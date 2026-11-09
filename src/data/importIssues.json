@@ -1,0 +1,392 @@
+[
+ {
+  "kind": "player",
+  "teamId": "flf",
+  "text": "Vincent Brooks (C): no age or contract in the expanded list",
+  "level": "fix"
+ },
+ {
+  "kind": "player",
+  "teamId": "flf",
+  "text": "Vincent Brooks (C): expanded list shows Elias Monroe in this slot",
+  "level": "fix"
+ },
+ {
+  "kind": "player",
+  "teamId": "flf",
+  "text": "Isaiah Reed (CB): no age or contract in the expanded list",
+  "level": "fix"
+ },
+ {
+  "kind": "player",
+  "teamId": "flf",
+  "text": "Isaiah Reed (CB): expanded list shows Micah Porter in this slot",
+  "level": "fix"
+ },
+ {
+  "kind": "player",
+  "teamId": "flf",
+  "text": "Elias Monroe (C): contract found under starter C in the expanded list",
+  "level": "fix"
+ },
+ {
+  "kind": "player",
+  "teamId": "flf",
+  "text": "Micah Porter (CB): contract found under starter CB in the expanded list",
+  "level": "fix"
+ },
+ {
+  "kind": "player",
+  "teamId": "ntw",
+  "text": "Malcolm Hayes (OG): age written as \"Age:\" instead of \"A:\"",
+  "level": "fix"
+ },
+ {
+  "kind": "player",
+  "teamId": "tga",
+  "text": "Caleb Thomas (DT): salary missing the $ sign",
+  "level": "fix"
+ },
+ {
+  "kind": "player",
+  "teamId": "tga",
+  "text": "Tracy Lambart (DE): no age or contract in the expanded list",
+  "level": "fix"
+ },
+ {
+  "kind": "player",
+  "teamId": "tga",
+  "text": "Tracy Lambart (DE): expanded list shows Isaiah Merrick in this slot",
+  "level": "fix"
+ },
+ {
+  "kind": "player",
+  "teamId": "tga",
+  "text": "Malik Jefferson (SS): age listed as 223",
+  "level": "fix"
+ },
+ {
+  "kind": "player",
+  "teamId": "tga",
+  "text": "Isaiah Merrick (DE): contract found under starter DE in the expanded list",
+  "level": "fix"
+ },
+ {
+  "kind": "cap",
+  "teamId": "crf",
+  "text": "Cap used is posted as $3.67M, but the contracts add up to $3.56M a year",
+  "level": "fix"
+ },
+ {
+  "kind": "cap",
+  "teamId": "drf",
+  "text": "Cap used is posted as $3.43M, but the contracts add up to $2.71M a year",
+  "level": "fix"
+ },
+ {
+  "kind": "cap",
+  "teamId": "ddc",
+  "text": "Cap used is posted as $3.48M, but the contracts add up to $3.22M a year",
+  "level": "fix"
+ },
+ {
+  "kind": "cap",
+  "teamId": "dst",
+  "text": "Cap used is posted as $3.46M, but the contracts add up to $3.28M a year",
+  "level": "fix"
+ },
+ {
+  "kind": "cap",
+  "teamId": "flf",
+  "text": "Cap used is posted as $3.55M, but the contracts add up to $2.90M a year",
+  "level": "fix"
+ },
+ {
+  "kind": "cap",
+  "teamId": "lsc",
+  "text": "Cap used is posted as $3.99M, but the contracts add up to $3.56M a year",
+  "level": "fix"
+ },
+ {
+  "kind": "cap",
+  "teamId": "ntw",
+  "text": "Cap used is posted as $3.58M, but the contracts add up to $3.16M a year",
+  "level": "fix"
+ },
+ {
+  "kind": "cap",
+  "teamId": "ocn",
+  "text": "Cap used is posted as $3.33M, but the contracts add up to $3.05M a year",
+  "level": "fix"
+ },
+ {
+  "kind": "team",
+  "teamId": "pln",
+  "text": "Team name spelled more than one way: Plain Pigs, Plains Pigs",
+  "level": "fix"
+ },
+ {
+  "kind": "cap",
+  "teamId": "pln",
+  "text": "Cap used is posted as $3.44M, but the contracts add up to $3.20M a year",
+  "level": "fix"
+ },
+ {
+  "kind": "cap",
+  "teamId": "tga",
+  "text": "Cap used is posted as $3.65M, but the contracts add up to $3.25M a year",
+  "level": "fix"
+ },
+ {
+  "kind": "cap",
+  "teamId": "void",
+  "text": "Cap used is posted as $3.82M, but the contracts add up to $3.30M a year",
+  "level": "fix"
+ },
+ {
+  "kind": "cap",
+  "teamId": "wrf",
+  "text": "Cap used is posted as $3.36M, but the contracts add up to $2.93M a year",
+  "level": "fix"
+ },
+ {
+  "kind": "team",
+  "teamId": "wsl",
+  "text": "Darius Coleman is listed twice on this roster (OG, SS)",
+  "level": "fix"
+ },
+ {
+  "kind": "duplicate",
+  "teamId": null,
+  "text": "Adrian Booker appears on 2 teams: TGA, WRF",
+  "level": "ask"
+ },
+ {
+  "kind": "duplicate",
+  "teamId": null,
+  "text": "Bryce Harrington appears on 2 teams: DRF, WSL",
+  "level": "ask"
+ },
+ {
+  "kind": "duplicate",
+  "teamId": null,
+  "text": "Caleb Morrison appears on 3 teams: CRF, OCN, WRF",
+  "level": "ask"
+ },
+ {
+  "kind": "duplicate",
+  "teamId": null,
+  "text": "Caleb Thomas appears on 2 teams: TGA, WSL",
+  "level": "ask"
+ },
+ {
+  "kind": "duplicate",
+  "teamId": null,
+  "text": "Cameron Holt appears on 2 teams: CRF, DDC",
+  "level": "ask"
+ },
+ {
+  "kind": "duplicate",
+  "teamId": null,
+  "text": "Christopher Adams appears on 2 teams: EDC, PLN",
+  "level": "ask"
+ },
+ {
+  "kind": "duplicate",
+  "teamId": null,
+  "text": "Cody Westbrook appears on 2 teams: LSC, WRF",
+  "level": "ask"
+ },
+ {
+  "kind": "duplicate",
+  "teamId": null,
+  "text": "Corey Matthews appears on 2 teams: OCM, WSL",
+  "level": "ask"
+ },
+ {
+  "kind": "duplicate",
+  "teamId": null,
+  "text": "Damian Booker appears on 2 teams: OCN, WSL",
+  "level": "ask"
+ },
+ {
+  "kind": "duplicate",
+  "teamId": null,
+  "text": "Damon Lawson appears on 2 teams: PLN, WRF",
+  "level": "ask"
+ },
+ {
+  "kind": "duplicate",
+  "teamId": null,
+  "text": "Darius Monroe appears on 2 teams: EDC, OCM",
+  "level": "ask"
+ },
+ {
+  "kind": "duplicate",
+  "teamId": null,
+  "text": "Dominic Fields appears on 2 teams: TGA, WRF",
+  "level": "ask"
+ },
+ {
+  "kind": "duplicate",
+  "teamId": null,
+  "text": "Elijah Crawford appears on 2 teams: WRF, WSL",
+  "level": "ask"
+ },
+ {
+  "kind": "duplicate",
+  "teamId": null,
+  "text": "Isaiah Merrick appears on 2 teams: TGA, WSL",
+  "level": "ask"
+ },
+ {
+  "kind": "duplicate",
+  "teamId": null,
+  "text": "Jalen Cross appears on 2 teams: EDC, LSC",
+  "level": "ask"
+ },
+ {
+  "kind": "duplicate",
+  "teamId": null,
+  "text": "Jalen Porter appears on 2 teams: CRF, TGA",
+  "level": "ask"
+ },
+ {
+  "kind": "duplicate",
+  "teamId": null,
+  "text": "Joel Carter appears on 2 teams: OCN, WRF",
+  "level": "ask"
+ },
+ {
+  "kind": "duplicate",
+  "teamId": null,
+  "text": "Landon Oakley appears on 2 teams: PLN, TGA",
+  "level": "ask"
+ },
+ {
+  "kind": "duplicate",
+  "teamId": null,
+  "text": "Malcolm Sullivan appears on 2 teams: FLF, WSL",
+  "level": "ask"
+ },
+ {
+  "kind": "duplicate",
+  "teamId": null,
+  "text": "Malik Everett appears on 3 teams: CRF, DRF, NTW",
+  "level": "ask"
+ },
+ {
+  "kind": "duplicate",
+  "teamId": null,
+  "text": "Malik Sterling appears on 2 teams: EDC, LSC",
+  "level": "ask"
+ },
+ {
+  "kind": "duplicate",
+  "teamId": null,
+  "text": "Marcus Delaney appears on 3 teams: TGA, VOID, WSL",
+  "level": "ask"
+ },
+ {
+  "kind": "duplicate",
+  "teamId": null,
+  "text": "Marcus Ellington appears on 3 teams: PLN, SNM, WRF",
+  "level": "ask"
+ },
+ {
+  "kind": "duplicate",
+  "teamId": null,
+  "text": "Nolan Barrett appears on 2 teams: SNM, WRF",
+  "level": "ask"
+ },
+ {
+  "kind": "duplicate",
+  "teamId": null,
+  "text": "Patrick Vega appears on 2 teams: CRF, WSL",
+  "level": "ask"
+ },
+ {
+  "kind": "duplicate",
+  "teamId": null,
+  "text": "Preston Merrick appears on 2 teams: PLN, WRF",
+  "level": "ask"
+ },
+ {
+  "kind": "duplicate",
+  "teamId": null,
+  "text": "Preston Walsh appears on 2 teams: NTW, WSL",
+  "level": "ask"
+ },
+ {
+  "kind": "duplicate",
+  "teamId": null,
+  "text": "Roman Fletcher appears on 2 teams: DRF, WSL",
+  "level": "ask"
+ },
+ {
+  "kind": "duplicate",
+  "teamId": null,
+  "text": "Ryan Harris appears on 2 teams: SNM, WSL",
+  "level": "ask"
+ },
+ {
+  "kind": "duplicate",
+  "teamId": null,
+  "text": "Ryan Vargas appears on 2 teams: DDC, WSL",
+  "level": "ask"
+ },
+ {
+  "kind": "duplicate",
+  "teamId": null,
+  "text": "Steve Higgens appears on 2 teams: NTW, WSL",
+  "level": "ask"
+ },
+ {
+  "kind": "duplicate",
+  "teamId": null,
+  "text": "Tyler Whitman appears on 2 teams: DDC, WSL",
+  "level": "ask"
+ },
+ {
+  "kind": "duplicate",
+  "teamId": null,
+  "text": "Tyson Caldwell appears on 2 teams: FLF, WRF",
+  "level": "ask"
+ },
+ {
+  "kind": "duplicate",
+  "teamId": null,
+  "text": "William Hernandez appears on 2 teams: TGA, VOID",
+  "level": "ask"
+ },
+ {
+  "kind": "duplicate",
+  "teamId": null,
+  "text": "Xavier Coleman appears on 3 teams: LSC, PLN, WRF",
+  "level": "ask"
+ },
+ {
+  "kind": "pick",
+  "teamId": "drf",
+  "text": "Pick code SMN S10 round 2 matches no team (typo?)",
+  "level": "fix"
+ },
+ {
+  "kind": "pick",
+  "teamId": "tga",
+  "text": "Holds a season 7 pick (DDC round 2) while every other list starts at season 8",
+  "level": "ask"
+ },
+ {
+  "kind": "pick",
+  "teamId": null,
+  "text": "SNM S11 round 2 is listed by DRF, SNM",
+  "level": "fix"
+ },
+ {
+  "kind": "pick",
+  "teamId": null,
+  "text": "OCM S8 round 2 is not on anyone's list",
+  "level": "ask"
+ }
+]

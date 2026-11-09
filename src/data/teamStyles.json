@@ -1,0 +1,19 @@
+{
+  "_note": "Placeholder colors picked from team names until the real colors and logos come in.",
+  "CRF": { "color": "#b3262e", "accent": "#f2c14e" },
+  "DDC": { "color": "#1f4e5f", "accent": "#7fd1e0" },
+  "EDC": { "color": "#6b3fa0", "accent": "#f0e68c" },
+  "LSC": { "color": "#3f8f4a", "accent": "#f29ac4" },
+  "NTW": { "color": "#7a2d20", "accent": "#e8e1d0" },
+  "SNM": { "color": "#2d6ca8", "accent": "#e8f4ff" },
+  "TGA": { "color": "#d9692b", "accent": "#2c3b2c" },
+  "VOID": { "color": "#3b1f5c", "accent": "#c084fc" },
+  "WRF": { "color": "#147a74", "accent": "#e05ad1" },
+  "DRF": { "color": "#2f4a2a", "accent": "#9bd36b" },
+  "DST": { "color": "#b88a4a", "accent": "#3a2a1a" },
+  "FLF": { "color": "#c45a8a", "accent": "#ffe08a" },
+  "OCM": { "color": "#2a8f8a", "accent": "#ffcf6b" },
+  "OCN": { "color": "#2563b0", "accent": "#9ad7ff" },
+  "PLN": { "color": "#e58aa0", "accent": "#5a8f3a" },
+  "WSL": { "color": "#5b6070", "accent": "#d7dbe3" }
+}

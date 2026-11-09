@@ -1,0 +1,110 @@
+:FlowerForestGolemsLOGO:Flower Forest Golems Starting Lineup @here
+
+Offense: ⭐⭐⭐⭐ #6
+Defense: ⭐⭐⭐⭐ #9
+Overall: ⭐⭐⭐⭐ #7
+Salary Cap: $3.55M/$4M
+
+QB: Liam Johnson | ⭐⭐⭐⭐✨ |
+WR: Kirk Dezi | ⭐⭐⭐✨ |
+WR: Ryan Mitchell | ⭐⭐⭐⭐✨ |
+C: Vincent Brooks | ⭐⭐⭐ |
+TE: Joshua Sandoval | ⭐⭐⭐⭐✨ |
+RB: Dan Butler | ⭐⭐⭐✨ |
+OG: Dominic Bailey | ⭐⭐⭐ |
+OG: Caleb Drayton | ⭐⭐⭐ |
+OT: Hugh Stephenson | ⭐⭐⭐✨ |
+OT: Oliver Esparza | 🌟🌟🌟🌟🌟 |
+DL: Andrew Garcia | ⭐⭐⭐⭐✨ |
+DT: William Sanchez | ⭐⭐⭐⭐ |
+DT: Merv Maxton | ⭐⭐⭐⭐ |
+DE: Elijah Salazar | 🌟🌟🌟🌟🌟 |
+DE: Jayden Gonzalez | ⭐⭐⭐⭐✨ |
+CB: Isaiah Reed | ⭐⭐⭐ |
+CB: Vernon Goodwin | ⭐⭐⭐⭐ |
+LB: Lucas Aguilar | ⭐⭐⭐⭐✨ |
+LB: Julian Price | ⭐⭐⭐⭐ |
+SS: Jayden Cabrera | ⭐⭐⭐✨ | 
+:FlowerForestGolemsLOGO:Flower Forest Golems Backups Lineup @here
+
+QB: Trevor Maddox | ⭐⭐✨ |
+WR: Damon Holloway | ⭐⭐⭐ |
+WR: Kade Winston | ⭐⭐ |
+C: Elias Monroe | ⭐⭐✨ |
+TE:
+RB: Tyson Caldwell | ⭐⭐⭐✨ |
+OG: Vincent Archer | ⭐⭐ |
+OG:
+OT: Malcolm Sullivan | ⭐⭐✨ |
+OT:
+DL: Troy McAllister | ⭐⭐✨ |
+DT: Samson Wade | ⭐⭐ |
+DT: Reid Callahan | ⭐⭐⭐ |
+DE: Desmond Ford | ⭐⭐✨ |
+DE:
+CB: Avery Lawson | ⭐⭐ |
+CB: Micah Porter | ⭐⭐✨ |
+LB: Darius Whitfield | ⭐⭐⭐ |
+LB: Camden Hughes | ⭐⭐✨ |
+SS: Jalen Whitmore | ⭐⭐⭐ | 
+:FlowerForestGolemsLOGO:Flower Forest Golems Starting Lineup ~ Roster Expanded @here
+
+QB: Liam Johnson | A: 27 | C: 2Y $233.33K | :HappyEmoji:
+WR: Kirk Dezi | A: 25 | C: 1Y $70K | :NormalEmoji:
+WR: Ryan Mitchell | A: 26 | C: 2Y $266.67K | :HappyEmoji:
+C: Elias Monroe | A: 24 | C: 2Y $138K | :NormalEmoji:
+TE: Joshua Sandoval | A: 27 | C: 2Y $133.33K | :HappyEmoji:
+RB: Dan Butler | A: 26 | C: 1Y $60K | :NormalEmoji:
+OG: Dominic Bailey | A: 26 | C: 1Y $40K | :NormalEmoji:
+OG: Caleb Drayton | A: 26 | C: 2Y $184K | :NormalEmoji:
+OT: Hugh Stephenson | A: 25 | C: 1Y $80K | :NormalEmoji:
+OT: Oliver Esparza | A: 26 | C: 2Y $346.67K | :HappyEmoji:
+DL: Andrew Garcia | A: 27 | C: 2Y $233.33K | :HappyEmoji:
+DT: William Sanchez | A: 26 | C: 1Y $95K | :NormalEmoji:
+DT: Merv Maxton | A: 27 | C: 2Y $146.67K | :NormalEmoji:
+DE: Elijah Salazar | A: 26 | C: 2Y $433.33K | :HappyEmoji:
+DE: Jayden Gonzalez | A: 27 | C: 2Y $300K | :HappyEmoji:
+CB: Micah Porter | A: 25 | C: 2Y $142K | :NormalEmoji:
+CB: Vernon Goodwin | A: 26 | C: 1Y $70K | :NormalEmoji:
+LB: Lucas Aguilar | A: 26 | C: 2Y $260K | :HappyEmoji:
+LB: Julian Price | A: 26 | C: 2Y $160K | :NormalEmoji:
+SS: Jayden Cabrera | A: 27 | C: 1Y $55K | :HappyEmoji:
+:FlowerForestGolemsLOGO:Flower Forest Golems Backups Lineup ~ Roster Expanded @here
+
+QB: Trevor Maddox | A: 25 | C: 2Y $168K | :NormalEmoji:
+WR: Damon Holloway | A: 26 | C: 2Y $186K | :NormalEmoji:
+WR: Kade Winston | A: 22 | C: 3Y $153K | :HappyEmoji:
+C:
+TE:
+RB: Tyson Caldwell | A: 21 | C: 3Y $170K | :HappyEmoji:
+OG: Vincent Archer | A: 23 | C: 3Y $156K | :HappyEmoji:
+OG:
+OT: Malcolm Sullivan | A: 21 | C: 2Y $105K | :HappyEmoji:
+OT:
+DL: Troy McAllister | A: 25 | C: 2Y $148K | :NormalEmoji:
+DT: Samson Wade | A: 22 | C: 3Y $150K | :HappyEmoji:
+DT: Reid Callahan | A: 26 | C: 2Y $188K | :NormalEmoji:
+DE: Desmond Ford | A: 24 | C: 3Y $171K | :HappyEmoji:
+DE:
+CB: Avery Lawson | A: 23 | C: 3Y $159K | :HappyEmoji:
+CB:
+LB: Darius Whitfield | A: 26 | C: 2Y $190K | :NormalEmoji:
+LB: Camden Hughes | A: 24 | C: 3Y $177K | :HappyEmoji:
+SS: Jalen Whitmore | A: 23 | C: 2Y $150K | :HappyEmoji: 
+:FlowerForestGolemsLOGO: Flower Forest Golems Draft Picks - Next 5 Seasons @here
+
+FLF S8 1st Round Pick
+FLF S8 2nd Round Pick
+FLF S8 3rd Round Pick
+FLF S9 1st Round Pick
+FLF S9 2nd Round Pick
+FLF S9 3rd Round Pick
+FLF S10 1st Round Pick
+FLF S10 2nd Round Pick
+FLF S10 3rd Round Pick
+FLF S11 1st Round Pick
+FLF S11 2nd Round Pick
+FLF S11 3rd Round Pick
+FLF S12 1st Round Pick
+FLF S12 2nd Round Pick
+FLF S12 3rd Round Pick

@@ -1,0 +1,110 @@
+:PlainsPigsLOGO:Plains Pigs Starting Lineup @here
+
+Offense: ⭐⭐⭐✨ #12
+Defense: ⭐⭐⭐⭐ #8
+Overall: ⭐⭐⭐⭐ #10
+Salary Cap: $3.44M/$4M
+
+QB: Ryan Gonzalez | ⭐⭐⭐⭐ |
+WR: Brandon Sanchez | ⭐⭐⭐⭐✨ |
+WR: Curtis McLaughlin | ⭐⭐⭐⭐ |
+C: Josh Kinney | ⭐⭐⭐⭐✨ |
+TE: Eddie Ford | ⭐⭐⭐✨ |
+RB: Sani Muhammed | ⭐⭐⭐⭐ |
+OG: Brock Steelmen | 🌟🌟🌟🌟🌟 |
+OG: Boston Welch | ⭐⭐⭐✨ |
+OT: Grayson Oakwood | 🌟🌟🌟🌟🌟 |
+OT: Landon Oakley | ⭐⭐⭐⭐ |
+DL: Preston Merrick | ⭐⭐⭐ |
+DT: Damon Lawson | ⭐⭐✨ |
+DT: Bruce Phelps | ⭐⭐⭐✨ |
+DE: Christopher Adams | ⭐⭐⭐⭐ |
+DE: Simon Stephens | ⭐⭐⭐⭐ |
+CB: Angel Miles | 🌟🌟🌟🌟🌟 |
+CB: Benjamin Castillo | ⭐⭐⭐ |
+LB: Preston Rhodes | ⭐⭐⭐ |
+LB: Brandon Cole | ⭐⭐⭐ |
+SS: Dana Lawrence | ⭐⭐⭐✨ | 
+:PlainsPigsLOGO:Plains Pigs Backups Lineup @here
+
+QB: Dawson Merrick | ⭐⭐✨ |
+WR: Treyson Vega | ⭐⭐⭐ |
+WR: Darnell Bishop | ⭐⭐ |
+C: Kendrick Lawson | ⭐⭐✨ |
+TE:
+RB: Malik Granger | ⭐⭐✨ |
+OG: Steven Carter | ⭐⭐⭐ |
+OG: Cody Whitmore | ⭐⭐⭐ |
+OT: Jalen Ramsey | ⭐⭐✨ |
+OT: Raymond Wallace | ⭐⭐⭐⭐ |
+DL: Bryson Maddox | ⭐⭐✨ |
+DT: Xavier Coleman | ⭐⭐⭐ |
+DT:
+DE: Marcus Ellington | ⭐⭐✨ |
+DE:
+CB: Devon McKinley | ⭐⭐ |
+CB: Elijah Dalton | ⭐⭐✨ |
+LB: Camron Westbrook | ⭐⭐✨ |
+LB:
+SS: Adrian Fletcher | ⭐⭐ | 
+:PlainsPigsLOGO:Plains Pigs Starting Lineup ~ Roster Expanded @here
+
+QB: Ryan Gonzalez | A: 27 | C: 2Y $173.33K | :NormalEmoji:
+WR: Brandon Sanchez | A: 26 | C: 2Y $280K | :HappyEmoji:
+WR: Curtis McLaughlin | A: 26 | C: 2Y $260K | :HappyEmoji:
+C: Josh Kinney | A: 27 | C: 2Y $200K | :HappyEmoji:
+TE: Eddie Ford | A: 25 | C: 2Y $225K | :HappyEmoji:
+RB: Sani Muhammed | A: 25 | C: 2Y $186.67K | :NormalEmoji:
+OG: Brock Steelmen | A: 27 | C: 2Y $260K | :HappyEmoji:
+OG: Boston Welch | A: 26 | C: 1Y $75K | :NormalEmoji:
+OT: Grayson Oakwood | A: 26 | C: 2Y $346.67K | :HappyEmoji:
+OT: Landon Oakley | A: 25 | C: 1Y $90K | :NormalEmoji:
+DL: Preston Merrick | A: 21 | C: 2Y $155K | :HappyEmoji:
+DT: Damon Lawson | A: 21 | C: 2Y $123K | :HappyEmoji:
+DT: Bruce Phelps | A: 27 | C: 1Y $55K | :NormalEmoji:
+DE: Christopher Adams | A: 27 | C: 2Y $333.33K | :HappyEmoji:
+DE: Simon Stephens | A: 25 | C: 2Y $233.33K | :NormalEmoji:
+CB: Angel Miles | A: 27 | C: 2Y $280K | :HappyEmoji:
+CB: Benjamin Castillo | A: 25 | C: 1Y $40K | :NormalEmoji:
+LB: Preston Rhodes | A: 26 | C: 2Y $190K | :NormalEmoji:
+LB: Brandon Cole | A: 22 | C: 2Y $160K | :HappyEmoji:
+SS: Dana Lawrence | A: 26 | C: 1Y $70K | :NormalEmoji: 
+:PlainsPigsLOGO:Plains Pigs Backups Lineup ~ Roster Expanded @here
+
+QB: Dawson Merrick | A: 25 | C: 2Y $166K | :NormalEmoji:
+WR: Treyson Vega | A: 26 | C: 2Y $188K | :NormalEmoji:
+WR: Darnell Bishop | A: 22 | C: 3Y $153K | :HappyEmoji:
+C: Kendrick Lawson | A: 24 | C: 2Y $138K | :NormalEmoji:
+TE:
+RB: Malik Granger | A: 25 | C: 2Y $150K | :NormalEmoji:
+OG: Steven Carter | A: 22 | C: 2Y $155K | :HappyEmoji:
+OG: Cody Whitmore | A: 26 | C: 2Y $184K | :NormalEmoji:
+OT: Jalen Ramsey | A: 24 | C: 3Y $174K | :HappyEmoji:
+OT: Raymond Wallace | A: 24 | C: 3Y $330K | :HappyEmoji:
+DL: Bryson Maddox | A: 25 | C: 2Y $148K | :NormalEmoji:
+DT: Xavier Coleman | A: 26 | C: 2Y $186K | :NormalEmoji:
+DT:
+DE: Marcus Ellington | A: 24 | C: 3Y $171K | :HappyEmoji:
+DE:
+CB: Devon McKinley | A: 23 | C: 3Y $159K | :HappyEmoji:
+CB: Elijah Dalton | A: 25 | C: 2Y $142K | :NormalEmoji:
+LB: Camron Westbrook | A: 24 | C: 3Y $177K | :HappyEmoji:
+LB:
+SS: Adrian Fletcher | A: 22 | C: 3Y $152K | :HappyEmoji: 
+:PlainsPigsLOGO:Plain Pigs Draft Picks - Next 5 Seasons @here
+
+PLN S8 1st Round Pick
+PLN S8 2nd Round Pick
+PLN S8 3rd Round Pick
+PLN S9 1st Round Pick
+PLN S9 2nd Round Pick
+PLN S9 3rd Round Pick
+PLN S10 1st Round Pick
+PLN S10 2nd Round Pick
+PLN S10 3rd Round Pick
+PLN S11 1st Round Pick
+PLN S11 2nd Round Pick
+PLN S11 3rd Round Pick
+PLN S12 1st Round Pick
+PLN S12 2nd Round Pick
+PLN S12 3rd Round Pick

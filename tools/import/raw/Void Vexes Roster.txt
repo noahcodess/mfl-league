@@ -1,0 +1,112 @@
+:VoidVexesLOGO:Void Vexes Starting Lineup @here
+
+Offense: 🌟🌟🌟🌟🌟 #1
+Defense: ⭐⭐⭐⭐✨ #2
+Overall: 🌟🌟🌟🌟🌟 #1
+Salary Cap: $3.82M/$4M
+
+QB: Eli Navarro | ⭐⭐⭐⭐✨ |
+WR: Jayden Clark | 🌟🌟🌟🌟🌟 |
+WR: Marcus Delaney | ⭐⭐⭐ |
+C: Chris Baker | 🌟🌟🌟🌟🌟 |
+TE: Cassius Brown | 🌟🌟🌟🌟🌟 |
+RB: Alec Navarro | 🌟🌟🌟🌟🌟 |
+OG: Aiden Zuniga | ⭐⭐⭐⭐✨ |
+OG: Brycen Montoya | 🌟🌟🌟🌟🌟 |
+OT: Roman Whitaker | ⭐⭐⭐⭐ |
+OT: Bowen Delgado | 🌟🌟🌟🌟🌟 |
+DL: Mason Avalos | ⭐⭐⭐⭐✨ |
+DT: Nicholas Cordero | ⭐⭐⭐⭐✨ |
+DT: Jasper Thompson | 🌟🌟🌟🌟🌟 |
+DE: Tyler Cortes | ⭐⭐⭐⭐✨ |
+DE: William Hernandez | 🌟🌟🌟🌟🌟 |
+CB: Andrew Torres | 🌟🌟🌟🌟🌟 |
+CB: Ethan Jones | ⭐⭐⭐⭐✨ |
+LB: Tristian Castillo | ⭐⭐⭐⭐✨ |
+LB: Nate Fisher | ⭐⭐⭐✨ |
+SS: Levi Sanchez | 🌟🌟🌟🌟🌟 | 
+:VoidVexesLOGO:Void Vexes Backups Lineup @here
+
+QB: Jaxon Merritt | ⭐⭐✨ |
+WR: Camden Rhodes | ⭐⭐⭐ |
+WR: Malik Preston | ⭐⭐ |
+C: Ruben Callahan | ⭐⭐✨ |
+TE: Garrett Langley | ⭐⭐⭐ |
+RB: Lamar Granger | ⭐⭐✨ |
+OG: Nico Sanderson | ⭐⭐ |
+OG: Travis Bellamy | ⭐⭐⭐ |
+OT: Keon Whitmore | ⭐⭐✨ |
+OT:
+DL: Roman Ellington | ⭐⭐✨ |
+DT: Cedric Hollowell | ⭐⭐ |
+DT: Wesley Granger | ⭐⭐⭐ |
+DE: Nolan Bradford | ⭐⭐✨ |
+DE: Travis Monroe | ⭐⭐⭐ |
+CB: Justin Pierce | ⭐⭐⭐ |
+CB: Lamar Vickers | ⭐⭐✨ |
+LB: Preston Keller | ⭐⭐⭐ |
+LB: Donovan Ashford | ⭐⭐✨ |
+SS: Marcus Renner | ⭐⭐ | 
+:VoidVexesLOGO:Void Vexes Starting Lineup ~ Roster Expanded @here
+
+QB: Eli Navarro | A: 23 | C: 3Y $360K | :HappyEmoji:
+WR: Jayden Clark | A: 27 | C: 1Y $100K | :HappyEmoji:
+WR: Marcus Delaney | A: 21 | C: 2Y $140K | :HappyEmoji:
+C: Chris Baker | A: 27 | C: 1Y $80K | :NormalEmoji:
+TE: Cassius Brown | A: 26 | C: 2Y $160K | :HappyEmoji:
+RB: Alec Navarro | A: 26 | C: 1Y $240K | :NormalEmoji:
+OG: Aiden Zuniga | A: 26 | C: 2Y $120K | :NormalEmoji:
+OG: Brycen Montoya | A: 26 | C: 2Y $100K | :ExcitedEmoji:
+OT: Roman Whitaker | A: 21 | C: 3Y $210K | :HappyEmoji:
+OT: Bowen Delgado | A: 26 | C: 2Y $280K | :HappyEmoji:
+DL: Mason Avalos | A: 26 | C: 2Y $200K | :HappyEmoji:
+DT: Nicholas Cordero | A: 26 | C: 2Y $113.33K | :NormalEmoji:
+DT: Jasper Thompson | A: 26 | C: 2Y $316.67K | :HappyEmoji:
+DE: Tyler Cortes | A: 26 | C: 1Y $100K | :HappyEmoji:
+DE: William Hernandez | A: 26 | C: 2Y $226.67K | :HappyEmoji:
+CB: Andrew Torres | A: 26 | C: 2Y $113.33K | :HappyEmoji:
+CB: Ethan Jones | A: 26 | C: 2Y $113.33K | :HappyEmoji:
+LB: Tristian Castillo | A: 26 | C: 1Y $95K | :HappyEmoji:
+LB: Nate Fisher | A: 24 | C: 3Y $120K | :ExcitedEmoji:
+SS: Levi Sanchez | A: 26 | C: 2Y $333.33K | :NormalEmoji:
+:VoidVexesLOGO:Void Vexes Backups Lineup ~ Roster Expanded @here
+
+QB: Jaxon Merritt | A: 25 | C: 2Y $168K | :NormalEmoji:
+WR: Camden Rhodes | A: 26 | C: 2Y $186K | :NormalEmoji:
+WR: Malik Preston | A: 22 | C: 3Y $153K | :HappyEmoji:
+C: Ruben Callahan | A: 24 | C: 2Y $138K | :NormalEmoji:
+TE: Garrett Langley | A: 21 | C: 2Y $160K | :HappyEmoji:
+RB: Lamar Granger | A: 21 | C: 2Y $125K | :HappyEmoji:
+OG: Nico Sanderson | A: 23 | C: 3Y $156K | :HappyEmoji:
+OG: Travis Bellamy | A: 26 | C: 2Y $184K | :NormalEmoji:
+OT: Keon Whitmore | A: 24 | C: 3Y $174K | :HappyEmoji:
+OT:
+DL: Roman Ellington | A: 25 | C: 2Y $148K | :NormalEmoji:
+DT: Cedric Hollowell | A: 22 | C: 3Y $150K | :HappyEmoji:
+DT: Wesley Granger | A: 26 | C: 2Y $188K | :NormalEmoji:
+DE: Nolan Bradford | A: 24 | C: 3Y $171K | :HappyEmoji:
+DE: Travis Monroe | A: 25 | C: 2Y $160K | :HappyEmoji:
+CB: Justin Pierce | A: 24 | C: 2Y $150K | :HappyEmoji:
+CB: Lamar Vickers | A: 25 | C: 2Y $142K | :NormalEmoji:
+LB: Preston Keller | A: 26 | C: 2Y $190K | :NormalEmoji:
+LB: Donovan Ashford | A: 24 | C: 3Y $177K | :HappyEmoji:
+SS: Marcus Renner | A: 22 | C: 3Y $152K | :HappyEmoji: 
+:VoidVexesLOGO: Void Vexes Draft Picks - Next 5 Seasons @here
+
+VOID S8 1st Round Pick
+DRF S8 1st Round Pick
+VOID S8 2nd Round Pick
+DRF S8 2nd Round Pick
+VOID S8 3rd Round Pick
+VOID S9 1st Round Pick
+VOID S9 2nd Round Pick
+VOID S9 3rd Round Pick
+VOID S10 1st Round Pick
+VOID S10 2nd Round Pick
+VOID S10 3rd Round Pick
+VOID S11 1st Round Pick
+VOID S11 2nd Round Pick
+VOID S11 3rd Round Pick
+VOID S12 1st Round Pick
+VOID S12 2nd Round Pick
+VOID S12 3rd Round Pick

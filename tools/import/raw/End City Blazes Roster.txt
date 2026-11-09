@@ -1,0 +1,110 @@
+:EndCityBlazesLOGO:End City Blazes Starting Lineup @here
+
+Offense: ⭐⭐⭐⭐ #8
+Defense: ⭐⭐⭐⭐ #12
+Overall: ⭐⭐⭐⭐ #9
+Salary Cap: $3.50M/$4M
+
+QB: Mason Lopez | ⭐⭐⭐✨ |
+WR: Elijah Brown | ⭐⭐⭐⭐ |
+WR: Darius Monroe | ⭐⭐⭐⭐ |
+C: Benjamin Rojas | ⭐⭐⭐⭐ |
+TE: Garrett Lawson | ⭐⭐⭐⭐ |
+RB: Matthew Hernandez | ⭐⭐⭐⭐✨ |
+OG: Jacob Soto | ⭐⭐⭐✨ |
+OG: Marciel Robert | ⭐⭐⭐ |
+OT: Liam Nguyen | ⭐⭐⭐✨ |
+OT: Carter Wright | ⭐⭐⭐⭐✨ |
+DL: Christopher Meza | 🌟🌟🌟🌟🌟 |
+DT: Wyatt Wilson | ⭐⭐⭐✨ |
+DT: Storm Devyn | ⭐⭐⭐⭐ |
+DE: Mason Marquez | ⭐⭐⭐✨ |
+DE: Christopher Adams | ⭐⭐⭐⭐ |
+CB: Liam Gallegos | ⭐⭐⭐⭐✨ |
+CB: Owen Rios | 🌟🌟🌟🌟🌟 |
+LB: Jude Castillo | ⭐⭐⭐⭐ |
+LB: Isaac Thompson | ⭐⭐⭐⭐✨ |
+SS: Logan Medina | 🌟🌟🌟🌟🌟 | 
+:EndCityBlazesLOGO:End City Blazes Backups Lineup @here
+
+QB: Nolan Mercer | ⭐⭐✨ |
+WR: Jalen Cross | ⭐⭐⭐ |
+WR: Issac Rivera | ⭐⭐⭐ |
+C: Victor Sloan | ⭐⭐✨ |
+TE:
+RB: Isaiah Vaughn | ⭐⭐✨ |
+OG: Luis Thornton | ⭐⭐⭐ |
+OG: Carter Flynn | ⭐⭐⭐ |
+OT: DeShawn Hale | ⭐⭐✨ |
+OT:
+DL: Malik Sterling | ⭐⭐✨ |
+DT: Bryce Porter | ⭐⭐ |
+DT: Camden Wolfe | ⭐⭐⭐ |
+DE: Xavier Stone | ⭐⭐✨ |
+DE:
+CB: Donovan Reed | ⭐⭐ |
+CB: Elijah Frost | ⭐⭐✨ |
+LB: Quentin Hayes | ⭐⭐⭐ |
+LB: Marcus Lane | ⭐⭐✨ |
+SS: Gavin Rhodes | ⭐⭐ | 
+:EndCityBlazesLOGO:End City Blazes Starting Lineup ~ Roster Expanded @here
+
+QB: Mason Lopez | A: 27 | C: 1Y $50K | :HappyEmoji:
+WR: Elijah Brown | A: 27 | C: 1Y $265K | :HappyEmoji:
+WR: Darius Monroe | A: 21 | C: 3Y $195K | :ExcitedEmoji:
+C: Benjamin Rojas | A: 27 | C: 2Y $93.33K | :HappyEmoji:
+TE: Garrett Lawson | A: 24 | C: 3Y $325K | :HappyEmoji:
+RB: Matthew Hernandez | A: 26 | C: 3Y $675K | :HappyEmoji:
+OG: Jacob Soto | A: 26 | C: 1Y $105K | :ExcitedEmoji:
+OG: Marciel Robert | A: 25 | C: 2Y $33.33K | :HappyEmoji:
+OT: Liam Nguyen | A: 26 | C: 2Y $53.33K | :ExcitedEmoji:
+OT: Carter Wright | A: 26 | C: 1Y $237.5K | :HappyEmoji:
+DL: Christopher Meza | A: 26 | C: 2Y $240K | :HappyEmoji:
+DT: Wyatt Wilson | A: 26 | C: 1Y $35K | :HappyEmoji:
+DT: Storm Devyn | A: 26 | C: 2Y $33.33K | :HappyEmoji:
+DE: Mason Marquez | A: 26 | C: 1Y $30K | :NormalEmoji:
+DE: Christopher Adams | A: 27 | C: 2Y $300K | :HappyEmoji:
+CB: Liam Gallegos | A: 26 | C: 1Y $270K | :HappyEmoji:
+CB: Owen Rios | A: 26 | C: 1Y $105K | :HappyEmoji:
+LB: Jude Castillo | A: 27 | C: 2Y $220K | :NormalEmoji:
+LB: Isaac Thompson | A: 26 | C: 1Y $300K | :HappyEmoji:
+SS: Logan Medina | A: 26 | C: 2Y $146.67K | :ExcitedEmoji: 
+:EndCityBlazesLOGO:End City Blazes Backups Lineup ~ Roster Expanded @here
+
+QB: Nolan Mercer | A: 25 | C: 2Y $166K | :NormalEmoji:
+WR: Jalen Cross | A: 26 | C: 2Y $184K | :NormalEmoji:
+WR: Issac Rivera | A: 27 | C: 1Y $25K | :ExcitedEmoji:
+C: Victor Sloan | A: 24 | C: 2Y $136K | :NormalEmoji:
+TE:
+RB: Isaiah Vaughn | A: 25 | C: 2Y $150K | :NormalEmoji:
+OG: Luis Thornton | A: 23 | C: 2Y $150K | :HappyEmoji:
+OG: Carter Flynn | A: 26 | C: 2Y $182K | :NormalEmoji:
+OT: DeShawn Hale | A: 24 | C: 3Y $174K | :HappyEmoji:
+OT:
+DL: Malik Sterling | A: 25 | C: 2Y $148K | :NormalEmoji:
+DT: Bryce Porter | A: 22 | C: 3Y $150K | :HappyEmoji:
+DT: Camden Wolfe | A: 26 | C: 2Y $186K | :NormalEmoji:
+DE: Xavier Stone | A: 24 | C: 3Y $171K | :HappyEmoji:
+DE:
+CB: Donovan Reed | A: 23 | C: 3Y $159K | :HappyEmoji:
+CB: Elijah Frost | A: 25 | C: 2Y $142K | :NormalEmoji:
+LB: Quentin Hayes | A: 26 | C: 2Y $188K | :NormalEmoji:
+LB: Marcus Lane | A: 24 | C: 3Y $177K | :HappyEmoji:
+SS: Gavin Rhodes | A: 22 | C: 3Y $152K | :HappyEmoji: 
+:EndCityBlazesLOGO: End City Blazes Draft Picks - Next 5 Seasons @here
+
+EDC S8 1st Round Pick
+EDC S8 2nd Round Pick
+EDC S8 3rd Round Pick
+EDC S9 1st Round Pick
+EDC S9 2nd Round Pick
+EDC S9 3rd Round Pick
+EDC S10 1st Round Pick
+EDC S10 2nd Round Pick
+EDC S10 3rd Round Pick
+EDC S11 1st Round Pick
+EDC S11 2nd Round Pick
+EDC S11 3rd Round Pick
+EDC S12 1st Round Pick
+EDC S12 2nd Round Pick
+EDC S12 3rd Round Pick
