@@ -36,22 +36,38 @@ export function mix(a, b, t) {
   return toHex(r1 + (r2 - r1) * t, g1 + (g2 - g1) * t, b1 + (b2 - b1) * t);
 }
 
+// Blocky 4x5 jersey digits.
 const DIGITS = {
-  0: ['111', '101', '101', '101', '111'], 1: ['010', '110', '010', '010', '111'], 2: ['111', '001', '111', '100', '111'],
-  3: ['111', '001', '011', '001', '111'], 4: ['101', '101', '111', '001', '001'], 5: ['111', '100', '111', '001', '111'],
-  6: ['111', '100', '111', '101', '111'], 7: ['111', '001', '010', '010', '010'], 8: ['111', '101', '111', '101', '111'],
-  9: ['111', '101', '111', '001', '111'],
+  0: ['1111', '1001', '1001', '1001', '1111'], 1: ['0110', '1110', '0110', '0110', '1111'], 2: ['1111', '0001', '1111', '1000', '1111'],
+  3: ['1111', '0001', '0111', '0001', '1111'], 4: ['1001', '1001', '1111', '0001', '0001'], 5: ['1111', '1000', '1111', '0001', '1111'],
+  6: ['1111', '1000', '1111', '1001', '1111'], 7: ['1111', '0001', '0011', '0010', '0010'], 8: ['1111', '1001', '1111', '1001', '1111'],
+  9: ['1111', '1001', '1111', '0001', '1111'],
 };
 
-// Draws a number centered on cx, top at y, with an optional 1px drop shadow.
-export function drawNumber(g, num, cx, y, color, shadow) {
+// Draws a jersey number centered on the 32-wide grid (top row y), with a 1px outline all the way around.
+export function drawNumber(g, num, y, color, edge) {
   const text = String(num);
-  const left = Math.round(cx - (text.length * 4 - 1) / 2);
-  const paint = (dx, dy, c) => [...text].forEach((ch, k) => DIGITS[ch].forEach((line, j) => [...line].forEach((bit, i) => {
-    if (bit === '1') g.set(left + k * 4 + i + dx, y + j + dy, c);
+  const left = 16 - (text.length * 6 - 2) / 2;
+  const cells = [];
+  [...text].forEach((ch, k) => DIGITS[ch].forEach((line, j) => [...line].forEach((bit, i) => {
+    if (bit === '1') cells.push([left + k * 6 + i, y + j]);
   })));
-  if (shadow) paint(1, 0, shadow);
-  paint(0, 0, color);
+  if (edge) cells.forEach(([x, yy]) => { for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) g.set(x + dx, yy + dy, edge); });
+  cells.forEach(([x, yy]) => g.set(x, yy, color));
+}
+
+// Adds a dark 1px outline around everything painted on `fg` (the Hoopland look), drawn onto `out`.
+export function outline(fg, out, color) {
+  for (let y = 0; y < SIZE; y++) {
+    for (let x = 0; x < SIZE; x++) {
+      if (fg.get(x, y)) continue;
+      const near = [[1, 0], [-1, 0], [0, 1], [0, -1]].some(([dx, dy]) => {
+        const nx = x + dx, ny = y + dy;
+        return nx >= 0 && ny >= 0 && nx < SIZE && ny < SIZE && fg.get(nx, ny);
+      });
+      if (near) out.set(x, y, color);
+    }
+  }
 }
 
 // Paints the grid onto a canvas (one canvas pixel per grid pixel) and returns an image URL.

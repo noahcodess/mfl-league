@@ -62,12 +62,6 @@
  {
   "kind": "player",
   "teamId": "tga",
-  "text": "Malik Jefferson (SS): age listed as 223",
-  "level": "fix"
- },
- {
-  "kind": "player",
-  "teamId": "tga",
   "text": "Isaiah Merrick (DE): contract found under starter DE in the expanded list",
   "level": "fix"
  },

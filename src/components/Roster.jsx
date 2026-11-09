@@ -1,27 +1,64 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PlayerTile from './PlayerTile.jsx';
 import { OFFENSE, DEFENSE, POSITION_NAMES } from '../data/positions.js';
 
-// The team's roster by side (offense, defense), position order, starters before backups. Open slots show as empty spots.
-function order(list, positions) {
-  const rank = (x) => positions.indexOf(x.position) * 100 + (x.depth === 'starter' ? 0 : 50) + (x.slot || 0);
-  return list.filter((x) => positions.includes(x.position)).sort((a, b) => rank(a) - rank(b));
+// The roster as a depth chart: one row per position with the starters showing; click to reveal the backups.
+const bySlot = (a, b) => (a.slot || 0) - (b.slot || 0);
+
+function OpenSpot({ v }) {
+  return (
+    <div className="ptile open" title={`Open ${POSITION_NAMES[v.position]} spot`}>
+      <span className="open-pos">{v.position}</span><span className="dim">Open spot</span>
+    </div>
+  );
+}
+
+function PositionRow({ pos, players, vacancies, team, onOpen, showAll }) {
+  const [open, setOpen] = useState(false);
+  const starters = players.filter((p) => p.position === pos && p.depth === 'starter').sort(bySlot);
+  const backups = players.filter((p) => p.position === pos && p.depth === 'backup').sort(bySlot);
+  const openStart = vacancies.filter((v) => v.position === pos && v.depth === 'starter');
+  const openBack = vacancies.filter((v) => v.position === pos && v.depth === 'backup');
+  const expanded = open || showAll;
+  const backupCount = backups.length + openBack.length;
+  return (
+    <div className={`pos-row${expanded ? ' expanded' : ''}`}>
+      <div className="pos-label" title={POSITION_NAMES[pos]}>
+        <b>{pos}</b><small>{POSITION_NAMES[pos]}</small>
+      </div>
+      <div className="pos-players">
+        <div className="pos-line">
+          {starters.map((p, i) => <PlayerTile key={p.id} player={p} team={team} index={i} onOpen={onOpen} />)}
+          {openStart.map((v) => <OpenSpot key={`s${v.slot}`} v={v} />)}
+        </div>
+        {expanded && backupCount > 0 && (
+          <div className="pos-line backups">
+            {backups.map((p, i) => <PlayerTile key={p.id} player={p} team={team} index={i} onOpen={onOpen} />)}
+            {openBack.map((v) => <OpenSpot key={`b${v.slot}`} v={v} />)}
+          </div>
+        )}
+      </div>
+      {backupCount > 0 && (
+        <button className={`pos-toggle${expanded ? ' on' : ''}`} onClick={() => setOpen(!open)} disabled={showAll}>
+          {expanded ? 'Hide' : 'Backups'} <span>{backupCount}</span>
+        </button>
+      )}
+    </div>
+  );
 }
 
 function Side({ title, positions, players, vacancies, team, onOpen }) {
-  const list = order(players, positions);
-  const open = order(vacancies, positions);
+  const [showAll, setShowAll] = useState(false);
+  const count = players.filter((p) => positions.includes(p.position)).length;
   return (
-    <section className="card">
-      <h3>{title} <span className="count">{list.length}</span></h3>
-      <div className="roster-grid">
-        {list.map((p, i) => <PlayerTile key={p.id} player={p} team={team} index={i} onOpen={onOpen} />)}
-        {open.map((v) => (
-          <div key={`${v.position}-${v.depth}-${v.slot}`} className="ptile open" title={`Open ${POSITION_NAMES[v.position]} spot`}>
-            <span className="open-pos">{v.position}</span><span className="dim">Open {v.depth} spot</span>
-          </div>
-        ))}
+    <section className="card depth-card">
+      <div className="depth-head-row">
+        <h3>{title} <span className="count">{count}</span></h3>
+        <button className="btn small ghost" onClick={() => setShowAll(!showAll)}>{showAll ? 'Starters only' : 'Show all backups'}</button>
       </div>
+      {positions.map((pos) => (
+        <PositionRow key={pos} pos={pos} players={players} vacancies={vacancies} team={team} onOpen={onOpen} showAll={showAll} />
+      ))}
     </section>
   );
 }

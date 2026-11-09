@@ -2,7 +2,6 @@
 import { seeded } from './seed.js';
 
 export const SKINS = ['#f7d7bf', '#eec19c', '#dca67d', '#c68b60', '#a66d49', '#7f4f34', '#5c3824'];
-const SKIN_WEIGHTS = [1, 3, 2, 2, 3, 4, 2];
 
 const HAIR = {
   black: '#17110e', darkBrown: '#36231a', brown: '#5b3a24', lightBrown: '#8a5d36',
@@ -32,18 +31,34 @@ function weighted(r, list) {
   return list[0][0];
 }
 
+// League makeup, matched to the NFL (TIDES racial report card, 2020-2022): about 57% Black, 26% white,
+// 9% mixed race, 2% Pacific Islander, 6% Hispanic or other. Each group gets fitting skin tones, hair and styles.
+const GROUPS = [
+  { w: 57, tones: [[3, 1], [4, 3], [5, 4], [6, 3]], hair: [['black', 6], ['darkBrown', 1]], styles: STYLES_DARK, eyes: EYES_DARK },
+  { w: 26, tones: [[0, 1], [1, 3], [2, 1]], hair: HAIR_BY_SKIN[0].concat(HAIR_BY_SKIN[1]), styles: STYLES_LIGHT, eyes: EYES_LIGHT },
+  { w: 9, tones: [[2, 1], [3, 2], [4, 1]], hair: [['black', 3], ['darkBrown', 3], ['brown', 1]],
+    styles: [['curly', 4], ['fade', 4], ['afro', 2], ['short', 2], ['braids', 1], ['buzz', 2]], eyes: EYES_DARK },
+  { w: 2, tones: [[3, 1], [4, 1]], hair: [['black', 1]], styles: [['long', 3], ['short', 2], ['locs', 1], ['buzz', 1]], eyes: EYES_DARK },
+  { w: 6, tones: [[1, 1], [2, 2], [3, 1]], hair: [['black', 3], ['darkBrown', 3], ['brown', 1]], styles: STYLES_LIGHT, eyes: EYES_DARK },
+];
+
 export function looksFor(player) {
   const r = seeded('looks-' + player.id);
-  const tone = weighted(r, SKINS.map((s, i) => [i, SKIN_WEIGHTS[i]]));
-  const dark = tone >= 4;
-  const hairName = weighted(r, HAIR_BY_SKIN[Math.min(3, Math.floor(tone / 2))]);
+  const group = GROUPS[weighted(r, GROUPS.map((gr, i) => [i, gr.w]))];
+  const tone = weighted(r, group.tones);
   const generated = {
     skin: SKINS[tone],
-    hair: HAIR[hairName],
-    style: weighted(r, dark ? STYLES_DARK : STYLES_LIGHT),
+    hair: HAIR[weighted(r, group.hair)],
+    style: weighted(r, group.styles),
     beard: weighted(r, BEARDS),
-    eyes: weighted(r, tone >= 3 ? EYES_DARK : EYES_LIGHT),
+    eyes: weighted(r, group.eyes),
     chain: r(10) === 0,
   };
   return { ...generated, ...(player.looks || {}) };
+}
+
+// Which group a generated player falls in (0 Black, 1 white, 2 mixed, 3 Pacific Islander, 4 Hispanic/other). Used for checking the league mix.
+export function groupOf(player) {
+  const r = seeded('looks-' + player.id);
+  return weighted(r, GROUPS.map((gr, i) => [i, gr.w]));
 }

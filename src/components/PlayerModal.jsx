@@ -1,4 +1,5 @@
-import React, { useEffect } from 'react';
+import React from 'react';
+import Modal from './Modal.jsx';
 import Headshot from './Headshot.jsx';
 import StarRating from './StarRating.jsx';
 import MoodTag from './MoodTag.jsx';
@@ -9,16 +10,10 @@ import { flagFor } from '../lib/flags.js';
 
 // Full player card: bio, rating, contract and cap hit. Potential only shows to the player's own team and the commissioner.
 export default function PlayerModal({ player, team, canSeePotential, potential, onClose }) {
-  useEffect(() => {
-    const onKey = (e) => e.key === 'Escape' && onClose();
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
-  }, [onClose]);
   if (!player) return null;
   const c = player.contract;
   return (
-    <div className="modal-back" onClick={onClose}>
-      <div className="modal pcard" style={{ '--team': team.color, '--team-accent': team.accent }} onClick={(e) => e.stopPropagation()}>
+    <Modal onClose={onClose} className="pcard" style={{ '--team': team.color, '--team-accent': team.accent }}>
         <button className="modal-x" onClick={onClose} aria-label="Close">×</button>
         <div className="pcard-head">
           <Headshot player={player} team={team} size={128} />
@@ -33,7 +28,7 @@ export default function PlayerModal({ player, team, canSeePotential, potential, 
           <div><span>Age</span><b>{player.age ?? '-'}</b></div>
           <div><span>Country</span><b>{flagFor(player.nationality || 'USA')} {player.nationality || 'USA'}</b></div>
           <div><span>Mood</span><b><MoodTag mood={player.mood} /></b></div>
-          <div className="pot"><span>Potential</span><b>{!canSeePotential ? '🔒 Hidden' : potential == null ? <span className="dim">Loading...</span>
+          <div className="pot"><span>Potential</span><b>{!canSeePotential ? '🔒 Hidden' : potential === undefined ? <span className="dim">Loading...</span> : potential === null ? <span className="dim">Not rated</span>
             : <><StarRating value={potential} elite={potential === 5} />{potential <= player.stars && <small className="dim"> Maxed</small>}</>}</b></div>
         </div>
         {isRetiring(player) && <div className="notice bad">Retiring this offseason (past the max age of {maxAge()}).</div>}
@@ -48,7 +43,6 @@ export default function PlayerModal({ player, team, canSeePotential, potential, 
         ) : <p className="dim">No contract on file.</p>}
         {!canSeePotential && <p className="pcard-note">Potential is only visible to this player's team. Scouting will reveal it.</p>}
         {player.notes.length > 0 && <ul className="pcard-flags">{player.notes.map((n) => <li key={n}>{n}</li>)}</ul>}
-      </div>
-    </div>
+    </Modal>
   );
 }

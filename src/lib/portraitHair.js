@@ -5,14 +5,17 @@ import { shade, mix } from './pixels.js';
 function fill(g, top, paint) {
   for (let y = top; y <= 8; y++) {
     const [a, b] = y === top ? [11, 20] : y === top + 1 ? [9, 22] : [8, 23];
-    for (let x = a; x <= b; x++) g.set(x, y, paint(x, y));
+    for (let x = a; x <= b; x++) {
+      const c = paint(x, y);
+      g.set(x, y, c && y === 8 ? shade(c, 0.8) : c);
+    }
   }
 }
 
 export function drawHair(g, L, head) {
   const h = L.hair, hi = shade(h, 1.45), sh = shade(h, 0.68);
   const soft = mix(L.skin, h, 0.6);
-  const lit = (x, y) => ((x * 5 + y * 3) % 7 === 0 ? hi : x >= 21 ? sh : h);
+  const lit = (x, y) => ((x * 5 + y * 3) % 11 === 0 ? hi : x >= 21 ? sh : h);
   switch (L.style) {
     case 'bald':
       g.set(12, 7, shade(L.skin, 1.35)); g.set(13, 7, shade(L.skin, 1.25)); g.set(12, 8, shade(L.skin, 1.2));
@@ -70,7 +73,8 @@ export function drawHair(g, L, head) {
       return;
     case 'long':
       fill(g, 4, lit);
-      for (let y = 8; y <= 21; y++) { g.row(y, 7, 8, y % 3 ? h : sh); g.row(y, 23, 24, sh); }
+      for (let y = 8; y <= 22; y++) { g.row(y, 7, 8, y % 3 ? h : hi); g.row(y, 23, 24, y % 3 ? sh : h); }
+      g.row(23, 7, 9, h); g.row(23, 22, 24, sh);
       g.row(5, 12, 15, hi);
       return;
     default:
