@@ -1,0 +1,23 @@
+@everyone MFL Teams - AI
+
+:OverworldConferenceLOGO:Conference
+
+:FlowerForestGolemsLOGO:Flower Forest Golems
+:LushCaveAxolotlsLOGO:Lush Cave Axolotls
+:PlainsPigsLOGO:Plains Pigs
+:TaigaFoxesLOGO:Taiga Foxes
+:DeepDarkCityRamsLOGO:Deep Dark City Rams
+:SnowyMountainCreepersLOGO:Snowy Mountain Creepers
+:DarkForestZombiesLOGO:Dark Forest Zombies
+:OceanDolphinsLOGO:Ocean Dolphins
+
+:NetherConferenceLOGO:Conference
+
+:CrimsonForestDragonsLOGO:Crimson Forest Dragons
+:NetherWasteSkeletonsLOGO:Nether Waste Skeletons
+:WarpedForestWithersLOGO:Warped Forest Withers
+:EndCityBlazesLOGO:End City Blazes
+:VoidVexesLOGO:Void Vexes
+:WastelandPhantomsLOGO:Wasteland Phantoms
+:OceanMonumentGuardiansLOGO:Ocean Monument Guardians
+:DesertSpidersLOGO:Desert Spiders 

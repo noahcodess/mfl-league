@@ -37,6 +37,8 @@ h3 { font-size: 14px; margin: 0 0 12px; color: var(--gold); font-weight: 400; }
 .table tr.flag td:first-child { box-shadow: inset 3px 0 0 var(--warn); }
 .team-cell { display: inline-flex; align-items: center; gap: 8px; color: var(--text); font-weight: 600; }
 
+.logo { display: block; object-fit: contain; image-rendering: auto; }
+.logo-sm { width: 30px; height: 30px; filter: drop-shadow(0 0 1px #ffffff66); } .logo-md { width: 44px; height: 44px; } .logo-lg { width: 96px; height: 96px; filter: drop-shadow(0 4px 10px #0008); }
 .badge { display: inline-flex; align-items: center; justify-content: center; border-radius: 6px; font-weight: 700; }
 .badge-sm { width: 40px; height: 24px; font-size: 10px; }
 .badge-md { width: 52px; height: 32px; font-size: 12px; }
@@ -49,7 +51,11 @@ h3 { font-size: 14px; margin: 0 0 12px; color: var(--gold); font-weight: 400; }
 .stars.none { color: #5a6280; font-size: 12px; }
 .stars-num { color: var(--dim); font-size: 11px; margin-left: 6px; }
 
-.team-head { display: grid; grid-template-columns: auto 1fr minmax(260px, 340px); gap: 18px; align-items: center; background: var(--panel); border: 1px solid var(--line); border-left: 6px solid; border-radius: 8px; padding: 16px; margin-bottom: 14px; }
+.team-head { display: grid; grid-template-columns: auto 1fr minmax(260px, 340px); gap: 18px; align-items: center; background: linear-gradient(110deg, color-mix(in srgb, var(--team) 55%, var(--panel)) 0%, var(--panel) 70%); border: 1px solid color-mix(in srgb, var(--team) 60%, var(--line)); border-radius: 10px; padding: 18px; margin-bottom: 14px; }
+.team-page .card { border-top: 3px solid color-mix(in srgb, var(--team) 70%, var(--line)); }
+.team-page h3 { color: color-mix(in srgb, var(--team-accent) 70%, var(--gold)); }
+.conf-tag { font-size: 11px; color: var(--team-accent); text-transform: uppercase; letter-spacing: 1px; font-weight: 600; }
+.table.teams tbody tr td:first-child { box-shadow: inset 3px 0 0 var(--team); }
 .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
 .chip { display: flex; align-items: center; gap: 8px; background: var(--panel2); border: 1px solid var(--line); border-radius: 6px; padding: 6px 10px; }
 .chip-label { font-size: 10px; color: var(--dim); }

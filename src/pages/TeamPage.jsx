@@ -19,11 +19,12 @@ export default function TeamPage({ teamId }) {
   const players = getPlayers(team.id);
   const issues = getTeamIssues(team.id);
   return (
-    <div>
+    <div className="team-page" style={{ '--team': team.color, '--team-accent': team.accent }}>
       <a className="back" href={links.league}>← All teams</a>
-      <div className="team-head" style={{ borderColor: team.color }}>
+      <div className="team-head">
         <TeamBadge team={team} size="lg" />
         <div className="team-title">
+          <span className="conf-tag">{team.conference} Conference</span>
           <h1>{team.name}</h1>
           <div className="chips">
             <RatingChip label="Overall" rating={team.overall} />

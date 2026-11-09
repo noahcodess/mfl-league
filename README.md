@@ -17,13 +17,13 @@ The MFL league website: coach logins, rosters, contracts, trades, draft and seas
 ```
 src/
   pages/        LeaguePage, TeamPage, DataCheckPage
-  components/   Header, TeamBadge, StarIcon, StarRating, RatingChip, MoodTag, CapBar, DepthChart, ContractTable, PickList, IssueList
-  data/         league.json (imported rosters), teams.js, players.js, picks.js, issues.js, positions.js, teamStyles.json
+  components/   Header, TeamBadge, ConferenceTable, StarIcon, StarRating, RatingChip, MoodTag, CapBar, DepthChart, ContractTable, PickList, IssueList
+  data/         league.json (imported rosters), logos/ + logos.js, teams.js, players.js, picks.js, issues.js, positions.js, teamStyles.json
   lib/          format.js, router.js
   styles/       theme.css
 docs/           League Rules Original, League History, Player Development
 tools/
-  import/       raw Discord roster posts, parse_rosters.py, check_league.py, Import Report.md
+  import/       raw Discord posts (rosters, conferences), parse_rosters.py, add_conferences.py, check_league.py, Import Report.md
   check_files.py
 ```
 

@@ -1,11 +1,16 @@
 import league from './league.json';
 import styles from './teamStyles.json';
+import { logoFor } from './logos.js';
 
 // Loads teams with their display colors. Later this reads from the database.
-const withStyle = (t) => ({ ...t, ...(styles[t.code] || { color: '#5b6478', accent: '#ffffff' }) });
+const withStyle = (t) => ({ ...t, ...(styles[t.code] || { color: '#5b6478', accent: '#ffffff' }), logo: logoFor(t.id) });
 
 export function getTeams() {
   return league.teams.map(withStyle).sort((a, b) => (a.overall?.rank ?? 99) - (b.overall?.rank ?? 99));
+}
+
+export function getConferences() {
+  return ['Overworld', 'Nether'];
 }
 
 export function getTeam(id) {

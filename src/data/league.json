@@ -25,7 +25,8 @@
    "nameVariants": [
     "Crimson Forest Dragons"
    ],
-   "source": "Crimson Forest Dragons Roster.txt"
+   "source": "Crimson Forest Dragons Roster.txt",
+   "conference": "Nether"
   },
   {
    "id": "drf",
@@ -47,7 +48,8 @@
    "nameVariants": [
     "Dark Forest Zombies"
    ],
-   "source": "Dark Forest Zombies Roster.txt"
+   "source": "Dark Forest Zombies Roster.txt",
+   "conference": "Overworld"
   },
   {
    "id": "ddc",
@@ -69,7 +71,8 @@
    "nameVariants": [
     "Deep Dark City Rams"
    ],
-   "source": "Deep Dark City Rams Roster.txt"
+   "source": "Deep Dark City Rams Roster.txt",
+   "conference": "Overworld"
   },
   {
    "id": "dst",
@@ -91,7 +94,8 @@
    "nameVariants": [
     "Desert Spiders"
    ],
-   "source": "Desert Spiders Roster.txt"
+   "source": "Desert Spiders Roster.txt",
+   "conference": "Nether"
   },
   {
    "id": "edc",
@@ -113,7 +117,8 @@
    "nameVariants": [
     "End City Blazes"
    ],
-   "source": "End City Blazes Roster.txt"
+   "source": "End City Blazes Roster.txt",
+   "conference": "Nether"
   },
   {
    "id": "flf",
@@ -135,7 +140,8 @@
    "nameVariants": [
     "Flower Forest Golems"
    ],
-   "source": "Flower Forest Golems Roster.txt"
+   "source": "Flower Forest Golems Roster.txt",
+   "conference": "Overworld"
   },
   {
    "id": "lsc",
@@ -157,7 +163,8 @@
    "nameVariants": [
     "Lush Cave Axolotls"
    ],
-   "source": "Lush Cave Axolotls Roster.txt"
+   "source": "Lush Cave Axolotls Roster.txt",
+   "conference": "Overworld"
   },
   {
    "id": "ntw",
@@ -179,7 +186,8 @@
    "nameVariants": [
     "Nether Waste Skeletons"
    ],
-   "source": "Nether Waste Skeletons Roster.txt"
+   "source": "Nether Waste Skeletons Roster.txt",
+   "conference": "Nether"
   },
   {
    "id": "ocn",
@@ -201,7 +209,8 @@
    "nameVariants": [
     "Ocean Dolphins"
    ],
-   "source": "Ocean Dolphins Roster.txt"
+   "source": "Ocean Dolphins Roster.txt",
+   "conference": "Overworld"
   },
   {
    "id": "ocm",
@@ -223,7 +232,8 @@
    "nameVariants": [
     "Ocean Monument Guardians"
    ],
-   "source": "Ocean Monument Guardians Roster.txt"
+   "source": "Ocean Monument Guardians Roster.txt",
+   "conference": "Nether"
   },
   {
    "id": "pln",
@@ -246,7 +256,8 @@
     "Plain Pigs",
     "Plains Pigs"
    ],
-   "source": "Plains Pigs Roster.txt"
+   "source": "Plains Pigs Roster.txt",
+   "conference": "Overworld"
   },
   {
    "id": "snm",
@@ -268,7 +279,8 @@
    "nameVariants": [
     "Snowy Mountain Creepers"
    ],
-   "source": "Snowy Mountain Creepers Roster.txt"
+   "source": "Snowy Mountain Creepers Roster.txt",
+   "conference": "Overworld"
   },
   {
    "id": "tga",
@@ -290,7 +302,8 @@
    "nameVariants": [
     "Taiga Foxes"
    ],
-   "source": "Taiga Foxes Roster.txt"
+   "source": "Taiga Foxes Roster.txt",
+   "conference": "Overworld"
   },
   {
    "id": "void",
@@ -312,7 +325,8 @@
    "nameVariants": [
     "Void Vexes"
    ],
-   "source": "Void Vexes Roster.txt"
+   "source": "Void Vexes Roster.txt",
+   "conference": "Nether"
   },
   {
    "id": "wrf",
@@ -334,7 +348,8 @@
    "nameVariants": [
     "Warped Forest Withers"
    ],
-   "source": "Warped Forest Withers Roster.txt"
+   "source": "Warped Forest Withers Roster.txt",
+   "conference": "Nether"
   },
   {
    "id": "wsl",
@@ -356,7 +371,8 @@
    "nameVariants": [
     "Wasteland Phantoms"
    ],
-   "source": "Wasteland Phantoms Roster.txt"
+   "source": "Wasteland Phantoms Roster.txt",
+   "conference": "Nether"
   }
  ],
  "players": [
