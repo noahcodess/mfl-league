@@ -22,7 +22,7 @@ export default function TeamPage({ teamId, viewer }) {
   const players = getPlayers(team.id);
   const issues = getTeamIssues(team.id);
   const isMine = viewer?.team_id === team.id;
-  const canSeePotential = isMine || viewer?.role === 'commissioner';
+  const canSeePotential = isMine || viewer?.role === 'commissioner' || !!viewer?.site_owner;
   return (
     <div className="team-page" style={{ '--team': team.color, '--team-accent': team.accent }}>
       {!isMine && <a className="back" href={links.league}>← League</a>}
@@ -39,7 +39,7 @@ export default function TeamPage({ teamId, viewer }) {
         </div>
         <CapBar used={teamCapUsed(team.id)} limit={capLimit()} />
       </div>
-      <Roster players={players} vacancies={getVacancies(team.id)} team={team} onOpen={setOpen} />
+      <Roster players={players} vacancies={getVacancies(team.id)} team={team} onOpen={setOpen} insider={canSeePotential ? potentials.map : null} />
       <div className="two-col">
         <PickList picks={getPicks(team.id)} currentSeason={currentSeason()} />
         <section className="card">

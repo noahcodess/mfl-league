@@ -3,8 +3,11 @@ import Headshot from './Headshot.jsx';
 import StarRating from './StarRating.jsx';
 import { isRetiring } from '../data/players.js';
 
-// One roster spot: headshot, number, name, position, stars and age. Click it for the full player card.
-export default function PlayerTile({ player, team, index, onOpen }) {
+// One roster spot: headshot, number, name, stars and age. Insiders (own team, commissioner, owner) also see
+// contract years left and potential. Click it for the full player card.
+export default function PlayerTile({ player, team, index, onOpen, insider }) {
+  const pot = insider ? insider[player.id] : null;
+  const years = player.contract?.years;
   return (
     <button className={`ptile ${player.depth}`} style={{ '--i': Math.min(index, 40) }} onClick={() => onOpen(player)}>
       <Headshot player={player} team={team} size={64} />
@@ -19,6 +22,12 @@ export default function PlayerTile({ player, team, index, onOpen }) {
           <StarRating value={player.stars} elite={player.elite} />
           <span className="ptile-age">{player.age ? `Age ${player.age}` : ''}</span>
         </span>
+        {insider && (
+          <span className="ptile-insider">
+            {years != null && <span className={`yrs${years === 1 ? ' last' : ''}`}>{years === 1 ? 'Final year' : `${years} yrs left`}</span>}
+            {pot != null && <span className="pot-mini">POT <StarRating value={pot} elite={pot === 5} /></span>}
+          </span>
+        )}
       </span>
     </button>
   );

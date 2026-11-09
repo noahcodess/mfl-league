@@ -13,7 +13,7 @@ function OpenSpot({ v }) {
   );
 }
 
-function PositionRow({ pos, players, vacancies, team, onOpen, showAll }) {
+function PositionRow({ pos, players, vacancies, team, onOpen, showAll, insider }) {
   const [open, setOpen] = useState(false);
   const starters = players.filter((p) => p.position === pos && p.depth === 'starter').sort(bySlot);
   const backups = players.filter((p) => p.position === pos && p.depth === 'backup').sort(bySlot);
@@ -28,12 +28,12 @@ function PositionRow({ pos, players, vacancies, team, onOpen, showAll }) {
       </div>
       <div className="pos-players">
         <div className="pos-line">
-          {starters.map((p, i) => <PlayerTile key={p.id} player={p} team={team} index={i} onOpen={onOpen} />)}
+          {starters.map((p, i) => <PlayerTile key={p.id} player={p} team={team} index={i} onOpen={onOpen} insider={insider} />)}
           {openStart.map((v) => <OpenSpot key={`s${v.slot}`} v={v} />)}
         </div>
         {expanded && backupCount > 0 && (
           <div className="pos-line backups">
-            {backups.map((p, i) => <PlayerTile key={p.id} player={p} team={team} index={i} onOpen={onOpen} />)}
+            {backups.map((p, i) => <PlayerTile key={p.id} player={p} team={team} index={i} onOpen={onOpen} insider={insider} />)}
             {openBack.map((v) => <OpenSpot key={`b${v.slot}`} v={v} />)}
           </div>
         )}
@@ -47,7 +47,7 @@ function PositionRow({ pos, players, vacancies, team, onOpen, showAll }) {
   );
 }
 
-function Side({ title, positions, players, vacancies, team, onOpen }) {
+function Side({ title, positions, players, vacancies, team, onOpen, insider }) {
   const [showAll, setShowAll] = useState(false);
   const count = players.filter((p) => positions.includes(p.position)).length;
   return (
@@ -57,17 +57,17 @@ function Side({ title, positions, players, vacancies, team, onOpen }) {
         <button className="btn small ghost" onClick={() => setShowAll(!showAll)}>{showAll ? 'Starters only' : 'Show all backups'}</button>
       </div>
       {positions.map((pos) => (
-        <PositionRow key={pos} pos={pos} players={players} vacancies={vacancies} team={team} onOpen={onOpen} showAll={showAll} />
+        <PositionRow key={pos} pos={pos} players={players} vacancies={vacancies} team={team} onOpen={onOpen} showAll={showAll} insider={insider} />
       ))}
     </section>
   );
 }
 
-export default function Roster({ players, vacancies, team, onOpen }) {
+export default function Roster({ players, vacancies, team, onOpen, insider }) {
   return (
     <>
-      <Side title="Offense" positions={OFFENSE} players={players} vacancies={vacancies} team={team} onOpen={onOpen} />
-      <Side title="Defense" positions={DEFENSE} players={players} vacancies={vacancies} team={team} onOpen={onOpen} />
+      <Side title="Offense" positions={OFFENSE} players={players} vacancies={vacancies} team={team} onOpen={onOpen} insider={insider} />
+      <Side title="Defense" positions={DEFENSE} players={players} vacancies={vacancies} team={team} onOpen={onOpen} insider={insider} />
     </>
   );
 }

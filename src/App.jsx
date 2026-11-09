@@ -9,6 +9,8 @@ import ChangePasswordPage from './pages/ChangePasswordPage.jsx';
 import KeySetupPage from './pages/KeySetupPage.jsx';
 import KeyUnlockPage from './pages/KeyUnlockPage.jsx';
 import ConsolePage from './pages/ConsolePage.jsx';
+import HomePage from './pages/HomePage.jsx';
+import DashboardPage from './pages/DashboardPage.jsx';
 import { useHashRoute, homeFor } from './lib/router.js';
 import { brandColors } from './lib/color.js';
 import { useSession, loginStep } from './data/session.js';
@@ -25,7 +27,13 @@ function Screen({ route, session, step }) {
   if (route.page === 'console') {
     if (step === 'login') return <LoginPage />;
     if (step !== 'ready') return null;
-    return session.profile.role === 'commissioner' ? <ConsolePage /> : <div className="notice bad">Commissioner only.</div>;
+    const p = session.profile;
+    if (p.role === 'commissioner' || p.site_owner) return <ConsolePage readOnly={p.role !== 'commissioner'} />;
+    return <div className="notice bad">Commissioner only.</div>;
+  }
+  if (route.page === 'home') {
+    const p = step === 'ready' ? session.profile : null;
+    return p?.role === 'coach' && p.team_id ? <DashboardPage viewer={p} /> : <HomePage signedIn={!!p} />;
   }
   if (route.page === 'team') return <TeamPage teamId={route.id} viewer={step === 'ready' ? session.profile : null} />;
   if (route.page === 'dataCheck') return <DataCheckPage />;

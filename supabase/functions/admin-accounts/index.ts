@@ -1,4 +1,5 @@
-// Account manager entry point: lets only the unlocked commissioner create, reset, move and remove coach logins.
+// Account manager entry point: only the unlocked commissioner can create, reset, move or remove coach logins.
+// The site owner may only list accounts (look, don't touch).
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { actions } from "./actions.ts";
 
@@ -24,14 +25,17 @@ Deno.serve(async (req) => {
   const asCaller = createClient(url, anonKey, {
     global: { headers: { Authorization: req.headers.get("Authorization") ?? "" } },
   });
-  const { data: allowed, error: checkError } = await asCaller.rpc("is_commissioner");
-  if (checkError || allowed !== true) return reply(403, { error: "Commissioner key required" });
-
   let body: { action?: string; [k: string]: unknown };
   try {
     body = await req.json();
   } catch {
     return reply(400, { error: "Bad request" });
+  }
+
+  const { data: isCommish } = await asCaller.rpc("is_commissioner");
+  if (isCommish !== true) {
+    const { data: isOwner } = await asCaller.rpc("is_site_owner");
+    if (!(isOwner === true && body.action === "list")) return reply(403, { error: "Commissioner key required" });
   }
 
   const run = actions[body.action ?? ""];

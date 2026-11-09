@@ -6,7 +6,9 @@ const commish = { user_id: 'd0', username: 'sserg', role: 'commissioner', team_i
 
 export function demoSession() {
   const base = { status: 'in', user: { id: 'demo' }, keyStatus: 'set', unlocked: true, refresh: async () => {} };
+  if (DEMO === 'visitor') return { ...base, status: 'out', user: null, profile: null };
   if (DEMO === 'coach') return { ...base, profile: coach };
+  if (DEMO === 'owner') return { ...base, profile: { ...coach, site_owner: true } };
   if (DEMO === 'change') return { ...base, profile: { ...coach, must_change_password: true } };
   if (DEMO === 'setup') return { ...base, profile: commish, keyStatus: 'unset', unlocked: false };
   if (DEMO === 'unlock') return { ...base, profile: commish, unlocked: false };

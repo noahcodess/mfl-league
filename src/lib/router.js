@@ -1,13 +1,14 @@
 import { useEffect, useState } from 'react';
 
-// Tiny hash router: '' = league, '#team-<id>' = team page, '#data-check', '#login', '#console'.
+// Tiny hash router: '' = home, '#league', '#team-<id>' = roster, '#data-check', '#login', '#console'.
 export function parseHash(hash) {
   const h = (hash || '').replace(/^#/, '');
   if (h.startsWith('team-')) return { page: 'team', id: h.slice(5) };
   if (h === 'data-check') return { page: 'dataCheck' };
   if (h === 'login') return { page: 'login' };
   if (h === 'console') return { page: 'console' };
-  return { page: 'league' };
+  if (h === 'league') return { page: 'league' };
+  return { page: 'home' };
 }
 
 export function useHashRoute() {
@@ -21,6 +22,7 @@ export function useHashRoute() {
 }
 
 export const links = {
+  home: '#home',
   league: '#league',
   team: (id) => `#team-${id}`,
   dataCheck: '#data-check',
@@ -31,6 +33,5 @@ export const links = {
 // Where someone lands after logging in.
 export function homeFor(profile) {
   if (profile?.role === 'commissioner') return links.console;
-  if (profile?.team_id) return links.team(profile.team_id);
-  return links.league;
+  return links.home;
 }

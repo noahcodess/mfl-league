@@ -7,13 +7,15 @@ import { signOut } from '../data/session.js';
 // Top bar: MFL logo, main navigation, live-data light, and who's logged in.
 export default function Header({ page, session, ready, live }) {
   const p = session.profile;
-  const isCommish = ready && p?.role === 'commissioner';
+  const isCommish = ready && (p?.role === 'commissioner' || p?.site_owner);
   const myTeam = ready && p?.role === 'coach' && p.team_id;
   return (
     <header className="header">
-      <a className="brand" href={links.league}><img src={leagueLogo.light} alt="" /><span>MFL</span></a>
+      <a className="brand" href={links.home}><img src={leagueLogo.light} alt="" /><span>MFL</span></a>
       <nav className="nav">
-        {myTeam && <a className={page === 'team' ? 'on' : ''} href={links.team(p.team_id)}>My Team</a>}
+        {myTeam && <a className={page === 'home' ? 'on' : ''} href={links.home}>My Team</a>}
+        {myTeam && <a className={page === 'team' ? 'on' : ''} href={links.team(p.team_id)}>Roster</a>}
+        {!myTeam && <a className={page === 'home' ? 'on' : ''} href={links.home}>Home</a>}
         <a className={page === 'league' ? 'on' : ''} href={links.league}>League</a>
         <a className={page === 'dataCheck' ? 'on' : ''} href={links.dataCheck}>Data Check</a>
         {isCommish && <a className={page === 'console' ? 'on' : ''} href={links.console}>Console</a>}
@@ -23,7 +25,7 @@ export default function Header({ page, session, ready, live }) {
           <span className={`live-dot${live ? ' on' : ''}`} /> Season {currentSeason()} · {PHASE_NAMES[currentPhase()]}
         </span>
         {session.status === 'in' ? (
-          <span className="who"><b>{p.username}</b><button className="btn small ghost" onClick={() => signOut(p.role === 'commissioner')}>Log out</button></span>
+          <span className="who">{p.site_owner && <span className="owner-tag" title="Site owner: you can see everything, change nothing">OWNER</span>}<b>{p.username}</b><button className="btn small ghost" onClick={() => signOut(p.role === 'commissioner')}>Log out</button></span>
         ) : session.status === 'out' && <a className="btn small" href={links.login}>Log in</a>}
       </div>
     </header>

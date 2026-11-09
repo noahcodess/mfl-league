@@ -3,7 +3,7 @@ import TeamBadge from './TeamBadge.jsx';
 import { shortDate } from '../lib/format.js';
 
 // Every account: username, team (changeable), first-login status, last login, and reset/remove buttons for coaches.
-export default function AccountTable({ accounts, teams, takenTeams, onReset, onMove, onRemove, busyId }) {
+export default function AccountTable({ accounts, teams, takenTeams, onReset, onMove, onRemove, busyId, readOnly }) {
   const teamById = Object.fromEntries(teams.map((t) => [t.id, t]));
   if (!accounts.length) return <div className="empty">No accounts yet.</div>;
   return (
@@ -22,7 +22,7 @@ export default function AccountTable({ accounts, teams, takenTeams, onReset, onM
                   {coach ? (
                     <span className="acct-team">
                       {team && <TeamBadge team={team} size="sm" />}
-                      <select value={a.team_id || ''} disabled={busyId === a.user_id} onChange={(e) => onMove(a, e.target.value)}>
+                      <select value={a.team_id || ''} disabled={readOnly || busyId === a.user_id} onChange={(e) => onMove(a, e.target.value)}>
                         <option value="">No team</option>
                         {teams.filter((t) => t.id === a.team_id || !takenTeams.has(t.id)).map((t) => <option key={t.id} value={t.id}>{t.code}</option>)}
                       </select>
@@ -32,7 +32,7 @@ export default function AccountTable({ accounts, teams, takenTeams, onReset, onM
                 <td>{a.must_change_password ? <span className="status-tag pending">Waiting for first login</span> : <span className="status-tag ok">Active</span>}</td>
                 <td className="dim">{a.last_sign_in_at ? shortDate(a.last_sign_in_at) : 'Never'}</td>
                 <td>
-                  {coach && (
+                  {coach && !readOnly && (
                     <div className="acct-actions">
                       <button className="btn small ghost" disabled={busyId === a.user_id} onClick={() => onReset(a)}>Reset password</button>
                       <button className="btn small danger" disabled={busyId === a.user_id} onClick={() => onRemove(a)}>Remove</button>

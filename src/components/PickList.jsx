@@ -4,11 +4,12 @@ import { getTeamByCode } from '../data/teams.js';
 import { ordinal } from '../lib/format.js';
 
 // Draft picks a team owns, by season: whose pick it is (team logo) and the round.
-export default function PickList({ picks, currentSeason }) {
+export default function PickList({ picks, currentSeason, title = 'Draft picks' }) {
   const seasons = [...new Set(picks.map((p) => p.season))];
   return (
     <section className="card">
-      <h3>Draft picks <span className="count">{picks.length}</span></h3>
+      <h3>{title} <span className="count">{picks.length}</span></h3>
+      {!picks.length && <p className="dim">No picks.</p>}
       <div className="picks">
         {seasons.map((s) => (
           <div className="pick-season" key={s}>
