@@ -42,11 +42,12 @@ h3 { font-size: 14px; margin: 0 0 12px; color: var(--gold); font-weight: 400; }
 .badge-md { width: 52px; height: 32px; font-size: 12px; }
 .badge-lg { width: 84px; height: 84px; font-size: 18px; border-radius: 12px; }
 
-.stars { color: var(--gold); letter-spacing: 1px; white-space: nowrap; }
-.stars .half { opacity: .45; }
-.stars.elite { color: var(--elite); text-shadow: 0 0 6px #ffb21a88; }
-.stars.none { color: #5a6280; font-size: 12px; letter-spacing: 0; }
-.stars-num { color: var(--dim); font-size: 11px; margin-left: 6px; letter-spacing: 0; }
+.stars { display: inline-flex; align-items: center; gap: 1px; white-space: nowrap; }
+.star-icon { fill: var(--gold); display: block; }
+.stars.elite .star-icon { fill: var(--elite); filter: drop-shadow(0 0 3px #ffb21a99); }
+.stars.declining .star-icon { fill: var(--bad); }
+.stars.none { color: #5a6280; font-size: 12px; }
+.stars-num { color: var(--dim); font-size: 11px; margin-left: 6px; }
 
 .team-head { display: grid; grid-template-columns: auto 1fr minmax(260px, 340px); gap: 18px; align-items: center; background: var(--panel); border: 1px solid var(--line); border-left: 6px solid; border-radius: 8px; padding: 16px; margin-bottom: 14px; }
 .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
