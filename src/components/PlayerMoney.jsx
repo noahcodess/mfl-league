@@ -15,11 +15,11 @@ function Bar({ label, value }) {
   );
 }
 
-export default function PlayerMoney({ player, potential, insider }) {
+export default function PlayerMoney({ player, potential, insider, traits }) {
   const value = marketValue(player);
   if (value == null) return null;
-  const t = traitsFor(player);
-  const ask = askingPrice(player, potential);
+  const t = traits || traitsFor(player);
+  const ask = askingPrice(player, potential, traits);
   const greed = t.greed >= 1.1 ? 'Greedy' : t.greed <= 0.95 ? 'Team-friendly' : 'Fair';
   return (
     <>
@@ -31,7 +31,7 @@ export default function PlayerMoney({ player, potential, insider }) {
       </div>
       {insider && (
         <div className="prios">
-          <div className="prios-head"><span>What he cares about</span><small>Cares most about {topPriority(t).toLowerCase()} · {greed}</small></div>
+          <div className="prios-head"><span>What he cares about</span><small>Cares most about {topPriority(t).toLowerCase()} · {greed}{t.loyalty != null && t.loyalty >= 0.7 ? ' · Loyal' : ''}</small></div>
           <Bar label="Money" value={t.money} />
           <Bar label="Playing time" value={t.playingTime} />
           <Bar label="Coach legacy" value={t.legacy} />

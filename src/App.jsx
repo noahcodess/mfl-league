@@ -37,11 +37,11 @@ function Screen({ route, session, step, reload }) {
     if (step !== 'ready') return null;
     const p = session.profile;
     if (p.role !== 'commissioner' && !p.site_owner) return <div className="notice bad">Commissioner only.</div>;
-    return <LeagueControlPage canControl={p.role === 'commissioner' || session.unlocked} reload={reload} />;
+    return <LeagueControlPage canControl={p.role === 'commissioner' || session.unlocked} reload={reload} viewerKey={`${p.user_id}-${session.unlocked}`} />;
   }
   if (route.page === 'home') {
     const p = step === 'ready' ? session.profile : null;
-    return p?.role === 'coach' && p.team_id ? <DashboardPage viewer={p} /> : <HomePage signedIn={!!p} />;
+    return p?.role === 'coach' && p.team_id ? <DashboardPage viewer={p} reload={reload} /> : <HomePage signedIn={!!p} />;
   }
   if (route.page === 'team') return <TeamPage teamId={route.id} viewer={step === 'ready' ? session.profile : null} />;
   if (route.page === 'dataCheck') return <DataCheckPage />;

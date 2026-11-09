@@ -12,12 +12,14 @@ import { getPicks } from '../data/picks.js';
 import { getTeamIssues } from '../data/issues.js';
 import { links } from '../lib/router.js';
 import { usePotentials } from '../data/potentials.js';
+import { usePlayerTraits } from '../data/traits.js';
 
 // One team: ratings, cap, roster (click a player for his card), draft picks and any data problems.
 export default function TeamPage({ teamId, viewer }) {
   const [open, setOpen] = useState(null);
   const potentials = usePotentials(viewer ? `${viewer.user_id}-${viewer.team_id}-${viewer.role}` : null);
   const team = getTeam(teamId);
+  const traits = usePlayerTraits(viewer ? `${viewer.user_id}-${viewer.role}` : null, teamId);
   if (!team) return <p>Team not found. <a href={links.league}>Back to the league</a></p>;
   const players = getPlayers(team.id);
   const issues = getTeamIssues(team.id);
@@ -47,7 +49,7 @@ export default function TeamPage({ teamId, viewer }) {
           <IssueList issues={issues} />
         </section>
       </div>
-      <PlayerModal player={open} team={team} canSeePotential={canSeePotential} potential={open && potentials.loaded ? (potentials.map[open.id] ?? null) : undefined} onClose={() => setOpen(null)} />
+      <PlayerModal player={open} team={team} canSeePotential={canSeePotential} potential={open && potentials.loaded ? (potentials.map[open.id] ?? null) : undefined} traits={open ? traits[open.id] : null} onClose={() => setOpen(null)} />
     </div>
   );
 }

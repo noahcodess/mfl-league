@@ -11,7 +11,7 @@ import { money } from '../lib/format.js';
 import { flagFor } from '../lib/flags.js';
 
 // Full player card: bio, rating, contract and cap hit. Potential only shows to the player's own team and the commissioner.
-export default function PlayerModal({ player, team, canSeePotential, potential, onClose }) {
+export default function PlayerModal({ player, team, canSeePotential, potential, traits, onClose }) {
   if (!player) return null;
   const c = contractOf(player);
   return (
@@ -44,7 +44,7 @@ export default function PlayerModal({ player, team, canSeePotential, potential, 
             <div className="hl"><span>Cap hit / year</span><b>{money(c.perYear)}</b></div>
           </div>
         ) : <p className="dim">No contract. {player.teamId ? 'He can be re-signed during the re-signing period.' : 'Free agent.'}</p>}
-        <PlayerMoney player={player} potential={canSeePotential ? potential : null} insider={canSeePotential} />
+        <PlayerMoney player={player} potential={canSeePotential ? potential : null} insider={canSeePotential} traits={traits} />
         {!canSeePotential && <p className="pcard-note">Potential is only visible to this player's team. Scouting will reveal it.</p>}
         {player.notes.length > 0 && <ul className="pcard-flags">{player.notes.map((n) => <li key={n}>{n}</li>)}</ul>}
     </Modal>

@@ -19,7 +19,10 @@ function Row({ p, team, potential, onOpen, right }) {
   );
 }
 
-export default function ContractWatch({ players, team, potentials, onOpen }) {
+const CHIP = { open: 'Talking', agreed: 'Agreed', approved: 'Signed', walked: 'Walked', denied: 'Denied' };
+
+export default function ContractWatch({ players, team, potentials, traits = {}, negotiations = [], onOpen, onNegotiate }) {
+  const talkOf = (id) => negotiations.find((n) => n.player_id === id && n.status !== 'denied');
   const retiring = players.filter(isRetiring);
   const expiring = players.filter((p) => isExpiring(p) && !isRetiring(p)).sort((a, b) => (b.stars || 0) - (a.stars || 0));
   const windowOpen = currentPhase() === 'offseason' && offseasonStep() === 3;
@@ -30,7 +33,12 @@ export default function ContractWatch({ players, team, potentials, onOpen }) {
         <p className="dim help">{windowOpen ? 'The re-signing window is open. Anyone not re-signed hits free agency when it closes.' : 'Their deals end this offseason. Re-sign them when the re-signing window opens, or they hit free agency.'}</p>
         {expiring.length ? expiring.map((p) => (
           <Row key={p.id} p={p} team={team} potential={potentials[p.id]} onOpen={onOpen}
-            right={<><span className="dim">{capHit(p) ? <>{money(capHit(p))} → </> : null}<b className="ask">{money(askingPrice(p, potentials[p.id]))}</b>/yr</span><button className="btn small ghost" disabled title={windowOpen ? 'Negotiation comes in the next update' : 'Opens in the re-signing period'}>Re-sign</button></>} />
+            right={<>
+              {talkOf(p.id) && <span className={`nego-chip ${talkOf(p.id).status}`}>{CHIP[talkOf(p.id).status]}</span>}
+              <span className="dim">{capHit(p) ? <>{money(capHit(p))} → </> : null}<b className="ask">{money(askingPrice(p, potentials[p.id], traits[p.id]))}</b>/yr</span>
+              <button className="btn small" disabled={!windowOpen} title={windowOpen ? 'Open talks' : 'Opens at the Re-signing step'}
+                onClick={(e) => { e.stopPropagation(); onNegotiate?.(p); }}>{talkOf(p.id) ? 'Talks' : 'Re-sign'}</button>
+            </>} />
         )) : <p className="dim">Nobody. Everyone is signed through next season.</p>}
       </section>
       <section className="card">

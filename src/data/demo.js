@@ -1,5 +1,10 @@
 // Test-only fake logins for screenshots (?demo=coach|commish|change|setup|unlock). Switched off in the real site build.
-export const DEMO = import.meta.env.DEV ? new URLSearchParams(window.location.search).get('demo') : null;
+import { store } from './store.js';
+
+const params = import.meta.env.DEV ? new URLSearchParams(window.location.search) : null;
+export const DEMO = params ? params.get('demo') : null;
+// Test-only: ?step=3 pretends the league is at that offseason step.
+if (DEMO && params.get('step')) store.league.meta.offseasonStep = Number(params.get('step'));
 
 const coach = { user_id: 'd1', username: 'noah', role: 'coach', team_id: 'snm', display_name: 'Noah', must_change_password: false };
 const commish = { user_id: 'd0', username: 'sserg', role: 'commissioner', team_id: null, display_name: 'SSerg', must_change_password: false };
@@ -25,4 +30,12 @@ export const demoAccounts = [
 // Test-only potentials for the demo coach's team (the real ones live in the database).
 export function demoPotentials() {
   return { 'snm-01': 4.5, 'snm-02': 5.0, 'snm-04': 4.5, 'snm-06': 4.5 };
+}
+
+// Test-only negotiation stand-ins (the real answers come from the server).
+export const demoQuote = { ask: 155000, years: 3, max_years: 3, market: 140000, cap_room: 1480000 };
+export function demoReply(perYear) {
+  if (perYear >= 125000) return { result: 'accepted', line: "Deal. Let's get to work.", patience: 2, counter: null };
+  if (perYear >= 106000) return { result: 'countered', line: "We're close. Get me to $125K a year for 3 years and it's done.", patience: 2, counter: { years: 3, per_year: 125000, role: 'starter' } };
+  return { result: 'rejected', line: "That's a long way off.", patience: 1, counter: null };
 }

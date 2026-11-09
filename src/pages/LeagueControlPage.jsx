@@ -2,16 +2,20 @@ import React, { useEffect, useState } from 'react';
 import OffseasonSteps, { OFFSEASON_STEPS } from '../components/OffseasonSteps.jsx';
 import LeagueLog from '../components/LeagueLog.jsx';
 import Modal from '../components/Modal.jsx';
+import DealInbox from '../components/DealInbox.jsx';
+import { useNegotiations } from '../data/negotiations.js';
 import { currentSeason, currentPhase, offseasonStep, leagueEvents, PHASE_NAMES } from '../data/teams.js';
 import { advanceOffseason, undoLastStep, lastSnapshotLabel } from '../data/leagueEngine.js';
 import { previewStep } from '../lib/stepPreview.js';
 
 // Commissioner's calendar: see what the next step will do, run it (after confirming), or undo the last one.
-export default function LeagueControlPage({ canControl, reload }) {
+export default function LeagueControlPage({ canControl, reload, viewerKey }) {
   const [confirm, setConfirm] = useState(null); // 'run' | 'undo'
   const [busy, setBusy] = useState(false);
   const [note, setNote] = useState(null);
   const [undoLabel, setUndoLabel] = useState(null);
+  const [version, setVersion] = useState(0);
+  const negotiations = useNegotiations(viewerKey, version);
   const phase = currentPhase(), step = offseasonStep();
   const inOffseason = phase === 'offseason';
   const [name, help] = OFFSEASON_STEPS[step] || [];
@@ -64,6 +68,7 @@ export default function LeagueControlPage({ canControl, reload }) {
               {undoLabel && <button className="btn ghost" disabled={!canControl || busy} onClick={() => setConfirm('undo')}>Undo last step</button>}
             </section>
           )}
+          <DealInbox negotiations={negotiations} canControl={canControl} onDone={async () => { setVersion((v) => v + 1); await reload(); }} />
           <LeagueLog events={leagueEvents()} />
         </div>
         <OffseasonSteps current={inOffseason ? step : OFFSEASON_STEPS.length + 1} title="Offseason calendar" />

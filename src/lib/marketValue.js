@@ -20,19 +20,21 @@ export function marketValue(p) {
 
 // What the player himself asks for: market value, plus a bump if he knows he's still growing, times his greed.
 // Mood matters too: unhappy players want more to stay, happy ones give a discount.
-export function askingPrice(p, potential) {
+export function askingPrice(p, potential, traits) {
   const value = marketValue(p);
   if (value == null) return null;
-  const t = traitsFor(p);
+  const t = traits || traitsFor(p);
   const growth = potential != null && p.age != null && p.age <= 24 ? 1 + 0.15 * Math.max(0, potential - p.stars) : 1;
   const mood = { angry: 1.12, unhappy: 1.08, happy: 0.95, excited: 0.92 }[p.mood] ?? 1;
   return Math.min(MAX_CONTRACT_TOTAL, round5k(value * growth * t.greed * mood));
 }
 
-// How many years he'd like. Rising young players bet on themselves; older players can't sign past the max age.
+// Longest deal he can sign (seasons through the max age) and how many years he'd like.
+export const maxYears = (p, maxAge = 27) => Math.max(1, Math.min(3, maxAge - (p.age ?? 25) + 1));
+
 export function preferredYears(p, potential, maxAge = 27) {
   if (p.age == null) return 2;
-  const left = Math.max(1, maxAge - p.age);
+  const left = maxYears(p, maxAge);
   const rising = potential != null && potential > p.stars;
   const want = p.age <= 23 && rising ? 2 : p.age <= 25 ? 3 : 1;
   return Math.min(3, want, left);

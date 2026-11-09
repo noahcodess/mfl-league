@@ -21,7 +21,7 @@ export function previewStep(step) {
     }
     case 3: {
       const list = onTeams.filter(isExpiring);
-      return { text: `The re-signing window closes. ${plural(list.length, 'unsigned player')} become free agents.`, list };
+      return { text: `The re-signing window closes. Bot teams re-sign the players they want to keep, then anyone still unsigned (up to ${list.length}) becomes a free agent. Deals waiting for approval must be handled first.`, list };
     }
     case 4: return { text: 'The draft room isn\'t built yet, so this step is skipped for now.', list: [] };
     case 5: return { text: 'Training camp ends and the regular season begins.', list: [] };
