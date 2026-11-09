@@ -4,6 +4,7 @@ import { viteSingleFile } from 'vite-plugin-singlefile';
 
 // "preview" mode bundles everything into one HTML file for sharing a preview link.
 export default defineConfig(({ mode }) => ({
+  base: './', // relative paths so the site works at any web address (GitHub Pages now, a real domain later)
   plugins: mode === 'preview' ? [react(), viteSingleFile()] : [react()],
   build: {
     outDir: mode === 'preview' ? 'dist-preview' : 'dist',

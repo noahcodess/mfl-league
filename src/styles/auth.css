@@ -1,0 +1,30 @@
+/* Login screens, forms and one-time secrets (temporary passwords, the commissioner key). */
+.auth-wrap { min-height: calc(100vh - 140px); display: grid; place-items: center; padding: 20px 0; }
+.auth-card { width: min(440px, 100%); background: var(--panel); border: 3px solid #000; outline: 2px solid var(--line); outline-offset: -6px;
+  box-shadow: 6px 6px 0 #000; padding: 28px 26px 24px; text-align: center; }
+.auth-card.wide { width: min(560px, 100%); }
+.auth-logo { width: 96px; height: 101px; image-rendering: pixelated; filter: drop-shadow(3px 3px 0 #000); margin-bottom: 6px; }
+.auth-card h1 { font-size: 26px; }
+.auth-card .sub { color: var(--dim); margin: 0 0 18px; line-height: 1.45; }
+.auth-card form { text-align: left; display: flex; flex-direction: column; gap: 12px; }
+.auth-step { display: inline-block; font-family: var(--pixel); font-size: 12px; color: var(--gold); background: #0006; border: 2px solid #000; padding: 2px 8px; margin-bottom: 10px; }
+
+.field { display: flex; flex-direction: column; gap: 5px; }
+.field label { font-family: var(--pixel); font-size: 13px; color: var(--dim); }
+.field input, .field select { width: 100%; padding: 10px 11px; font-size: 15px; color: var(--text); background: #0c0705;
+  border: 2px solid #000; outline: 2px solid var(--line); outline-offset: -4px; font-family: inherit; }
+.field input:focus, .field select:focus { outline-color: var(--brand); }
+.field .hint { font-size: 12px; color: var(--faint); }
+.form-error { color: #ffb3b3; background: #2a0d0d; border: 2px solid #7a2020; padding: 8px 10px; font-size: 13px; }
+
+.secret { background: #000; border: 2px solid var(--gold); padding: 14px; margin: 6px 0 12px; text-align: center; }
+.secret-label { font-family: var(--pixel); font-size: 12px; color: var(--gold); text-transform: uppercase; margin-bottom: 8px; }
+.secret-value { font-family: ui-monospace, 'Cascadia Mono', Consolas, monospace; font-size: 22px; letter-spacing: 1px; color: #fff; word-break: break-all; user-select: all; }
+.secret-actions { display: flex; justify-content: center; gap: 8px; margin-top: 10px; }
+.secret-warn { color: var(--warn); font-size: 13px; line-height: 1.45; text-align: left; margin: 0 0 12px; }
+.checks { text-align: left; margin: 0 0 14px; padding-left: 18px; color: var(--dim); line-height: 1.6; }
+.check-row { display: flex; gap: 8px; align-items: flex-start; text-align: left; font-size: 13px; color: var(--dim); }
+.check-row input { margin-top: 3px; accent-color: var(--brand); }
+.link-btn { background: none; border: 0; color: var(--link); cursor: pointer; padding: 0; font: inherit; }
+.link-btn:hover { text-decoration: underline; }
+.stack-form { display: flex; flex-direction: column; gap: 12px; }

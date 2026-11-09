@@ -14,3 +14,8 @@ export function ordinal(n) {
 export function plural(n, word) {
   return `${n} ${word}${n === 1 ? '' : 's'}`;
 }
+
+export function shortDate(iso) {
+  const d = new Date(iso);
+  return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) + ', ' + d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+}

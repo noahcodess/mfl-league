@@ -1,0 +1,23 @@
+/* Commissioner console: the accounts table, the create form and the one-time password popup. */
+.console-head { display: flex; align-items: center; gap: 14px; margin-bottom: 16px; }
+.console-head .unlocked { margin-left: auto; font-size: 12px; color: var(--good); font-family: var(--pixel); }
+.console-grid { display: grid; grid-template-columns: 1fr 320px; gap: 16px; align-items: start; }
+.acct-user { font-weight: 600; }
+.acct-name { color: var(--dim); font-size: 12px; }
+.role-tag { font-family: var(--pixel); font-size: 11px; padding: 2px 6px; border: 1px solid #000; background: var(--panel2); color: var(--dim); }
+.role-tag.commissioner { background: var(--mfl); color: var(--gold); }
+.status-tag { font-size: 12px; }
+.status-tag.pending { color: var(--warn); }
+.status-tag.ok { color: var(--good); }
+.acct-actions { display: flex; gap: 6px; justify-content: flex-end; }
+.acct-team { display: inline-flex; align-items: center; gap: 6px; }
+.acct-team select { background: #0c0705; color: var(--text); border: 2px solid var(--line); padding: 3px 4px; font: inherit; font-size: 12px; }
+.empty { color: var(--faint); padding: 18px 8px; text-align: center; }
+
+.modal-back { position: fixed; inset: 0; background: #000b; display: grid; place-items: center; z-index: 20; padding: 16px; }
+.modal { width: min(460px, 100%); background: var(--panel); border: 3px solid #000; outline: 2px solid var(--gold); outline-offset: -6px; box-shadow: 6px 6px 0 #000; padding: 22px; }
+.modal h2 { margin-bottom: 6px; }
+.modal p { color: var(--dim); line-height: 1.45; margin: 0 0 10px; }
+.modal-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 12px; }
+
+@media (max-width: 960px) { .console-grid { grid-template-columns: 1fr; } }

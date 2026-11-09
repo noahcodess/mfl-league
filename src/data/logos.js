@@ -8,3 +8,6 @@ const byId = Object.fromEntries(
 export function logoFor(teamId) {
   return byId[teamId] || null;
 }
+
+// The MFL league logo: 'light' has white outlines for dark backgrounds.
+export const leagueLogo = { dark: byId.mfl, light: byId['mfl-light'] };

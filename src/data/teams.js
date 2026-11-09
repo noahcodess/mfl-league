@@ -1,12 +1,12 @@
-import league from './league.json';
+import { store } from './store.js';
 import styles from './teamStyles.json';
 import { logoFor } from './logos.js';
 
-// Loads teams with their display colors. Later this reads from the database.
-const withStyle = (t) => ({ ...t, ...(styles[t.code] || { color: '#5b6478', accent: '#ffffff' }), logo: logoFor(t.id) });
+// Loads teams with their display colors. Reads from the store (live database copy when loaded).
+const withStyle = (t) => ({ ...(styles[t.code] || { color: '#5b6478', accent: '#ffffff' }), ...t, color: t.color || styles[t.code]?.color || '#5b6478', accent: t.accent || styles[t.code]?.accent || '#ffffff', logo: logoFor(t.id) });
 
 export function getTeams() {
-  return league.teams.map(withStyle).sort((a, b) => (a.overall?.rank ?? 99) - (b.overall?.rank ?? 99));
+  return store.league.teams.map(withStyle).sort((a, b) => (a.overall?.rank ?? 99) - (b.overall?.rank ?? 99));
 }
 
 export function getConferences() {
@@ -14,19 +14,19 @@ export function getConferences() {
 }
 
 export function getTeam(id) {
-  const t = league.teams.find((x) => x.id === id);
+  const t = store.league.teams.find((x) => x.id === id);
   return t ? withStyle(t) : null;
 }
 
 export function getTeamByCode(code) {
-  const t = league.teams.find((x) => x.code === code);
+  const t = store.league.teams.find((x) => x.code === code);
   return t ? withStyle(t) : null;
 }
 
 export function capLimit() {
-  return league.meta.capLimit;
+  return store.league.meta.capLimit;
 }
 
 export function currentSeason() {
-  return league.meta.currentSeason;
+  return store.league.meta.currentSeason;
 }

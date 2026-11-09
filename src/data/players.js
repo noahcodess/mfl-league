@@ -1,12 +1,12 @@
-import league from './league.json';
+import { store } from './store.js';
 
-// Loads players and works out contract numbers. Later this reads from the database.
+// Loads players and works out contract numbers. Reads from the store (live database copy when loaded).
 export function getPlayers(teamId) {
-  return league.players.filter((p) => p.teamId === teamId);
+  return store.league.players.filter((p) => p.teamId === teamId);
 }
 
 export function getAllPlayers() {
-  return league.players;
+  return store.league.players;
 }
 
 // Cap hit = total contract value spread evenly over its years (to be confirmed by the league).
@@ -20,5 +20,5 @@ export function teamCapUsed(teamId) {
 }
 
 export function getVacancies(teamId) {
-  return league.vacancies.filter((v) => v.teamId === teamId);
+  return store.league.vacancies.filter((v) => v.teamId === teamId);
 }

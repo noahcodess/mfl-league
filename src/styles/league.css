@@ -1,0 +1,65 @@
+/* League screens: logos, stars, team header, cap bar, depth chart, picks, data-check issues. */
+.logo { display: block; object-fit: contain; }
+.logo-sm { width: 30px; height: 30px; filter: drop-shadow(0 0 1px #ffffff55); }
+.logo-md { width: 44px; height: 44px; }
+.logo-lg { width: 104px; height: 104px; filter: drop-shadow(4px 4px 0 #000a); }
+.badge { display: inline-flex; align-items: center; justify-content: center; font-weight: 700; border: 2px solid #000; }
+.badge-sm { width: 40px; height: 24px; font-size: 10px; }
+.badge-md { width: 52px; height: 32px; font-size: 12px; }
+.badge-lg { width: 84px; height: 84px; font-size: 18px; }
+
+.stars { display: inline-flex; align-items: center; gap: 1px; white-space: nowrap; }
+.star-icon { fill: var(--gold); display: block; filter: drop-shadow(1px 1px 0 #000); }
+.stars.elite .star-icon { fill: var(--elite); filter: drop-shadow(1px 1px 0 #000) drop-shadow(0 0 3px #ffb21a99); }
+.stars.declining .star-icon { fill: var(--bad); }
+.stars.none { color: var(--faint); font-size: 12px; }
+.stars-num { color: var(--dim); font-size: 11px; margin-left: 6px; }
+
+.team-head { display: grid; grid-template-columns: auto 1fr minmax(260px, 340px); gap: 18px; align-items: center;
+  background: linear-gradient(110deg, color-mix(in srgb, var(--team) 60%, var(--panel)) 0%, var(--panel) 72%);
+  border: 2px solid #000; outline: 2px solid color-mix(in srgb, var(--team) 70%, var(--line)); outline-offset: -4px;
+  padding: 20px; margin-bottom: 16px; box-shadow: var(--shadow); }
+.team-page .card { border-top: 4px solid color-mix(in srgb, var(--team) 80%, var(--line)); }
+.team-page h3 { color: color-mix(in srgb, var(--team-accent) 70%, var(--gold)); }
+.conf-tag { font-size: 11px; color: var(--team-accent); text-transform: uppercase; letter-spacing: 1px; font-weight: 600; }
+.table.teams tbody tr td:first-child { box-shadow: inset 4px 0 0 var(--team); }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+.chip { display: flex; align-items: center; gap: 8px; background: #0008; border: 2px solid #000; padding: 6px 10px; }
+.chip-label { font-size: 11px; color: var(--dim); }
+.chip-rank { font-weight: 700; }
+
+.cap-top, .cap-foot { display: flex; justify-content: space-between; font-size: 12px; color: var(--dim); }
+.cap-top strong { color: var(--text); }
+.cap-track { height: 12px; background: #000; border: 2px solid #000; margin: 6px 0; overflow: hidden; }
+.cap-fill { height: 100%; background: repeating-linear-gradient(90deg, var(--good) 0 6px, #3bb877 6px 8px); }
+.cap-fill.hot { background: repeating-linear-gradient(90deg, var(--warn) 0 6px, var(--bad) 6px 8px); }
+.warn { color: var(--warn); }
+
+.depth-head, .depth-row { display: grid; grid-template-columns: 44px 1fr 1fr; gap: 8px; align-items: center; }
+.depth-head { font-size: 11px; color: var(--dim); text-transform: uppercase; padding-bottom: 6px; border-bottom: 2px solid var(--line); }
+.depth-row { padding: 5px 0; border-bottom: 1px solid var(--line2); }
+.pos { font-size: 13px; color: var(--dim); }
+.slot { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+.slot-name { font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.slot.open { color: var(--faint); font-style: italic; }
+.slot.flag .slot-name::after { content: ' !'; color: var(--warn); }
+
+.mood { font-size: 11px; padding: 2px 7px; background: var(--panel2); border: 1px solid var(--line); }
+.mood-happy { color: var(--good); } .mood-excited { color: var(--gold); } .mood-angry, .mood-unhappy { color: var(--bad); }
+.mood.none { background: none; border: 0; color: var(--faint); }
+
+.picks { display: flex; flex-direction: column; gap: 8px; }
+.pick-season { display: flex; align-items: center; flex-wrap: wrap; gap: 6px; }
+.pick-s { width: 34px; color: var(--dim); font-size: 13px; }
+.pick { background: var(--panel2); border: 2px solid var(--line); padding: 3px 8px; font-weight: 600; }
+.pick.via { border-color: var(--gold); }
+.pick small { color: var(--gold); font-weight: 400; }
+
+.issues { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.issues li { display: flex; gap: 10px; align-items: baseline; line-height: 1.4; }
+.lvl { font-size: 11px; padding: 2px 6px; flex-shrink: 0; border: 1px solid #0008; }
+.lvl-fix { background: #3a2410; color: var(--warn); } .lvl-need { background: #3a1018; color: var(--bad); } .lvl-ask { background: #10263a; color: #8fc4ff; }
+.count { font-size: 12px; color: var(--dim); margin-left: 6px; }
+.help { margin: -6px 0 12px; }
+
+@media (max-width: 860px) { .team-head { grid-template-columns: 1fr; } }
