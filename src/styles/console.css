@@ -15,7 +15,7 @@
 .empty { color: var(--faint); padding: 18px 8px; text-align: center; }
 
 .modal-back { position: fixed; inset: 0; background: #000b; display: grid; place-items: center; z-index: 20; padding: 16px; }
-.modal { width: min(460px, 100%); background: var(--panel); border: 3px solid #000; outline: 2px solid var(--gold); outline-offset: -6px; box-shadow: 6px 6px 0 #000; padding: 22px; }
+.modal { max-height: calc(100vh - 32px); overflow-y: auto; width: min(460px, 100%); background: var(--panel); border: 3px solid #000; outline: 2px solid var(--gold); outline-offset: -6px; box-shadow: 6px 6px 0 #000; padding: 22px; }
 .modal h2 { margin-bottom: 6px; }
 .modal p { color: var(--dim); line-height: 1.45; margin: 0 0 10px; }
 .modal-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 12px; }

@@ -19,3 +19,8 @@ export const demoAccounts = [
   { user_id: 'd2', username: 'blaze_gm', role: 'coach', team_id: 'crf', display_name: 'Blaze', must_change_password: true, last_sign_in_at: null },
   { user_id: 'd3', username: 'tidecaller', role: 'coach', team_id: 'ocn', display_name: null, must_change_password: false, last_sign_in_at: '2026-11-08T01:12:00Z' },
 ];
+
+// Test-only potentials for the demo coach's team (the real ones live in the database).
+export function demoPotentials() {
+  return { 'snm-01': 4.5, 'snm-02': 5.0, 'snm-04': 4.5, 'snm-06': 4.5 };
+}

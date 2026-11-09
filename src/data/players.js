@@ -22,3 +22,13 @@ export function teamCapUsed(teamId) {
 export function getVacancies(teamId) {
   return store.league.vacancies.filter((v) => v.teamId === teamId);
 }
+
+// Oldest age a player can play. Anyone older retires when the commissioner runs the retirement step.
+export function maxAge() {
+  return store.league.meta.maxAge ?? 27;
+}
+
+// Ages over 60 are data typos, not real ages.
+export function isRetiring(p) {
+  return p.age != null && p.age > maxAge() && p.age < 60;
+}

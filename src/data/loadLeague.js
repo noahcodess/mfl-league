@@ -15,7 +15,7 @@ const toTeam = (t) => ({
 const toPlayer = (p) => ({
   id: p.id, teamId: p.team_id, name: p.name, position: p.position, depth: p.depth, slot: p.slot,
   stars: p.stars == null ? null : Number(p.stars), elite: p.elite, age: p.age, mood: p.mood,
-  nationality: p.nationality, notes: p.notes ?? [], number: p.number,
+  nationality: p.nationality, notes: p.notes ?? [], number: p.number, playStyle: p.play_style, looks: p.looks || {},
   contract: p.contract_years ? { years: p.contract_years, total: p.contract_total } : null,
 });
 
@@ -36,7 +36,7 @@ export async function loadLeague() {
     if (failed) throw failed.error;
     const meta = Object.fromEntries(settings.data.map((s) => [s.key, s.value]));
     store.league = {
-      meta: { capLimit: meta.cap_limit, currentSeason: meta.current_season, phase: meta.phase },
+      meta: { capLimit: meta.cap_limit, currentSeason: meta.current_season, phase: meta.phase, maxAge: meta.max_age ?? 27 },
       teams: teams.data.map(toTeam),
       players: players.data.map(toPlayer),
       picks: picks.data.map(toPick),
