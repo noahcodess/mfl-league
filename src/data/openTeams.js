@@ -6,7 +6,7 @@ import { DEMO } from './demo.js';
 export function useOpenTeams() {
   const [ids, setIds] = useState(null);
   useEffect(() => {
-    if (DEMO) { setIds(['crf', 'ddc', 'dst', 'edc', 'flf', 'lsc', 'ntw', 'ocm', 'ocn', 'pln', 'tga', 'void', 'wrf', 'wsl', 'drf']); return; }
+    if (DEMO) { setIds(['ddc', 'drf', 'ntw', 'ocm', 'ocn', 'pln', 'wrf', 'wsl']); return; }
     db.rpc('open_team_ids').then(({ data, error }) => setIds(error ? [] : (data || []).map((r) => (typeof r === 'string' ? r : r.open_team_ids))));
   }, []);
   return ids;

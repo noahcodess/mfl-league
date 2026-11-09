@@ -3,6 +3,7 @@ import Modal from './Modal.jsx';
 import Headshot from './Headshot.jsx';
 import StarRating from './StarRating.jsx';
 import MoodTag from './MoodTag.jsx';
+import PlayerMoney from './PlayerMoney.jsx';
 import { capHit, isRetiring, maxAge } from '../data/players.js';
 import { POSITION_NAMES } from '../data/positions.js';
 import { money, plural } from '../lib/format.js';
@@ -41,6 +42,7 @@ export default function PlayerModal({ player, team, canSeePotential, potential, 
             <div className="hl"><span>Cap hit / year</span><b>{money(capHit(player))}</b></div>
           </div>
         ) : <p className="dim">No contract on file.</p>}
+        <PlayerMoney player={player} potential={canSeePotential ? potential : null} insider={canSeePotential} />
         {!canSeePotential && <p className="pcard-note">Potential is only visible to this player's team. Scouting will reveal it.</p>}
         {player.notes.length > 0 && <ul className="pcard-flags">{player.notes.map((n) => <li key={n}>{n}</li>)}</ul>}
     </Modal>

@@ -6,7 +6,7 @@ import { listAccounts, createCoach, resetCoach, moveCoach, removeCoach } from '.
 import { getTeams } from '../data/teams.js';
 
 // Commissioner console: create coach logins, reset passwords, move coaches between teams, remove accounts.
-export default function ConsolePage({ readOnly }) {
+export default function ConsolePage({ readOnly, testMode }) {
   const [accounts, setAccounts] = useState(null);
   const [error, setError] = useState('');
   const [busyId, setBusyId] = useState(null);
@@ -49,9 +49,10 @@ export default function ConsolePage({ readOnly }) {
     <div>
       <div className="console-head">
         <div><h1>Commissioner Console</h1><div className="dim">League office tools. Passwords are never visible here, only resettable.</div></div>
-        <span className="unlocked">{readOnly ? '👁 OWNER VIEW · READ ONLY' : '● KEY UNLOCKED'}</span>
+        <span className="unlocked">{readOnly ? '👁 OWNER VIEW · READ ONLY' : testMode ? '🧪 TEST MODE · NO KEY NEEDED' : '● KEY UNLOCKED'}</span>
       </div>
       {readOnly && <div className="notice">You're seeing what the commissioner sees. Only he can make changes, with his key.</div>}
+      {testMode && <div className="notice">Test mode is on: you have full commissioner powers without the key. It gets switched off before the league goes live.</div>}
       {error && <div className="notice bad">{error}</div>}
       <div className={`console-grid${readOnly ? ' solo' : ''}`}>
         <section className="card">

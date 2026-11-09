@@ -29,7 +29,8 @@
     "Crimson Forest Dragons"
    ],
    "source": "Crimson Forest Dragons Roster.txt",
-   "conference": "Nether"
+   "conference": "Nether",
+   "reserved": true
   },
   {
    "id": "drf",
@@ -52,7 +53,8 @@
     "Dark Forest Zombies"
    ],
    "source": "Dark Forest Zombies Roster.txt",
-   "conference": "Overworld"
+   "conference": "Overworld",
+   "reserved": false
   },
   {
    "id": "ddc",
@@ -75,7 +77,8 @@
     "Deep Dark City Rams"
    ],
    "source": "Deep Dark City Rams Roster.txt",
-   "conference": "Overworld"
+   "conference": "Overworld",
+   "reserved": false
   },
   {
    "id": "dst",
@@ -98,7 +101,8 @@
     "Desert Spiders"
    ],
    "source": "Desert Spiders Roster.txt",
-   "conference": "Nether"
+   "conference": "Nether",
+   "reserved": true
   },
   {
    "id": "edc",
@@ -121,7 +125,8 @@
     "End City Blazes"
    ],
    "source": "End City Blazes Roster.txt",
-   "conference": "Nether"
+   "conference": "Nether",
+   "reserved": true
   },
   {
    "id": "flf",
@@ -144,7 +149,8 @@
     "Flower Forest Golems"
    ],
    "source": "Flower Forest Golems Roster.txt",
-   "conference": "Overworld"
+   "conference": "Overworld",
+   "reserved": true
   },
   {
    "id": "lsc",
@@ -167,7 +173,8 @@
     "Lush Cave Axolotls"
    ],
    "source": "Lush Cave Axolotls Roster.txt",
-   "conference": "Overworld"
+   "conference": "Overworld",
+   "reserved": true
   },
   {
    "id": "ntw",
@@ -190,7 +197,8 @@
     "Nether Waste Skeletons"
    ],
    "source": "Nether Waste Skeletons Roster.txt",
-   "conference": "Nether"
+   "conference": "Nether",
+   "reserved": false
   },
   {
    "id": "ocn",
@@ -213,7 +221,8 @@
     "Ocean Dolphins"
    ],
    "source": "Ocean Dolphins Roster.txt",
-   "conference": "Overworld"
+   "conference": "Overworld",
+   "reserved": false
   },
   {
    "id": "ocm",
@@ -236,7 +245,8 @@
     "Ocean Monument Guardians"
    ],
    "source": "Ocean Monument Guardians Roster.txt",
-   "conference": "Nether"
+   "conference": "Nether",
+   "reserved": false
   },
   {
    "id": "pln",
@@ -260,7 +270,8 @@
     "Plains Pigs"
    ],
    "source": "Plains Pigs Roster.txt",
-   "conference": "Overworld"
+   "conference": "Overworld",
+   "reserved": false
   },
   {
    "id": "snm",
@@ -283,7 +294,8 @@
     "Snowy Mountain Creepers"
    ],
    "source": "Snowy Mountain Creepers Roster.txt",
-   "conference": "Overworld"
+   "conference": "Overworld",
+   "reserved": false
   },
   {
    "id": "tga",
@@ -306,7 +318,8 @@
     "Taiga Foxes"
    ],
    "source": "Taiga Foxes Roster.txt",
-   "conference": "Overworld"
+   "conference": "Overworld",
+   "reserved": true
   },
   {
    "id": "void",
@@ -329,7 +342,8 @@
     "Void Vexes"
    ],
    "source": "Void Vexes Roster.txt",
-   "conference": "Nether"
+   "conference": "Nether",
+   "reserved": true
   },
   {
    "id": "wrf",
@@ -352,7 +366,8 @@
     "Warped Forest Withers"
    ],
    "source": "Warped Forest Withers Roster.txt",
-   "conference": "Nether"
+   "conference": "Nether",
+   "reserved": false
   },
   {
    "id": "wsl",
@@ -375,7 +390,8 @@
     "Wasteland Phantoms"
    ],
    "source": "Wasteland Phantoms Roster.txt",
-   "conference": "Nether"
+   "conference": "Nether",
+   "reserved": false
   }
  ],
  "players": [

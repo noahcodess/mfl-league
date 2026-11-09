@@ -3,6 +3,7 @@ import Headshot from './Headshot.jsx';
 import StarRating from './StarRating.jsx';
 import { capHit, isRetiring } from '../data/players.js';
 import { money } from '../lib/format.js';
+import { askingPrice } from '../lib/marketValue.js';
 
 // Coach-only lists: contracts in their final year (re-sign candidates) and players aging out this offseason.
 function Row({ p, team, potential, onOpen, right }) {
@@ -26,7 +27,7 @@ export default function ContractWatch({ players, team, potentials, onOpen }) {
         <p className="dim help">Re-sign them during the re-signing period, or they hit free agency.</p>
         {expiring.length ? expiring.map((p) => (
           <Row key={p.id} p={p} team={team} potential={potentials[p.id]} onOpen={onOpen}
-            right={<><span className="dim">{money(capHit(p))}/yr</span><button className="btn small ghost" disabled title="Opens in the re-signing period">Re-sign</button></>} />
+            right={<><span className="dim">{money(capHit(p))} → <b className="ask">{money(askingPrice(p, potentials[p.id]))}</b>/yr</span><button className="btn small ghost" disabled title="Opens in the re-signing period">Re-sign</button></>} />
         )) : <p className="dim">Nobody. Everyone is signed past this season.</p>}
       </section>
       <section className="card">

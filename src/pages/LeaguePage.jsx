@@ -1,5 +1,6 @@
 import React from 'react';
 import ConferenceTable from '../components/ConferenceTable.jsx';
+import MarketReport from '../components/MarketReport.jsx';
 import { getTeams, getConferences, capLimit } from '../data/teams.js';
 import { getAllPlayers } from '../data/players.js';
 import { getIssues } from '../data/issues.js';
@@ -13,7 +14,7 @@ export default function LeaguePage() {
   return (
     <div>
       <div className="page-head">
-        <h1>Teams</h1>
+        <h1>League</h1>
         <p className="dim">{teams.length} teams · {getAllPlayers().length} players · {money(capLimit())} cap · 2 conferences</p>
       </div>
       {flagged > 0 && (
@@ -22,6 +23,7 @@ export default function LeaguePage() {
       {getConferences().map((c) => (
         <ConferenceTable key={c} name={c} teams={teams.filter((t) => t.conference === c)} />
       ))}
+      <MarketReport />
     </div>
   );
 }

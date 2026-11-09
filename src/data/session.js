@@ -12,7 +12,11 @@ async function readSession() {
   if (!user) return SIGNED_OUT;
   const { data: profile } = await db.from('profiles').select('*').eq('user_id', user.id).maybeSingle();
   if (!profile) return { ...SIGNED_OUT, error: 'This login has no MFL profile. Ask the commissioner.' };
-  if (profile.role !== 'commissioner') return { status: 'in', user, profile, keyStatus: null, unlocked: false };
+  if (profile.role !== 'commissioner') {
+    // The site owner gets commissioner powers while test mode is on (the database decides).
+    const { data: testCommish } = profile.site_owner ? await db.rpc('is_commissioner') : { data: false };
+    return { status: 'in', user, profile, keyStatus: null, unlocked: testCommish === true };
+  }
   const [{ data: keyStatus }, { data: unlocked }] = await Promise.all([db.rpc('commish_key_status'), db.rpc('is_commissioner')]);
   return { status: 'in', user, profile, keyStatus, unlocked: unlocked === true };
 }

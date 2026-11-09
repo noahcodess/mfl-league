@@ -28,7 +28,7 @@ function Screen({ route, session, step }) {
     if (step === 'login') return <LoginPage />;
     if (step !== 'ready') return null;
     const p = session.profile;
-    if (p.role === 'commissioner' || p.site_owner) return <ConsolePage readOnly={p.role !== 'commissioner'} />;
+    if (p.role === 'commissioner' || p.site_owner) return <ConsolePage readOnly={p.role !== 'commissioner' && !session.unlocked} testMode={p.site_owner && session.unlocked} />;
     return <div className="notice bad">Commissioner only.</div>;
   }
   if (route.page === 'home') {

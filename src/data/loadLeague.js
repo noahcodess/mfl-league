@@ -9,7 +9,7 @@ const toTeam = (t) => ({
   offense: rating(t.offense_stars, t.offense_rank),
   defense: rating(t.defense_stars, t.defense_rank),
   overall: rating(t.overall_stars, t.overall_rank),
-  capUsedReported: t.cap_used_reported,
+  capUsedReported: t.cap_used_reported, reserved: t.reserved,
 });
 
 const toPlayer = (p) => ({
@@ -36,7 +36,7 @@ export async function loadLeague() {
     if (failed) throw failed.error;
     const meta = Object.fromEntries(settings.data.map((s) => [s.key, s.value]));
     store.league = {
-      meta: { capLimit: meta.cap_limit, currentSeason: meta.current_season, phase: meta.phase, maxAge: meta.max_age ?? 27, agedForSeason: meta.aged_for_season ?? 0 },
+      meta: { capLimit: meta.cap_limit, currentSeason: meta.current_season, phase: meta.phase, maxAge: meta.max_age ?? 27, agedForSeason: meta.aged_for_season ?? 0, testMode: meta.test_mode === true },
       teams: teams.data.map(toTeam),
       players: players.data.map(toPlayer),
       picks: picks.data.map(toPick),

@@ -57,3 +57,4 @@
   .join-steps { grid-template-columns: 1fr; }
   .watch-row { grid-template-columns: 32px 1fr auto; } .watch-right { grid-column: 2 / -1; }
 }
+.wall-tag.reserved { background: #3a2d10; color: var(--gold); border-color: #6b4f12; }
