@@ -1,0 +1,35 @@
+/* Light animations: screens slide in, cards and tiles cascade, stars pop, popups bounce. All off for reduced-motion users. */
+@keyframes rise { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+@keyframes fade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes pop { 0% { opacity: 0; transform: scale(.4); } 70% { transform: scale(1.18); } 100% { opacity: 1; transform: scale(1); } }
+@keyframes modal-in { from { opacity: 0; transform: translateY(16px) scale(.96); } to { opacity: 1; transform: none; } }
+@keyframes grow { from { width: 0; } }
+@keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+@keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: .35; } }
+@keyframes sweep { from { background-position: -200% 0; } to { background-position: 200% 0; } }
+
+.page { animation: rise .35s ease-out both; }
+.page .card { animation: rise .45s ease-out both; }
+.page .card:nth-of-type(2) { animation-delay: .06s; } .page .card:nth-of-type(3) { animation-delay: .12s; } .page .card:nth-of-type(4) { animation-delay: .18s; }
+.ptile { animation: rise .32s ease-out both; animation-delay: calc(var(--i, 0) * 14ms + .1s); }
+.stars .star-icon { animation: pop .35s ease-out both; }
+.stars .star-icon:nth-child(2) { animation-delay: .05s; } .stars .star-icon:nth-child(3) { animation-delay: .1s; }
+.stars .star-icon:nth-child(4) { animation-delay: .15s; } .stars .star-icon:nth-child(5) { animation-delay: .2s; }
+.cap-fill { animation: grow .9s cubic-bezier(.2, .8, .2, 1) both .15s; }
+.team-head { animation: rise .4s ease-out both; }
+.team-head .logo-lg { animation: pop .55s ease-out both, float 4s ease-in-out 1s infinite; }
+.auth-card { animation: modal-in .35s ease-out both; }
+.auth-logo { animation: float 3.2s ease-in-out infinite; }
+.modal-back { animation: fade .18s ease-out both; }
+.modal { animation: modal-in .25s ease-out both; }
+.live-dot.on { animation: blink 2.4s ease-in-out infinite; }
+.brand img { transition: transform .2s; }
+.brand:hover img { transform: rotate(-8deg) scale(1.08); }
+.table.teams tbody tr { transition: background .12s; }
+.table.teams tbody tr:hover .logo-sm { transform: scale(1.15); }
+.logo-sm { transition: transform .15s; }
+.header { background-image: linear-gradient(90deg, transparent, color-mix(in srgb, var(--brand) 18%, transparent), transparent); background-size: 200% 100%; animation: sweep 9s linear infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}

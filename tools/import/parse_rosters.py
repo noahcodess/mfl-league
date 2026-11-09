@@ -110,7 +110,7 @@ def team_code(team):
 
 def build():
     posts = read_posts()
-    league = {'meta': {'capLimit': CAP_LIMIT, 'currentSeason': 7, 'source': 'Discord roster posts'}, 'teams': [], 'players': [], 'picks': [], 'vacancies': []}
+    league = {'meta': {'capLimit': CAP_LIMIT, 'currentSeason': 8, 'phase': 'offseason', 'source': 'Discord roster posts'}, 'teams': [], 'players': [], 'picks': [], 'vacancies': []}
     for name, t in posts.items():
         code = team_code(t)
         tid = code.lower()

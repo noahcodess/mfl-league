@@ -72,81 +72,9 @@
   "level": "fix"
  },
  {
-  "kind": "cap",
-  "teamId": "crf",
-  "text": "Cap used is posted as $3.67M, but the contracts add up to $3.56M a year",
-  "level": "fix"
- },
- {
-  "kind": "cap",
-  "teamId": "drf",
-  "text": "Cap used is posted as $3.43M, but the contracts add up to $2.71M a year",
-  "level": "fix"
- },
- {
-  "kind": "cap",
-  "teamId": "ddc",
-  "text": "Cap used is posted as $3.48M, but the contracts add up to $3.22M a year",
-  "level": "fix"
- },
- {
-  "kind": "cap",
-  "teamId": "dst",
-  "text": "Cap used is posted as $3.46M, but the contracts add up to $3.28M a year",
-  "level": "fix"
- },
- {
-  "kind": "cap",
-  "teamId": "flf",
-  "text": "Cap used is posted as $3.55M, but the contracts add up to $2.90M a year",
-  "level": "fix"
- },
- {
-  "kind": "cap",
-  "teamId": "lsc",
-  "text": "Cap used is posted as $3.99M, but the contracts add up to $3.56M a year",
-  "level": "fix"
- },
- {
-  "kind": "cap",
-  "teamId": "ntw",
-  "text": "Cap used is posted as $3.58M, but the contracts add up to $3.16M a year",
-  "level": "fix"
- },
- {
-  "kind": "cap",
-  "teamId": "ocn",
-  "text": "Cap used is posted as $3.33M, but the contracts add up to $3.05M a year",
-  "level": "fix"
- },
- {
   "kind": "team",
   "teamId": "pln",
   "text": "Team name spelled more than one way: Plain Pigs, Plains Pigs",
-  "level": "fix"
- },
- {
-  "kind": "cap",
-  "teamId": "pln",
-  "text": "Cap used is posted as $3.44M, but the contracts add up to $3.20M a year",
-  "level": "fix"
- },
- {
-  "kind": "cap",
-  "teamId": "tga",
-  "text": "Cap used is posted as $3.65M, but the contracts add up to $3.25M a year",
-  "level": "fix"
- },
- {
-  "kind": "cap",
-  "teamId": "void",
-  "text": "Cap used is posted as $3.82M, but the contracts add up to $3.30M a year",
-  "level": "fix"
- },
- {
-  "kind": "cap",
-  "teamId": "wrf",
-  "text": "Cap used is posted as $3.36M, but the contracts add up to $2.93M a year",
   "level": "fix"
  },
  {

@@ -11,7 +11,6 @@ ROOT = Path(__file__).parents[2]
 LEAGUE = ROOT / 'src' / 'data' / 'league.json'
 ISSUES = ROOT / 'src' / 'data' / 'importIssues.json'
 REPORT = Path(__file__).parent / 'Import Report.md'
-CAP_TOLERANCE = 100_000
 
 
 def cap_hit(p):
@@ -37,10 +36,10 @@ def check(league):
             add('ratings', t['id'], 'Star ratings and moods are missing (lost when the post was pasted as text)', 'need')
         if len(t['nameVariants']) > 1:
             add('team', t['id'], 'Team name spelled more than one way: ' + ', '.join(t['nameVariants']))
+        # Our cap math is the real cap (contract total / years). Discord's posted totals are ignored.
         hit = sum(cap_hit(p) for p in ps)
-        rep = t['capUsedReported']
-        if rep and abs(hit - rep) > CAP_TOLERANCE:
-            add('cap', t['id'], f"Cap used is posted as ${rep/1e6:.2f}M, but the contracts add up to ${hit/1e6:.2f}M a year")
+        if hit > league['meta']['capLimit']:
+            add('cap', t['id'], f"Over the cap: contracts add up to ${hit/1e6:.2f}M a year", 'need')
         names = defaultdict(list)
         for p in ps:
             names[p['name']].append(p['position'])
@@ -79,7 +78,7 @@ def write(league, issues, dupes):
     ISSUES.write_text(json.dumps(issues, indent=1, ensure_ascii=False), encoding='utf-8')
     teams = {t['id']: t for t in league['teams']}
     lines = ['# Import Report', '', f"{len(league['teams'])} teams, {len(league['players'])} players, {len(league['picks'])} draft picks, {len(league['vacancies'])} empty depth slots.", '']
-    for kind, title in [('ratings', 'Missing ratings'), ('cap', 'Cap totals that do not add up'), ('player', 'Player data problems'), ('team', 'Roster problems'), ('pick', 'Draft pick problems'), ('duplicate', 'Same name on more than one team')]:
+    for kind, title in [('ratings', 'Missing ratings'), ('cap', 'Over the salary cap'), ('player', 'Player data problems'), ('team', 'Roster problems'), ('pick', 'Draft pick problems'), ('duplicate', 'Same name on more than one team')]:
         rows = [i for i in issues if i['kind'] == kind]
         if not rows:
             continue

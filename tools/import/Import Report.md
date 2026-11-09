@@ -2,21 +2,6 @@
 
 16 teams, 590 players, 242 draft picks, 50 empty depth slots.
 
-## Cap totals that do not add up (12)
-
-- Crimson Forest Dragons: Cap used is posted as $3.67M, but the contracts add up to $3.56M a year
-- Dark Forest Zombies: Cap used is posted as $3.43M, but the contracts add up to $2.71M a year
-- Deep Dark City Rams: Cap used is posted as $3.48M, but the contracts add up to $3.22M a year
-- Desert Spiders: Cap used is posted as $3.46M, but the contracts add up to $3.28M a year
-- Flower Forest Golems: Cap used is posted as $3.55M, but the contracts add up to $2.90M a year
-- Lush Cave Axolotls: Cap used is posted as $3.99M, but the contracts add up to $3.56M a year
-- Nether Waste Skeletons: Cap used is posted as $3.58M, but the contracts add up to $3.16M a year
-- Ocean Dolphins: Cap used is posted as $3.33M, but the contracts add up to $3.05M a year
-- Plains Pigs: Cap used is posted as $3.44M, but the contracts add up to $3.20M a year
-- Taiga Foxes: Cap used is posted as $3.65M, but the contracts add up to $3.25M a year
-- Void Vexes: Cap used is posted as $3.82M, but the contracts add up to $3.30M a year
-- Warped Forest Withers: Cap used is posted as $3.36M, but the contracts add up to $2.93M a year
-
 ## Player data problems (12)
 
 - Flower Forest Golems: Vincent Brooks (C): no age or contract in the expanded list

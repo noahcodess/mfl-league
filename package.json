@@ -7,7 +7,7 @@
     "dev": "vite",
     "build": "vite build",
     "build:preview": "vite build --mode preview",
-    "import": "python3 tools/import/parse_rosters.py && python3 tools/import/add_conferences.py && python3 tools/import/check_league.py",
+    "import": "python3 tools/import/parse_rosters.py && python3 tools/import/add_conferences.py && python3 tools/import/assign_numbers.py && python3 tools/import/check_league.py && python3 tools/import/export_sql.py",
     "check": "python3 tools/check_files.py"
   },
   "dependencies": {

@@ -27,7 +27,7 @@ export default function ChangePasswordPage({ session }) {
 
   return (
     <AuthCard step={isCommish ? 'Step 1 of 2' : null} title="Pick your password"
-      sub={`Welcome, ${session.profile.display_name || session.profile.username}. Your temporary password worked. Now choose your own. Nobody else will be able to see it, not even the commissioner.`}>
+      sub={`Welcome, ${session.profile.display_name || session.profile.username}. Your temporary password worked. Now choose your own: nobody else can see it, not even the commissioner. ${isCommish ? '' : 'Next stop: your team.'}`}>
       <form onSubmit={submit}>
         <Field id="new-pass" label="New password" type="password" value={pass} onChange={(e) => setPass(e.target.value)}
           hint={`At least ${PASSWORD_MIN} characters`} autoComplete="new-password" required />

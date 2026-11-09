@@ -1,6 +1,6 @@
 import React from 'react';
 import { links } from '../lib/router.js';
-import { currentSeason } from '../data/teams.js';
+import { currentSeason, currentPhase, PHASE_NAMES } from '../data/teams.js';
 import { leagueLogo } from '../data/logos.js';
 import { signOut } from '../data/session.js';
 
@@ -20,7 +20,7 @@ export default function Header({ page, session, ready, live }) {
       </nav>
       <div className="header-right">
         <span className="season" title={live ? 'Live league data' : 'Offline copy of the league data'}>
-          <span className={`live-dot${live ? ' on' : ''}`} /> Season {currentSeason()}
+          <span className={`live-dot${live ? ' on' : ''}`} /> Season {currentSeason()} · {PHASE_NAMES[currentPhase()]}
         </span>
         {session.status === 'in' ? (
           <span className="who"><b>{p.username}</b><button className="btn small ghost" onClick={() => signOut(p.role === 'commissioner')}>Log out</button></span>

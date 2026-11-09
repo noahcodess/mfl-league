@@ -30,3 +30,10 @@ export function capLimit() {
 export function currentSeason() {
   return store.league.meta.currentSeason;
 }
+
+// League calendar phase: 'offseason', 'regular_season' or 'playoffs'.
+export function currentPhase() {
+  return store.league.meta.phase || 'offseason';
+}
+
+export const PHASE_NAMES = { offseason: 'Offseason', regular_season: 'Regular Season', playoffs: 'Playoffs' };

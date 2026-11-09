@@ -11,5 +11,7 @@ import './styles/theme.css';
 import './styles/league.css';
 import './styles/auth.css';
 import './styles/console.css';
+import './styles/roster.css';
+import './styles/motion.css';
 
 createRoot(document.getElementById('root')).render(<App />);

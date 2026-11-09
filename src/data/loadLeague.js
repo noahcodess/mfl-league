@@ -15,7 +15,7 @@ const toTeam = (t) => ({
 const toPlayer = (p) => ({
   id: p.id, teamId: p.team_id, name: p.name, position: p.position, depth: p.depth, slot: p.slot,
   stars: p.stars == null ? null : Number(p.stars), elite: p.elite, age: p.age, mood: p.mood,
-  nationality: p.nationality, notes: p.notes ?? [],
+  nationality: p.nationality, notes: p.notes ?? [], number: p.number,
   contract: p.contract_years ? { years: p.contract_years, total: p.contract_total } : null,
 });
 

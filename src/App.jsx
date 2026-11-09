@@ -27,7 +27,7 @@ function Screen({ route, session, step }) {
     if (step !== 'ready') return null;
     return session.profile.role === 'commissioner' ? <ConsolePage /> : <div className="notice bad">Commissioner only.</div>;
   }
-  if (route.page === 'team') return <TeamPage teamId={route.id} />;
+  if (route.page === 'team') return <TeamPage teamId={route.id} viewer={step === 'ready' ? session.profile : null} />;
   if (route.page === 'dataCheck') return <DataCheckPage />;
   return <LeaguePage />;
 }
@@ -42,7 +42,7 @@ export default function App() {
   return (
     <div className="app" style={brandColors(myTeam)}>
       <Header page={route.page} session={session} ready={step === 'ready'} live={live} />
-      <main className="main"><Screen route={route} session={session} step={step} /></main>
+      <main className="main"><div className="page" key={`${route.page}-${route.id || ''}-${step}`}><Screen route={route} session={session} step={step} /></div></main>
     </div>
   );
 }

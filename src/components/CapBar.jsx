@@ -1,10 +1,9 @@
 import React from 'react';
 import { money } from '../lib/format.js';
 
-// Salary cap meter: contracts on the books vs the cap, with the posted figure for comparison.
-export default function CapBar({ used, limit, posted }) {
+// Salary cap meter. Cap hit = contract total spread evenly over its years; this is the league's real cap.
+export default function CapBar({ used, limit }) {
   const pct = Math.min(100, (used / limit) * 100);
-  const off = posted != null && Math.abs(posted - used) > 100000;
   return (
     <div className="cap">
       <div className="cap-top">
@@ -13,8 +12,8 @@ export default function CapBar({ used, limit, posted }) {
       </div>
       <div className="cap-track"><div className={`cap-fill ${pct > 95 ? 'hot' : ''}`} style={{ width: `${pct}%` }} /></div>
       <div className="cap-foot">
-        <span>{money(limit - used)} room</span>
-        {posted != null && <span className={off ? 'warn' : ''}>Posted in Discord: {money(posted)}</span>}
+        <span className={used > limit ? 'warn' : ''}>{used > limit ? `${money(used - limit)} over` : `${money(limit - used)} room`}</span>
+        <span>{Math.round(pct)}% used</span>
       </div>
     </div>
   );

@@ -27,7 +27,7 @@ def load_rows(table, rows, columns, types):
     return f"insert into public.{table} ({', '.join(columns)})\nselect {cols} from jsonb_array_elements('{q(arr)}') v;\n"
 
 
-PLAYER_TYPES = ['text', 'text', 'text', 'text', 'text', 'int', 'numeric', 'boolean', 'int', 'int', 'int', 'text', 'text[]']
+PLAYER_TYPES = ['text', 'text', 'text', 'text', 'text', 'int', 'numeric', 'boolean', 'int', 'int', 'int', 'text', 'text[]', 'int']
 
 
 def main():
@@ -47,12 +47,12 @@ def main():
         'id': p['id'], 'team_id': p['teamId'], 'name': p['name'], 'position': p['position'], 'depth': p['depth'],
         'slot': p['slot'], 'stars': p['stars'], 'elite': p['elite'], 'age': p['age'],
         'contract_years': (p['contract'] or {}).get('years'), 'contract_total': (p['contract'] or {}).get('total'),
-        'mood': p['mood'], 'notes': p['notes'],
+        'mood': p['mood'], 'notes': p['notes'], 'number': p.get('number'),
     } for p in league['players']]
     picks = [{'owner_id': p['ownerId'], 'original_code': p['originalCode'], 'season': p['season'], 'round': p['round']} for p in league['picks']]
     iss = [{'kind': i['kind'], 'team_id': i['teamId'], 'text': i['text'], 'level': i['level']} for i in issues]
     settings = [{'key': 'cap_limit', 'value': league['meta']['capLimit']}, {'key': 'current_season', 'value': league['meta']['currentSeason']},
-                {'key': 'phase', 'value': 'regular_season'}]
+                {'key': 'phase', 'value': league['meta'].get('phase', 'offseason')}]
 
     files = {'01_reset.sql': 'delete from public.import_issues; delete from public.picks; delete from public.player_potential; delete from public.players; delete from public.teams; delete from public.league_settings;\n',
              '02_teams.sql': load('teams', teams, list(teams[0])) + load('league_settings', settings, ['key', 'value'])}
