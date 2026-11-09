@@ -7,6 +7,7 @@ export function parseHash(hash) {
   if (h === 'data-check') return { page: 'dataCheck' };
   if (h === 'login') return { page: 'login' };
   if (h === 'console') return { page: 'console' };
+  if (h === 'control') return { page: 'control' };
   if (h === 'league') return { page: 'league' };
   return { page: 'home' };
 }
@@ -28,6 +29,7 @@ export const links = {
   dataCheck: '#data-check',
   login: '#login',
   console: '#console',
+  control: '#control',
 };
 
 // Where someone lands after logging in.

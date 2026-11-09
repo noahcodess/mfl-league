@@ -5,7 +5,7 @@ import ContractWatch from '../components/ContractWatch.jsx';
 import PickList from '../components/PickList.jsx';
 import ConferenceTable from '../components/ConferenceTable.jsx';
 import PlayerModal from '../components/PlayerModal.jsx';
-import { getTeam, getTeams, capLimit, currentSeason } from '../data/teams.js';
+import { getTeam, getTeams, capLimit, currentSeason, offseasonStep } from '../data/teams.js';
 import { getPlayers, teamCapUsed } from '../data/players.js';
 import { getPicks } from '../data/picks.js';
 import { usePotentials } from '../data/potentials.js';
@@ -22,7 +22,7 @@ export default function DashboardPage({ viewer }) {
     <div className="team-page dashboard" style={{ '--team': team.color, '--team-accent': team.accent }}>
       <DashHero team={team} capUsed={teamCapUsed(team.id)} capLimit={capLimit()} coachName={viewer.display_name || viewer.username} />
       <div className="two-col wide-left">
-        <OffseasonSteps current={0} />
+        <OffseasonSteps current={offseasonStep()} />
         <PickList picks={draftPicks} currentSeason={currentSeason()} title={`Season ${currentSeason()} draft`} />
       </div>
       <ContractWatch players={players} team={team} potentials={potentials.map} onOpen={setOpen} />

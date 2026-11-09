@@ -21,3 +21,14 @@
 .modal-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 12px; }
 
 @media (max-width: 960px) { .console-grid { grid-template-columns: 1fr; } }
+.next-step p { line-height: 1.5; margin: 0 0 8px; }
+.next-step .preview { color: var(--text); background: #0007; border: 2px solid #000; border-left: 4px solid var(--gold); padding: 8px 10px; }
+.preview-list { margin: 0 0 10px; font-size: 13px; }
+.preview-list summary { cursor: pointer; color: var(--link); }
+.preview-list ul { max-height: 220px; overflow-y: auto; margin: 6px 0 0; padding-left: 18px; line-height: 1.6; }
+.step-actions { display: flex; gap: 8px; margin: 12px 0 6px; flex-wrap: wrap; }
+.log { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 4px; max-height: 420px; overflow-y: auto; }
+.log li { display: flex; align-items: center; gap: 8px; padding: 5px 6px; border-bottom: 1px solid var(--line2); font-size: 13px; }
+.log-icon { width: 20px; text-align: center; }
+.log-text { flex: 1; }
+.log-when { font-family: var(--pixel); font-size: 11px; color: var(--faint); }

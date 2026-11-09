@@ -5,5 +5,6 @@ import bundledIssues from './importIssues.json';
 export const store = {
   league: bundled,
   issues: bundledIssues,
+  events: [],
   source: 'bundled',
 };

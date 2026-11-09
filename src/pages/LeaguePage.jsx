@@ -1,7 +1,8 @@
 import React from 'react';
 import ConferenceTable from '../components/ConferenceTable.jsx';
 import MarketReport from '../components/MarketReport.jsx';
-import { getTeams, getConferences, capLimit } from '../data/teams.js';
+import LeagueLog from '../components/LeagueLog.jsx';
+import { getTeams, getConferences, capLimit, leagueEvents } from '../data/teams.js';
 import { getAllPlayers } from '../data/players.js';
 import { getIssues } from '../data/issues.js';
 import { links } from '../lib/router.js';
@@ -24,6 +25,7 @@ export default function LeaguePage() {
         <ConferenceTable key={c} name={c} teams={teams.filter((t) => t.conference === c)} />
       ))}
       <MarketReport />
+      <LeagueLog events={leagueEvents()} limit={15} title="League news" />
     </div>
   );
 }

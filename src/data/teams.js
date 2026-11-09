@@ -37,3 +37,12 @@ export function currentPhase() {
 }
 
 export const PHASE_NAMES = { offseason: 'Offseason', regular_season: 'Regular Season', playoffs: 'Playoffs' };
+
+// Which offseason step is up next (0 = Birthday Day ... 5 = Training camp).
+export function offseasonStep() {
+  return store.league.meta.offseasonStep ?? 0;
+}
+
+export function leagueEvents() {
+  return store.events || [];
+}

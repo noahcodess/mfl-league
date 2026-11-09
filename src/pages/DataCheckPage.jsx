@@ -6,7 +6,7 @@ import { getTeam } from '../data/teams.js';
 // Commissioner view of everything the import flagged, grouped by type.
 const GROUPS = [
   ['ratings', 'Missing ratings', 'These posts were pasted as plain text, so the star emojis and moods dropped out.'],
-  ['cap', 'Cap totals that do not match', 'Per-year cap hit is worked out as total contract ÷ years. Wasteland matches exactly; these do not.'],
+  ['cap', 'Over the salary cap', 'Cap hit is total contract ÷ years, counting only deals that cover the coming season.'],
   ['player', 'Player data problems', 'Typos, and lineup posts that disagree with the expanded roster posts.'],
   ['team', 'Roster problems', null],
   ['pick', 'Draft pick problems', null],

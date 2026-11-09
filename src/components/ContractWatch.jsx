@@ -2,10 +2,12 @@ import React from 'react';
 import Headshot from './Headshot.jsx';
 import StarRating from './StarRating.jsx';
 import { capHit, isRetiring } from '../data/players.js';
+import { isExpiring } from '../data/contracts.js';
+import { offseasonStep, currentPhase } from '../data/teams.js';
 import { money } from '../lib/format.js';
 import { askingPrice } from '../lib/marketValue.js';
 
-// Coach-only lists: contracts in their final year (re-sign candidates) and players aging out this offseason.
+// Coach-only lists: players whose contracts end this offseason (re-sign or lose them) and players aging out.
 function Row({ p, team, potential, onOpen, right }) {
   return (
     <button className="watch-row" onClick={() => onOpen(p)}>
@@ -19,16 +21,17 @@ function Row({ p, team, potential, onOpen, right }) {
 
 export default function ContractWatch({ players, team, potentials, onOpen }) {
   const retiring = players.filter(isRetiring);
-  const expiring = players.filter((p) => p.contract?.years === 1 && !isRetiring(p)).sort((a, b) => (b.stars || 0) - (a.stars || 0));
+  const expiring = players.filter((p) => isExpiring(p) && !isRetiring(p)).sort((a, b) => (b.stars || 0) - (a.stars || 0));
+  const windowOpen = currentPhase() === 'offseason' && offseasonStep() === 3;
   return (
     <div className="two-col">
       <section className="card">
-        <h3>Final contract year <span className="count">{expiring.length}</span></h3>
-        <p className="dim help">Re-sign them during the re-signing period, or they hit free agency.</p>
+        <h3>Contracts ending <span className="count">{expiring.length}</span></h3>
+        <p className="dim help">{windowOpen ? 'The re-signing window is open. Anyone not re-signed hits free agency when it closes.' : 'Their deals end this offseason. Re-sign them when the re-signing window opens, or they hit free agency.'}</p>
         {expiring.length ? expiring.map((p) => (
           <Row key={p.id} p={p} team={team} potential={potentials[p.id]} onOpen={onOpen}
-            right={<><span className="dim">{money(capHit(p))} → <b className="ask">{money(askingPrice(p, potentials[p.id]))}</b>/yr</span><button className="btn small ghost" disabled title="Opens in the re-signing period">Re-sign</button></>} />
-        )) : <p className="dim">Nobody. Everyone is signed past this season.</p>}
+            right={<><span className="dim">{capHit(p) ? <>{money(capHit(p))} → </> : null}<b className="ask">{money(askingPrice(p, potentials[p.id]))}</b>/yr</span><button className="btn small ghost" disabled title={windowOpen ? 'Negotiation comes in the next update' : 'Opens in the re-signing period'}>Re-sign</button></>} />
+        )) : <p className="dim">Nobody. Everyone is signed through next season.</p>}
       </section>
       <section className="card">
         <h3>Aging out <span className="count">{retiring.length}</span></h3>

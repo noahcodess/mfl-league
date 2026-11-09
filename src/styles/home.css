@@ -58,3 +58,6 @@
   .watch-row { grid-template-columns: 32px 1fr auto; } .watch-right { grid-column: 2 / -1; }
 }
 .wall-tag.reserved { background: #3a2d10; color: var(--gold); border-color: #6b4f12; }
+.yrs.gone { color: var(--bad); border-color: #7a2020; }
+.steps li.live { border-color: var(--good); background: #0d241866; }
+.steps li.live .step-dot { border-color: var(--good); color: var(--good); }

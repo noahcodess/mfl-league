@@ -18,7 +18,8 @@ export default function Header({ page, session, ready, live }) {
         {!myTeam && <a className={page === 'home' ? 'on' : ''} href={links.home}>Home</a>}
         <a className={page === 'league' ? 'on' : ''} href={links.league}>League</a>
         <a className={page === 'dataCheck' ? 'on' : ''} href={links.dataCheck}>Data Check</a>
-        {isCommish && <a className={page === 'console' ? 'on' : ''} href={links.console}>Console</a>}
+        {isCommish && <a className={page === 'control' ? 'on' : ''} href={links.control}>League Control</a>}
+        {isCommish && <a className={page === 'console' ? 'on' : ''} href={links.console}>Accounts</a>}
       </nav>
       <div className="header-right">
         <span className="season" title={live ? 'Live league data' : 'Offline copy of the league data'}>

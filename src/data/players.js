@@ -1,22 +1,27 @@
 import { store } from './store.js';
+import { contractOf, capHitOf } from './contracts.js';
 
 // Loads players and works out contract numbers. Reads from the store (live database copy when loaded).
 export function getPlayers(teamId) {
   return store.league.players.filter((p) => p.teamId === teamId);
 }
 
+// Everyone still playing (on a team or a free agent). Retired players stay in the data for history.
 export function getAllPlayers() {
-  return store.league.players;
+  return store.league.players.filter((p) => (p.status ?? 'active') !== 'retired');
 }
 
-// Cap hit = total contract value spread evenly over its years (to be confirmed by the league).
+export function getFreeAgents() {
+  return store.league.players.filter((p) => p.status === 'free_agent');
+}
+
+// Cap hit = the contract's yearly amount (total ÷ years). Used for display; the cap total only counts live deals.
 export function capHit(p) {
-  const c = p.contract;
-  return c && c.years ? c.total / c.years : 0;
+  return contractOf(p)?.perYear ?? 0;
 }
 
 export function teamCapUsed(teamId) {
-  return getPlayers(teamId).reduce((sum, p) => sum + capHit(p), 0);
+  return getPlayers(teamId).reduce((sum, p) => sum + capHitOf(p), 0);
 }
 
 export function getVacancies(teamId) {

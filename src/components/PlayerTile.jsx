@@ -2,12 +2,13 @@ import React from 'react';
 import Headshot from './Headshot.jsx';
 import StarRating from './StarRating.jsx';
 import { isRetiring } from '../data/players.js';
+import { contractLabel, yearsLeft } from '../data/contracts.js';
 
 // One roster spot: headshot, number, name, stars and age. Insiders (own team, commissioner, owner) also see
 // contract years left and potential. Click it for the full player card.
 export default function PlayerTile({ player, team, index, onOpen, insider }) {
   const pot = insider ? insider[player.id] : null;
-  const years = player.contract?.years;
+  const left = yearsLeft(player);
   return (
     <button className={`ptile ${player.depth}`} style={{ '--i': Math.min(index, 40) }} onClick={() => onOpen(player)}>
       <Headshot player={player} team={team} size={64} />
@@ -24,7 +25,7 @@ export default function PlayerTile({ player, team, index, onOpen, insider }) {
         </span>
         {insider && (
           <span className="ptile-insider">
-            {years != null && <span className={`yrs${years === 1 ? ' last' : ''}`}>{years === 1 ? 'Final year' : `${years} yrs left`}</span>}
+            <span className={`yrs${left === 0 ? ' gone' : left === 1 ? ' last' : ''}`}>{contractLabel(player)}</span>
             {pot != null && <span className="pot-mini">POT <StarRating value={pot} elite={pot === 5} /></span>}
           </span>
         )}
