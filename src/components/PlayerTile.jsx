@@ -12,7 +12,7 @@ export default function PlayerTile({ player, team, index, onOpen }) {
         <span className="ptile-top">
           <span className="ptile-num">#{player.number ?? '-'}</span>
           <span className="ptile-name">{player.name}</span>
-          {isRetiring(player) && <span className="ret-tag" title="Retiring this offseason">RET</span>}
+          {isRetiring(player) && <span className="ret-tag" title="Ages out this offseason (max age 27)">RET</span>}
         </span>
         <span className="ptile-bottom">
           <span className="ptile-pos">{player.depth === 'backup' ? 'Backup' : 'Starter'}</span>

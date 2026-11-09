@@ -28,7 +28,15 @@ export function maxAge() {
   return store.league.meta.maxAge ?? 27;
 }
 
-// Ages over 60 are data typos, not real ages.
+// Age a player will be once this offseason's aging step runs (the commissioner starts it). Ages over 60 are typos.
+export function offseasonAge(p) {
+  if (p.age == null || p.age >= 60) return null;
+  const aged = (store.league.meta.agedForSeason ?? 0) >= store.league.meta.currentSeason;
+  return aged ? p.age : p.age + 1;
+}
+
+// Retiring = past the max age after this offseason's birthday.
 export function isRetiring(p) {
-  return p.age != null && p.age > maxAge() && p.age < 60;
+  const age = offseasonAge(p);
+  return age != null && age > maxAge();
 }

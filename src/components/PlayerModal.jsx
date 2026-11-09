@@ -31,7 +31,7 @@ export default function PlayerModal({ player, team, canSeePotential, potential, 
           <div className="pot"><span>Potential</span><b>{!canSeePotential ? '🔒 Hidden' : potential === undefined ? <span className="dim">Loading...</span> : potential === null ? <span className="dim">Not rated</span>
             : <><StarRating value={potential} elite={potential === 5} />{potential <= player.stars && <small className="dim"> Maxed</small>}</>}</b></div>
         </div>
-        {isRetiring(player) && <div className="notice bad">Retiring this offseason (past the max age of {maxAge()}).</div>}
+        {isRetiring(player) && <div className="notice bad">Retiring this offseason: turns {player.age + 1} at the offseason birthday, past the max age of {maxAge()}.</div>}
         {player.playStyle && <p className="pcard-style"><span>Play style</span>{player.playStyle}</p>}
         <h3>Contract</h3>
         {c ? (

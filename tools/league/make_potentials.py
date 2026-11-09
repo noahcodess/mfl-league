@@ -8,7 +8,7 @@ Rules (from docs/Player Development.md, plus Noah's Nov 9 notes):
 - 26 and older are maxed out (potential = current stars). 5.0 is the ceiling.
 - 5-star potential stays rare for players who aren't already 4.5+.
 - Hand-set potentials (Noah's choices) always win.
-Ages come straight from league.json, which already has the Season 8 offseason (+1) ages. Seeded by player id, so re-running gives the same result.
+Uses the age each player will be after this offseason's birthday (age + 1). Seeded by player id, so re-running gives the same result.
 """
 import json
 import random
@@ -47,7 +47,7 @@ def main():
     league = json.loads(LEAGUE.read_text(encoding='utf-8'))
     rows, growth = [], defaultdict(list)
     for p in league['players']:
-        age = p['age'] if p['age'] is not None and p['age'] < 60 else None
+        age = p['age'] + 1 if p['age'] is not None and p['age'] < 60 else None
         pot = potential(p, age)
         if pot is None:
             continue

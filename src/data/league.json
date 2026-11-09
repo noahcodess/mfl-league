@@ -4,7 +4,8 @@
   "currentSeason": 8,
   "phase": "offseason",
   "source": "Discord roster posts",
-  "maxAge": 27
+  "maxAge": 27,
+  "agedForSeason": 7
  },
  "teams": [
   {
@@ -387,7 +388,7 @@
    "slot": 1,
    "stars": 3.5,
    "elite": false,
-   "age": 28,
+   "age": 27,
    "contract": {
     "years": 1,
     "total": 45000
@@ -405,7 +406,7 @@
    "slot": 1,
    "stars": 4.0,
    "elite": false,
-   "age": 26,
+   "age": 25,
    "contract": {
     "years": 3,
     "total": 300000
@@ -417,20 +418,21 @@
   {
    "id": "crf-03",
    "teamId": "crf",
-   "name": "Malik Everett",
+   "name": "Oluwaseun Okafor",
    "position": "WR",
    "depth": "starter",
    "slot": 2,
    "stars": 4.0,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 1,
     "total": 110000
    },
    "mood": "normal",
    "notes": [],
-   "number": 11
+   "number": 11,
+   "nationality": "Nigeria"
   },
   {
    "id": "crf-04",
@@ -441,7 +443,7 @@
    "slot": 1,
    "stars": 5.0,
    "elite": true,
-   "age": 28,
+   "age": 27,
    "contract": {
     "years": 2,
     "total": 500000
@@ -459,7 +461,7 @@
    "slot": 1,
    "stars": 4.5,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 1,
     "total": 90000
@@ -477,7 +479,7 @@
    "slot": 1,
    "stars": 5.0,
    "elite": true,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 2,
     "total": 566670
@@ -495,7 +497,7 @@
    "slot": 1,
    "stars": 3.5,
    "elite": false,
-   "age": 25,
+   "age": 24,
    "contract": {
     "years": 1,
     "total": 70000
@@ -513,7 +515,7 @@
    "slot": 2,
    "stars": 5.0,
    "elite": true,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 2,
     "total": 500000
@@ -531,7 +533,7 @@
    "slot": 1,
    "stars": 4.0,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 1,
     "total": 40000
@@ -549,7 +551,7 @@
    "slot": 2,
    "stars": 3.5,
    "elite": false,
-   "age": 26,
+   "age": 25,
    "contract": {
     "years": 1,
     "total": 90000
@@ -567,7 +569,7 @@
    "slot": 1,
    "stars": 5.0,
    "elite": true,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 2,
     "total": 120000
@@ -585,7 +587,7 @@
    "slot": 1,
    "stars": 4.0,
    "elite": false,
-   "age": 25,
+   "age": 24,
    "contract": {
     "years": 1,
     "total": 40000
@@ -603,7 +605,7 @@
    "slot": 2,
    "stars": 3.5,
    "elite": false,
-   "age": 26,
+   "age": 25,
    "contract": {
     "years": 1,
     "total": 80000
@@ -621,7 +623,7 @@
    "slot": 1,
    "stars": 4.5,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 1,
     "total": 90000
@@ -633,20 +635,21 @@
   {
    "id": "crf-15",
    "teamId": "crf",
-   "name": "Patrick Vega",
+   "name": "Kenta Sato",
    "position": "DE",
    "depth": "starter",
    "slot": 2,
    "stars": 4.0,
    "elite": false,
-   "age": 25,
+   "age": 24,
    "contract": {
     "years": 3,
     "total": 375000
    },
    "mood": "happy",
    "notes": [],
-   "number": 95
+   "number": 95,
+   "nationality": "Japan"
   },
   {
    "id": "crf-16",
@@ -657,7 +660,7 @@
    "slot": 1,
    "stars": 4.5,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 2,
     "total": 193330
@@ -675,7 +678,7 @@
    "slot": 2,
    "stars": 4.0,
    "elite": false,
-   "age": 28,
+   "age": 27,
    "contract": {
     "years": 2,
     "total": 360000
@@ -693,7 +696,7 @@
    "slot": 1,
    "stars": 4.0,
    "elite": false,
-   "age": 26,
+   "age": 25,
    "contract": {
     "years": 1,
     "total": 50000
@@ -711,7 +714,7 @@
    "slot": 2,
    "stars": 4.0,
    "elite": false,
-   "age": 25,
+   "age": 24,
    "contract": {
     "years": 3,
     "total": 360000
@@ -729,7 +732,7 @@
    "slot": 1,
    "stars": 3.5,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 1,
     "total": 50000
@@ -741,20 +744,21 @@
   {
    "id": "crf-21",
    "teamId": "crf",
-   "name": "Caleb Morrison",
+   "name": "Nolan MacDonald",
    "position": "QB",
    "depth": "backup",
    "slot": 1,
    "stars": 2.5,
    "elite": false,
-   "age": 22,
+   "age": 21,
    "contract": {
     "years": 1,
     "total": 100000
    },
    "mood": "happy",
    "notes": [],
-   "number": 12
+   "number": 12,
+   "nationality": "Canada"
   },
   {
    "id": "crf-22",
@@ -765,7 +769,7 @@
    "slot": 1,
    "stars": 3.5,
    "elite": false,
-   "age": 25,
+   "age": 24,
    "contract": {
     "years": 2,
     "total": 26670
@@ -783,7 +787,7 @@
    "slot": 2,
    "stars": 3.0,
    "elite": false,
-   "age": 26,
+   "age": 25,
    "contract": {
     "years": 2,
     "total": 150000
@@ -801,7 +805,7 @@
    "slot": 1,
    "stars": 2.5,
    "elite": false,
-   "age": 25,
+   "age": 24,
    "contract": {
     "years": 1,
     "total": 63000
@@ -819,7 +823,7 @@
    "slot": 1,
    "stars": 3.0,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 2,
     "total": 164000
@@ -837,7 +841,7 @@
    "slot": 1,
    "stars": 3.0,
    "elite": false,
-   "age": 26,
+   "age": 25,
    "contract": {
     "years": 1,
     "total": 88000
@@ -855,7 +859,7 @@
    "slot": 1,
    "stars": 2.0,
    "elite": false,
-   "age": 23,
+   "age": 22,
    "contract": {
     "years": 3,
     "total": 156000
@@ -873,7 +877,7 @@
    "slot": 2,
    "stars": 2.5,
    "elite": false,
-   "age": 25,
+   "age": 24,
    "contract": {
     "years": 2,
     "total": 122000
@@ -891,7 +895,7 @@
    "slot": 1,
    "stars": 3.0,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 1,
     "total": 90000
@@ -909,7 +913,7 @@
    "slot": 2,
    "stars": 2.5,
    "elite": false,
-   "age": 24,
+   "age": 23,
    "contract": {
     "years": 3,
     "total": 177000
@@ -927,7 +931,7 @@
    "slot": 1,
    "stars": 2.0,
    "elite": false,
-   "age": 23,
+   "age": 22,
    "contract": {
     "years": 1,
     "total": 75000
@@ -945,7 +949,7 @@
    "slot": 1,
    "stars": 2.5,
    "elite": false,
-   "age": 25,
+   "age": 24,
    "contract": {
     "years": 2,
     "total": 128000
@@ -963,7 +967,7 @@
    "slot": 2,
    "stars": 2.0,
    "elite": false,
-   "age": 23,
+   "age": 22,
    "contract": {
     "years": 3,
     "total": 153000
@@ -981,7 +985,7 @@
    "slot": 1,
    "stars": 3.0,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 2,
     "total": 182000
@@ -999,7 +1003,7 @@
    "slot": 2,
    "stars": 3.5,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 2,
     "total": 240000
@@ -1011,20 +1015,21 @@
   {
    "id": "crf-36",
    "teamId": "crf",
-   "name": "Jalen Porter",
+   "name": "Oskar Holm",
    "position": "CB",
    "depth": "backup",
    "slot": 1,
    "stars": 3.0,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 2,
     "total": 170000
    },
    "mood": "normal",
    "notes": [],
-   "number": 23
+   "number": 23,
+   "nationality": "Sweden"
   },
   {
    "id": "crf-37",
@@ -1035,7 +1040,7 @@
    "slot": 2,
    "stars": 2.5,
    "elite": false,
-   "age": 24,
+   "age": 23,
    "contract": {
     "years": 3,
     "total": 171000
@@ -1053,7 +1058,7 @@
    "slot": 1,
    "stars": 2.0,
    "elite": false,
-   "age": 23,
+   "age": 22,
    "contract": {
     "years": 2,
     "total": 100000
@@ -1071,7 +1076,7 @@
    "slot": 1,
    "stars": 2.5,
    "elite": false,
-   "age": 25,
+   "age": 24,
    "contract": {
     "years": 3,
     "total": 186000
@@ -1089,7 +1094,7 @@
    "slot": 1,
    "stars": 3.5,
    "elite": false,
-   "age": 26,
+   "age": 25,
    "contract": {
     "years": 1,
     "total": 80000
@@ -1107,7 +1112,7 @@
    "slot": 1,
    "stars": 4.0,
    "elite": false,
-   "age": 26,
+   "age": 25,
    "contract": {
     "years": 1,
     "total": 120000
@@ -1125,7 +1130,7 @@
    "slot": 2,
    "stars": 3.5,
    "elite": false,
-   "age": 26,
+   "age": 25,
    "contract": {
     "years": 1,
     "total": 65000
@@ -1143,7 +1148,7 @@
    "slot": 1,
    "stars": 3.0,
    "elite": false,
-   "age": 28,
+   "age": 27,
    "contract": {
     "years": 2,
     "total": 133330
@@ -1161,7 +1166,7 @@
    "slot": 1,
    "stars": 4.0,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 2,
     "total": 160000
@@ -1179,7 +1184,7 @@
    "slot": 1,
    "stars": 3.5,
    "elite": false,
-   "age": 26,
+   "age": 25,
    "contract": {
     "years": 1,
     "total": 60000
@@ -1197,7 +1202,7 @@
    "slot": 1,
    "stars": 3.5,
    "elite": false,
-   "age": 26,
+   "age": 25,
    "contract": {
     "years": 1,
     "total": 70000
@@ -1215,7 +1220,7 @@
    "slot": 2,
    "stars": 3.0,
    "elite": false,
-   "age": 26,
+   "age": 25,
    "contract": {
     "years": 2,
     "total": 175000
@@ -1233,7 +1238,7 @@
    "slot": 1,
    "stars": 3.0,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 2,
     "total": 178000
@@ -1251,7 +1256,7 @@
    "slot": 2,
    "stars": 4.0,
    "elite": false,
-   "age": 26,
+   "age": 25,
    "contract": {
     "years": 2,
     "total": 173330
@@ -1269,7 +1274,7 @@
    "slot": 1,
    "stars": 4.0,
    "elite": false,
-   "age": 26,
+   "age": 25,
    "contract": {
     "years": 2,
     "total": 290000
@@ -1287,7 +1292,7 @@
    "slot": 1,
    "stars": 3.5,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 1,
     "total": 65000
@@ -1305,7 +1310,7 @@
    "slot": 2,
    "stars": 3.0,
    "elite": false,
-   "age": 26,
+   "age": 25,
    "contract": {
     "years": 2,
     "total": 170000
@@ -1323,7 +1328,7 @@
    "slot": 1,
    "stars": 3.0,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 2,
     "total": 190000
@@ -1341,7 +1346,7 @@
    "slot": 2,
    "stars": 3.5,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 1,
     "total": 75000
@@ -1359,7 +1364,7 @@
    "slot": 1,
    "stars": 4.0,
    "elite": false,
-   "age": 26,
+   "age": 25,
    "contract": {
     "years": 2,
     "total": 186670
@@ -1377,7 +1382,7 @@
    "slot": 2,
    "stars": 4.0,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 1,
     "total": 55000
@@ -1395,7 +1400,7 @@
    "slot": 1,
    "stars": 4.0,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 2,
     "total": 200000
@@ -1413,7 +1418,7 @@
    "slot": 2,
    "stars": 3.5,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 2,
     "total": 173330
@@ -1431,7 +1436,7 @@
    "slot": 1,
    "stars": 3.5,
    "elite": false,
-   "age": 26,
+   "age": 25,
    "contract": {
     "years": 1,
     "total": 55000
@@ -1449,7 +1454,7 @@
    "slot": 1,
    "stars": 2.5,
    "elite": false,
-   "age": 26,
+   "age": 25,
    "contract": {
     "years": 2,
     "total": 168000
@@ -1467,7 +1472,7 @@
    "slot": 1,
    "stars": 3.0,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 2,
     "total": 184000
@@ -1485,7 +1490,7 @@
    "slot": 2,
    "stars": 2.0,
    "elite": false,
-   "age": 23,
+   "age": 22,
    "contract": {
     "years": 3,
     "total": 156000
@@ -1503,7 +1508,7 @@
    "slot": 1,
    "stars": 2.5,
    "elite": false,
-   "age": 25,
+   "age": 24,
    "contract": {
     "years": 2,
     "total": 132000
@@ -1521,7 +1526,7 @@
    "slot": 1,
    "stars": 3.0,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 1,
     "total": 94000
@@ -1539,7 +1544,7 @@
    "slot": 1,
    "stars": 2.5,
    "elite": false,
-   "age": 26,
+   "age": 25,
    "contract": {
     "years": 2,
     "total": 150000
@@ -1557,7 +1562,7 @@
    "slot": 1,
    "stars": 2.0,
    "elite": false,
-   "age": 24,
+   "age": 23,
    "contract": {
     "years": 3,
     "total": 159000
@@ -1575,7 +1580,7 @@
    "slot": 1,
    "stars": 2.5,
    "elite": false,
-   "age": 25,
+   "age": 24,
    "contract": {
     "years": 3,
     "total": 186000
@@ -1587,20 +1592,21 @@
   {
    "id": "drf-29",
    "teamId": "drf",
-   "name": "Bryce Harrington",
+   "name": "Moritz Schneider",
    "position": "OT",
    "depth": "backup",
    "slot": 2,
    "stars": 3.0,
    "elite": false,
-   "age": 24,
+   "age": 23,
    "contract": {
     "years": 2,
     "total": 155000
    },
    "mood": "happy",
    "notes": [],
-   "number": 75
+   "number": 75,
+   "nationality": "Germany"
   },
   {
    "id": "drf-30",
@@ -1611,7 +1617,7 @@
    "slot": 1,
    "stars": 3.5,
    "elite": false,
-   "age": 26,
+   "age": 25,
    "contract": {
     "years": 2,
     "total": 233330
@@ -1629,7 +1635,7 @@
    "slot": 1,
    "stars": 2.0,
    "elite": false,
-   "age": 23,
+   "age": 22,
    "contract": {
     "years": 3,
     "total": 153000
@@ -1647,7 +1653,7 @@
    "slot": 1,
    "stars": 2.5,
    "elite": false,
-   "age": 25,
+   "age": 24,
    "contract": {
     "years": 2,
     "total": 138000
@@ -1665,7 +1671,7 @@
    "slot": 1,
    "stars": 2.0,
    "elite": false,
-   "age": 24,
+   "age": 23,
    "contract": {
     "years": 3,
     "total": 162000
@@ -1683,7 +1689,7 @@
    "slot": 2,
    "stars": 2.5,
    "elite": false,
-   "age": 25,
+   "age": 24,
    "contract": {
     "years": 3,
     "total": 177000
@@ -1701,7 +1707,7 @@
    "slot": 1,
    "stars": 2.0,
    "elite": false,
-   "age": 23,
+   "age": 22,
    "contract": {
     "years": 3,
     "total": 150000
@@ -1719,7 +1725,7 @@
    "slot": 1,
    "stars": 3.5,
    "elite": false,
-   "age": 28,
+   "age": 27,
    "contract": {
     "years": 2,
     "total": 160000
@@ -1737,7 +1743,7 @@
    "slot": 1,
    "stars": 4.0,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 1,
     "total": 55000
@@ -1755,7 +1761,7 @@
    "slot": 2,
    "stars": 5.0,
    "elite": true,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 2,
     "total": 273330
@@ -1773,7 +1779,7 @@
    "slot": 1,
    "stars": 4.0,
    "elite": false,
-   "age": 28,
+   "age": 27,
    "contract": {
     "years": 2,
     "total": 120000
@@ -1791,7 +1797,7 @@
    "slot": 1,
    "stars": 4.0,
    "elite": false,
-   "age": 28,
+   "age": 27,
    "contract": {
     "years": 2,
     "total": 126670
@@ -1809,7 +1815,7 @@
    "slot": 1,
    "stars": 5.0,
    "elite": true,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 2,
     "total": 300000
@@ -1827,7 +1833,7 @@
    "slot": 1,
    "stars": 3.0,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 2,
     "total": 180000
@@ -1845,7 +1851,7 @@
    "slot": 2,
    "stars": 5.0,
    "elite": true,
-   "age": 28,
+   "age": 27,
    "contract": {
     "years": 2,
     "total": 206670
@@ -1863,7 +1869,7 @@
    "slot": 1,
    "stars": 5.0,
    "elite": true,
-   "age": 28,
+   "age": 27,
    "contract": {
     "years": 2,
     "total": 616670
@@ -1881,7 +1887,7 @@
    "slot": 2,
    "stars": 4.0,
    "elite": false,
-   "age": 26,
+   "age": 25,
    "contract": {
     "years": 1,
     "total": 45000
@@ -1899,7 +1905,7 @@
    "slot": 1,
    "stars": 3.5,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 1,
     "total": 40000
@@ -1917,7 +1923,7 @@
    "slot": 1,
    "stars": 3.0,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 2,
     "total": 184000
@@ -1929,20 +1935,21 @@
   {
    "id": "ddc-13",
    "teamId": "ddc",
-   "name": "Cameron Holt",
+   "name": "Santiago Villanueva",
    "position": "DT",
    "depth": "starter",
    "slot": 2,
    "stars": 3.5,
    "elite": false,
-   "age": 26,
+   "age": 25,
    "contract": {
     "years": 1,
     "total": 65000
    },
    "mood": "normal",
    "notes": [],
-   "number": 96
+   "number": 96,
+   "nationality": "Mexico"
   },
   {
    "id": "ddc-14",
@@ -1953,7 +1960,7 @@
    "slot": 1,
    "stars": 4.0,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 1,
     "total": 95000
@@ -1971,7 +1978,7 @@
    "slot": 2,
    "stars": 3.5,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 1,
     "total": 65000
@@ -1989,7 +1996,7 @@
    "slot": 1,
    "stars": 4.5,
    "elite": false,
-   "age": 28,
+   "age": 27,
    "contract": {
     "years": 2,
     "total": 233330
@@ -2007,7 +2014,7 @@
    "slot": 2,
    "stars": 4.0,
    "elite": false,
-   "age": 26,
+   "age": 25,
    "contract": {
     "years": 2,
     "total": 446670
@@ -2025,7 +2032,7 @@
    "slot": 1,
    "stars": 5.0,
    "elite": true,
-   "age": 28,
+   "age": 27,
    "contract": {
     "years": 2,
     "total": 280000
@@ -2043,7 +2050,7 @@
    "slot": 2,
    "stars": 3.5,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 1,
     "total": 55000
@@ -2061,7 +2068,7 @@
    "slot": 1,
    "stars": 5.0,
    "elite": true,
-   "age": 28,
+   "age": 27,
    "contract": {
     "years": 2,
     "total": 200000
@@ -2079,7 +2086,7 @@
    "slot": 1,
    "stars": 3.0,
    "elite": false,
-   "age": 22,
+   "age": 21,
    "contract": {
     "years": 2,
     "total": 130000
@@ -2097,7 +2104,7 @@
    "slot": 1,
    "stars": 3.0,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 2,
     "total": 186000
@@ -2115,7 +2122,7 @@
    "slot": 2,
    "stars": 2.0,
    "elite": false,
-   "age": 23,
+   "age": 22,
    "contract": {
     "years": 3,
     "total": 153000
@@ -2133,7 +2140,7 @@
    "slot": 1,
    "stars": 2.5,
    "elite": false,
-   "age": 25,
+   "age": 24,
    "contract": {
     "years": 2,
     "total": 138000
@@ -2151,7 +2158,7 @@
    "slot": 1,
    "stars": 2.0,
    "elite": false,
-   "age": 25,
+   "age": 24,
    "contract": {
     "years": 1,
     "total": 90000
@@ -2169,7 +2176,7 @@
    "slot": 1,
    "stars": 2.5,
    "elite": false,
-   "age": 26,
+   "age": 25,
    "contract": {
     "years": 2,
     "total": 148000
@@ -2187,7 +2194,7 @@
    "slot": 1,
    "stars": 2.0,
    "elite": false,
-   "age": 24,
+   "age": 23,
    "contract": {
     "years": 3,
     "total": 156000
@@ -2205,7 +2212,7 @@
    "slot": 1,
    "stars": 2.5,
    "elite": false,
-   "age": 25,
+   "age": 24,
    "contract": {
     "years": 3,
     "total": 174000
@@ -2223,7 +2230,7 @@
    "slot": 1,
    "stars": 2.5,
    "elite": false,
-   "age": 26,
+   "age": 25,
    "contract": {
     "years": 2,
     "total": 146000
@@ -2241,7 +2248,7 @@
    "slot": 1,
    "stars": 2.0,
    "elite": false,
-   "age": 23,
+   "age": 22,
    "contract": {
     "years": 3,
     "total": 150000
@@ -2253,20 +2260,21 @@
   {
    "id": "ddc-31",
    "teamId": "ddc",
-   "name": "Ryan Vargas",
+   "name": "Diego Castañeda",
    "position": "DT",
    "depth": "backup",
    "slot": 2,
    "stars": 3.0,
    "elite": false,
-   "age": 25,
+   "age": 24,
    "contract": {
     "years": 2,
     "total": 165000
    },
    "mood": "happy",
    "notes": [],
-   "number": 93
+   "number": 93,
+   "nationality": "Mexico"
   },
   {
    "id": "ddc-32",
@@ -2277,7 +2285,7 @@
    "slot": 1,
    "stars": 2.5,
    "elite": false,
-   "age": 25,
+   "age": 24,
    "contract": {
     "years": 3,
     "total": 171000
@@ -2295,7 +2303,7 @@
    "slot": 1,
    "stars": 2.0,
    "elite": false,
-   "age": 24,
+   "age": 23,
    "contract": {
     "years": 3,
     "total": 159000
@@ -2313,7 +2321,7 @@
    "slot": 2,
    "stars": 2.5,
    "elite": false,
-   "age": 26,
+   "age": 25,
    "contract": {
     "years": 2,
     "total": 140000
@@ -2331,7 +2339,7 @@
    "slot": 1,
    "stars": 3.0,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 2,
     "total": 188000
@@ -2349,7 +2357,7 @@
    "slot": 2,
    "stars": 2.5,
    "elite": false,
-   "age": 25,
+   "age": 24,
    "contract": {
     "years": 3,
     "total": 177000
@@ -2367,7 +2375,7 @@
    "slot": 1,
    "stars": 2.0,
    "elite": false,
-   "age": 23,
+   "age": 22,
    "contract": {
     "years": 3,
     "total": 152000
@@ -2385,7 +2393,7 @@
    "slot": 1,
    "stars": 3.5,
    "elite": false,
-   "age": 26,
+   "age": 25,
    "contract": {
     "years": 1,
     "total": 60000
@@ -2403,7 +2411,7 @@
    "slot": 1,
    "stars": 3.5,
    "elite": false,
-   "age": 26,
+   "age": 25,
    "contract": {
     "years": 1,
     "total": 55000
@@ -2421,7 +2429,7 @@
    "slot": 2,
    "stars": 3.0,
    "elite": false,
-   "age": 26,
+   "age": 25,
    "contract": {
     "years": 1,
     "total": 120000
@@ -2439,7 +2447,7 @@
    "slot": 1,
    "stars": 3.5,
    "elite": false,
-   "age": 26,
+   "age": 25,
    "contract": {
     "years": 1,
     "total": 85000
@@ -2457,7 +2465,7 @@
    "slot": 1,
    "stars": 3.0,
    "elite": false,
-   "age": 26,
+   "age": 25,
    "contract": {
     "years": 2,
     "total": 150000
@@ -2475,7 +2483,7 @@
    "slot": 1,
    "stars": 3.5,
    "elite": false,
-   "age": 26,
+   "age": 25,
    "contract": {
     "years": 1,
     "total": 60000
@@ -2493,7 +2501,7 @@
    "slot": 1,
    "stars": 4.0,
    "elite": false,
-   "age": 26,
+   "age": 25,
    "contract": {
     "years": 3,
     "total": 310000
@@ -2511,7 +2519,7 @@
    "slot": 2,
    "stars": 4.0,
    "elite": false,
-   "age": 28,
+   "age": 27,
    "contract": {
     "years": 2,
     "total": 173330
@@ -2529,7 +2537,7 @@
    "slot": 1,
    "stars": 3.5,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 1,
     "total": 70000
@@ -2547,7 +2555,7 @@
    "slot": 2,
    "stars": 3.0,
    "elite": false,
-   "age": 26,
+   "age": 25,
    "contract": {
     "years": 1,
     "total": 105000
@@ -2565,7 +2573,7 @@
    "slot": 1,
    "stars": 4.0,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 2,
     "total": 213330
@@ -2583,7 +2591,7 @@
    "slot": 1,
    "stars": 4.0,
    "elite": false,
-   "age": 28,
+   "age": 27,
    "contract": {
     "years": 2,
     "total": 200000
@@ -2601,7 +2609,7 @@
    "slot": 2,
    "stars": 3.0,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 2,
     "total": 180000
@@ -2619,7 +2627,7 @@
    "slot": 1,
    "stars": 4.5,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 2,
     "total": 800000
@@ -2637,7 +2645,7 @@
    "slot": 2,
    "stars": 3.5,
    "elite": false,
-   "age": 28,
+   "age": 27,
    "contract": {
     "years": 1,
     "total": 130000
@@ -2655,7 +2663,7 @@
    "slot": 1,
    "stars": 4.0,
    "elite": false,
-   "age": 26,
+   "age": 25,
    "contract": {
     "years": 1,
     "total": 65000
@@ -2673,7 +2681,7 @@
    "slot": 2,
    "stars": 4.0,
    "elite": false,
-   "age": 22,
+   "age": 21,
    "contract": {
     "years": 3,
     "total": 200000
@@ -2691,7 +2699,7 @@
    "slot": 1,
    "stars": 3.0,
    "elite": false,
-   "age": 26,
+   "age": 25,
    "contract": {
     "years": 1,
     "total": 75000
@@ -2709,7 +2717,7 @@
    "slot": 2,
    "stars": 3.0,
    "elite": false,
-   "age": 28,
+   "age": 27,
    "contract": {
     "years": 1,
     "total": 90000
@@ -2727,7 +2735,7 @@
    "slot": 1,
    "stars": 3.0,
    "elite": false,
-   "age": 26,
+   "age": 25,
    "contract": {
     "years": 1,
     "total": 55000
@@ -2745,7 +2753,7 @@
    "slot": 1,
    "stars": 2.5,
    "elite": false,
-   "age": 26,
+   "age": 25,
    "contract": {
     "years": 2,
     "total": 166000
@@ -2763,7 +2771,7 @@
    "slot": 1,
    "stars": 3.0,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 2,
     "total": 188000
@@ -2781,7 +2789,7 @@
    "slot": 2,
    "stars": 3.0,
    "elite": false,
-   "age": 25,
+   "age": 24,
    "contract": {
     "years": 2,
     "total": 145000
@@ -2799,7 +2807,7 @@
    "slot": 1,
    "stars": 2.0,
    "elite": false,
-   "age": 23,
+   "age": 22,
    "contract": {
     "years": 3,
     "total": 153000
@@ -2817,7 +2825,7 @@
    "slot": 1,
    "stars": 2.5,
    "elite": false,
-   "age": 26,
+   "age": 25,
    "contract": {
     "years": 2,
     "total": 152000
@@ -2835,7 +2843,7 @@
    "slot": 1,
    "stars": 2.0,
    "elite": false,
-   "age": 24,
+   "age": 23,
    "contract": {
     "years": 3,
     "total": 159000
@@ -2853,7 +2861,7 @@
    "slot": 2,
    "stars": 3.0,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 2,
     "total": 182000
@@ -2871,7 +2879,7 @@
    "slot": 1,
    "stars": 2.5,
    "elite": false,
-   "age": 25,
+   "age": 24,
    "contract": {
     "years": 2,
     "total": 136000
@@ -2889,7 +2897,7 @@
    "slot": 2,
    "stars": 3.0,
    "elite": false,
-   "age": 28,
+   "age": 27,
    "contract": {
     "years": 1,
     "total": 99000
@@ -2907,7 +2915,7 @@
    "slot": 1,
    "stars": 2.5,
    "elite": false,
-   "age": 26,
+   "age": 25,
    "contract": {
     "years": 2,
     "total": 148000
@@ -2925,7 +2933,7 @@
    "slot": 1,
    "stars": 2.0,
    "elite": false,
-   "age": 23,
+   "age": 22,
    "contract": {
     "years": 3,
     "total": 150000
@@ -2943,7 +2951,7 @@
    "slot": 1,
    "stars": 2.5,
    "elite": false,
-   "age": 25,
+   "age": 24,
    "contract": {
     "years": 3,
     "total": 171000
@@ -2961,7 +2969,7 @@
    "slot": 2,
    "stars": 2.5,
    "elite": false,
-   "age": 26,
+   "age": 25,
    "contract": {
     "years": 1,
     "total": 85000
@@ -2979,7 +2987,7 @@
    "slot": 1,
    "stars": 2.0,
    "elite": false,
-   "age": 24,
+   "age": 23,
    "contract": {
     "years": 3,
     "total": 156000
@@ -2997,7 +3005,7 @@
    "slot": 2,
    "stars": 2.5,
    "elite": false,
-   "age": 26,
+   "age": 25,
    "contract": {
     "years": 2,
     "total": 142000
@@ -3015,7 +3023,7 @@
    "slot": 1,
    "stars": 3.0,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 2,
     "total": 186000
@@ -3033,7 +3041,7 @@
    "slot": 2,
    "stars": 3.0,
    "elite": false,
-   "age": 22,
+   "age": 21,
    "contract": {
     "years": 2,
     "total": 130000
@@ -3051,7 +3059,7 @@
    "slot": 1,
    "stars": 2.0,
    "elite": false,
-   "age": 23,
+   "age": 22,
    "contract": {
     "years": 3,
     "total": 151000
@@ -3069,7 +3077,7 @@
    "slot": 1,
    "stars": 3.5,
    "elite": false,
-   "age": 28,
+   "age": 27,
    "contract": {
     "years": 1,
     "total": 50000
@@ -3087,7 +3095,7 @@
    "slot": 1,
    "stars": 4.0,
    "elite": false,
-   "age": 28,
+   "age": 27,
    "contract": {
     "years": 1,
     "total": 265000
@@ -3105,7 +3113,7 @@
    "slot": 2,
    "stars": 4.0,
    "elite": false,
-   "age": 22,
+   "age": 21,
    "contract": {
     "years": 3,
     "total": 195000
@@ -3123,7 +3131,7 @@
    "slot": 1,
    "stars": 4.0,
    "elite": false,
-   "age": 28,
+   "age": 27,
    "contract": {
     "years": 2,
     "total": 93330
@@ -3141,7 +3149,7 @@
    "slot": 1,
    "stars": 4.0,
    "elite": false,
-   "age": 25,
+   "age": 24,
    "contract": {
     "years": 3,
     "total": 325000
@@ -3159,7 +3167,7 @@
    "slot": 1,
    "stars": 4.5,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 3,
     "total": 675000
@@ -3177,7 +3185,7 @@
    "slot": 1,
    "stars": 3.5,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 1,
     "total": 105000
@@ -3195,7 +3203,7 @@
    "slot": 2,
    "stars": 3.0,
    "elite": false,
-   "age": 26,
+   "age": 25,
    "contract": {
     "years": 2,
     "total": 33330
@@ -3213,7 +3221,7 @@
    "slot": 1,
    "stars": 3.5,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 2,
     "total": 53330
@@ -3231,7 +3239,7 @@
    "slot": 2,
    "stars": 4.5,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 1,
     "total": 237500
@@ -3249,7 +3257,7 @@
    "slot": 1,
    "stars": 5.0,
    "elite": true,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 2,
     "total": 240000
@@ -3267,7 +3275,7 @@
    "slot": 1,
    "stars": 3.5,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 1,
     "total": 35000
@@ -3285,7 +3293,7 @@
    "slot": 2,
    "stars": 4.0,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 2,
     "total": 33330
@@ -3303,7 +3311,7 @@
    "slot": 1,
    "stars": 3.5,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 1,
     "total": 30000
@@ -3315,20 +3323,21 @@
   {
    "id": "edc-15",
    "teamId": "edc",
-   "name": "Christopher Adams",
+   "name": "Lukas Vogel",
    "position": "DE",
    "depth": "starter",
    "slot": 2,
    "stars": 4.0,
    "elite": false,
-   "age": 28,
+   "age": 27,
    "contract": {
     "years": 2,
     "total": 300000
    },
    "mood": "happy",
    "notes": [],
-   "number": 59
+   "number": 59,
+   "nationality": "Germany"
   },
   {
    "id": "edc-16",
@@ -3339,7 +3348,7 @@
    "slot": 1,
    "stars": 4.5,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 1,
     "total": 270000
@@ -3357,7 +3366,7 @@
    "slot": 2,
    "stars": 5.0,
    "elite": true,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 1,
     "total": 105000
@@ -3375,7 +3384,7 @@
    "slot": 1,
    "stars": 4.0,
    "elite": false,
-   "age": 28,
+   "age": 27,
    "contract": {
     "years": 2,
     "total": 220000
@@ -3393,7 +3402,7 @@
    "slot": 2,
    "stars": 4.5,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 1,
     "total": 300000
@@ -3411,7 +3420,7 @@
    "slot": 1,
    "stars": 5.0,
    "elite": true,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 2,
     "total": 146670
@@ -3429,7 +3438,7 @@
    "slot": 1,
    "stars": 2.5,
    "elite": false,
-   "age": 26,
+   "age": 25,
    "contract": {
     "years": 2,
     "total": 166000
@@ -3441,20 +3450,21 @@
   {
    "id": "edc-22",
    "teamId": "edc",
-   "name": "Jalen Cross",
+   "name": "Trey Pruitt",
    "position": "WR",
    "depth": "backup",
    "slot": 1,
    "stars": 3.0,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 2,
     "total": 184000
    },
    "mood": "normal",
    "notes": [],
-   "number": 18
+   "number": 18,
+   "nationality": "USA"
   },
   {
    "id": "edc-23",
@@ -3465,7 +3475,7 @@
    "slot": 2,
    "stars": 3.0,
    "elite": false,
-   "age": 28,
+   "age": 27,
    "contract": {
     "years": 1,
     "total": 25000
@@ -3483,7 +3493,7 @@
    "slot": 1,
    "stars": 2.5,
    "elite": false,
-   "age": 25,
+   "age": 24,
    "contract": {
     "years": 2,
     "total": 136000
@@ -3501,7 +3511,7 @@
    "slot": 1,
    "stars": 2.5,
    "elite": false,
-   "age": 26,
+   "age": 25,
    "contract": {
     "years": 2,
     "total": 150000
@@ -3519,7 +3529,7 @@
    "slot": 1,
    "stars": 3.0,
    "elite": false,
-   "age": 24,
+   "age": 23,
    "contract": {
     "years": 2,
     "total": 150000
@@ -3537,7 +3547,7 @@
    "slot": 2,
    "stars": 3.0,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 2,
     "total": 182000
@@ -3555,7 +3565,7 @@
    "slot": 1,
    "stars": 2.5,
    "elite": false,
-   "age": 25,
+   "age": 24,
    "contract": {
     "years": 3,
     "total": 174000
@@ -3567,20 +3577,21 @@
   {
    "id": "edc-29",
    "teamId": "edc",
-   "name": "Malik Sterling",
+   "name": "Théo Lefebvre",
    "position": "DL",
    "depth": "backup",
    "slot": 1,
    "stars": 2.5,
    "elite": false,
-   "age": 26,
+   "age": 25,
    "contract": {
     "years": 2,
     "total": 148000
    },
    "mood": "normal",
    "notes": [],
-   "number": 58
+   "number": 58,
+   "nationality": "France"
   },
   {
    "id": "edc-30",
@@ -3591,7 +3602,7 @@
    "slot": 1,
    "stars": 2.0,
    "elite": false,
-   "age": 23,
+   "age": 22,
    "contract": {
     "years": 3,
     "total": 150000
@@ -3609,7 +3620,7 @@
    "slot": 2,
    "stars": 3.0,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 2,
     "total": 186000
@@ -3627,7 +3638,7 @@
    "slot": 1,
    "stars": 2.5,
    "elite": false,
-   "age": 25,
+   "age": 24,
    "contract": {
     "years": 3,
     "total": 171000
@@ -3645,7 +3656,7 @@
    "slot": 1,
    "stars": 2.0,
    "elite": false,
-   "age": 24,
+   "age": 23,
    "contract": {
     "years": 3,
     "total": 159000
@@ -3663,7 +3674,7 @@
    "slot": 2,
    "stars": 2.5,
    "elite": false,
-   "age": 26,
+   "age": 25,
    "contract": {
     "years": 2,
     "total": 142000
@@ -3681,7 +3692,7 @@
    "slot": 1,
    "stars": 3.0,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 2,
     "total": 188000
@@ -3699,7 +3710,7 @@
    "slot": 2,
    "stars": 2.5,
    "elite": false,
-   "age": 25,
+   "age": 24,
    "contract": {
     "years": 3,
     "total": 177000
@@ -3717,7 +3728,7 @@
    "slot": 1,
    "stars": 2.0,
    "elite": false,
-   "age": 23,
+   "age": 22,
    "contract": {
     "years": 3,
     "total": 152000
@@ -3735,7 +3746,7 @@
    "slot": 1,
    "stars": 4.5,
    "elite": false,
-   "age": 28,
+   "age": 27,
    "contract": {
     "years": 2,
     "total": 233330
@@ -3753,7 +3764,7 @@
    "slot": 1,
    "stars": 3.5,
    "elite": false,
-   "age": 26,
+   "age": 25,
    "contract": {
     "years": 1,
     "total": 70000
@@ -3771,7 +3782,7 @@
    "slot": 2,
    "stars": 4.5,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 2,
     "total": 266670
@@ -3807,7 +3818,7 @@
    "slot": 1,
    "stars": 4.5,
    "elite": false,
-   "age": 28,
+   "age": 27,
    "contract": {
     "years": 2,
     "total": 133330
@@ -3825,7 +3836,7 @@
    "slot": 1,
    "stars": 3.5,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 1,
     "total": 60000
@@ -3843,7 +3854,7 @@
    "slot": 1,
    "stars": 3.0,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 1,
     "total": 40000
@@ -3861,7 +3872,7 @@
    "slot": 2,
    "stars": 3.0,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 2,
     "total": 184000
@@ -3879,7 +3890,7 @@
    "slot": 1,
    "stars": 3.5,
    "elite": false,
-   "age": 26,
+   "age": 25,
    "contract": {
     "years": 1,
     "total": 80000
@@ -3897,7 +3908,7 @@
    "slot": 2,
    "stars": 5.0,
    "elite": true,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 2,
     "total": 346670
@@ -3915,7 +3926,7 @@
    "slot": 1,
    "stars": 4.5,
    "elite": false,
-   "age": 28,
+   "age": 27,
    "contract": {
     "years": 2,
     "total": 233330
@@ -3933,7 +3944,7 @@
    "slot": 1,
    "stars": 4.0,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 1,
     "total": 95000
@@ -3951,7 +3962,7 @@
    "slot": 2,
    "stars": 4.0,
    "elite": false,
-   "age": 28,
+   "age": 27,
    "contract": {
     "years": 2,
     "total": 146670
@@ -3969,7 +3980,7 @@
    "slot": 1,
    "stars": 5.0,
    "elite": true,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 2,
     "total": 433330
@@ -3987,7 +3998,7 @@
    "slot": 2,
    "stars": 4.5,
    "elite": false,
-   "age": 28,
+   "age": 27,
    "contract": {
     "years": 2,
     "total": 300000
@@ -4023,7 +4034,7 @@
    "slot": 2,
    "stars": 4.0,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 1,
     "total": 70000
@@ -4041,7 +4052,7 @@
    "slot": 1,
    "stars": 4.5,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 2,
     "total": 260000
@@ -4059,7 +4070,7 @@
    "slot": 2,
    "stars": 4.0,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 2,
     "total": 160000
@@ -4077,7 +4088,7 @@
    "slot": 1,
    "stars": 3.5,
    "elite": false,
-   "age": 28,
+   "age": 27,
    "contract": {
     "years": 1,
     "total": 55000
@@ -4095,7 +4106,7 @@
    "slot": 1,
    "stars": 2.5,
    "elite": false,
-   "age": 26,
+   "age": 25,
    "contract": {
     "years": 2,
     "total": 168000
@@ -4113,7 +4124,7 @@
    "slot": 1,
    "stars": 3.0,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 2,
     "total": 186000
@@ -4131,7 +4142,7 @@
    "slot": 2,
    "stars": 2.0,
    "elite": false,
-   "age": 23,
+   "age": 22,
    "contract": {
     "years": 3,
     "total": 153000
@@ -4149,7 +4160,7 @@
    "slot": 1,
    "stars": 2.5,
    "elite": false,
-   "age": 25,
+   "age": 24,
    "contract": {
     "years": 2,
     "total": 138000
@@ -4169,7 +4180,7 @@
    "slot": 1,
    "stars": 3.5,
    "elite": false,
-   "age": 22,
+   "age": 21,
    "contract": {
     "years": 3,
     "total": 170000
@@ -4187,7 +4198,7 @@
    "slot": 1,
    "stars": 2.0,
    "elite": false,
-   "age": 24,
+   "age": 23,
    "contract": {
     "years": 3,
     "total": 156000
@@ -4205,7 +4216,7 @@
    "slot": 1,
    "stars": 2.5,
    "elite": false,
-   "age": 22,
+   "age": 21,
    "contract": {
     "years": 2,
     "total": 105000
@@ -4223,7 +4234,7 @@
    "slot": 1,
    "stars": 2.5,
    "elite": false,
-   "age": 26,
+   "age": 25,
    "contract": {
     "years": 2,
     "total": 148000
@@ -4241,7 +4252,7 @@
    "slot": 1,
    "stars": 2.0,
    "elite": false,
-   "age": 23,
+   "age": 22,
    "contract": {
     "years": 3,
     "total": 150000
@@ -4259,7 +4270,7 @@
    "slot": 2,
    "stars": 3.0,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 2,
     "total": 188000
@@ -4277,7 +4288,7 @@
    "slot": 1,
    "stars": 2.5,
    "elite": false,
-   "age": 25,
+   "age": 24,
    "contract": {
     "years": 3,
     "total": 171000
@@ -4295,7 +4306,7 @@
    "slot": 1,
    "stars": 2.0,
    "elite": false,
-   "age": 24,
+   "age": 23,
    "contract": {
     "years": 3,
     "total": 159000
@@ -4313,7 +4324,7 @@
    "slot": 2,
    "stars": 2.5,
    "elite": false,
-   "age": 26,
+   "age": 25,
    "contract": {
     "years": 2,
     "total": 142000
@@ -4333,7 +4344,7 @@
    "slot": 1,
    "stars": 3.0,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 2,
     "total": 190000
@@ -4351,7 +4362,7 @@
    "slot": 2,
    "stars": 2.5,
    "elite": false,
-   "age": 25,
+   "age": 24,
    "contract": {
     "years": 3,
     "total": 177000
@@ -4369,7 +4380,7 @@
    "slot": 1,
    "stars": 3.0,
    "elite": false,
-   "age": 24,
+   "age": 23,
    "contract": {
     "years": 2,
     "total": 150000
@@ -4387,7 +4398,7 @@
    "slot": 1,
    "stars": 4.0,
    "elite": false,
-   "age": 24,
+   "age": 23,
    "contract": {
     "years": 3,
     "total": 425000
@@ -4405,7 +4416,7 @@
    "slot": 1,
    "stars": 4.0,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 2,
     "total": 200000
@@ -4423,7 +4434,7 @@
    "slot": 2,
    "stars": 4.0,
    "elite": false,
-   "age": 24,
+   "age": 23,
    "contract": {
     "years": 3,
     "total": 400000
@@ -4441,7 +4452,7 @@
    "slot": 1,
    "stars": 3.0,
    "elite": false,
-   "age": 26,
+   "age": 25,
    "contract": {
     "years": 2,
     "total": 165000
@@ -4459,7 +4470,7 @@
    "slot": 1,
    "stars": 3.5,
    "elite": false,
-   "age": 25,
+   "age": 24,
    "contract": {
     "years": 1,
     "total": 130000
@@ -4477,7 +4488,7 @@
    "slot": 1,
    "stars": 3.5,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 2,
     "total": 166670
@@ -4495,7 +4506,7 @@
    "slot": 1,
    "stars": 5.0,
    "elite": true,
-   "age": 28,
+   "age": 27,
    "contract": {
     "years": 2,
     "total": 233330
@@ -4513,7 +4524,7 @@
    "slot": 2,
    "stars": 3.5,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 1,
     "total": 55000
@@ -4531,7 +4542,7 @@
    "slot": 1,
    "stars": 5.0,
    "elite": true,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 2,
     "total": 320000
@@ -4549,7 +4560,7 @@
    "slot": 2,
    "stars": 5.0,
    "elite": true,
-   "age": 28,
+   "age": 27,
    "contract": {
     "years": 2,
     "total": 333330
@@ -4567,7 +4578,7 @@
    "slot": 1,
    "stars": 4.0,
    "elite": false,
-   "age": 25,
+   "age": 24,
    "contract": {
     "years": 2,
     "total": 300000
@@ -4585,7 +4596,7 @@
    "slot": 1,
    "stars": 3.5,
    "elite": false,
-   "age": 22,
+   "age": 21,
    "contract": {
     "years": 3,
     "total": 185000
@@ -4603,7 +4614,7 @@
    "slot": 2,
    "stars": 3.5,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 1,
     "total": 55000
@@ -4621,7 +4632,7 @@
    "slot": 1,
    "stars": 4.0,
    "elite": false,
-   "age": 26,
+   "age": 25,
    "contract": {
     "years": 2,
     "total": 233330
@@ -4639,7 +4650,7 @@
    "slot": 2,
    "stars": 4.5,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 2,
     "total": 260000
@@ -4657,7 +4668,7 @@
    "slot": 1,
    "stars": 5.0,
    "elite": true,
-   "age": 28,
+   "age": 27,
    "contract": {
     "years": 2,
     "total": 400000
@@ -4675,7 +4686,7 @@
    "slot": 2,
    "stars": 3.5,
    "elite": false,
-   "age": 26,
+   "age": 25,
    "contract": {
     "years": 1,
     "total": 115000
@@ -4693,7 +4704,7 @@
    "slot": 1,
    "stars": 4.0,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 2,
     "total": 186670
@@ -4711,7 +4722,7 @@
    "slot": 2,
    "stars": 5.0,
    "elite": true,
-   "age": 28,
+   "age": 27,
    "contract": {
     "years": 2,
     "total": 266670
@@ -4729,7 +4740,7 @@
    "slot": 1,
    "stars": 3.5,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 1,
     "total": 65000
@@ -4747,7 +4758,7 @@
    "slot": 1,
    "stars": 3.5,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 1,
     "total": 60000
@@ -4765,7 +4776,7 @@
    "slot": 1,
    "stars": 3.0,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 2,
     "total": 188000
@@ -4783,7 +4794,7 @@
    "slot": 2,
    "stars": 3.5,
    "elite": false,
-   "age": 26,
+   "age": 25,
    "contract": {
     "years": 2,
     "total": 153330
@@ -4801,7 +4812,7 @@
    "slot": 1,
    "stars": 2.5,
    "elite": false,
-   "age": 25,
+   "age": 24,
    "contract": {
     "years": 2,
     "total": 136000
@@ -4819,7 +4830,7 @@
    "slot": 1,
    "stars": 3.0,
    "elite": false,
-   "age": 24,
+   "age": 23,
    "contract": {
     "years": 2,
     "total": 155000
@@ -4837,7 +4848,7 @@
    "slot": 1,
    "stars": 2.5,
    "elite": false,
-   "age": 26,
+   "age": 25,
    "contract": {
     "years": 2,
     "total": 150000
@@ -4855,7 +4866,7 @@
    "slot": 1,
    "stars": 2.0,
    "elite": false,
-   "age": 24,
+   "age": 23,
    "contract": {
     "years": 3,
     "total": 156000
@@ -4873,7 +4884,7 @@
    "slot": 2,
    "stars": 3.0,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 2,
     "total": 184000
@@ -4891,7 +4902,7 @@
    "slot": 1,
    "stars": 2.5,
    "elite": false,
-   "age": 25,
+   "age": 24,
    "contract": {
     "years": 3,
     "total": 174000
@@ -4909,7 +4920,7 @@
    "slot": 1,
    "stars": 2.5,
    "elite": false,
-   "age": 26,
+   "age": 25,
    "contract": {
     "years": 2,
     "total": 148000
@@ -4927,7 +4938,7 @@
    "slot": 1,
    "stars": 2.0,
    "elite": false,
-   "age": 23,
+   "age": 22,
    "contract": {
     "years": 3,
     "total": 150000
@@ -4945,7 +4956,7 @@
    "slot": 2,
    "stars": 3.0,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 2,
     "total": 186000
@@ -4963,7 +4974,7 @@
    "slot": 1,
    "stars": 2.5,
    "elite": false,
-   "age": 25,
+   "age": 24,
    "contract": {
     "years": 3,
     "total": 171000
@@ -4981,7 +4992,7 @@
    "slot": 1,
    "stars": 3.0,
    "elite": false,
-   "age": 22,
+   "age": 21,
    "contract": {
     "years": 2,
     "total": 132000
@@ -4999,7 +5010,7 @@
    "slot": 2,
    "stars": 2.5,
    "elite": false,
-   "age": 26,
+   "age": 25,
    "contract": {
     "years": 2,
     "total": 142000
@@ -5017,7 +5028,7 @@
    "slot": 1,
    "stars": 3.0,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 2,
     "total": 190000
@@ -5035,7 +5046,7 @@
    "slot": 2,
    "stars": 2.5,
    "elite": false,
-   "age": 25,
+   "age": 24,
    "contract": {
     "years": 3,
     "total": 177000
@@ -5053,7 +5064,7 @@
    "slot": 1,
    "stars": 2.0,
    "elite": false,
-   "age": 23,
+   "age": 22,
    "contract": {
     "years": 3,
     "total": 152000
@@ -5071,7 +5082,7 @@
    "slot": 1,
    "stars": 3.5,
    "elite": false,
-   "age": 28,
+   "age": 27,
    "contract": {
     "years": 1,
     "total": 45000
@@ -5089,7 +5100,7 @@
    "slot": 1,
    "stars": 5.0,
    "elite": true,
-   "age": 28,
+   "age": 27,
    "contract": {
     "years": 1,
     "total": 145000
@@ -5101,20 +5112,21 @@
   {
    "id": "ntw-03",
    "teamId": "ntw",
-   "name": "Malik Everett",
+   "name": "Jean-Pierre Pierre-Louis",
    "position": "WR",
    "depth": "starter",
    "slot": 2,
    "stars": 4.0,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 1,
     "total": 150000
    },
    "mood": "normal",
    "notes": [],
-   "number": 2
+   "number": 2,
+   "nationality": "Haiti"
   },
   {
    "id": "ntw-04",
@@ -5125,7 +5137,7 @@
    "slot": 1,
    "stars": 5.0,
    "elite": true,
-   "age": 28,
+   "age": 27,
    "contract": {
     "years": 2,
     "total": 226670
@@ -5143,7 +5155,7 @@
    "slot": 1,
    "stars": 4.0,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 2,
     "total": 93330
@@ -5161,7 +5173,7 @@
    "slot": 1,
    "stars": 5.0,
    "elite": true,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 2,
     "total": 266670
@@ -5179,7 +5191,7 @@
    "slot": 1,
    "stars": 3.0,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 2,
     "total": 184000
@@ -5197,7 +5209,7 @@
    "slot": 2,
    "stars": 5.0,
    "elite": true,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 1,
     "total": 120000
@@ -5215,7 +5227,7 @@
    "slot": 1,
    "stars": 3.0,
    "elite": false,
-   "age": 26,
+   "age": 25,
    "contract": {
     "years": 2,
     "total": 170000
@@ -5233,7 +5245,7 @@
    "slot": 2,
    "stars": 4.0,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 2,
     "total": 250000
@@ -5251,7 +5263,7 @@
    "slot": 1,
    "stars": 4.0,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 2,
     "total": 266670
@@ -5269,7 +5281,7 @@
    "slot": 1,
    "stars": 3.5,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 1,
     "total": 50000
@@ -5287,7 +5299,7 @@
    "slot": 2,
    "stars": 4.0,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 2,
     "total": 100000
@@ -5305,7 +5317,7 @@
    "slot": 1,
    "stars": 4.5,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 2,
     "total": 460000
@@ -5323,7 +5335,7 @@
    "slot": 2,
    "stars": 3.5,
    "elite": false,
-   "age": 26,
+   "age": 25,
    "contract": {
     "years": 1,
     "total": 125000
@@ -5341,7 +5353,7 @@
    "slot": 1,
    "stars": 4.0,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 1,
     "total": 65000
@@ -5359,7 +5371,7 @@
    "slot": 2,
    "stars": 3.5,
    "elite": false,
-   "age": 26,
+   "age": 25,
    "contract": {
     "years": 2,
     "total": 40000
@@ -5377,7 +5389,7 @@
    "slot": 1,
    "stars": 4.5,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 1,
     "total": 85000
@@ -5395,7 +5407,7 @@
    "slot": 2,
    "stars": 4.0,
    "elite": false,
-   "age": 26,
+   "age": 25,
    "contract": {
     "years": 1,
     "total": 60000
@@ -5413,7 +5425,7 @@
    "slot": 1,
    "stars": 5.0,
    "elite": true,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 1,
     "total": 75000
@@ -5431,7 +5443,7 @@
    "slot": 1,
    "stars": 3.5,
    "elite": false,
-   "age": 22,
+   "age": 21,
    "contract": {
     "years": 3,
     "total": 180000
@@ -5449,7 +5461,7 @@
    "slot": 1,
    "stars": 3.0,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 2,
     "total": 188000
@@ -5467,7 +5479,7 @@
    "slot": 2,
    "stars": 2.0,
    "elite": false,
-   "age": 23,
+   "age": 22,
    "contract": {
     "years": 3,
     "total": 156000
@@ -5485,7 +5497,7 @@
    "slot": 1,
    "stars": 2.5,
    "elite": false,
-   "age": 25,
+   "age": 24,
    "contract": {
     "years": 2,
     "total": 138000
@@ -5503,7 +5515,7 @@
    "slot": 1,
    "stars": 2.5,
    "elite": false,
-   "age": 26,
+   "age": 25,
    "contract": {
     "years": 2,
     "total": 150000
@@ -5521,7 +5533,7 @@
    "slot": 1,
    "stars": 2.0,
    "elite": false,
-   "age": 24,
+   "age": 23,
    "contract": {
     "years": 3,
     "total": 153000
@@ -5539,7 +5551,7 @@
    "slot": 2,
    "stars": 3.0,
    "elite": false,
-   "age": 25,
+   "age": 24,
    "contract": {
     "years": 2,
     "total": 170000
@@ -5559,7 +5571,7 @@
    "slot": 1,
    "stars": 2.5,
    "elite": false,
-   "age": 25,
+   "age": 24,
    "contract": {
     "years": 3,
     "total": 174000
@@ -5577,7 +5589,7 @@
    "slot": 1,
    "stars": 2.5,
    "elite": false,
-   "age": 26,
+   "age": 25,
    "contract": {
     "years": 2,
     "total": 146000
@@ -5595,7 +5607,7 @@
    "slot": 1,
    "stars": 2.0,
    "elite": false,
-   "age": 23,
+   "age": 22,
    "contract": {
     "years": 3,
     "total": 150000
@@ -5613,7 +5625,7 @@
    "slot": 2,
    "stars": 3.0,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 2,
     "total": 186000
@@ -5631,7 +5643,7 @@
    "slot": 1,
    "stars": 2.5,
    "elite": false,
-   "age": 25,
+   "age": 24,
    "contract": {
     "years": 3,
     "total": 171000
@@ -5649,7 +5661,7 @@
    "slot": 1,
    "stars": 2.5,
    "elite": false,
-   "age": 22,
+   "age": 21,
    "contract": {
     "years": 2,
     "total": 110000
@@ -5661,20 +5673,21 @@
   {
    "id": "ntw-34",
    "teamId": "ntw",
-   "name": "Steve Higgens",
+   "name": "Thiago Pereira",
    "position": "CB",
    "depth": "backup",
    "slot": 2,
    "stars": 3.0,
    "elite": false,
-   "age": 26,
+   "age": 25,
    "contract": {
     "years": 2,
     "total": 150000
    },
    "mood": "happy",
    "notes": [],
-   "number": 23
+   "number": 23,
+   "nationality": "Brazil"
   },
   {
    "id": "ntw-35",
@@ -5685,7 +5698,7 @@
    "slot": 1,
    "stars": 3.0,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 2,
     "total": 190000
@@ -5703,7 +5716,7 @@
    "slot": 2,
    "stars": 3.0,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 1,
     "total": 115000
@@ -5721,7 +5734,7 @@
    "slot": 1,
    "stars": 2.0,
    "elite": false,
-   "age": 23,
+   "age": 22,
    "contract": {
     "years": 3,
     "total": 152000
@@ -5739,7 +5752,7 @@
    "slot": 1,
    "stars": 3.5,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 1,
     "total": 45000
@@ -5757,7 +5770,7 @@
    "slot": 1,
    "stars": 4.0,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 2,
     "total": 213330
@@ -5775,7 +5788,7 @@
    "slot": 2,
    "stars": 4.0,
    "elite": false,
-   "age": 26,
+   "age": 25,
    "contract": {
     "years": 2,
     "total": 300000
@@ -5793,7 +5806,7 @@
    "slot": 1,
    "stars": 3.0,
    "elite": false,
-   "age": 23,
+   "age": 22,
    "contract": {
     "years": 2,
     "total": 145000
@@ -5811,7 +5824,7 @@
    "slot": 1,
    "stars": 2.0,
    "elite": false,
-   "age": 22,
+   "age": 21,
    "contract": {
     "years": 1,
     "total": 80000
@@ -5829,7 +5842,7 @@
    "slot": 1,
    "stars": 3.5,
    "elite": false,
-   "age": 26,
+   "age": 25,
    "contract": {
     "years": 1,
     "total": 100000
@@ -5847,7 +5860,7 @@
    "slot": 1,
    "stars": 3.5,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 1,
     "total": 55000
@@ -5865,7 +5878,7 @@
    "slot": 2,
    "stars": 4.0,
    "elite": false,
-   "age": 28,
+   "age": 27,
    "contract": {
     "years": 2,
     "total": 160000
@@ -5883,7 +5896,7 @@
    "slot": 1,
    "stars": 3.0,
    "elite": false,
-   "age": 28,
+   "age": 27,
    "contract": {
     "years": 1,
     "total": 98000
@@ -5901,7 +5914,7 @@
    "slot": 2,
    "stars": 3.5,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 1,
     "total": 70000
@@ -5919,7 +5932,7 @@
    "slot": 1,
    "stars": 3.5,
    "elite": false,
-   "age": 25,
+   "age": 24,
    "contract": {
     "years": 1,
     "total": 55000
@@ -5937,7 +5950,7 @@
    "slot": 1,
    "stars": 4.0,
    "elite": false,
-   "age": 28,
+   "age": 27,
    "contract": {
     "years": 2,
     "total": 193330
@@ -5949,20 +5962,21 @@
   {
    "id": "ocn-13",
    "teamId": "ocn",
-   "name": "Joel Carter",
+   "name": "Jonas Hoffmann",
    "position": "DT",
    "depth": "starter",
    "slot": 2,
    "stars": 3.5,
    "elite": false,
-   "age": 26,
+   "age": 25,
    "contract": {
     "years": 1,
     "total": 65000
    },
    "mood": "normal",
    "notes": [],
-   "number": 94
+   "number": 94,
+   "nationality": "Germany"
   },
   {
    "id": "ocn-14",
@@ -5973,7 +5987,7 @@
    "slot": 1,
    "stars": 4.0,
    "elite": false,
-   "age": 22,
+   "age": 21,
    "contract": {
     "years": 3,
     "total": 225000
@@ -5991,7 +6005,7 @@
    "slot": 2,
    "stars": 2.5,
    "elite": false,
-   "age": 25,
+   "age": 24,
    "contract": {
     "years": 3,
     "total": 171000
@@ -6009,7 +6023,7 @@
    "slot": 1,
    "stars": 4.0,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 1,
     "total": 65000
@@ -6027,7 +6041,7 @@
    "slot": 2,
    "stars": 4.0,
    "elite": false,
-   "age": 26,
+   "age": 25,
    "contract": {
     "years": 1,
     "total": 210000
@@ -6045,7 +6059,7 @@
    "slot": 1,
    "stars": 4.0,
    "elite": false,
-   "age": 28,
+   "age": 27,
    "contract": {
     "years": 2,
     "total": 220000
@@ -6063,7 +6077,7 @@
    "slot": 2,
    "stars": 3.5,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 2,
     "total": 273330
@@ -6081,7 +6095,7 @@
    "slot": 1,
    "stars": 4.0,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 2,
     "total": 233330
@@ -6099,7 +6113,7 @@
    "slot": 1,
    "stars": 2.5,
    "elite": false,
-   "age": 26,
+   "age": 25,
    "contract": {
     "years": 2,
     "total": 168000
@@ -6117,7 +6131,7 @@
    "slot": 1,
    "stars": 3.0,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 2,
     "total": 186000
@@ -6135,7 +6149,7 @@
    "slot": 2,
    "stars": 2.0,
    "elite": false,
-   "age": 23,
+   "age": 22,
    "contract": {
     "years": 3,
     "total": 153000
@@ -6153,7 +6167,7 @@
    "slot": 1,
    "stars": 2.5,
    "elite": false,
-   "age": 25,
+   "age": 24,
    "contract": {
     "years": 2,
     "total": 115000
@@ -6171,7 +6185,7 @@
    "slot": 1,
    "stars": 2.5,
    "elite": false,
-   "age": 26,
+   "age": 25,
    "contract": {
     "years": 1,
     "total": 105000
@@ -6189,7 +6203,7 @@
    "slot": 1,
    "stars": 2.0,
    "elite": false,
-   "age": 24,
+   "age": 23,
    "contract": {
     "years": 3,
     "total": 156000
@@ -6207,7 +6221,7 @@
    "slot": 2,
    "stars": 3.0,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 2,
     "total": 184000
@@ -6225,7 +6239,7 @@
    "slot": 1,
    "stars": 2.5,
    "elite": false,
-   "age": 25,
+   "age": 24,
    "contract": {
     "years": 3,
     "total": 174000
@@ -6243,7 +6257,7 @@
    "slot": 2,
    "stars": 2.5,
    "elite": false,
-   "age": 25,
+   "age": 24,
    "contract": {
     "years": 2,
     "total": 120000
@@ -6261,7 +6275,7 @@
    "slot": 1,
    "stars": 2.5,
    "elite": false,
-   "age": 26,
+   "age": 25,
    "contract": {
     "years": 2,
     "total": 148000
@@ -6279,7 +6293,7 @@
    "slot": 1,
    "stars": 2.0,
    "elite": false,
-   "age": 23,
+   "age": 22,
    "contract": {
     "years": 3,
     "total": 150000
@@ -6297,7 +6311,7 @@
    "slot": 2,
    "stars": 3.0,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 2,
     "total": 188000
@@ -6315,7 +6329,7 @@
    "slot": 1,
    "stars": 2.0,
    "elite": false,
-   "age": 24,
+   "age": 23,
    "contract": {
     "years": 3,
     "total": 159000
@@ -6333,7 +6347,7 @@
    "slot": 2,
    "stars": 2.5,
    "elite": false,
-   "age": 26,
+   "age": 25,
    "contract": {
     "years": 2,
     "total": 142000
@@ -6351,7 +6365,7 @@
    "slot": 1,
    "stars": 3.0,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 2,
     "total": 190000
@@ -6363,20 +6377,21 @@
   {
    "id": "ocn-36",
    "teamId": "ocn",
-   "name": "Damian Booker",
+   "name": "Brooks Crenshaw",
    "position": "LB",
    "depth": "backup",
    "slot": 2,
    "stars": 3.0,
    "elite": false,
-   "age": 22,
+   "age": 21,
    "contract": {
     "years": 2,
     "total": 128000
    },
    "mood": "happy",
    "notes": [],
-   "number": 47
+   "number": 47,
+   "nationality": "USA"
   },
   {
    "id": "ocn-37",
@@ -6387,7 +6402,7 @@
    "slot": 1,
    "stars": 2.0,
    "elite": false,
-   "age": 23,
+   "age": 22,
    "contract": {
     "years": 3,
     "total": 152000
@@ -6405,7 +6420,7 @@
    "slot": 1,
    "stars": 4.0,
    "elite": false,
-   "age": 25,
+   "age": 24,
    "contract": {
     "years": 3,
     "total": 375000
@@ -6423,7 +6438,7 @@
    "slot": 1,
    "stars": 5.0,
    "elite": true,
-   "age": 28,
+   "age": 27,
    "contract": {
     "years": 1,
     "total": 175000
@@ -6441,7 +6456,7 @@
    "slot": 2,
    "stars": 4.0,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 2,
     "total": 173330
@@ -6459,7 +6474,7 @@
    "slot": 1,
    "stars": 2.5,
    "elite": false,
-   "age": 25,
+   "age": 24,
    "contract": {
     "years": 2,
     "total": 138000
@@ -6477,7 +6492,7 @@
    "slot": 1,
    "stars": 3.0,
    "elite": false,
-   "age": 22,
+   "age": 21,
    "contract": {
     "years": 2,
     "total": 150000
@@ -6495,7 +6510,7 @@
    "slot": 1,
    "stars": 4.0,
    "elite": false,
-   "age": 26,
+   "age": 25,
    "contract": {
     "years": 3,
     "total": 330000
@@ -6513,7 +6528,7 @@
    "slot": 1,
    "stars": 3.0,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 2,
     "total": 184000
@@ -6531,7 +6546,7 @@
    "slot": 2,
    "stars": 4.0,
    "elite": false,
-   "age": 28,
+   "age": 27,
    "contract": {
     "years": 2,
     "total": 160000
@@ -6549,7 +6564,7 @@
    "slot": 1,
    "stars": 4.0,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 2,
     "total": 186670
@@ -6567,7 +6582,7 @@
    "slot": 2,
    "stars": 2.5,
    "elite": false,
-   "age": 25,
+   "age": 24,
    "contract": {
     "years": 3,
     "total": 174000
@@ -6585,7 +6600,7 @@
    "slot": 1,
    "stars": 2.5,
    "elite": false,
-   "age": 26,
+   "age": 25,
    "contract": {
     "years": 2,
     "total": 148000
@@ -6603,7 +6618,7 @@
    "slot": 1,
    "stars": 4.0,
    "elite": false,
-   "age": 26,
+   "age": 25,
    "contract": {
     "years": 2,
     "total": 333330
@@ -6621,7 +6636,7 @@
    "slot": 2,
    "stars": 3.5,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 2,
     "total": 360000
@@ -6639,7 +6654,7 @@
    "slot": 1,
    "stars": 4.0,
    "elite": false,
-   "age": 28,
+   "age": 27,
    "contract": {
     "years": 2,
     "total": 213330
@@ -6657,7 +6672,7 @@
    "slot": 2,
    "stars": 2.5,
    "elite": false,
-   "age": 25,
+   "age": 24,
    "contract": {
     "years": 3,
     "total": 171000
@@ -6675,7 +6690,7 @@
    "slot": 1,
    "stars": 3.5,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 1,
     "total": 60000
@@ -6693,7 +6708,7 @@
    "slot": 2,
    "stars": 3.5,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 1,
     "total": 45000
@@ -6711,7 +6726,7 @@
    "slot": 1,
    "stars": 4.0,
    "elite": false,
-   "age": 28,
+   "age": 27,
    "contract": {
     "years": 2,
     "total": 246670
@@ -6729,7 +6744,7 @@
    "slot": 2,
    "stars": 4.0,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 2,
     "total": 300000
@@ -6747,7 +6762,7 @@
    "slot": 1,
    "stars": 3.5,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 1,
     "total": 55000
@@ -6765,7 +6780,7 @@
    "slot": 1,
    "stars": 2.5,
    "elite": false,
-   "age": 26,
+   "age": 25,
    "contract": {
     "years": 2,
     "total": 166000
@@ -6777,20 +6792,21 @@
   {
    "id": "ocm-22",
    "teamId": "ocm",
-   "name": "Darius Monroe",
+   "name": "Tevita Tupou",
    "position": "WR",
    "depth": "backup",
    "slot": 1,
    "stars": 3.0,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 2,
     "total": 188000
    },
    "mood": "normal",
    "notes": [],
-   "number": 15
+   "number": 15,
+   "nationality": "Tonga"
   },
   {
    "id": "ocm-23",
@@ -6801,7 +6817,7 @@
    "slot": 2,
    "stars": 3.0,
    "elite": false,
-   "age": 23,
+   "age": 22,
    "contract": {
     "years": 2,
     "total": 150000
@@ -6813,20 +6829,21 @@
   {
    "id": "ocm-24",
    "teamId": "ocm",
-   "name": "Corey Matthews",
+   "name": "Nolan Gagnon",
    "position": "RB",
    "depth": "backup",
    "slot": 1,
    "stars": 3.5,
    "elite": false,
-   "age": 26,
+   "age": 25,
    "contract": {
     "years": 1,
     "total": 135000
    },
    "mood": "normal",
    "notes": [],
-   "number": 7
+   "number": 7,
+   "nationality": "Canada"
   },
   {
    "id": "ocm-25",
@@ -6837,7 +6854,7 @@
    "slot": 1,
    "stars": 2.0,
    "elite": false,
-   "age": 24,
+   "age": 23,
    "contract": {
     "years": 3,
     "total": 156000
@@ -6855,7 +6872,7 @@
    "slot": 1,
    "stars": 2.0,
    "elite": false,
-   "age": 23,
+   "age": 22,
    "contract": {
     "years": 3,
     "total": 150000
@@ -6873,7 +6890,7 @@
    "slot": 2,
    "stars": 3.0,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 2,
     "total": 186000
@@ -6891,7 +6908,7 @@
    "slot": 1,
    "stars": 2.0,
    "elite": false,
-   "age": 24,
+   "age": 23,
    "contract": {
     "years": 3,
     "total": 159000
@@ -6909,7 +6926,7 @@
    "slot": 2,
    "stars": 2.5,
    "elite": false,
-   "age": 26,
+   "age": 25,
    "contract": {
     "years": 2,
     "total": 142000
@@ -6927,7 +6944,7 @@
    "slot": 1,
    "stars": 3.0,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 2,
     "total": 190000
@@ -6945,7 +6962,7 @@
    "slot": 2,
    "stars": 2.5,
    "elite": false,
-   "age": 25,
+   "age": 24,
    "contract": {
     "years": 3,
     "total": 177000
@@ -6963,7 +6980,7 @@
    "slot": 1,
    "stars": 2.0,
    "elite": false,
-   "age": 23,
+   "age": 22,
    "contract": {
     "years": 3,
     "total": 152000
@@ -6981,7 +6998,7 @@
    "slot": 1,
    "stars": 4.0,
    "elite": false,
-   "age": 28,
+   "age": 27,
    "contract": {
     "years": 2,
     "total": 173330
@@ -6999,7 +7016,7 @@
    "slot": 1,
    "stars": 4.5,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 2,
     "total": 280000
@@ -7017,7 +7034,7 @@
    "slot": 2,
    "stars": 4.0,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 2,
     "total": 260000
@@ -7035,7 +7052,7 @@
    "slot": 1,
    "stars": 4.5,
    "elite": false,
-   "age": 28,
+   "age": 27,
    "contract": {
     "years": 2,
     "total": 200000
@@ -7053,7 +7070,7 @@
    "slot": 1,
    "stars": 3.5,
    "elite": false,
-   "age": 26,
+   "age": 25,
    "contract": {
     "years": 2,
     "total": 225000
@@ -7071,7 +7088,7 @@
    "slot": 1,
    "stars": 4.0,
    "elite": false,
-   "age": 26,
+   "age": 25,
    "contract": {
     "years": 2,
     "total": 186670
@@ -7089,7 +7106,7 @@
    "slot": 1,
    "stars": 5.0,
    "elite": true,
-   "age": 28,
+   "age": 27,
    "contract": {
     "years": 2,
     "total": 260000
@@ -7107,7 +7124,7 @@
    "slot": 2,
    "stars": 3.5,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 1,
     "total": 75000
@@ -7125,7 +7142,7 @@
    "slot": 1,
    "stars": 5.0,
    "elite": true,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 2,
     "total": 346670
@@ -7137,20 +7154,21 @@
   {
    "id": "pln-10",
    "teamId": "pln",
-   "name": "Landon Oakley",
+   "name": "Cooper Gallagher",
    "position": "OT",
    "depth": "starter",
    "slot": 2,
    "stars": 4.0,
    "elite": false,
-   "age": 26,
+   "age": 25,
    "contract": {
     "years": 1,
     "total": 90000
    },
    "mood": "normal",
    "notes": [],
-   "number": 75
+   "number": 75,
+   "nationality": "Australia"
   },
   {
    "id": "pln-11",
@@ -7161,7 +7179,7 @@
    "slot": 1,
    "stars": 3.0,
    "elite": false,
-   "age": 22,
+   "age": 21,
    "contract": {
     "years": 2,
     "total": 155000
@@ -7179,7 +7197,7 @@
    "slot": 1,
    "stars": 2.5,
    "elite": false,
-   "age": 22,
+   "age": 21,
    "contract": {
     "years": 2,
     "total": 123000
@@ -7197,7 +7215,7 @@
    "slot": 2,
    "stars": 3.5,
    "elite": false,
-   "age": 28,
+   "age": 27,
    "contract": {
     "years": 1,
     "total": 55000
@@ -7215,7 +7233,7 @@
    "slot": 1,
    "stars": 4.0,
    "elite": false,
-   "age": 28,
+   "age": 27,
    "contract": {
     "years": 2,
     "total": 333330
@@ -7233,7 +7251,7 @@
    "slot": 2,
    "stars": 4.0,
    "elite": false,
-   "age": 26,
+   "age": 25,
    "contract": {
     "years": 2,
     "total": 233330
@@ -7251,7 +7269,7 @@
    "slot": 1,
    "stars": 5.0,
    "elite": true,
-   "age": 28,
+   "age": 27,
    "contract": {
     "years": 2,
     "total": 280000
@@ -7269,7 +7287,7 @@
    "slot": 2,
    "stars": 3.0,
    "elite": false,
-   "age": 26,
+   "age": 25,
    "contract": {
     "years": 1,
     "total": 40000
@@ -7287,7 +7305,7 @@
    "slot": 1,
    "stars": 3.0,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 2,
     "total": 190000
@@ -7305,7 +7323,7 @@
    "slot": 2,
    "stars": 3.0,
    "elite": false,
-   "age": 23,
+   "age": 22,
    "contract": {
     "years": 2,
     "total": 160000
@@ -7323,7 +7341,7 @@
    "slot": 1,
    "stars": 3.5,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 1,
     "total": 70000
@@ -7341,7 +7359,7 @@
    "slot": 1,
    "stars": 2.5,
    "elite": false,
-   "age": 26,
+   "age": 25,
    "contract": {
     "years": 2,
     "total": 166000
@@ -7359,7 +7377,7 @@
    "slot": 1,
    "stars": 3.0,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 2,
     "total": 188000
@@ -7377,7 +7395,7 @@
    "slot": 2,
    "stars": 2.0,
    "elite": false,
-   "age": 23,
+   "age": 22,
    "contract": {
     "years": 3,
     "total": 153000
@@ -7395,7 +7413,7 @@
    "slot": 1,
    "stars": 2.5,
    "elite": false,
-   "age": 25,
+   "age": 24,
    "contract": {
     "years": 2,
     "total": 138000
@@ -7413,7 +7431,7 @@
    "slot": 1,
    "stars": 2.5,
    "elite": false,
-   "age": 26,
+   "age": 25,
    "contract": {
     "years": 2,
     "total": 150000
@@ -7431,7 +7449,7 @@
    "slot": 1,
    "stars": 3.0,
    "elite": false,
-   "age": 23,
+   "age": 22,
    "contract": {
     "years": 2,
     "total": 155000
@@ -7449,7 +7467,7 @@
    "slot": 2,
    "stars": 3.0,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 2,
     "total": 184000
@@ -7467,7 +7485,7 @@
    "slot": 1,
    "stars": 2.5,
    "elite": false,
-   "age": 25,
+   "age": 24,
    "contract": {
     "years": 3,
     "total": 174000
@@ -7485,7 +7503,7 @@
    "slot": 2,
    "stars": 4.0,
    "elite": false,
-   "age": 25,
+   "age": 24,
    "contract": {
     "years": 3,
     "total": 330000
@@ -7503,7 +7521,7 @@
    "slot": 1,
    "stars": 2.5,
    "elite": false,
-   "age": 26,
+   "age": 25,
    "contract": {
     "years": 2,
     "total": 148000
@@ -7515,38 +7533,40 @@
   {
    "id": "pln-31",
    "teamId": "pln",
-   "name": "Xavier Coleman",
+   "name": "Stefan Jovanović",
    "position": "DT",
    "depth": "backup",
    "slot": 1,
    "stars": 3.0,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 2,
     "total": 186000
    },
    "mood": "normal",
    "notes": [],
-   "number": 70
+   "number": 70,
+   "nationality": "Serbia"
   },
   {
    "id": "pln-32",
    "teamId": "pln",
-   "name": "Marcus Ellington",
+   "name": "Hugo Moreau",
    "position": "DE",
    "depth": "backup",
    "slot": 1,
    "stars": 2.5,
    "elite": false,
-   "age": 25,
+   "age": 24,
    "contract": {
     "years": 3,
     "total": 171000
    },
    "mood": "happy",
    "notes": [],
-   "number": 97
+   "number": 97,
+   "nationality": "France"
   },
   {
    "id": "pln-33",
@@ -7557,7 +7577,7 @@
    "slot": 1,
    "stars": 2.0,
    "elite": false,
-   "age": 24,
+   "age": 23,
    "contract": {
     "years": 3,
     "total": 159000
@@ -7575,7 +7595,7 @@
    "slot": 2,
    "stars": 2.5,
    "elite": false,
-   "age": 26,
+   "age": 25,
    "contract": {
     "years": 2,
     "total": 142000
@@ -7593,7 +7613,7 @@
    "slot": 1,
    "stars": 2.5,
    "elite": false,
-   "age": 25,
+   "age": 24,
    "contract": {
     "years": 3,
     "total": 177000
@@ -7611,7 +7631,7 @@
    "slot": 1,
    "stars": 2.0,
    "elite": false,
-   "age": 23,
+   "age": 22,
    "contract": {
     "years": 3,
     "total": 152000
@@ -7629,7 +7649,7 @@
    "slot": 1,
    "stars": 4.0,
    "elite": false,
-   "age": 25,
+   "age": 24,
    "contract": {
     "years": 3,
     "total": 288750
@@ -7657,7 +7677,7 @@
    "slot": 1,
    "stars": 5.0,
    "elite": true,
-   "age": 28,
+   "age": 27,
    "contract": {
     "years": 2,
     "total": 453330
@@ -7675,7 +7695,7 @@
    "slot": 2,
    "stars": 4.0,
    "elite": false,
-   "age": 25,
+   "age": 24,
    "contract": {
     "years": 1,
     "total": 142500
@@ -7694,7 +7714,7 @@
    "slot": 1,
    "stars": 4.5,
    "elite": false,
-   "age": 28,
+   "age": 27,
    "contract": {
     "years": 2,
     "total": 166670
@@ -7712,7 +7732,7 @@
    "slot": 1,
    "stars": 4.5,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 2,
     "total": 113330
@@ -7737,7 +7757,7 @@
    "slot": 1,
    "stars": 4.5,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 2,
     "total": 400000
@@ -7755,7 +7775,7 @@
    "slot": 1,
    "stars": 5.0,
    "elite": true,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 2,
     "total": 140000
@@ -7773,7 +7793,7 @@
    "slot": 2,
    "stars": 4.0,
    "elite": false,
-   "age": 25,
+   "age": 24,
    "contract": {
     "years": 2,
     "total": 233330
@@ -7791,7 +7811,7 @@
    "slot": 1,
    "stars": 4.5,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 1,
     "total": 70000
@@ -7809,7 +7829,7 @@
    "slot": 2,
    "stars": 4.5,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 1,
     "total": 75000
@@ -7827,7 +7847,7 @@
    "slot": 1,
    "stars": 5.0,
    "elite": true,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 1,
     "total": 312500
@@ -7845,7 +7865,7 @@
    "slot": 1,
    "stars": 4.5,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 2,
     "total": 73330
@@ -7863,7 +7883,7 @@
    "slot": 2,
    "stars": 5.0,
    "elite": true,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 1,
     "total": 200000
@@ -7881,7 +7901,7 @@
    "slot": 1,
    "stars": 3.0,
    "elite": false,
-   "age": 22,
+   "age": 21,
    "contract": {
     "years": 2,
     "total": 135000
@@ -7899,7 +7919,7 @@
    "slot": 2,
    "stars": 4.5,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 1,
     "total": 55000
@@ -7911,20 +7931,21 @@
   {
    "id": "snm-16",
    "teamId": "snm",
-   "name": "Ryan Harris",
+   "name": "Ronan Doherty",
    "position": "CB",
    "depth": "starter",
    "slot": 1,
    "stars": 4.0,
    "elite": false,
-   "age": 24,
+   "age": 23,
    "contract": {
     "years": 3,
     "total": 350000
    },
    "mood": "happy",
    "notes": [],
-   "number": 30
+   "number": 30,
+   "nationality": "Ireland"
   },
   {
    "id": "snm-17",
@@ -7935,7 +7956,7 @@
    "slot": 2,
    "stars": 5.0,
    "elite": true,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 1,
     "total": 225000
@@ -7953,7 +7974,7 @@
    "slot": 1,
    "stars": 4.0,
    "elite": false,
-   "age": 26,
+   "age": 25,
    "contract": {
     "years": 3,
     "total": 300000
@@ -7971,7 +7992,7 @@
    "slot": 2,
    "stars": 4.5,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 1,
     "total": 55000
@@ -7989,7 +8010,7 @@
    "slot": 1,
    "stars": 5.0,
    "elite": true,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 2,
     "total": 213330
@@ -8007,7 +8028,7 @@
    "slot": 1,
    "stars": 2.5,
    "elite": false,
-   "age": 26,
+   "age": 25,
    "contract": {
     "years": 2,
     "total": 168000
@@ -8025,7 +8046,7 @@
    "slot": 1,
    "stars": 3.0,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 2,
     "total": 186000
@@ -8043,7 +8064,7 @@
    "slot": 2,
    "stars": 2.0,
    "elite": false,
-   "age": 23,
+   "age": 22,
    "contract": {
     "years": 3,
     "total": 153000
@@ -8061,7 +8082,7 @@
    "slot": 1,
    "stars": 3.0,
    "elite": false,
-   "age": 22,
+   "age": 21,
    "contract": {
     "years": 2,
     "total": 150000
@@ -8079,7 +8100,7 @@
    "slot": 1,
    "stars": 2.0,
    "elite": false,
-   "age": 23,
+   "age": 22,
    "contract": {
     "years": 2,
     "total": 125000
@@ -8091,20 +8112,21 @@
   {
    "id": "snm-26",
    "teamId": "snm",
-   "name": "Marcus Ellington",
+   "name": "Jayden Ashby",
    "position": "RB",
    "depth": "backup",
    "slot": 1,
    "stars": 2.5,
    "elite": false,
-   "age": 26,
+   "age": 25,
    "contract": {
     "years": 2,
     "total": 150000
    },
    "mood": "normal",
    "notes": [],
-   "number": 33
+   "number": 33,
+   "nationality": "Australia"
   },
   {
    "id": "snm-27",
@@ -8115,7 +8137,7 @@
    "slot": 1,
    "stars": 2.0,
    "elite": false,
-   "age": 24,
+   "age": 23,
    "contract": {
     "years": 3,
     "total": 156000
@@ -8133,7 +8155,7 @@
    "slot": 2,
    "stars": 3.0,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 2,
     "total": 184000
@@ -8151,7 +8173,7 @@
    "slot": 1,
    "stars": 2.5,
    "elite": false,
-   "age": 25,
+   "age": 24,
    "contract": {
     "years": 3,
     "total": 174000
@@ -8169,7 +8191,7 @@
    "slot": 1,
    "stars": 2.5,
    "elite": false,
-   "age": 26,
+   "age": 25,
    "contract": {
     "years": 2,
     "total": 148000
@@ -8187,7 +8209,7 @@
    "slot": 1,
    "stars": 2.0,
    "elite": false,
-   "age": 23,
+   "age": 22,
    "contract": {
     "years": 3,
     "total": 150000
@@ -8205,7 +8227,7 @@
    "slot": 2,
    "stars": 3.0,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 2,
     "total": 188000
@@ -8223,7 +8245,7 @@
    "slot": 1,
    "stars": 2.5,
    "elite": false,
-   "age": 25,
+   "age": 24,
    "contract": {
     "years": 3,
     "total": 171000
@@ -8241,7 +8263,7 @@
    "slot": 1,
    "stars": 2.0,
    "elite": false,
-   "age": 24,
+   "age": 23,
    "contract": {
     "years": 3,
     "total": 159000
@@ -8259,7 +8281,7 @@
    "slot": 2,
    "stars": 2.5,
    "elite": false,
-   "age": 26,
+   "age": 25,
    "contract": {
     "years": 2,
     "total": 142000
@@ -8277,7 +8299,7 @@
    "slot": 1,
    "stars": 3.0,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 2,
     "total": 190000
@@ -8295,7 +8317,7 @@
    "slot": 2,
    "stars": 2.5,
    "elite": false,
-   "age": 25,
+   "age": 24,
    "contract": {
     "years": 3,
     "total": 177000
@@ -8313,7 +8335,7 @@
    "slot": 1,
    "stars": 2.0,
    "elite": false,
-   "age": 23,
+   "age": 22,
    "contract": {
     "years": 3,
     "total": 152000
@@ -8331,7 +8353,7 @@
    "slot": 1,
    "stars": 4.0,
    "elite": false,
-   "age": 26,
+   "age": 25,
    "contract": {
     "years": 1,
     "total": 55000
@@ -8349,7 +8371,7 @@
    "slot": 1,
    "stars": 4.0,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 1,
     "total": 65000
@@ -8367,7 +8389,7 @@
    "slot": 2,
    "stars": 4.5,
    "elite": false,
-   "age": 26,
+   "age": 25,
    "contract": {
     "years": 1,
     "total": 175000
@@ -8385,7 +8407,7 @@
    "slot": 1,
    "stars": 4.5,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 1,
     "total": 67500
@@ -8403,7 +8425,7 @@
    "slot": 1,
    "stars": 4.0,
    "elite": false,
-   "age": 26,
+   "age": 25,
    "contract": {
     "years": 2,
     "total": 266670
@@ -8421,7 +8443,7 @@
    "slot": 1,
    "stars": 4.5,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 2,
     "total": 200000
@@ -8439,7 +8461,7 @@
    "slot": 1,
    "stars": 3.5,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 1,
     "total": 55000
@@ -8457,7 +8479,7 @@
    "slot": 2,
    "stars": 3.5,
    "elite": false,
-   "age": 22,
+   "age": 21,
    "contract": {
     "years": 3,
     "total": 165000
@@ -8475,7 +8497,7 @@
    "slot": 1,
    "stars": 4.0,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 1,
     "total": 62500
@@ -8493,7 +8515,7 @@
    "slot": 2,
    "stars": 5.0,
    "elite": true,
-   "age": 28,
+   "age": 27,
    "contract": {
     "years": 2,
     "total": 633330
@@ -8511,7 +8533,7 @@
    "slot": 1,
    "stars": 4.0,
    "elite": false,
-   "age": 26,
+   "age": 25,
    "contract": {
     "years": 1,
     "total": 60000
@@ -8529,7 +8551,7 @@
    "slot": 1,
    "stars": 4.0,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 1,
     "total": 65000
@@ -8541,13 +8563,13 @@
   {
    "id": "tga-13",
    "teamId": "tga",
-   "name": "Caleb Thomas",
+   "name": "Owen Sinclair",
    "position": "DT",
    "depth": "starter",
    "slot": 2,
    "stars": 3.0,
    "elite": false,
-   "age": 22,
+   "age": 21,
    "contract": {
     "years": 3,
     "total": 200000
@@ -8556,7 +8578,8 @@
    "notes": [
     "salary missing the $ sign"
    ],
-   "number": 91
+   "number": 91,
+   "nationality": "Canada"
   },
   {
    "id": "tga-14",
@@ -8567,7 +8590,7 @@
    "slot": 1,
    "stars": 4.0,
    "elite": false,
-   "age": 28,
+   "age": 27,
    "contract": {
     "years": 1,
     "total": 180000
@@ -8603,7 +8626,7 @@
    "slot": 1,
    "stars": 5.0,
    "elite": true,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 2,
     "total": 266670
@@ -8621,7 +8644,7 @@
    "slot": 2,
    "stars": 4.0,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 1,
     "total": 70000
@@ -8639,7 +8662,7 @@
    "slot": 1,
    "stars": 4.0,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 1,
     "total": 62500
@@ -8651,20 +8674,21 @@
   {
    "id": "tga-19",
    "teamId": "tga",
-   "name": "William Hernandez",
+   "name": "Trey Beasley",
    "position": "LB",
    "depth": "starter",
    "slot": 2,
    "stars": 4.0,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 1,
     "total": 67500
    },
    "mood": "happy",
    "notes": [],
-   "number": 9
+   "number": 9,
+   "nationality": "USA"
   },
   {
    "id": "tga-20",
@@ -8675,7 +8699,7 @@
    "slot": 1,
    "stars": 4.0,
    "elite": false,
-   "age": 24,
+   "age": 23,
    "contract": {
     "years": 3,
     "total": 375000
@@ -8693,7 +8717,7 @@
    "slot": 1,
    "stars": 2.5,
    "elite": false,
-   "age": 26,
+   "age": 25,
    "contract": {
     "years": 2,
     "total": 166000
@@ -8711,7 +8735,7 @@
    "slot": 1,
    "stars": 3.0,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 2,
     "total": 188000
@@ -8729,7 +8753,7 @@
    "slot": 2,
    "stars": 2.0,
    "elite": false,
-   "age": 23,
+   "age": 22,
    "contract": {
     "years": 3,
     "total": 153000
@@ -8747,7 +8771,7 @@
    "slot": 1,
    "stars": 2.5,
    "elite": false,
-   "age": 25,
+   "age": 24,
    "contract": {
     "years": 2,
     "total": 138000
@@ -8765,7 +8789,7 @@
    "slot": 1,
    "stars": 2.5,
    "elite": false,
-   "age": 22,
+   "age": 21,
    "contract": {
     "years": 2,
     "total": 115000
@@ -8783,7 +8807,7 @@
    "slot": 1,
    "stars": 2.5,
    "elite": false,
-   "age": 26,
+   "age": 25,
    "contract": {
     "years": 2,
     "total": 150000
@@ -8801,7 +8825,7 @@
    "slot": 1,
    "stars": 2.0,
    "elite": false,
-   "age": 24,
+   "age": 23,
    "contract": {
     "years": 3,
     "total": 156000
@@ -8819,7 +8843,7 @@
    "slot": 2,
    "stars": 3.0,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 2,
     "total": 184000
@@ -8837,7 +8861,7 @@
    "slot": 1,
    "stars": 2.5,
    "elite": false,
-   "age": 25,
+   "age": 24,
    "contract": {
     "years": 3,
     "total": 174000
@@ -8849,20 +8873,21 @@
   {
    "id": "tga-30",
    "teamId": "tga",
-   "name": "Marcus Delaney",
+   "name": "Nolan Bouchard",
    "position": "OT",
    "depth": "backup",
    "slot": 2,
    "stars": 2.0,
    "elite": false,
-   "age": 24,
+   "age": 23,
    "contract": {
     "years": 2,
     "total": 125000
    },
    "mood": "happy",
    "notes": [],
-   "number": 66
+   "number": 66,
+   "nationality": "Canada"
   },
   {
    "id": "tga-31",
@@ -8873,7 +8898,7 @@
    "slot": 1,
    "stars": 2.5,
    "elite": false,
-   "age": 26,
+   "age": 25,
    "contract": {
     "years": 2,
     "total": 148000
@@ -8891,7 +8916,7 @@
    "slot": 1,
    "stars": 2.0,
    "elite": false,
-   "age": 23,
+   "age": 22,
    "contract": {
     "years": 3,
     "total": 150000
@@ -8909,7 +8934,7 @@
    "slot": 2,
    "stars": 3.0,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 2,
     "total": 186000
@@ -8921,13 +8946,13 @@
   {
    "id": "tga-34",
    "teamId": "tga",
-   "name": "Isaiah Merrick",
+   "name": "Reece Fairbanks",
    "position": "DE",
    "depth": "backup",
    "slot": 1,
    "stars": 2.0,
    "elite": false,
-   "age": 22,
+   "age": 21,
    "contract": {
     "years": 1,
     "total": 95000
@@ -8936,7 +8961,8 @@
    "notes": [
     "contract found under starter DE in the expanded list"
    ],
-   "number": 90
+   "number": 90,
+   "nationality": "England"
   },
   {
    "id": "tga-35",
@@ -8947,7 +8973,7 @@
    "slot": 1,
    "stars": 2.0,
    "elite": false,
-   "age": 24,
+   "age": 23,
    "contract": {
     "years": 3,
     "total": 159000
@@ -8965,7 +8991,7 @@
    "slot": 2,
    "stars": 2.5,
    "elite": false,
-   "age": 26,
+   "age": 25,
    "contract": {
     "years": 2,
     "total": 142000
@@ -8983,7 +9009,7 @@
    "slot": 1,
    "stars": 3.0,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 2,
     "total": 190000
@@ -9001,7 +9027,7 @@
    "slot": 2,
    "stars": 2.5,
    "elite": false,
-   "age": 25,
+   "age": 24,
    "contract": {
     "years": 3,
     "total": 177000
@@ -9019,7 +9045,7 @@
    "slot": 1,
    "stars": 2.0,
    "elite": false,
-   "age": 23,
+   "age": 22,
    "contract": {
     "years": 3,
     "total": 152000
@@ -9037,7 +9063,7 @@
    "slot": 1,
    "stars": 4.5,
    "elite": false,
-   "age": 24,
+   "age": 23,
    "contract": {
     "years": 3,
     "total": 360000
@@ -9055,7 +9081,7 @@
    "slot": 1,
    "stars": 5.0,
    "elite": true,
-   "age": 28,
+   "age": 27,
    "contract": {
     "years": 1,
     "total": 100000
@@ -9067,20 +9093,21 @@
   {
    "id": "void-03",
    "teamId": "void",
-   "name": "Marcus Delaney",
+   "name": "Ronan O'Sullivan",
    "position": "WR",
    "depth": "starter",
    "slot": 2,
    "stars": 3.0,
    "elite": false,
-   "age": 22,
+   "age": 21,
    "contract": {
     "years": 2,
     "total": 140000
    },
    "mood": "happy",
    "notes": [],
-   "number": 4
+   "number": 4,
+   "nationality": "Ireland"
   },
   {
    "id": "void-04",
@@ -9091,7 +9118,7 @@
    "slot": 1,
    "stars": 5.0,
    "elite": true,
-   "age": 28,
+   "age": 27,
    "contract": {
     "years": 1,
     "total": 80000
@@ -9109,7 +9136,7 @@
    "slot": 1,
    "stars": 5.0,
    "elite": true,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 2,
     "total": 160000
@@ -9127,7 +9154,7 @@
    "slot": 1,
    "stars": 5.0,
    "elite": true,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 1,
     "total": 240000
@@ -9145,7 +9172,7 @@
    "slot": 1,
    "stars": 4.5,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 2,
     "total": 120000
@@ -9163,7 +9190,7 @@
    "slot": 2,
    "stars": 5.0,
    "elite": true,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 2,
     "total": 100000
@@ -9181,7 +9208,7 @@
    "slot": 1,
    "stars": 4.0,
    "elite": false,
-   "age": 22,
+   "age": 21,
    "contract": {
     "years": 3,
     "total": 210000
@@ -9199,7 +9226,7 @@
    "slot": 2,
    "stars": 5.0,
    "elite": true,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 2,
     "total": 280000
@@ -9217,7 +9244,7 @@
    "slot": 1,
    "stars": 4.5,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 2,
     "total": 200000
@@ -9235,7 +9262,7 @@
    "slot": 1,
    "stars": 4.5,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 2,
     "total": 113330
@@ -9253,7 +9280,7 @@
    "slot": 2,
    "stars": 5.0,
    "elite": true,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 2,
     "total": 316670
@@ -9271,7 +9298,7 @@
    "slot": 1,
    "stars": 4.5,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 1,
     "total": 100000
@@ -9289,7 +9316,7 @@
    "slot": 2,
    "stars": 5.0,
    "elite": true,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 2,
     "total": 226670
@@ -9307,7 +9334,7 @@
    "slot": 1,
    "stars": 5.0,
    "elite": true,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 2,
     "total": 113330
@@ -9325,7 +9352,7 @@
    "slot": 2,
    "stars": 4.5,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 2,
     "total": 113330
@@ -9343,7 +9370,7 @@
    "slot": 1,
    "stars": 4.5,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 1,
     "total": 95000
@@ -9361,7 +9388,7 @@
    "slot": 2,
    "stars": 3.5,
    "elite": false,
-   "age": 25,
+   "age": 24,
    "contract": {
     "years": 3,
     "total": 120000
@@ -9379,7 +9406,7 @@
    "slot": 1,
    "stars": 5.0,
    "elite": true,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 2,
     "total": 333330
@@ -9397,7 +9424,7 @@
    "slot": 1,
    "stars": 2.5,
    "elite": false,
-   "age": 26,
+   "age": 25,
    "contract": {
     "years": 2,
     "total": 168000
@@ -9415,7 +9442,7 @@
    "slot": 1,
    "stars": 3.0,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 2,
     "total": 186000
@@ -9433,7 +9460,7 @@
    "slot": 2,
    "stars": 2.0,
    "elite": false,
-   "age": 23,
+   "age": 22,
    "contract": {
     "years": 3,
     "total": 153000
@@ -9451,7 +9478,7 @@
    "slot": 1,
    "stars": 2.5,
    "elite": false,
-   "age": 25,
+   "age": 24,
    "contract": {
     "years": 2,
     "total": 138000
@@ -9469,7 +9496,7 @@
    "slot": 1,
    "stars": 3.0,
    "elite": false,
-   "age": 22,
+   "age": 21,
    "contract": {
     "years": 2,
     "total": 160000
@@ -9487,7 +9514,7 @@
    "slot": 1,
    "stars": 2.5,
    "elite": false,
-   "age": 22,
+   "age": 21,
    "contract": {
     "years": 2,
     "total": 125000
@@ -9505,7 +9532,7 @@
    "slot": 1,
    "stars": 2.0,
    "elite": false,
-   "age": 24,
+   "age": 23,
    "contract": {
     "years": 3,
     "total": 156000
@@ -9523,7 +9550,7 @@
    "slot": 2,
    "stars": 3.0,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 2,
     "total": 184000
@@ -9541,7 +9568,7 @@
    "slot": 1,
    "stars": 2.5,
    "elite": false,
-   "age": 25,
+   "age": 24,
    "contract": {
     "years": 3,
     "total": 174000
@@ -9559,7 +9586,7 @@
    "slot": 1,
    "stars": 2.5,
    "elite": false,
-   "age": 26,
+   "age": 25,
    "contract": {
     "years": 2,
     "total": 148000
@@ -9577,7 +9604,7 @@
    "slot": 1,
    "stars": 2.0,
    "elite": false,
-   "age": 23,
+   "age": 22,
    "contract": {
     "years": 3,
     "total": 150000
@@ -9595,7 +9622,7 @@
    "slot": 2,
    "stars": 3.0,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 2,
     "total": 188000
@@ -9613,7 +9640,7 @@
    "slot": 1,
    "stars": 2.5,
    "elite": false,
-   "age": 25,
+   "age": 24,
    "contract": {
     "years": 3,
     "total": 171000
@@ -9631,7 +9658,7 @@
    "slot": 2,
    "stars": 3.0,
    "elite": false,
-   "age": 26,
+   "age": 25,
    "contract": {
     "years": 2,
     "total": 160000
@@ -9649,7 +9676,7 @@
    "slot": 1,
    "stars": 3.0,
    "elite": false,
-   "age": 25,
+   "age": 24,
    "contract": {
     "years": 2,
     "total": 150000
@@ -9667,7 +9694,7 @@
    "slot": 2,
    "stars": 2.5,
    "elite": false,
-   "age": 26,
+   "age": 25,
    "contract": {
     "years": 2,
     "total": 142000
@@ -9685,7 +9712,7 @@
    "slot": 1,
    "stars": 3.0,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 2,
     "total": 190000
@@ -9703,7 +9730,7 @@
    "slot": 2,
    "stars": 2.5,
    "elite": false,
-   "age": 25,
+   "age": 24,
    "contract": {
     "years": 3,
     "total": 177000
@@ -9721,7 +9748,7 @@
    "slot": 1,
    "stars": 2.0,
    "elite": false,
-   "age": 23,
+   "age": 22,
    "contract": {
     "years": 3,
     "total": 152000
@@ -9739,7 +9766,7 @@
    "slot": 1,
    "stars": 4.5,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 2,
     "total": 200000
@@ -9757,7 +9784,7 @@
    "slot": 1,
    "stars": 4.0,
    "elite": false,
-   "age": 26,
+   "age": 25,
    "contract": {
     "years": 1,
     "total": 75000
@@ -9775,7 +9802,7 @@
    "slot": 2,
    "stars": 3.0,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 1,
     "total": 45000
@@ -9793,7 +9820,7 @@
    "slot": 1,
    "stars": 4.0,
    "elite": false,
-   "age": 28,
+   "age": 27,
    "contract": {
     "years": 2,
     "total": 140000
@@ -9811,7 +9838,7 @@
    "slot": 1,
    "stars": 3.5,
    "elite": false,
-   "age": 26,
+   "age": 25,
    "contract": {
     "years": 1,
     "total": 65000
@@ -9829,7 +9856,7 @@
    "slot": 1,
    "stars": 5.0,
    "elite": true,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 2,
     "total": 280000
@@ -9847,7 +9874,7 @@
    "slot": 1,
    "stars": 4.5,
    "elite": false,
-   "age": 28,
+   "age": 27,
    "contract": {
     "years": 2,
     "total": 206670
@@ -9865,7 +9892,7 @@
    "slot": 2,
    "stars": 3.5,
    "elite": false,
-   "age": 28,
+   "age": 27,
    "contract": {
     "years": 1,
     "total": 60000
@@ -9883,7 +9910,7 @@
    "slot": 1,
    "stars": 5.0,
    "elite": true,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 2,
     "total": 233330
@@ -9901,7 +9928,7 @@
    "slot": 2,
    "stars": 4.0,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 2,
     "total": 333330
@@ -9919,7 +9946,7 @@
    "slot": 1,
    "stars": 3.0,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 1,
     "total": 30000
@@ -9937,7 +9964,7 @@
    "slot": 1,
    "stars": 4.0,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 2,
     "total": 120000
@@ -9955,7 +9982,7 @@
    "slot": 2,
    "stars": 4.0,
    "elite": false,
-   "age": 28,
+   "age": 27,
    "contract": {
     "years": 2,
     "total": 260000
@@ -9973,7 +10000,7 @@
    "slot": 1,
    "stars": 2.5,
    "elite": false,
-   "age": 22,
+   "age": 21,
    "contract": {
     "years": 2,
     "total": 108000
@@ -9985,20 +10012,21 @@
   {
    "id": "wrf-15",
    "teamId": "wrf",
-   "name": "Dominic Fields",
+   "name": "Damar McKenzie",
    "position": "DE",
    "depth": "starter",
    "slot": 2,
    "stars": 4.0,
    "elite": false,
-   "age": 28,
+   "age": 27,
    "contract": {
     "years": 2,
     "total": 333330
    },
    "mood": "normal",
    "notes": [],
-   "number": 54
+   "number": 54,
+   "nationality": "Jamaica"
   },
   {
    "id": "wrf-16",
@@ -10009,7 +10037,7 @@
    "slot": 1,
    "stars": 3.5,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 2,
     "total": 66670
@@ -10027,7 +10055,7 @@
    "slot": 2,
    "stars": 3.0,
    "elite": false,
-   "age": 23,
+   "age": 22,
    "contract": {
     "years": 2,
     "total": 160000
@@ -10045,7 +10073,7 @@
    "slot": 1,
    "stars": 3.5,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 1,
     "total": 65000
@@ -10063,7 +10091,7 @@
    "slot": 2,
    "stars": 3.5,
    "elite": false,
-   "age": 26,
+   "age": 25,
    "contract": {
     "years": 1,
     "total": 65000
@@ -10081,7 +10109,7 @@
    "slot": 1,
    "stars": 4.0,
    "elite": false,
-   "age": 26,
+   "age": 25,
    "contract": {
     "years": 2,
     "total": 300000
@@ -10093,20 +10121,21 @@
   {
    "id": "wrf-21",
    "teamId": "wrf",
-   "name": "Caleb Morrison",
+   "name": "Gabriel Carvalho",
    "position": "QB",
    "depth": "backup",
    "slot": 1,
    "stars": 2.5,
    "elite": false,
-   "age": 26,
+   "age": 25,
    "contract": {
     "years": 2,
     "total": 166000
    },
    "mood": "normal",
    "notes": [],
-   "number": 11
+   "number": 11,
+   "nationality": "Brazil"
   },
   {
    "id": "wrf-22",
@@ -10117,7 +10146,7 @@
    "slot": 1,
    "stars": 3.0,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 2,
     "total": 188000
@@ -10135,7 +10164,7 @@
    "slot": 2,
    "stars": 3.0,
    "elite": false,
-   "age": 22,
+   "age": 21,
    "contract": {
     "years": 2,
     "total": 150000
@@ -10153,7 +10182,7 @@
    "slot": 1,
    "stars": 2.5,
    "elite": false,
-   "age": 25,
+   "age": 24,
    "contract": {
     "years": 2,
     "total": 138000
@@ -10165,20 +10194,21 @@
   {
    "id": "wrf-25",
    "teamId": "wrf",
-   "name": "Tyson Caldwell",
+   "name": "Lukas Becker",
    "position": "RB",
    "depth": "backup",
    "slot": 1,
    "stars": 2.5,
    "elite": false,
-   "age": 26,
+   "age": 25,
    "contract": {
     "years": 2,
     "total": 150000
    },
    "mood": "normal",
    "notes": [],
-   "number": 1
+   "number": 1,
+   "nationality": "Germany"
   },
   {
    "id": "wrf-26",
@@ -10189,7 +10219,7 @@
    "slot": 1,
    "stars": 2.5,
    "elite": false,
-   "age": 22,
+   "age": 21,
    "contract": {
     "years": 2,
     "total": 118000
@@ -10201,74 +10231,78 @@
   {
    "id": "wrf-27",
    "teamId": "wrf",
-   "name": "Xavier Coleman",
+   "name": "Declan Byrne",
    "position": "OG",
    "depth": "backup",
    "slot": 2,
    "stars": 3.0,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 2,
     "total": 184000
    },
    "mood": "normal",
    "notes": [],
-   "number": 50
+   "number": 50,
+   "nationality": "Ireland"
   },
   {
    "id": "wrf-28",
    "teamId": "wrf",
-   "name": "Nolan Barrett",
+   "name": "Kemar Campbell",
    "position": "OT",
    "depth": "backup",
    "slot": 1,
    "stars": 2.5,
    "elite": false,
-   "age": 25,
+   "age": 24,
    "contract": {
     "years": 3,
     "total": 174000
    },
    "mood": "happy",
    "notes": [],
-   "number": 77
+   "number": 77,
+   "nationality": "Jamaica"
   },
   {
    "id": "wrf-29",
    "teamId": "wrf",
-   "name": "Preston Merrick",
+   "name": "Emeka Okonkwo",
    "position": "DL",
    "depth": "backup",
    "slot": 1,
    "stars": 2.5,
    "elite": false,
-   "age": 26,
+   "age": 25,
    "contract": {
     "years": 2,
     "total": 148000
    },
    "mood": "normal",
    "notes": [],
-   "number": 94
+   "number": 94,
+   "nationality": "Nigeria"
   },
   {
    "id": "wrf-30",
    "teamId": "wrf",
-   "name": "Damon Lawson",
+   "name": "Mateusz Wiśniewski",
    "position": "DT",
    "depth": "backup",
    "slot": 1,
    "stars": 2.0,
    "elite": false,
-   "age": 23,
+   "age": 22,
    "contract": {
     "years": 3,
     "total": 150000
    },
    "mood": "happy",
    "notes": [],
-   "number": 91
+   "number": 91,
+   "nationality": "Poland"
   },
   {
    "id": "wrf-31",
@@ -10279,7 +10313,7 @@
    "slot": 2,
    "stars": 3.0,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 2,
     "total": 186000
@@ -10297,7 +10331,7 @@
    "slot": 1,
    "stars": 3.0,
    "elite": false,
-   "age": 26,
+   "age": 25,
    "contract": {
     "years": 1,
     "total": 35000
@@ -10309,38 +10343,40 @@
   {
    "id": "wrf-33",
    "teamId": "wrf",
-   "name": "Cody Westbrook",
+   "name": "Axel Bergström",
    "position": "CB",
    "depth": "backup",
    "slot": 2,
    "stars": 2.5,
    "elite": false,
-   "age": 26,
+   "age": 25,
    "contract": {
     "years": 2,
     "total": 142000
    },
    "mood": "normal",
    "notes": [],
-   "number": 2
+   "number": 2,
+   "nationality": "Sweden"
   },
   {
    "id": "wrf-34",
    "teamId": "wrf",
-   "name": "Adrian Booker",
+   "name": "Emeka Adebayo",
    "position": "LB",
    "depth": "backup",
    "slot": 1,
    "stars": 3.0,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 2,
     "total": 190000
    },
    "mood": "normal",
    "notes": [],
-   "number": 4
+   "number": 4,
+   "nationality": "Nigeria"
   },
   {
    "id": "wrf-35",
@@ -10351,7 +10387,7 @@
    "slot": 2,
    "stars": 3.5,
    "elite": false,
-   "age": 22,
+   "age": 21,
    "contract": {
     "years": 3,
     "total": 175000
@@ -10369,7 +10405,7 @@
    "slot": 1,
    "stars": 3.0,
    "elite": false,
-   "age": 22,
+   "age": 21,
    "contract": {
     "years": 2,
     "total": 145000
@@ -10387,7 +10423,7 @@
    "slot": 1,
    "stars": 4.0,
    "elite": false,
-   "age": 22,
+   "age": 21,
    "contract": {
     "years": 3,
     "total": 240000
@@ -10405,7 +10441,7 @@
    "slot": 1,
    "stars": 3.0,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 2,
     "total": 186000
@@ -10423,7 +10459,7 @@
    "slot": 2,
    "stars": 3.5,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 1,
     "total": 55000
@@ -10441,7 +10477,7 @@
    "slot": 1,
    "stars": 4.5,
    "elite": false,
-   "age": 28,
+   "age": 27,
    "contract": {
     "years": 2,
     "total": 153330
@@ -10459,7 +10495,7 @@
    "slot": 1,
    "stars": 4.0,
    "elite": false,
-   "age": 28,
+   "age": 27,
    "contract": {
     "years": 2,
     "total": 133330
@@ -10477,7 +10513,7 @@
    "slot": 1,
    "stars": 3.5,
    "elite": false,
-   "age": 26,
+   "age": 25,
    "contract": {
     "years": 1,
     "total": 135000
@@ -10495,7 +10531,7 @@
    "slot": 1,
    "stars": 3.0,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 2,
     "total": 184000
@@ -10513,7 +10549,7 @@
    "slot": 2,
    "stars": 5.0,
    "elite": true,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 2,
     "total": 233330
@@ -10531,7 +10567,7 @@
    "slot": 1,
    "stars": 3.0,
    "elite": false,
-   "age": 22,
+   "age": 21,
    "contract": {
     "years": 2,
     "total": 138000
@@ -10549,7 +10585,7 @@
    "slot": 2,
    "stars": 4.0,
    "elite": false,
-   "age": 28,
+   "age": 27,
    "contract": {
     "years": 2,
     "total": 186670
@@ -10567,7 +10603,7 @@
    "slot": 1,
    "stars": 4.0,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 2,
     "total": 173330
@@ -10585,7 +10621,7 @@
    "slot": 1,
    "stars": 4.0,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 1,
     "total": 70000
@@ -10603,7 +10639,7 @@
    "slot": 2,
    "stars": 5.0,
    "elite": true,
-   "age": 28,
+   "age": 27,
    "contract": {
     "years": 2,
     "total": 233330
@@ -10621,7 +10657,7 @@
    "slot": 1,
    "stars": 4.0,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 2,
     "total": 333330
@@ -10639,7 +10675,7 @@
    "slot": 2,
    "stars": 3.5,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 1,
     "total": 55000
@@ -10657,7 +10693,7 @@
    "slot": 1,
    "stars": 3.5,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 1,
     "total": 60000
@@ -10675,7 +10711,7 @@
    "slot": 2,
    "stars": 5.0,
    "elite": true,
-   "age": 28,
+   "age": 27,
    "contract": {
     "years": 2,
     "total": 253330
@@ -10693,7 +10729,7 @@
    "slot": 1,
    "stars": 3.0,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 2,
     "total": 190000
@@ -10711,7 +10747,7 @@
    "slot": 2,
    "stars": 3.5,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 1,
     "total": 50000
@@ -10729,7 +10765,7 @@
    "slot": 1,
    "stars": 3.5,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 1,
     "total": 55000
@@ -10741,20 +10777,21 @@
   {
    "id": "wsl-21",
    "teamId": "wsl",
-   "name": "Tyler Whitman",
+   "name": "Femi Eze",
    "position": "QB",
    "depth": "backup",
    "slot": 1,
    "stars": 2.5,
    "elite": false,
-   "age": 26,
+   "age": 25,
    "contract": {
     "years": 2,
     "total": 168000
    },
    "mood": "normal",
    "notes": [],
-   "number": 3
+   "number": 3,
+   "nationality": "Nigeria"
   },
   {
    "id": "wsl-22",
@@ -10765,7 +10802,7 @@
    "slot": 1,
    "stars": 3.0,
    "elite": false,
-   "age": 25,
+   "age": 24,
    "contract": {
     "years": 2,
     "total": 150000
@@ -10783,7 +10820,7 @@
    "slot": 2,
    "stars": 2.0,
    "elite": false,
-   "age": 23,
+   "age": 22,
    "contract": {
     "years": 3,
     "total": 153000
@@ -10801,7 +10838,7 @@
    "slot": 1,
    "stars": 2.5,
    "elite": false,
-   "age": 25,
+   "age": 24,
    "contract": {
     "years": 2,
     "total": 138000
@@ -10819,7 +10856,7 @@
    "slot": 1,
    "stars": 2.5,
    "elite": false,
-   "age": 26,
+   "age": 25,
    "contract": {
     "years": 2,
     "total": 150000
@@ -10831,56 +10868,59 @@
   {
    "id": "wsl-26",
    "teamId": "wsl",
-   "name": "Darius Coleman",
+   "name": "Carter Tremblay",
    "position": "OG",
    "depth": "backup",
    "slot": 1,
    "stars": 2.0,
    "elite": false,
-   "age": 24,
+   "age": 23,
    "contract": {
     "years": 3,
     "total": 156000
    },
    "mood": "happy",
    "notes": [],
-   "number": 66
+   "number": 66,
+   "nationality": "Canada"
   },
   {
    "id": "wsl-27",
    "teamId": "wsl",
-   "name": "Malcolm Sullivan",
+   "name": "Babatunde Adeyemi",
    "position": "OT",
    "depth": "backup",
    "slot": 1,
    "stars": 2.5,
    "elite": false,
-   "age": 25,
+   "age": 24,
    "contract": {
     "years": 3,
     "total": 174000
    },
    "mood": "happy",
    "notes": [],
-   "number": 71
+   "number": 71,
+   "nationality": "Nigeria"
   },
   {
    "id": "wsl-28",
    "teamId": "wsl",
-   "name": "Roman Fletcher",
+   "name": "Marko Petrović",
    "position": "DL",
    "depth": "backup",
    "slot": 1,
    "stars": 2.5,
    "elite": false,
-   "age": 26,
+   "age": 25,
    "contract": {
     "years": 2,
     "total": 148000
    },
    "mood": "normal",
    "notes": [],
-   "number": 58
+   "number": 58,
+   "nationality": "Serbia"
   },
   {
    "id": "wsl-29",
@@ -10891,7 +10931,7 @@
    "slot": 1,
    "stars": 2.0,
    "elite": false,
-   "age": 23,
+   "age": 22,
    "contract": {
     "years": 3,
     "total": 150000
@@ -10909,7 +10949,7 @@
    "slot": 2,
    "stars": 3.0,
    "elite": false,
-   "age": 27,
+   "age": 26,
    "contract": {
     "years": 2,
     "total": 188000
@@ -10927,7 +10967,7 @@
    "slot": 1,
    "stars": 2.5,
    "elite": false,
-   "age": 25,
+   "age": 24,
    "contract": {
     "years": 3,
     "total": 171000
@@ -10945,7 +10985,7 @@
    "slot": 1,
    "stars": 2.0,
    "elite": false,
-   "age": 24,
+   "age": 23,
    "contract": {
     "years": 3,
     "total": 159000
@@ -10957,38 +10997,40 @@
   {
    "id": "wsl-33",
    "teamId": "wsl",
-   "name": "Preston Walsh",
+   "name": "Rafael Oliveira",
    "position": "CB",
    "depth": "backup",
    "slot": 2,
    "stars": 2.5,
    "elite": false,
-   "age": 26,
+   "age": 25,
    "contract": {
     "years": 2,
     "total": 142000
    },
    "mood": "normal",
    "notes": [],
-   "number": 39
+   "number": 39,
+   "nationality": "Brazil"
   },
   {
    "id": "wsl-34",
    "teamId": "wsl",
-   "name": "Elijah Crawford",
+   "name": "Kofi Mensah",
    "position": "LB",
    "depth": "backup",
    "slot": 1,
    "stars": 2.5,
    "elite": false,
-   "age": 25,
+   "age": 24,
    "contract": {
     "years": 3,
     "total": 177000
    },
    "mood": "happy",
    "notes": [],
-   "number": 56
+   "number": 56,
+   "nationality": "Ghana"
   },
   {
    "id": "wsl-35",
@@ -10999,7 +11041,7 @@
    "slot": 2,
    "stars": 2.0,
    "elite": false,
-   "age": 22,
+   "age": 21,
    "contract": {
     "years": 1,
     "total": 80000
@@ -11017,7 +11059,7 @@
    "slot": 1,
    "stars": 3.0,
    "elite": false,
-   "age": 25,
+   "age": 24,
    "contract": {
     "years": 2,
     "total": 145000

@@ -36,7 +36,7 @@ export async function loadLeague() {
     if (failed) throw failed.error;
     const meta = Object.fromEntries(settings.data.map((s) => [s.key, s.value]));
     store.league = {
-      meta: { capLimit: meta.cap_limit, currentSeason: meta.current_season, phase: meta.phase, maxAge: meta.max_age ?? 27 },
+      meta: { capLimit: meta.cap_limit, currentSeason: meta.current_season, phase: meta.phase, maxAge: meta.max_age ?? 27, agedForSeason: meta.aged_for_season ?? 0 },
       teams: teams.data.map(toTeam),
       players: players.data.map(toPlayer),
       picks: picks.data.map(toPick),
