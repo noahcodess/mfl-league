@@ -14,6 +14,8 @@ import DashboardPage from './pages/DashboardPage.jsx';
 import LeagueControlPage from './pages/LeagueControlPage.jsx';
 import FreeAgentsPage from './pages/FreeAgentsPage.jsx';
 import DraftPage from './pages/DraftPage.jsx';
+import SandboxBanner from './components/SandboxBanner.jsx';
+import { inSandbox } from './data/sandbox.js';
 import { useHashRoute, homeFor } from './lib/router.js';
 import { brandColors } from './lib/color.js';
 import { useSession, loginStep } from './data/session.js';
@@ -62,8 +64,9 @@ export default function App() {
   useEffect(() => { loadLeague().then(setLive); }, []);
   const myTeam = step === 'ready' && session.profile?.role === 'coach' ? getTeam(session.profile.team_id) : null;
   return (
-    <div className="app" style={brandColors(myTeam)}>
-      <Header page={route.page} session={session} ready={step === 'ready'} live={live} />
+    <div className={`app${inSandbox() ? ' sandbox' : ''}`} style={inSandbox() ? undefined : brandColors(myTeam)}>
+      <Header page={route.page} session={session} ready={step === 'ready'} live={live} onLeagueChange={reload} />
+      <SandboxBanner />
       <main className="main"><div className="page" key={`${route.page}-${route.id || ''}-${step}`}><Screen route={route} session={session} step={step} reload={reload} /></div></main>
     </div>
   );

@@ -1,0 +1,11 @@
+/* TEST mode: the whole site goes green so nobody mistakes it for the real league. */
+.app.sandbox { --brand: #2fbf71; --mfl-hi: #2fbf71; --gold: #8ff0b4; --link: #8ff0b4; --panel: #0d1a12; --panel2: #10241a; --line: #1d4a32; }
+body:has(.app.sandbox) { background-image: radial-gradient(#ffffff08 1px, transparent 1px), linear-gradient(180deg, #06200f 0%, #07110b 340px); background-color: #07110b; }
+.app.sandbox .header { background-color: #08160ef0; border-bottom-color: #2fbf71; }
+.sandbox-banner { position: sticky; top: 52px; z-index: 4; padding: 6px 16px; text-align: center; font-family: var(--pixel); font-size: 13px;
+  color: #062014; background: repeating-linear-gradient(45deg, #2fbf71, #2fbf71 14px, #29a863 14px, #29a863 28px); border-bottom: 2px solid #000; }
+.test-btn { background: #1d4a32; color: #8ff0b4; border-color: #000; }
+.test-btn.on { background: #2fbf71; color: #062014; animation: blink 1.6s ease-in-out infinite; }
+.step-live { font-family: var(--pixel); font-size: 11px; padding: 2px 6px; border: 1px solid #000; }
+.step-live.real { background: #3a1010; color: var(--bad); }
+.step-live.test { background: #10301e; color: #8ff0b4; }

@@ -8,6 +8,7 @@ export function applyDemoOverrides() {
   if (!DEMO) return;
   if (params.get('step')) store.league.meta.offseasonStep = Number(params.get('step'));
   if (params.get('round')) store.league.meta.faRound = Number(params.get('round'));
+  if (params.get('sandbox')) store.league.meta.sandbox = true;
 }
 applyDemoOverrides();
 

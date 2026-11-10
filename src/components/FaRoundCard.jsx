@@ -3,6 +3,7 @@ import Modal from './Modal.jsx';
 import { runFaRound, faRound, faRounds } from '../data/freeAgency.js';
 import { links } from '../lib/router.js';
 import { plural } from '../lib/format.js';
+import { inSandbox } from '../data/sandbox.js';
 
 // League Control during free agency: run the next round (bots bid, every free agent picks), with confirm and a recap.
 export default function FaRoundCard({ canControl, onDone }) {
@@ -40,7 +41,8 @@ export default function FaRoundCard({ canControl, onDone }) {
       </div>
       {confirm && (
         <Modal onClose={() => !busy && setConfirm(false)}>
-          <h2>Run free agency round {next}?</h2>
+          <h2>⚠️ Run free agency round {next}?</h2>
+          <p>{inSandbox() ? <span className="step-live test">🧪 TEST MODE: this resets when you leave TEST</span> : <span className="step-live real">🔴 REAL LEAGUE: this counts</span>}</p>
           <p>Bots make their offers, then players decide. Players get a little less picky every round{next === 1 ? ', and big names may wait this one out' : ''}.</p>
           <p className="dim">You can undo it right after if something looks wrong.</p>
           <div className="modal-actions">

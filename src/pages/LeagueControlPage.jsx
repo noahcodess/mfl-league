@@ -6,6 +6,7 @@ import DealInbox from '../components/DealInbox.jsx';
 import FaRoundCard from '../components/FaRoundCard.jsx';
 import { useNegotiations } from '../data/negotiations.js';
 import { currentSeason, currentPhase, offseasonStep, leagueEvents, PHASE_NAMES, FA_WINDOW } from '../data/teams.js';
+import { inSandbox } from '../data/sandbox.js';
 import { advanceOffseason, undoLastStep, lastSnapshotLabel } from '../data/leagueEngine.js';
 import { previewStep } from '../lib/stepPreview.js';
 
@@ -77,7 +78,8 @@ export default function LeagueControlPage({ canControl, reload, viewerKey }) {
       </div>
       {confirm && (
         <Modal onClose={() => !busy && setConfirm(null)}>
-          <h2>{confirm === 'run' ? `Run ${name}?` : 'Undo the last step?'}</h2>
+          <h2>⚠️ {confirm === 'run' ? `Move the league to ${name}?` : 'Undo the last step?'}</h2>
+          <p>{inSandbox() ? <span className="step-live test">🧪 TEST MODE: this resets when you leave TEST</span> : <span className="step-live real">🔴 REAL LEAGUE: this counts</span>}</p>
           <p>{confirm === 'run' ? preview.text : `This puts the league back to: ${undoLabel?.toLowerCase()}.`}</p>
           <p className="dim">{confirm === 'run' ? 'Every coach sees the change right away. You can undo it right after if something looks wrong.' : 'Anything that happened since that step is reversed.'}</p>
           <div className="modal-actions">
