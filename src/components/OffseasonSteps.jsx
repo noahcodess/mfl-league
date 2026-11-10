@@ -3,7 +3,7 @@ import React from 'react';
 // The offseason calendar. The commissioner moves the league from one step to the next from his screen.
 // The step just run is what's happening now (e.g. the re-signing window); the next one is up next.
 export const OFFSEASON_STEPS = [
-  ['Birthday & Farewell', 'Every player gets a year older, then anyone past the max age (27) retires.'],
+  ['Birthday & Farewell', 'Every player gets a year older, young players grow toward their potential, and anyone past 27 retires.'],
   ['Re-signing', 'Expiring contracts end. Teams re-sign their own players before the market opens.'],
   ['Free agency', 'Anyone not re-signed is up for grabs. Teams bid, players pick over a few rounds.'],
   ['Draft', 'Rookies join the league, live in the draft room.'],

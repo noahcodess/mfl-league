@@ -5,7 +5,7 @@ import { getTeam } from '../data/teams.js';
 // The permanent league log: every birthday, retirement, contract, signing, draft pick and award, newest first.
 const ICONS = { birthday: '🎂', retired: '👋', contract_expired: '📜', free_agent: '🆓', signed: '✍️', resigned: '✍️', draft: '🎓', season_start: '🏈', award: '🏆',
   deal_agreed: '🤝', deal_denied: '❌', talks_ended: '🚪', bots_resigned: '🤖', fa_open: '🛒', fa_round: '🔁', fa_holdout: '⏳',
-  fa_closed: '🔒', street_free_agents: '🆕' };
+  fa_closed: '🔒', street_free_agents: '🆕', developed: '📈' };
 
 export default function LeagueLog({ events, limit = 30, title = 'League log' }) {
   return (
