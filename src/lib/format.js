@@ -19,3 +19,6 @@ export function shortDate(iso) {
   const d = new Date(iso);
   return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) + ', ' + d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
 }
+
+// Attribute ratings are stored 1-99 for precision and shown out of 10. A 10 is rare (98+); 9 = really good.
+export const outOf10 = (v) => (v >= 98 ? 10 : Math.max(1, Math.min(9, Math.round(v / 10))));

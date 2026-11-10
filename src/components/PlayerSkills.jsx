@@ -4,7 +4,7 @@ import { usePlayerAttributes } from '../data/attributes.js';
 import { strengthsAndWeaknesses } from '../lib/strengths.js';
 import { STYLES } from '../lib/attributeDefs.js';
 
-// The skills part of a player page: OVR with position and league rank, his archetype with strengths and
+// The skills part of a player page: his position rank and league rank (from his skills), his archetype with strengths and
 // weaknesses, then his attribute bars.
 export default function PlayerSkills({ player, potential }) {
   const { ratings, ceilings, style, rank, loaded } = usePlayerAttributes(player, potential);
@@ -15,7 +15,6 @@ export default function PlayerSkills({ player, potential }) {
     <>
       {rank && (
         <div className="ranks">
-          <div><span>OVR</span><b>{rank.ovr}</b></div>
           <div><span>{player.position} rank</span><b>#{rank.pos_rank}</b></div>
           <div><span>League rank</span><b>#{rank.overall_rank}</b></div>
         </div>
