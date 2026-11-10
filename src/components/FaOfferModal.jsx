@@ -5,7 +5,7 @@ import StarRating from './StarRating.jsx';
 import OfferForm, { snapMoney } from './OfferForm.jsx';
 import BiddingBoard from './BiddingBoard.jsx';
 import InterestMeter, { SIGN_LINE } from './InterestMeter.jsx';
-import { getFaQuote, getFaBoard, makeFaOffer, withdrawFaOffer, faOpen, faRound, faRounds, maxOpenOffers } from '../data/freeAgency.js';
+import { getFaQuote, getFaBoard, makeFaOffer, withdrawFaOffer, faOpen, faRound, faRounds } from '../data/freeAgency.js';
 import { tierOf } from '../lib/tiers.js';
 import { money, plural } from '../lib/format.js';
 import { getTeam } from '../data/teams.js';
@@ -91,7 +91,7 @@ export default function FaOfferModal({ player, myTeam, canOffer, potential, onCl
           <OfferForm maxPerYear={quote.cap_room ?? Infinity} quote={quote} years={years} setYears={setYears} perYear={perYear} setPerYear={setPerYear} role={role} setRole={setRole}
             canSend={!busy} busy={busy} onSend={send} sendLabel={quote.mine ? 'Update offer' : 'Make offer'} />
           {quote.mine && <button className="btn wide ghost" disabled={busy} onClick={pull}>Pull my offer</button>}
-          <p className="dim help">You have {quote.offers_out} of {maxOpenOffers()} offers out. Round {Math.min(faRound() + 1, faRounds())} of {faRounds()} is next.</p>
+          <p className="dim help">You have {quote.offers_out} of {quote.offers_max ?? '?'} offers out this round. Round {Math.min(faRound() + 1, faRounds())} of {faRounds()} is next.</p>
         </>
       )}
     </Modal>

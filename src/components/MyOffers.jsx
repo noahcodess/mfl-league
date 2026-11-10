@@ -1,6 +1,6 @@
 import React from 'react';
 import { store } from '../data/store.js';
-import { faOpen, maxOpenOffers } from '../data/freeAgency.js';
+import { faOpen, offerLimit } from '../data/freeAgency.js';
 import { money } from '../lib/format.js';
 
 // Side panel on the free agent market: how it works, plus this coach's offers (out now, signed, lost).
@@ -15,7 +15,7 @@ export default function MyOffers({ team, offers, onOpen }) {
     <section className="card fa-side">
       <h3>How free agency works</h3>
       <ul className="fa-rules">
-        <li>💸 Make up to {maxOpenOffers()} offers at a time, any size that fits your cap.</li>
+        <li>💸 Offers you can have out: 3 in round 1, 10 in round 2, then as many as you have roster spots.</li>
         <li>🔁 The commissioner runs a few rounds. Each round every player picks the best offer he'll take.</li>
         <li>⭐ Each player has a personality: some chase rings, some want to start, some only want money.</li>
         <li>📊 The top of a player's bidding board is the team he likes most, and that team gets him.</li>
@@ -25,7 +25,7 @@ export default function MyOffers({ team, offers, onOpen }) {
       </ul>
       {team && (
         <>
-          <h3>Your offers <span className="count">{out}/{maxOpenOffers()}</span></h3>
+          <h3>Your offers <span className="count">{out}{offerLimit() ? `/${offerLimit()}` : ''}</span></h3>
           {!mine.length && <p className="dim">{faOpen() ? 'No offers yet. Click a player to make one.' : 'Nothing yet this offseason.'}</p>}
           {mine.map((o) => (
             <button key={o.id} className={`offer-row ${o.status}`} onClick={() => onOpen(o.player_id)}>

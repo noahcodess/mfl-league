@@ -9,7 +9,8 @@ const clean = (msg = '') => (msg.includes('not allowed') ? 'Only the commissione
 
 export const faRound = () => Number(store.league.meta.faRound ?? 0);
 export const faRounds = () => Number(store.league.meta.faRounds ?? 4);
-export const maxOpenOffers = () => Number(store.league.meta.maxOpenOffers ?? 6);
+// Open offers allowed in the round coming up: 3, then 10, then as many as you have roster spots.
+export const offerLimit = () => (({ 1: 3, 2: 10 })[faRound() + 1] ?? null);
 export const faOpen = () => store.league.meta.phase === 'offseason' && Number(store.league.meta.offseasonStep) === FA_WINDOW;
 
 // Offers this person may see (own team; the commissioner and owner see all). Newest first.

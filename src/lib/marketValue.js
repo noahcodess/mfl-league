@@ -3,7 +3,7 @@
 // position, age, role, potential and personality.
 import { traitsFor } from './playerTraits.js';
 
-const BASE = { 1.5: 40000, 2: 50000, 2.5: 65000, 3: 85000, 3.5: 100000, 4: 125000, 4.5: 160000, 5: 210000 };
+const BASE = { 1: 28000, 1.5: 38000, 2: 47000, 2.5: 61000, 3: 80000, 3.5: 93000, 4: 117000, 4.5: 150000, 5: 198000 };
 const POSITION = { QB: 1.25, WR: 1.1, DE: 1.1, OT: 1.1, TE: 0.9, OG: 0.9, C: 0.9, DT: 0.9, SS: 0.9 };
 const AGE = { 21: 0.9, 22: 0.9, 26: 0.95, 27: 0.85 };
 export const MIN_SALARY = 10000;
@@ -14,7 +14,7 @@ const round5k = (n) => Math.max(MIN_SALARY, Math.round(n / 5000) * 5000);
 // Fair yearly value anyone can see: stars, elite status, position, age and starter/backup role.
 export function marketValue(p) {
   if (p.stars == null) return null;
-  const base = BASE[p.stars] ?? BASE[Math.round(p.stars * 2) / 2] ?? 50000;
+  const base = BASE[p.stars] ?? BASE[Math.round(p.stars * 2) / 2] ?? 47000;
   return round5k(base * (p.elite ? 1.15 : 1) * (POSITION[p.position] ?? 1) * (AGE[p.age] ?? 1) * (p.depth === 'backup' ? 0.85 : 1));
 }
 
