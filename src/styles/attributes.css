@@ -2,7 +2,7 @@
 .attrs { margin: 14px 0 6px; }
 .attr-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 10px 16px; }
 .attr-label { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 3px;
-  font-family: var(--pixel); font-size: 11px; text-transform: uppercase; letter-spacing: .5px; color: var(--text); }
+  font-family: var(--label); font-weight: 700; font-size: 11.5px; text-transform: uppercase; letter-spacing: .5px; color: var(--text); }
 .attr-label b { color: #d6cf4c; }
 .attr.core .attr-label span { color: var(--dim); }
 .abar { position: relative; height: 16px; background: #000; border: 2px solid #000; box-shadow: 0 0 0 1px #ffffff22; }
@@ -10,13 +10,13 @@
 .abar-ceil { position: absolute; left: 0; top: 0; bottom: 0; border: 2px solid #d6cf4c; box-sizing: border-box; }
 .ranks { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin: 12px 0 4px; }
 .ranks div { padding: 8px 10px; background: var(--panel2); border: 2px solid #000; text-align: center; }
-.ranks span { display: block; font-family: var(--pixel); font-size: 10px; color: var(--dim); text-transform: uppercase; }
+.ranks span { display: block; font-family: var(--label); font-weight: 700; font-size: 11.5px; color: var(--dim); text-transform: uppercase; }
 .ranks b { font-family: var(--pixel); font-size: 20px; color: #d6cf4c; }
 .archetype { margin: 14px 0 4px; }
 .arch-name { font-family: var(--pixel); font-size: 15px; color: var(--team-accent, var(--gold)); margin: -4px 0 8px; }
 .arch-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 .arch-cols > div { padding: 8px 10px; background: var(--panel2); border: 2px solid #000; }
-.arch-cols span { font-family: var(--pixel); font-size: 11px; text-transform: uppercase; }
+.arch-cols span { font-family: var(--label); font-weight: 700; font-size: 11.5px; text-transform: uppercase; }
 .arch-cols span.good { color: var(--good); }
 .arch-cols span.bad { color: var(--bad); }
 .arch-cols ul { margin: 6px 0 0; padding-left: 16px; font-size: 13px; }

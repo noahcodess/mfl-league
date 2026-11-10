@@ -6,6 +6,7 @@ import OfferForm, { snapMoney } from './OfferForm.jsx';
 import BiddingBoard from './BiddingBoard.jsx';
 import PlayerSkills from './PlayerSkills.jsx';
 import ScoutButton from './ScoutButton.jsx';
+import Tabs from './Tabs.jsx';
 import InterestMeter, { SIGN_LINE } from './InterestMeter.jsx';
 import { getFaQuote, getFaBoard, makeFaOffer, withdrawFaOffer, faOpen, faRound, faRounds } from '../data/freeAgency.js';
 import { tierOf } from '../lib/tiers.js';
@@ -65,6 +66,9 @@ export default function FaOfferModal({ player, myTeam, canOffer, potential, scou
           <div className={`tier tier-${tier.key}`} title={tier.note}>{tier.label}{player.nationality && player.nationality !== 'USA' ? ` · ${player.nationality}` : ''}</div>
         </div>
       </div>
+      <Tabs tabs={[
+        { key: 'offer', label: 'Offer', render: () => (
+          <>
       {quote && (
         <div className="pcard-grid">
           <div className="hl"><span>Asking</span><b>{money(quote.ask)}/yr</b></div>
@@ -81,8 +85,6 @@ export default function FaOfferModal({ player, myTeam, canOffer, potential, scou
       )}
       {quote?.grudge === 0 && <div className="notice grudge">“{quote.grudge_line}” <span className="dim">He won't sign with you this offseason.</span></div>}
       {quote?.grudge > 0 && quote.left_how && <div className="notice">{LEFT_HOW[quote.left_how]}</div>}
-      {scouts && <ScoutButton player={player} left={scouts.fa} scouted={scouted} known={potential != null} onScouted={() => onChanged?.()} />}
-      <PlayerSkills player={player} potential={potential} />
       <BiddingBoard board={board} />
       {!open && <div className="notice">Offers open during the Free agency step. {faRound() >= faRounds() ? 'This year\'s rounds are done.' : ''}</div>}
       {open && !canOffer && <div className="notice">Only a team's coach can make offers.</div>}
@@ -98,6 +100,15 @@ export default function FaOfferModal({ player, myTeam, canOffer, potential, scou
           <p className="dim help">You have {quote.offers_out} of {quote.offers_max ?? '?'} offers out this round. Round {Math.min(faRound() + 1, faRounds())} of {faRounds()} is next.</p>
         </>
       )}
+          </>
+        ) },
+        { key: 'player', label: 'Player', render: () => (
+          <>
+            {scouts && <ScoutButton player={player} left={scouts.fa} scouted={scouted} known={potential != null} onScouted={() => onChanged?.()} />}
+            <PlayerSkills player={player} potential={potential} />
+          </>
+        ) },
+      ]} />
     </Modal>
   );
 }

@@ -1,4 +1,5 @@
 import React from 'react';
+import ShowMore from './ShowMore.jsx';
 import Headshot from './Headshot.jsx';
 import StarRating from './StarRating.jsx';
 import { capHit, isRetiring } from '../data/players.js';
@@ -31,7 +32,7 @@ export default function ContractWatch({ players, team, potentials, traits = {}, 
       <section className="card">
         <h3>Contracts ending <span className="count">{expiring.length}</span></h3>
         <p className="dim help">{windowOpen ? 'The re-signing window is open. Anyone not re-signed hits free agency when it closes.' : 'Their deals end this offseason. Re-sign them when the re-signing window opens, or they hit free agency.'}</p>
-        {expiring.length ? expiring.map((p) => (
+        {expiring.length ? <ShowMore items={expiring} first={4} render={(p) => (
           <Row key={p.id} p={p} team={team} potential={potentials[p.id]} onOpen={onOpen}
             right={<>
               {talkOf(p.id) && <span className={`nego-chip ${talkOf(p.id).status}`}>{CHIP[talkOf(p.id).status]}</span>}
@@ -39,11 +40,11 @@ export default function ContractWatch({ players, team, potentials, traits = {}, 
               <button className="btn small" disabled={!windowOpen} title={windowOpen ? 'Open talks' : 'Opens at the Re-signing step'}
                 onClick={(e) => { e.stopPropagation(); onNegotiate?.(p); }}>{talkOf(p.id) ? 'Talks' : 'Re-sign'}</button>
             </>} />
-        )) : <p className="dim">Nobody. Everyone is signed through next season.</p>}
+        )} /> : <p className="dim">Nobody. Everyone is signed through next season.</p>}
       </section>
       <section className="card">
         <h3>Aging out <span className="count">{retiring.length}</span></h3>
-        <p className="dim help">They turn 28 on Birthday Day and retire. Plan their replacements.</p>
+        <p className="dim help">They turn 28 at Birthday & Farewell and retire. Plan their replacements.</p>
         {retiring.length ? retiring.map((p) => (
           <Row key={p.id} p={p} team={team} onOpen={onOpen} right={<span className="ret-tag">RET</span>} />
         )) : <p className="dim">No retirements this year.</p>}

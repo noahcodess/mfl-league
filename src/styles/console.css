@@ -1,10 +1,10 @@
 /* Commissioner console: the accounts table, the create form and the one-time password popup. */
 .console-head { display: flex; align-items: center; gap: 14px; margin-bottom: 16px; }
-.console-head .unlocked { margin-left: auto; font-size: 12px; color: var(--good); font-family: var(--pixel); }
+.console-head .unlocked { margin-left: auto; font-size: 12px; color: var(--good); font-family: var(--label); font-weight: 700; }
 .console-grid { display: grid; grid-template-columns: 1fr 320px; gap: 16px; align-items: start; }
 .acct-user { font-weight: 600; }
 .acct-name { color: var(--dim); font-size: 12px; }
-.role-tag { font-family: var(--pixel); font-size: 11px; padding: 2px 6px; border: 1px solid #000; background: var(--panel2); color: var(--dim); }
+.role-tag { font-family: var(--label); font-weight: 700; font-size: 12px; padding: 2px 6px; border: 1px solid #000; background: var(--panel2); color: var(--dim); }
 .role-tag.commissioner { background: var(--mfl); color: var(--gold); }
 .status-tag { font-size: 12px; }
 .status-tag.pending { color: var(--warn); }
@@ -31,13 +31,13 @@
 .log li { display: flex; align-items: center; gap: 8px; padding: 5px 6px; border-bottom: 1px solid var(--line2); font-size: 13px; }
 .log-icon { width: 20px; text-align: center; }
 .log-text { flex: 1; }
-.log-when { font-family: var(--pixel); font-size: 11px; color: var(--faint); }
+.log-when { font-family: var(--label); font-weight: 700; font-size: 12px; color: var(--faint); }
 .nego { width: min(560px, 100%); position: relative; outline-color: var(--team); }
 .nego-head { display: flex; gap: 14px; align-items: center; margin-bottom: 12px; }
 .nego-head .headshot { border: 3px solid #000; box-shadow: 3px 3px 0 #000; }
 .nego-head h2 { margin: 0 0 2px; font-size: 20px; }
 .nego-sub { color: var(--dim); font-size: 13px; display: flex; align-items: center; gap: 6px; }
-.tier { display: inline-block; margin-top: 5px; font-family: var(--pixel); font-size: 11px; padding: 1px 7px; border: 1px solid #000; }
+.tier { display: inline-block; margin-top: 5px; font-family: var(--label); font-weight: 700; font-size: 12px; padding: 1px 7px; border: 1px solid #000; }
 .tier-star { background: #5a3d0a; color: var(--gold); } .tier-starter { background: #12324a; color: #9fd0ff; } .tier-depth { background: var(--panel2); color: var(--dim); }
 .nego-traits { font-size: 13px; color: var(--dim); margin: 0 0 10px; }
 .nego-traits b { color: var(--text); }
@@ -50,18 +50,18 @@
 .bubble.player.rejected { border-color: var(--warn); } .bubble.player.walked { border-color: var(--bad); }
 .nego-form { display: flex; flex-direction: column; gap: 8px; }
 .seg { display: flex; gap: 0; }
-.seg button { flex: 1; padding: 7px; font-family: var(--pixel); font-size: 13px; color: var(--dim); background: var(--panel2); border: 2px solid #000; cursor: pointer; }
+.seg button { flex: 1; padding: 7px; font-family: var(--label); font-weight: 700; font-size: 13px; color: var(--dim); background: var(--panel2); border: 2px solid #000; cursor: pointer; }
 .seg button.on { color: #fff; background: var(--team, var(--brand)); }
 .seg button:disabled { opacity: .35; cursor: default; }
 .money-step { display: flex; gap: 6px; align-items: center; }
 .money-step button { width: 34px; height: 34px; font-size: 18px; color: var(--text); background: var(--panel2); border: 2px solid #000; cursor: pointer; }
 .money-step input { flex: 1; min-width: 0; height: 34px; text-align: center; font-family: var(--pixel); font-size: 18px; color: var(--gold); background: #000; border: 2px solid var(--line); }
-.money-step .chip-btn { width: auto; padding: 0 9px; font-size: 12px; font-family: var(--pixel); }
+.money-step .chip-btn { width: auto; padding: 0 9px; font-size: 12px; font-family: var(--label); font-weight: 700; }
 .nego-total { font-size: 13px; color: var(--dim); text-align: right; }
 .counter-btn { margin-bottom: 10px; background: #6b4f12; }
 .deal-row { display: flex; align-items: center; gap: 10px; padding: 8px; margin-bottom: 6px; background: var(--panel2); border: 2px solid #000; }
 .deal-text { flex: 1; display: flex; flex-direction: column; }
 .deal-text small { color: var(--dim); font-size: 12px; }
-.nego-chip { font-family: var(--pixel); font-size: 10px; padding: 1px 6px; border: 1px solid #000; }
+.nego-chip { font-family: var(--label); font-weight: 700; font-size: 12px; padding: 1px 6px; border: 1px solid #000; }
 .nego-chip.open { background: #3a2d10; color: var(--gold); } .nego-chip.agreed { background: #0d2418; color: var(--good); }
 .nego-chip.approved { background: var(--good); color: #062014; } .nego-chip.walked, .nego-chip.denied { background: #3a1010; color: var(--bad); }

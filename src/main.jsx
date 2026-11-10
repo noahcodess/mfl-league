@@ -15,6 +15,7 @@ import './styles/roster.css';
 import './styles/market.css';
 import './styles/attributes.css';
 import './styles/sandbox.css';
+import './styles/layout.css';
 import './styles/home.css';
 import './styles/motion.css';
 

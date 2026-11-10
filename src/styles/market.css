@@ -1,7 +1,7 @@
 /* Free agent market: position filters, the player grid, offer panel, offer reads, and the round card in League Control. */
 .fa-filters { display: flex; flex-wrap: wrap; gap: 10px; justify-content: space-between; align-items: center; margin-bottom: 12px; }
 .pos-chips { display: flex; flex-wrap: wrap; gap: 4px; }
-.pos-chips button { font-family: var(--pixel); font-size: 12px; padding: 4px 8px; color: var(--dim); background: var(--panel2); border: 2px solid #000; cursor: pointer; }
+.pos-chips button { font-family: var(--label); font-weight: 700; font-size: 12px; padding: 4px 8px; color: var(--dim); background: var(--panel2); border: 2px solid #000; cursor: pointer; }
 .pos-chips button small { color: var(--faint); margin-left: 2px; }
 .pos-chips button.on { color: #fff; background: var(--team, var(--brand)); }
 .pos-chips button.on small { color: #fffc; }
@@ -9,13 +9,13 @@
 .sort-seg { min-width: 220px; }
 .fa-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 8px; }
 .ptile.fa { border-left-color: #6b7280; }
-.offer-tag { font-family: var(--pixel); font-size: 10px; padding: 1px 6px; background: var(--good); color: #062014; border: 1px solid #000; }
+.offer-tag { font-family: var(--label); font-weight: 700; font-size: 12px; padding: 1px 6px; background: var(--good); color: #062014; border: 1px solid #000; }
 .fa-side { align-self: start; position: sticky; top: 76px; }
 .fa-rules { margin: 0 0 16px; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 6px; font-size: 13px; color: var(--dim); }
 .offer-row { display: grid; grid-template-columns: 1fr auto; gap: 2px 8px; width: 100%; text-align: left; font: inherit; color: var(--text); padding: 7px 9px;
   margin-bottom: 6px; background: var(--panel2); border: 2px solid #000; cursor: pointer; }
 .offer-row small { grid-column: 1; color: var(--dim); font-size: 12px; }
-.offer-status { grid-row: 1 / 3; grid-column: 2; align-self: center; font-family: var(--pixel); font-size: 10px; padding: 2px 6px; border: 1px solid #000; }
+.offer-status { grid-row: 1 / 3; grid-column: 2; align-self: center; font-family: var(--label); font-weight: 700; font-size: 12px; padding: 2px 6px; border: 1px solid #000; }
 .offer-status.open { background: #3a2d10; color: var(--gold); }
 .offer-status.won { background: var(--good); color: #062014; }
 .offer-status.lost, .offer-status.expired { background: #3a1010; color: var(--bad); }
@@ -23,7 +23,7 @@
 .notice.read-strong { border-color: var(--good); color: var(--good); }
 .notice.read-close { border-color: var(--gold); color: var(--gold); }
 .notice.read-low { border-color: var(--bad); color: var(--bad); }
-.deal-kind { font-family: var(--pixel); font-size: 10px; padding: 0 5px; margin-left: 4px; border: 1px solid #000; background: var(--panel); color: var(--dim); }
+.deal-kind { font-family: var(--label); font-weight: 700; font-size: 12px; padding: 0 5px; margin-left: 4px; border: 1px solid #000; background: var(--panel); color: var(--dim); }
 .deal-kind.free_agency { background: #10263a; color: #8ac8ff; }
 .fa-pips { display: flex; gap: 6px; margin: -4px 0 10px; }
 .fa-pips span { width: 26px; height: 8px; background: var(--panel2); border: 2px solid #000; }
@@ -43,17 +43,17 @@
 .meter.hot .meter-fill { background: var(--good); }
 .meter-line { position: absolute; top: -2px; bottom: -2px; width: 2px; background: #fff; box-shadow: 0 0 0 1px #000; }
 .my-meter { display: grid; grid-template-columns: auto 1fr auto; gap: 10px; align-items: center; margin: 4px 0 10px; font-size: 13px; }
-.my-meter b { font-family: var(--pixel); font-size: 12px; min-width: 64px; text-align: right; }
+.my-meter b { font-family: var(--label); font-weight: 700; font-size: 12px; min-width: 64px; text-align: right; }
 .fa-type { margin: 10px 0 0; font-size: 13px; }
 .notice.grudge { border-color: var(--bad); color: var(--text); font-style: italic; }
-.rookie-tag { font-family: var(--pixel); font-size: 9px; padding: 0 4px; margin-left: 4px; background: #d6cf4c; color: #1b1a08; border: 1px solid #000; }
-.scout-count { font-family: var(--pixel); font-size: 12px; color: #d6cf4c; margin: 4px 0 0; }
+.rookie-tag { font-family: var(--label); font-weight: 700; font-size: 12px; padding: 0 4px; margin-left: 4px; background: #d6cf4c; color: #1b1a08; border: 1px solid #000; }
+.scout-count { font-family: var(--label); font-weight: 700; font-size: 12px; color: #d6cf4c; margin: 4px 0 0; }
 .scout-box { display: flex; flex-direction: column; gap: 6px; margin: 12px 0; }
 .scout-box small { font-size: 11.5px; }
 .scout-done { margin: 12px 0; padding: 8px 10px; border: 2px solid var(--good); color: var(--good); font-size: 13px; }
 .college { padding: 10px; background: var(--panel2); border: 2px solid #000; margin-bottom: 8px; }
 .college-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(90px, 1fr)); gap: 8px; }
-.college-stats span { display: block; font-family: var(--pixel); font-size: 10px; color: var(--dim); text-transform: uppercase; }
+.college-stats span { display: block; font-family: var(--label); font-weight: 700; font-size: 11.5px; color: var(--dim); text-transform: uppercase; }
 .college-stats b { font-family: var(--pixel); font-size: 16px; color: var(--text); }
 .honors { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
 .honor { font-size: 12px; padding: 3px 8px; background: #2c2710; color: #e7d97a; border: 1px solid #000; }
@@ -61,6 +61,10 @@
 .order-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 4px; }
 .order-list li { display: grid; grid-template-columns: 44px auto 1fr; gap: 8px; align-items: center; padding: 4px 6px; background: var(--panel2); border: 1px solid #000; }
 .order-list li.mine { border-color: var(--good); box-shadow: inset 3px 0 0 var(--good); }
-.pick-no { font-family: var(--pixel); font-size: 12px; color: #d6cf4c; }
+.pick-no { font-family: var(--label); font-weight: 700; font-size: 12px; color: #d6cf4c; }
 .order-team { font-size: 13px; }
 .no-pick { width: 28px; text-align: center; color: var(--faint); }
+.fa-how-box { margin-bottom: 14px; }
+.fa-how-box summary { cursor: pointer; font-weight: 700; color: var(--gold); margin-bottom: 8px; }
+.pos-chips { margin-bottom: 10px; }
+.college-head { font-weight: 700; font-size: 13px; color: var(--gold); margin-bottom: 8px; }

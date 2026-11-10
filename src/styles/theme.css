@@ -6,6 +6,7 @@
   --gold: #ffd23f; --elite: #ffb21a; --good: #4fd18b; --warn: #ffa046; --bad: #ff5d5d; --link: #ffb48a;
   --brand: var(--mfl-hi); --brand-accent: #ffffff;
   --pixel: 'Pixelify Sans', ui-monospace, monospace;
+  --label: Inter, 'Segoe UI', system-ui, sans-serif; /* small text: readable, numbers line up */
   --shadow: 4px 4px 0 #000;
 }
 * { box-sizing: border-box; }
@@ -16,7 +17,10 @@ body {
 }
 a { color: var(--link); text-decoration: none; }
 a:hover { text-decoration: underline; }
-h1, h2, h3, .brand, .badge, .chip-label, .count, .pick-s, .lvl, .pos, .btn { font-family: var(--pixel); letter-spacing: .4px; }
+/* Pixel font for titles only; small text uses a clean font so numbers and labels are easy to read. */
+h1, h2, h3, .brand { font-family: var(--pixel); letter-spacing: .4px; }
+.badge, .chip-label, .count, .pick-s, .lvl, .pos, .btn { font-family: var(--label); font-weight: 700; letter-spacing: .2px; }
+body { font-variant-numeric: tabular-nums; }
 h1 { font-size: 30px; margin: 0 0 4px; font-weight: 600; }
 h2 { font-size: 20px; margin: 0 0 10px; font-weight: 600; }
 h3 { font-size: 15px; margin: 0 0 12px; color: var(--gold); font-weight: 500; text-transform: uppercase; }

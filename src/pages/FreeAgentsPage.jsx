@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import PlayerTile from '../components/PlayerTile.jsx';
+import PlayerTable from '../components/PlayerTable.jsx';
 import FaOfferModal, { FA_JERSEY } from '../components/FaOfferModal.jsx';
 import MyOffers from '../components/MyOffers.jsx';
 import { getFreeAgents } from '../data/players.js';
@@ -10,10 +10,6 @@ import { useFaOffers, faOpen, faRound, faRounds } from '../data/freeAgency.js';
 import { useMyScouts } from '../data/scouting.js';
 
 // The free agent market: every unsigned player, filter by position, sort, and make offers during free agency.
-const SORTS = {
-  best: { label: 'Best', fn: (a, b) => b.stars - a.stars || a.age - b.age },
-  young: { label: 'Youngest', fn: (a, b) => a.age - b.age || b.stars - a.stars },
-};
 
 function marketStatus() {
   if (faOpen()) return faRound() >= faRounds() ? `All ${faRounds()} rounds done. Leftovers sign when free agency closes.` : `Free agency is open. Round ${faRound() + 1} of ${faRounds()} is next.`;
@@ -22,7 +18,6 @@ function marketStatus() {
 
 export default function FreeAgentsPage({ viewer }) {
   const [pos, setPos] = useState('ALL');
-  const [sort, setSort] = useState('best');
   const [open, setOpen] = useState(null);
   const [version, setVersion] = useState(0);
   const viewerKey = viewer ? `${viewer.user_id}-${viewer.team_id}-${viewer.role}` : null;
@@ -34,8 +29,7 @@ export default function FreeAgentsPage({ viewer }) {
   const offeredIds = new Set(myOffers.filter((o) => o.status === 'open').map((o) => o.player_id));
   const all = getFreeAgents();
   const seesPot = Object.keys(potentials.map).some((id) => all.some((p) => p.id === id));
-  const sorts = seesPot ? { ...SORTS, pot: { label: 'Potential', fn: (a, b) => (potentials.map[b.id] ?? 0) - (potentials.map[a.id] ?? 0) || a.age - b.age } } : SORTS;
-  const shown = all.filter((p) => pos === 'ALL' || p.position === pos).sort(sorts[sort].fn);
+  const shown = all.filter((p) => pos === 'ALL' || p.position === pos);
   const count = (p) => all.filter((x) => x.position === p).length;
 
   return (
@@ -46,24 +40,16 @@ export default function FreeAgentsPage({ viewer }) {
       </div>
       <div className="two-col wide-left">
         <section className="card">
-          <div className="fa-filters">
-            <div className="pos-chips">
-              <button className={pos === 'ALL' ? 'on' : ''} onClick={() => setPos('ALL')}>All</button>
-              {[...OFFENSE, ...DEFENSE].map((p) => (
-                <button key={p} className={pos === p ? 'on' : ''} disabled={!count(p)} onClick={() => setPos(p)}>{p} <small>{count(p)}</small></button>
-              ))}
-            </div>
-            <div className="seg sort-seg">{Object.entries(sorts).map(([k, s]) => (
-              <button key={k} className={sort === k ? 'on' : ''} onClick={() => setSort(k)}>{s.label}</button>
-            ))}</div>
-          </div>
-          {!shown.length && <p className="dim">Nobody here right now.</p>}
-          <div className="fa-grid">
-            {shown.map((p, i) => (
-              <PlayerTile key={p.id} player={p} team={FA_JERSEY} index={i} onOpen={setOpen} insider={seesPot ? potentials.map : null}
-                badge={offeredIds.has(p.id) ? <span className="offer-tag">Your offer</span> : null} />
+          <div className="pos-chips">
+            <button className={pos === 'ALL' ? 'on' : ''} onClick={() => setPos('ALL')}>All <small>{all.length}</small></button>
+            {[...OFFENSE, ...DEFENSE].map((p) => (
+              <button key={p} className={pos === p ? 'on' : ''} disabled={!count(p)} onClick={() => setPos(p)}>{p} <small>{count(p)}</small></button>
             ))}
           </div>
+          {!shown.length && <p className="dim">Nobody here right now.</p>}
+          <PlayerTable players={shown} jersey={FA_JERSEY} onOpen={setOpen} potentials={seesPot ? potentials.map : null}
+            sub={(p) => (p.previousTeamId ? `Last team: ${getTeam(p.previousTeamId)?.code || p.previousTeamId}` : p.nationality && p.nationality !== 'USA' ? p.nationality : 'Free agent')}
+            tags={(p) => (offeredIds.has(p.id) ? <span className="offer-tag">Your offer</span> : null)} />
         </section>
         <MyOffers team={myTeam} offers={myOffers} onOpen={(id) => setOpen(all.find((p) => p.id === id) || null)} />
       </div>

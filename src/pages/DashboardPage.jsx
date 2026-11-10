@@ -31,7 +31,7 @@ export default function DashboardPage({ viewer, reload }) {
     <div className="team-page dashboard" style={{ '--team': team.color, '--team-accent': team.accent }}>
       <DashHero team={team} capUsed={teamCapUsed(team.id)} capLimit={capLimit()} coachName={viewer.display_name || viewer.username} />
       <div className="two-col wide-left">
-        <OffseasonSteps current={offseasonStep()} />
+        <OffseasonSteps current={offseasonStep()} compact />
         <PickList picks={draftPicks} currentSeason={currentSeason()} title={`Season ${currentSeason()} draft`} />
       </div>
       <ContractWatch players={players} team={team} potentials={potentials.map} traits={traits} negotiations={negotiations} onOpen={setOpen} onNegotiate={setTalk} />

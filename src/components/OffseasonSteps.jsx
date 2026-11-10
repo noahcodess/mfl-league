@@ -10,7 +10,24 @@ export const OFFSEASON_STEPS = [
   ['Training camp', 'Set depth charts before Week 1.'],
 ];
 
-export default function OffseasonSteps({ current = 0, title = 'Offseason road map' }) {
+// compact: a one-line step bar plus what's happening now (for the dashboard).
+export default function OffseasonSteps({ current = 0, title = 'Offseason road map', compact = false }) {
+  if (compact) {
+    const live = OFFSEASON_STEPS[current - 1];
+    const next = OFFSEASON_STEPS[current];
+    return (
+      <section className="card">
+        <h3>{title}</h3>
+        <div className="stepbar">{OFFSEASON_STEPS.map(([name], i) => (
+          <span key={name} className={i < current - 1 ? 'done' : i === current - 1 ? 'live' : i === current ? 'now' : ''} title={OFFSEASON_STEPS[i][1]}>{name}</span>
+        ))}</div>
+        <div className="step-now">
+          {live && <><b>Now: {live[0]}</b><p>{live[1]}</p></>}
+          {next && <p style={{ marginTop: live ? 8 : 0 }}><b style={{ display: 'inline' }}>Up next: {next[0]}.</b> {next[1]}</p>}
+        </div>
+      </section>
+    );
+  }
   return (
     <section className="card">
       <h3>{title}</h3>

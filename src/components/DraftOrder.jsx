@@ -12,8 +12,8 @@ export default function DraftOrder({ season, order, myTeamId }) {
     return store.league.picks.find((p) => p.season === season && p.round === round && p.originalCode === code);
   };
   return (
-    <section className="card draft-order">
-      <div className="board-head"><h3>Draft order</h3>
+    <div className="draft-order">
+      <div className="board-head"><span className="dim">Same order every round.</span>
         <div className="seg">{[1, 2, 3].map((r) => <button key={r} className={round === r ? 'on' : ''} onClick={() => setRound(r)}>Round {r}</button>)}</div>
       </div>
       <ol className="order-list">
@@ -31,6 +31,6 @@ export default function DraftOrder({ season, order, myTeamId }) {
         })}
       </ol>
       <p className="dim board-note">Worst record picks first; playoff teams go by how far they got; the Craft Bowl champion picks last.</p>
-    </section>
+    </div>
   );
 }

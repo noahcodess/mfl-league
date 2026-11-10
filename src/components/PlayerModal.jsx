@@ -5,13 +5,15 @@ import StarRating from './StarRating.jsx';
 import MoodTag from './MoodTag.jsx';
 import PlayerMoney from './PlayerMoney.jsx';
 import PlayerSkills from './PlayerSkills.jsx';
+import Tabs from './Tabs.jsx';
 import { isRetiring, maxAge } from '../data/players.js';
 import { contractOf, yearsLeft, contractLabel } from '../data/contracts.js';
 import { POSITION_NAMES } from '../data/positions.js';
 import { money, heightLabel } from '../lib/format.js';
 import { flagFor } from '../lib/flags.js';
 
-// Full player card: bio, rating, contract and cap hit. Potential only shows to the player's own team and the commissioner.
+// Full player card: bio up top, then tabs for skills (archetype, bars) and contract & money. Potential only shows to
+// the player's own team, the commissioner and scouts.
 export default function PlayerModal({ player, team, canSeePotential, potential, traits, onClose }) {
   if (!player) return null;
   const c = contractOf(player);
@@ -37,8 +39,10 @@ export default function PlayerModal({ player, team, canSeePotential, potential, 
             : <><StarRating value={potential} elite={potential === 5} />{potential <= player.stars && <small className="dim"> Maxed</small>}</>}</b></div>
         </div>
         {isRetiring(player) && <div className="notice bad">Retiring this offseason: turns {player.age + 1} at the offseason birthday, past the max age of {maxAge()}.</div>}
-        <PlayerSkills player={player} potential={canSeePotential ? potential : null} />
-        <h3>Contract</h3>
+        <Tabs tabs={[
+          { key: 'skills', label: 'Skills', render: () => <PlayerSkills player={player} potential={canSeePotential ? potential : null} /> },
+          { key: 'contract', label: 'Contract & money', render: () => (
+            <>
         {c ? (
           <div className="pcard-grid">
             <div><span>Status</span><b className={yearsLeft(player) === 0 ? 'warn' : ''}>{contractLabel(player)}</b></div>
@@ -50,6 +54,9 @@ export default function PlayerModal({ player, team, canSeePotential, potential, 
         <PlayerMoney player={player} potential={canSeePotential ? potential : null} insider={canSeePotential} traits={traits} />
         {!canSeePotential && <p className="pcard-note">Potential is only visible to this player's team. Scouting will reveal it.</p>}
         {player.notes.length > 0 && <ul className="pcard-flags">{player.notes.map((n) => <li key={n}>{n}</li>)}</ul>}
+            </>
+          ) },
+        ]} />
     </Modal>
   );
 }

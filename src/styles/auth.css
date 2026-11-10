@@ -7,10 +7,10 @@
 .auth-card h1 { font-size: 26px; }
 .auth-card .sub { color: var(--dim); margin: 0 0 18px; line-height: 1.45; }
 .auth-card form { text-align: left; display: flex; flex-direction: column; gap: 12px; }
-.auth-step { display: inline-block; font-family: var(--pixel); font-size: 12px; color: var(--gold); background: #0006; border: 2px solid #000; padding: 2px 8px; margin-bottom: 10px; }
+.auth-step { display: inline-block; font-family: var(--label); font-weight: 700; font-size: 12px; color: var(--gold); background: #0006; border: 2px solid #000; padding: 2px 8px; margin-bottom: 10px; }
 
 .field { display: flex; flex-direction: column; gap: 5px; }
-.field label { font-family: var(--pixel); font-size: 13px; color: var(--dim); }
+.field label { font-family: var(--label); font-weight: 700; font-size: 13px; color: var(--dim); }
 .field input, .field select { width: 100%; padding: 10px 11px; font-size: 15px; color: var(--text); background: #0c0705;
   border: 2px solid #000; outline: 2px solid var(--line); outline-offset: -4px; font-family: inherit; }
 .field input:focus, .field select:focus { outline-color: var(--brand); }
@@ -18,7 +18,7 @@
 .form-error { color: #ffb3b3; background: #2a0d0d; border: 2px solid #7a2020; padding: 8px 10px; font-size: 13px; }
 
 .secret { background: #000; border: 2px solid var(--gold); padding: 14px; margin: 6px 0 12px; text-align: center; }
-.secret-label { font-family: var(--pixel); font-size: 12px; color: var(--gold); text-transform: uppercase; margin-bottom: 8px; }
+.secret-label { font-family: var(--label); font-weight: 700; font-size: 12px; color: var(--gold); text-transform: uppercase; margin-bottom: 8px; }
 .secret-value { font-family: ui-monospace, 'Cascadia Mono', Consolas, monospace; font-size: 22px; letter-spacing: 1px; color: #fff; word-break: break-all; user-select: all; }
 .secret-actions { display: flex; justify-content: center; gap: 8px; margin-top: 10px; }
 .secret-warn { color: var(--warn); font-size: 13px; line-height: 1.45; text-align: left; margin: 0 0 12px; }
@@ -29,5 +29,5 @@
 .link-btn:hover { text-decoration: underline; }
 .stack-form { display: flex; flex-direction: column; gap: 12px; }
 .login-steps { text-align: left; margin: 18px 0 0; padding: 12px 12px 12px 30px; background: #0006; border: 2px solid #000; color: var(--dim); font-size: 13px; line-height: 1.55; }
-.login-steps li::marker { font-family: var(--pixel); color: var(--gold); }
+.login-steps li::marker { font-family: var(--label); font-weight: 700; color: var(--gold); }
 .login-as { margin-bottom: 14px; }

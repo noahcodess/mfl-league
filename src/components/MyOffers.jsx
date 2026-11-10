@@ -13,7 +13,8 @@ export default function MyOffers({ team, offers, onOpen }) {
   const nameOf = (id) => store.league.players.find((p) => p.id === id)?.name || 'Unknown player';
   return (
     <section className="card fa-side">
-      <h3>How free agency works</h3>
+      <details className="fa-how-box">
+      <summary>How free agency works</summary>
       <ul className="fa-rules">
         <li>💸 Offers you can have out: 3 in round 1, 10 in round 2, then as many as you have roster spots.</li>
         <li>🔁 The commissioner runs a few rounds. Each round every player picks the best offer he'll take.</li>
@@ -23,6 +24,7 @@ export default function MyOffers({ team, offers, onOpen }) {
         <li>📉 Nobody bites? Players get less picky every round. Big names may wait it out.</li>
         <li>✅ Signings go to the commissioner to approve, like re-signings.</li>
       </ul>
+      </details>
       {team && (
         <>
           <h3>Your offers <span className="count">{out}{offerLimit() ? `/${offerLimit()}` : ''}</span></h3>
