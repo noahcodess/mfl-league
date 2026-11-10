@@ -8,15 +8,16 @@ import { ATTRIBUTES } from '../lib/attributeDefs.js';
 import { seeded } from '../lib/seed.js';
 
 // Test-only stand-in class so screenshots work offline.
-function demoClass(season) {
-  const names = ['Tobi Adeyemi', 'Cole Whitlock', 'Jaxon Pruitt', 'Lachlan Ashby', 'Darius Gentry', 'Sione Aumua', 'Marcus Haskins', 'Liam Tremblay'];
+const FIRST = ['Tobi', 'Cole', 'Jaxon', 'Lachlan', 'Darius', 'Sione', 'Marcus', 'Liam', 'Keon', 'Malik', 'Brody', 'Tre', 'Isaiah', 'Rowan', 'Dante', 'Kai'];
+const LAST = ['Adeyemi', 'Whitlock', 'Pruitt', 'Ashby', 'Gentry', 'Aumua', 'Haskins', 'Tremblay', 'Okafor', 'Banks', 'Reyes', 'Holloway', 'Mercer', 'Dunn', 'Vance', 'Pryor'];
+const SCHOOLS = ['Alabama', 'Ohio State', 'Utah', 'Oregon', 'LSU', 'Washington', 'Georgia', 'Michigan', 'Texas', 'Clemson'];
+export function demoClass(season, count = 60) {
   const pos = Object.keys(ATTRIBUTES);
-  return names.map((name, i) => {
+  return Array.from({ length: count }, (_, i) => {
     const r = seeded(`demo-prospect-${i}`);
-    const stars = [1, 1.5, 2, 2.5, 3, 1.5, 2, 3.5][i];
-    return { id: `demo-dr-${i}`, name, position: pos[r(pos.length)], stars, age: 21 + r(2), status: 'prospect', notes: [],
-      nationality: ['Nigeria', 'USA', 'USA', 'Australia', 'USA', 'Samoa', 'USA', 'Canada'][i], college: ['Alabama', 'Ohio State', 'Utah', 'Oregon', 'LSU', 'Washington', 'Georgia', 'Michigan'][i],
-      height: 70 + r(8), weight: 190 + r(120), draftSeason: season,
+    const stars = [3, 3, 2.5, 3, 2.5, 2.5, 2, 3, 2, 2.5, 1.5, 2, 2, 1.5, 1, 2][i % 16];
+    return { id: `demo-dr-${i}`, name: `${FIRST[i % 16]} ${LAST[(i * 7 + 3) % 16]}`, position: pos[r(pos.length)], stars, age: 21 + r(2), status: 'prospect', notes: [],
+      nationality: i % 9 === 4 ? 'Nigeria' : 'USA', college: SCHOOLS[i % SCHOOLS.length], height: 70 + r(8), weight: 190 + r(120), draftSeason: season, looks: {},
       collegeStats: { class: 'Senior', games: 13, stats: [['Tackles', 40 + r(40)], ['Sacks', 2 + r(10)], ['INT', r(4)], ['Forced fumbles', r(4)]], honors: i % 3 === 0 ? ['All-Conference First Team'] : [] } };
   });
 }

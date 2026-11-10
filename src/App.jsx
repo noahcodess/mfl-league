@@ -15,6 +15,8 @@ import LeagueControlPage from './pages/LeagueControlPage.jsx';
 import FreeAgentsPage from './pages/FreeAgentsPage.jsx';
 import DraftPage from './pages/DraftPage.jsx';
 import SandboxBanner from './components/SandboxBanner.jsx';
+import DraftAlert from './components/DraftAlert.jsx';
+import { usePresenceHeartbeat } from './data/presence.js';
 import { inSandbox } from './data/sandbox.js';
 import { useHashRoute, homeFor } from './lib/router.js';
 import { brandColors } from './lib/color.js';
@@ -48,7 +50,10 @@ function Screen({ route, session, step, reload }) {
     return p?.role === 'coach' && p.team_id ? <DashboardPage viewer={p} reload={reload} /> : <HomePage signedIn={!!p} />;
   }
   if (route.page === 'team') return <TeamPage teamId={route.id} viewer={step === 'ready' ? session.profile : null} />;
-  if (route.page === 'draft') return <DraftPage viewer={step === 'ready' ? session.profile : null} />;
+  if (route.page === 'draft') {
+    const p = step === 'ready' ? session.profile : null;
+    return <DraftPage viewer={p} canControl={p?.role === 'commissioner'} stageRoute={route.stage} />;
+  }
   if (route.page === 'freeAgents') return <FreeAgentsPage viewer={step === 'ready' ? session.profile : null} />;
   if (route.page === 'dataCheck') return <DataCheckPage />;
   return <LeaguePage />;
@@ -63,10 +68,12 @@ export default function App() {
   const reload = async () => { setLive(await loadLeague()); setVersion((v) => v + 1); };
   useEffect(() => { loadLeague().then(setLive); }, []);
   const myTeam = step === 'ready' && session.profile?.role === 'coach' ? getTeam(session.profile.team_id) : null;
+  usePresenceHeartbeat(step === 'ready');
   return (
     <div className={`app${inSandbox() ? ' sandbox' : ''}`} style={inSandbox() ? undefined : brandColors(myTeam)}>
-      <Header page={route.page} session={session} ready={step === 'ready'} live={live} onLeagueChange={reload} />
-      <SandboxBanner />
+      {!route.stage && <Header page={route.page} session={session} ready={step === 'ready'} live={live} onLeagueChange={reload} />}
+      {!route.stage && <SandboxBanner />}
+      {myTeam && !route.stage && <DraftAlert teamId={myTeam.id} page={route.page} />}
       <main className="main"><div className="page" key={`${route.page}-${route.id || ''}-${step}`}><Screen route={route} session={session} step={step} reload={reload} /></div></main>
     </div>
   );

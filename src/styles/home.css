@@ -3,11 +3,11 @@
   background: radial-gradient(circle at 15% 40%, #6618004d, transparent 55%), linear-gradient(120deg, #2a1209, var(--panel) 70%);
   border: 3px solid #000; outline: 2px solid var(--mfl-hi); outline-offset: -6px; box-shadow: 6px 6px 0 #000; }
 .hero-logo { width: 180px; height: 190px; image-rendering: pixelated; filter: drop-shadow(5px 5px 0 #000); animation: float 3.4s ease-in-out infinite; }
-.hero-kicker { font-family: var(--pixel); color: var(--gold); font-size: 13px; letter-spacing: 1px; }
+.hero-kicker { font-family: var(--label); font-weight: 800; color: var(--gold); font-size: 13px; letter-spacing: 1px; }
 .hero-title { font-size: clamp(44px, 8vw, 84px); line-height: .95; margin: 6px 0 10px; letter-spacing: 3px;
   text-shadow: 4px 4px 0 #000, 0 0 30px #d9622f55; animation: pop .6s ease-out both; }
 .hero-tag { color: var(--dim); font-size: 16px; max-width: 520px; line-height: 1.5; margin: 0 0 16px; }
-.hero-open { display: inline-flex; align-items: baseline; gap: 10px; font-family: var(--pixel); font-size: 18px; color: var(--text);
+.hero-open { display: inline-flex; align-items: baseline; gap: 10px; font-family: var(--label); font-weight: 700; font-size: 18px; color: var(--text);
   background: #0008; border: 2px solid #000; padding: 6px 14px; margin-bottom: 16px; }
 .open-count { font-size: 34px; color: var(--gold); text-shadow: 2px 2px 0 #000; }
 .hero-actions { display: flex; gap: 10px; flex-wrap: wrap; }

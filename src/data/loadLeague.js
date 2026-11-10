@@ -19,6 +19,7 @@ export const toPlayer = (p) => ({
   stars: p.stars == null ? null : Number(p.stars), elite: p.elite, age: p.age, mood: p.mood,
   nationality: p.nationality, notes: p.notes ?? [], number: p.number, playStyle: p.play_style, looks: p.looks || {},
   status: p.status, previousTeamId: p.previous_team_id, height: p.height_in, weight: p.weight_lb, rookieSeason: p.rookie_season, college: p.college, collegeStats: p.college_stats, draftSeason: p.draft_season,
+  draftRound: p.draft_round, draftPick: p.draft_pick, draftedBy: p.drafted_by,
 });
 
 const toContract = (c) => ({ perYear: c.per_year, total: c.total, firstSeason: c.first_season, lastSeason: c.last_season, source: c.source, role: c.role });

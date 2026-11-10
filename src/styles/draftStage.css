@@ -1,0 +1,73 @@
+/* Draft stage: the On the Clock panel, the clock ring, the up-next strip, the TV ticker, grade stamps, and stage (screen share) mode. */
+.otc { --team: #555; position: relative; display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap; padding: 26px 28px; margin-bottom: 12px; overflow: hidden;
+  border: 3px solid #000; outline: 2px solid var(--team); outline-offset: -7px; box-shadow: var(--shadow);
+  background: radial-gradient(600px 260px at 18% 50%, color-mix(in srgb, var(--team) 55%, transparent), transparent 70%), linear-gradient(120deg, #0c1328, #101a3a); animation: otc-in .6s cubic-bezier(.2, .9, .2, 1.2) both; }
+@keyframes otc-in { from { opacity: 0; transform: translateX(-40px) scale(.97); } to { opacity: 1; transform: none; } }
+.otc-beams { position: absolute; inset: 0; pointer-events: none; }
+.otc-beams i { position: absolute; left: 10%; top: 50%; width: 140%; height: 40px; transform-origin: left center; background: linear-gradient(90deg, color-mix(in srgb, var(--team-accent, #fff) 30%, transparent), transparent); opacity: .18; animation: beam 6s linear infinite; }
+.otc-beams i:nth-child(2) { animation-delay: -2s; } .otc-beams i:nth-child(3) { animation-delay: -4s; }
+@keyframes beam { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+.otc-team { display: flex; align-items: center; gap: 22px; position: relative; flex: 1; min-width: 260px; }
+.otc-logo { position: relative; }
+.otc-logo::after { content: ''; position: absolute; inset: -14px; border-radius: 50%; border: 3px solid var(--team); opacity: .7; animation: ring 2s ease-out infinite; }
+@keyframes ring { from { transform: scale(.8); opacity: .8; } to { transform: scale(1.35); opacity: 0; } }
+.otc-logo .logo-xl, .otc-logo .badge-xl { animation: pop .6s ease-out both, float 3.4s ease-in-out .6s infinite; }
+.otc-label { font-family: var(--label); font-weight: 800; font-size: 14px; letter-spacing: 5px; text-transform: uppercase; color: var(--gold); }
+.otc-clock .otc-label, .otc-pending .otc-label { animation: blink 1.4s ease-in-out infinite; }
+.otc-pending .otc-label { color: #fff; font-size: 18px; text-shadow: 0 0 12px var(--gold); }
+.otc-name { font-family: var(--label); font-size: 40px; font-weight: 800; margin: 4px 0; line-height: 1.05; text-shadow: 3px 3px 0 #000; }
+.otc-meta { font-family: var(--label); font-weight: 700; color: #c7d1ee; } .otc-pick { color: var(--gold); font-size: 18px; } .otc-via { color: #93a0c4; }
+.otc-coach { margin-top: 6px; font-size: 13px; color: #c7d1ee; }
+.otc-go { margin-top: 12px; background: var(--gold); color: #1a1000; font-weight: 800; font-size: 16px; animation: pulse-glow 1.2s ease-in-out infinite; }
+.otc-wait { margin-top: 10px; color: var(--gold); font-weight: 700; }
+.otc-mine { outline-color: var(--gold); }
+.otc-paused { filter: saturate(.4); }
+
+.clock-ring { position: relative; flex: none; }
+.clock-ring svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+.clock-track { fill: #070b1acc; stroke: #ffffff18; stroke-width: 8; }
+.clock-fill { fill: none; stroke-width: 8; stroke-linecap: butt; transition: stroke-dashoffset .25s linear, stroke .3s; }
+.clock-ring.green .clock-fill { stroke: #35d07f; } .clock-ring.gold .clock-fill { stroke: var(--gold); } .clock-ring.red .clock-fill { stroke: #ff3b3b; } .clock-ring.paused .clock-fill { stroke: #6b7393; }
+.clock-ring.red { animation: shake .5s ease-in-out infinite; }
+@keyframes shake { 25% { transform: translateX(-2px); } 75% { transform: translateX(2px); } }
+.clock-text { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.clock-text b { font-family: var(--label); font-weight: 800; font-size: 44px; line-height: 1; }
+.clock-ring.red .clock-text b { color: #ff6b6b; }
+.clock-text small { font-size: 11px; text-transform: uppercase; letter-spacing: 2px; color: #93a0c4; margin-top: 4px; }
+
+.upnext { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; overflow-x: auto; }
+.upnext-title { font-family: var(--label); font-weight: 800; letter-spacing: 3px; font-size: 12px; color: var(--ice); text-transform: uppercase; white-space: nowrap; }
+.upnext ol { display: flex; gap: 6px; list-style: none; margin: 0; padding: 0; }
+.upnext li { display: flex; align-items: center; gap: 6px; padding: 5px 9px; background: #0c1328; border: 2px solid var(--sline); white-space: nowrap; font-family: var(--label); font-weight: 700; font-size: 13px;
+  animation: rise .35s ease-out both; animation-delay: calc(var(--i) * 60ms); }
+.upnext li.mine { border-color: var(--gold); } .upnext-no { color: var(--gold); } .upnext-human { position: relative; } .upnext-human .dot { margin-left: 3px; width: 7px; height: 7px; }
+
+.ticker { position: fixed; left: 0; right: 0; bottom: 0; z-index: 4; display: flex; align-items: center; height: 40px; background: #050814f2; border-top: 2px solid var(--gold); overflow: hidden; }
+.ticker-tag { flex: none; height: 100%; display: flex; align-items: center; padding: 0 14px; background: var(--gold); color: #1a1000; font-family: var(--label); font-weight: 800; letter-spacing: 2px; font-size: 13px; }
+.ticker-track { display: flex; width: max-content; animation: crawl var(--speed, 40s) linear infinite; }
+.ticker-row { display: flex; }
+.ticker-item { display: inline-flex; align-items: center; gap: 6px; padding: 0 22px; font-family: var(--label); font-size: 14px; color: #dbe4ff; white-space: nowrap; border-right: 1px solid #ffffff22; }
+.ticker-item b { color: var(--gold); } .ticker-item em { color: #93a0c4; font-style: normal; } .ticker-item .logo-sm { width: 22px; height: 22px; }
+@keyframes crawl { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+.grade-stamp { display: inline-flex; align-items: center; justify-content: center; font-family: var(--label); font-weight: 900; border: 3px solid currentColor; transform: rotate(-8deg); background: #0008; flex: none; }
+.grade-md { width: 92px; height: 92px; font-size: 46px; } .grade-sm { min-width: 40px; height: 32px; padding: 0 6px; font-size: 17px; border-width: 2px; }
+.grade-a { color: #35d07f; } .grade-b { color: var(--gold); } .grade-c { color: #ffa046; } .grade-d { color: #ff6b4a; } .grade-f { color: #ff2e2e; }
+
+/* Stage mode: just the show, big, for screen sharing */
+body.stage-on .header, body.stage-on .sandbox-banner, body.stage-on .draft-alert { display: none; }
+body.stage-on .main { max-width: none; padding: 0; }
+.stage-mode { margin: 0; padding: 2vw 3vw 70px; min-height: 100vh; }
+.stage-mode .dhead-title h1 { font-size: clamp(36px, 4vw, 72px); } .stage-mode .dhead-season { font-size: clamp(14px, 1.2vw, 22px); }
+.stage-mode .otc { padding: 3vw; } .stage-mode .otc-name { font-size: clamp(40px, 4.4vw, 84px); }
+.stage-mode .otc .logo-xl { width: clamp(150px, 13vw, 260px); height: clamp(150px, 13vw, 260px); }
+.stage-mode .clock-ring { width: clamp(180px, 15vw, 300px) !important; height: clamp(180px, 15vw, 300px) !important; }
+.stage-mode .clock-text b { font-size: clamp(44px, 4vw, 80px); }
+.stage-mode .stage-results .results-list { grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); }
+.dhead-exit { position: absolute; right: 0; top: 0; opacity: .25; } .dhead-exit:hover { opacity: 1; }
+
+@media (max-width: 700px) {
+  .otc { padding: 16px; } .otc-team { gap: 12px; } .otc .logo-xl { width: 84px; height: 84px; } .otc-name { font-size: 26px; }
+  .otc-logo::after { inset: -8px; } .clock-ring { width: 130px !important; height: 130px !important; } .clock-text b { font-size: 32px; }
+  .dhead-title h1 { font-size: 30px; } .dhead-status { margin-left: 0; width: 100%; }
+}

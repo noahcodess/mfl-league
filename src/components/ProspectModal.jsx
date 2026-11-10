@@ -10,8 +10,8 @@ import { POSITION_NAMES } from '../data/positions.js';
 import { heightLabel } from '../lib/format.js';
 import { flagFor } from '../lib/flags.js';
 
-// A draft prospect's card: bio, then tabs for the scouting report (college season, honors, send a scout) and ratings.
-export default function ProspectModal({ player, potential, scouts, scouted, onScouted, onClose }) {
+// A draft prospect's card: bio, optional buttons (flag, draft), then tabs for the scouting report (college season, honors, send a scout) and ratings.
+export default function ProspectModal({ player, potential, scouts, scouted, onScouted, onClose, footer }) {
   const cs = player.collegeStats || {};
   return (
     <Modal onClose={onClose} className="pcard" style={{ '--team': FA_JERSEY.color, '--team-accent': '#d6cf4c' }}>
@@ -32,6 +32,7 @@ export default function ProspectModal({ player, potential, scouts, scouted, onSc
         <div><span>Country</span><b>{flagFor(player.nationality || 'USA')} {player.nationality || 'USA'}</b></div>
         <div className="pot"><span>Potential</span><b>{potential != null ? <StarRating value={potential} elite={potential === 5} /> : '🔒 Scout him'}</b></div>
       </div>
+      {footer && <div className="pcard-actions">{footer}</div>}
       <Tabs tabs={[
         { key: 'report', label: 'Scouting report', render: () => (
           <>

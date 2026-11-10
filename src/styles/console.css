@@ -55,7 +55,7 @@
 .seg button:disabled { opacity: .35; cursor: default; }
 .money-step { display: flex; gap: 6px; align-items: center; }
 .money-step button { width: 34px; height: 34px; font-size: 18px; color: var(--text); background: var(--panel2); border: 2px solid #000; cursor: pointer; }
-.money-step input { flex: 1; min-width: 0; height: 34px; text-align: center; font-family: var(--pixel); font-size: 18px; color: var(--gold); background: #000; border: 2px solid var(--line); }
+.money-step input { flex: 1; min-width: 0; height: 34px; text-align: center; font-family: var(--label); font-weight: 800; font-size: 18px; color: var(--gold); background: #000; border: 2px solid var(--line); }
 .money-step .chip-btn { width: auto; padding: 0 9px; font-size: 12px; font-family: var(--label); font-weight: 700; }
 .nego-total { font-size: 13px; color: var(--dim); text-align: right; }
 .counter-btn { margin-bottom: 10px; background: #6b4f12; }

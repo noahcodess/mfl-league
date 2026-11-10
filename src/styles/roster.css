@@ -4,7 +4,7 @@
 .pos-row { display: grid; grid-template-columns: 96px 1fr auto; gap: 12px; align-items: start; padding: 8px 0; border-bottom: 2px solid var(--line2); }
 .pos-row:last-child { border-bottom: 0; }
 .pos-label { display: flex; flex-direction: column; gap: 2px; padding-top: 10px; }
-.pos-label b { font-family: var(--pixel); font-size: 20px; font-weight: 600; color: color-mix(in srgb, var(--team-accent, #fff) 55%, var(--gold)); }
+.pos-label b { font-family: var(--label); font-size: 20px; font-weight: 800; color: color-mix(in srgb, var(--team-accent, #fff) 55%, var(--gold)); }
 .pos-label small { font-size: 11px; color: var(--faint); line-height: 1.2; }
 .pos-players { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
 .pos-line { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 8px; }
@@ -75,7 +75,7 @@
 .pos-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(330px, 1fr)); gap: 10px; }
 .pos-card { background: #0005; border: 2px solid #000; padding: 8px; display: flex; flex-direction: column; gap: 4px; }
 .pos-card-head { display: flex; align-items: baseline; gap: 8px; padding: 0 2px 4px; }
-.pos-card-head b { font-family: var(--pixel); font-size: 18px; color: color-mix(in srgb, var(--team-accent, #fff) 55%, var(--gold)); }
+.pos-card-head b { font-family: var(--label); font-weight: 800; font-size: 18px; color: color-mix(in srgb, var(--team-accent, #fff) 55%, var(--gold)); }
 .pos-card-head span { font-size: 12px; color: var(--faint); }
 .depth-row { display: grid; grid-template-columns: 38px 44px 1fr; gap: 8px; align-items: center; width: 100%; padding: 5px 6px; text-align: left;
   font: inherit; color: var(--text); background: var(--panel2); border: 2px solid #000; border-left: 3px solid var(--team, var(--brand)); cursor: pointer; }

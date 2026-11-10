@@ -18,7 +18,9 @@ body {
 a { color: var(--link); text-decoration: none; }
 a:hover { text-decoration: underline; }
 /* Pixel font for titles only; small text uses a clean font so numbers and labels are easy to read. */
-h1, h2, h3, .brand { font-family: var(--pixel); letter-spacing: .4px; }
+/* The pixel font is rare on purpose: big page titles and the logo only. */
+h1, .brand { font-family: var(--pixel); letter-spacing: .4px; }
+h2, h3 { font-family: var(--label); font-weight: 800; letter-spacing: .2px; }
 .badge, .chip-label, .count, .pick-s, .lvl, .pos, .btn { font-family: var(--label); font-weight: 700; letter-spacing: .2px; }
 body { font-variant-numeric: tabular-nums; }
 h1 { font-size: 30px; margin: 0 0 4px; font-weight: 600; }
@@ -35,7 +37,7 @@ h3 { font-size: 15px; margin: 0 0 12px; color: var(--gold); font-weight: 500; te
 .brand:hover { text-decoration: none; }
 .brand img { width: 38px; height: 40px; image-rendering: pixelated; }
 .nav { display: flex; gap: 4px; }
-.nav a { color: var(--dim); padding: 7px 11px; font-family: var(--pixel); font-size: 14px; border: 2px solid transparent; }
+.nav a { color: var(--dim); padding: 7px 11px; font-family: var(--label); font-weight: 600; font-size: 14px; border: 2px solid transparent; }
 .nav a.on, .nav a:hover { color: var(--text); background: var(--panel2); border-color: var(--line); text-decoration: none; }
 .nav a.on { border-bottom-color: var(--brand); }
 .header-right { margin-left: auto; display: flex; align-items: center; gap: 12px; }
@@ -43,7 +45,7 @@ h3 { font-size: 15px; margin: 0 0 12px; color: var(--gold); font-weight: 500; te
 .live-dot { width: 8px; height: 8px; background: var(--faint); box-shadow: 0 0 0 2px #000; }
 .live-dot.on { background: var(--good); }
 .who { display: flex; align-items: center; gap: 8px; font-size: 13px; }
-.who b { font-family: var(--pixel); font-weight: 500; }
+.who b { font-family: var(--label); font-weight: 700; }
 
 /* Panels, notices, layout */
 .page-head { margin-bottom: 16px; }

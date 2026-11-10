@@ -17,6 +17,9 @@ import './styles/attributes.css';
 import './styles/sandbox.css';
 import './styles/layout.css';
 import './styles/home.css';
+import './styles/draft.css';
+import './styles/draftStage.css';
+import './styles/draftReveal.css';
 import './styles/motion.css';
 
 createRoot(document.getElementById('root')).render(<App />);

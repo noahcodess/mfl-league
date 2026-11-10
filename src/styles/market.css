@@ -54,7 +54,7 @@
 .college { padding: 10px; background: var(--panel2); border: 2px solid #000; margin-bottom: 8px; }
 .college-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(90px, 1fr)); gap: 8px; }
 .college-stats span { display: block; font-family: var(--label); font-weight: 700; font-size: 11.5px; color: var(--dim); text-transform: uppercase; }
-.college-stats b { font-family: var(--pixel); font-size: 16px; color: var(--text); }
+.college-stats b { font-family: var(--label); font-weight: 800; font-size: 16px; color: var(--text); }
 .honors { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
 .honor { font-size: 12px; padding: 3px 8px; background: #2c2710; color: #e7d97a; border: 1px solid #000; }
 .draft-order { align-self: start; }
