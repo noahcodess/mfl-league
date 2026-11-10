@@ -54,12 +54,13 @@ function Screen({ route, session, step, reload }) {
   if (route.page === 'team') return <TeamPage teamId={route.id} viewer={step === 'ready' ? session.profile : null} />;
   if (route.page === 'draft') {
     const p = step === 'ready' ? session.profile : null;
-    return <DraftPage viewer={p} canControl={p?.role === 'commissioner' || (!!p?.site_owner && session.unlocked)} stageRoute={route.stage} />;
+    return <DraftPage viewer={p} canControl={p?.role === 'commissioner' || !!p?.site_owner /* TEMPORARY: owner tests the desk */} stageRoute={route.stage} />;
   }
   if (route.page === 'draftDesk') {
     if (step === 'login') return <LoginPage />;
     if (step !== 'ready') return null;
-    return session.profile.role === 'commissioner' || (session.profile.site_owner && session.unlocked) ? <DraftDeskPage viewer={session.profile} /> : <div className="notice bad">Commissioner only.</div>;
+    // TEMPORARY (testing): the site owner can open the desk too. The server still checks every action and every secret.
+    return session.profile.role === 'commissioner' || session.profile.site_owner ? <DraftDeskPage viewer={session.profile} /> : <div className="notice bad">Commissioner only.</div>;
   }
   if (route.page === 'freeAgents') return <FreeAgentsPage viewer={step === 'ready' ? session.profile : null} />;
   if (route.page === 'dataCheck') return <DataCheckPage />;
