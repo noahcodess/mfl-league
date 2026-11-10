@@ -7719,7 +7719,17 @@
    "mood": "normal",
    "notes": [],
    "number": 5,
-   "playStyle": "Big-bodied possession WR (plays like Drake London) with extra speed: wins contested catches, strong hands, can stretch the field"
+   "playStyle": "Big-bodied possession WR (plays like Drake London) with extra speed: wins contested catches, strong hands, can stretch the field",
+   "looks": {
+    "style": "curly",
+    "skin": "#e9b994",
+    "mouth": "smile",
+    "nose": "normal",
+    "brows": "normal",
+    "eyeShape": "normal",
+    "headband": false,
+    "beard": "none"
+   }
   },
   {
    "id": "snm-04",

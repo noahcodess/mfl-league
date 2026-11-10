@@ -6,32 +6,32 @@ import json
 from pathlib import Path
 
 ROOT = Path(__file__).parents[2]
-# Every player: 6 attributes for his position, then the 3 everyone has (Stamina = tiredness and injuries, Clutch = big moments).
-EVERYONE = [('speed', 'Speed'), ('stamina', 'Stamina'), ('clutch', 'Clutch')]
+# Every player: 8 attributes for his position, then the 2 everyone has (Toughness = stamina and how often he gets hurt).
+EVERYONE = [('speed', 'Speed'), ('toughness', 'Toughness')]
 OL = [('pass_block', 'Pass Block'), ('run_block', 'Run Block'), ('strength', 'Strength'), ('footwork', 'Footwork'),
-      ('anchor', 'Anchor'), ('awareness', 'Awareness')]
+      ('anchor', 'Anchor'), ('awareness', 'Awareness'), ('discipline', 'Discipline'), ('agility', 'Agility')]
 DT = [('power_moves', 'Power Moves'), ('finesse_moves', 'Finesse Moves'), ('block_shed', 'Block Shedding'), ('strength', 'Strength'),
-      ('run_stop', 'Run Stopping'), ('pursuit', 'Pursuit')]
+      ('run_stop', 'Run Stopping'), ('pursuit', 'Pursuit'), ('double_team', 'Beats Double Teams'), ('tackling', 'Tackling')]
 POSITION = {
     'QB': [('throw_power', 'Throw Power'), ('short_acc', 'Short Accuracy'), ('deep_acc', 'Deep Accuracy'), ('throw_on_run', 'Throw on the Run'),
-           ('vision', 'Reading Defenses'), ('break_sack', 'Break Sack')],
+           ('vision', 'Reading Defenses'), ('break_sack', 'Break Sack'), ('throw_pressure', 'Throw Under Pressure'), ('play_action', 'Play Action')],
     'RB': [('acceleration', 'Acceleration'), ('elusiveness', 'Elusiveness'), ('break_tackle', 'Break Tackle'), ('carrying', 'Ball Security'),
-           ('vision', 'Vision'), ('catching', 'Catching')],
+           ('vision', 'Vision'), ('catching', 'Catching'), ('pass_block', 'Pass Block'), ('route_running', 'Route Running')],
     'WR': [('catching', 'Catching'), ('route_running', 'Route Running'), ('release', 'Release'), ('catch_traffic', 'Catch in Traffic'),
-           ('jumping', 'Jumping'), ('agility', 'Agility')],
+           ('jumping', 'Jumping'), ('agility', 'Agility'), ('run_after_catch', 'Run After Catch'), ('spectacular_catch', 'Spectacular Catch')],
     'TE': [('catching', 'Catching'), ('route_running', 'Route Running'), ('catch_traffic', 'Catch in Traffic'), ('run_block', 'Run Block'),
-           ('pass_block', 'Pass Block'), ('strength', 'Strength')],
+           ('pass_block', 'Pass Block'), ('strength', 'Strength'), ('run_after_catch', 'Run After Catch'), ('release', 'Release')],
     'OT': OL, 'OG': OL,
-    'C': OL[:4] + [('awareness', 'Awareness'), ('snapping', 'Snapping')],
+    'C': OL[:4] + [('anchor', 'Anchor'), ('awareness', 'Awareness'), ('snapping', 'Snapping'), ('discipline', 'Discipline')],
     'DL': DT, 'DT': DT,
     'DE': [('speed_rush', 'Speed Rush'), ('power_moves', 'Power Moves'), ('block_shed', 'Block Shedding'), ('strength', 'Strength'),
-           ('pursuit', 'Pursuit'), ('tackling', 'Tackling')],
+           ('pursuit', 'Pursuit'), ('tackling', 'Tackling'), ('run_stop', 'Run Stopping'), ('finesse_moves', 'Finesse Moves')],
     'LB': [('tackling', 'Tackling'), ('pursuit', 'Pursuit'), ('play_rec', 'Play Recognition'), ('hit_power', 'Hit Power'),
-           ('zone_cover', 'Zone Coverage'), ('man_cover', 'Man Coverage')],
+           ('zone_cover', 'Zone Coverage'), ('man_cover', 'Man Coverage'), ('blitzing', 'Blitzing'), ('block_shed', 'Block Shedding')],
     'CB': [('man_cover', 'Man Coverage'), ('zone_cover', 'Zone Coverage'), ('press', 'Press'), ('ball_skills', 'Ball Skills'),
-           ('agility', 'Agility'), ('tackling', 'Tackling')],
+           ('agility', 'Agility'), ('tackling', 'Tackling'), ('jumping', 'Jumping'), ('play_rec', 'Play Recognition')],
     'SS': [('zone_cover', 'Zone Coverage'), ('man_cover', 'Man Coverage'), ('tackling', 'Tackling'), ('hit_power', 'Hit Power'),
-           ('ball_skills', 'Ball Skills'), ('play_rec', 'Play Recognition')],
+           ('ball_skills', 'Ball Skills'), ('play_rec', 'Play Recognition'), ('pursuit', 'Pursuit'), ('blitzing', 'Blitzing')],
 }
 DEFS = {pos: attrs + EVERYONE for pos, attrs in POSITION.items()}
 

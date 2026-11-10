@@ -14,7 +14,7 @@ export default function AttributeBars({ position, ratings, ceilings }) {
           const v = ratings[key] ?? 0;
           const c = ceilings?.[key];
           return (
-            <div key={key} className={`attr${['speed', 'stamina', 'clutch'].includes(key) ? ' core' : ''}`}>
+            <div key={key} className={`attr${['speed', 'toughness'].includes(key) ? ' core' : ''}`}>
               <div className="attr-label"><span>{label}</span><b>{outOf10(v)}</b></div>
               <div className="abar" title={c != null ? `${label}: ${outOf10(v)}/10 now, can reach ${outOf10(c)}/10` : `${label}: ${outOf10(v)}/10`}>
                 {c != null && c > v && <span className="abar-ceil" style={{ width: `${c}%` }} />}
