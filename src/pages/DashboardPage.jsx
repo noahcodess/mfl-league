@@ -6,6 +6,7 @@ import PickList from '../components/PickList.jsx';
 import ConferenceTable from '../components/ConferenceTable.jsx';
 import PlayerModal from '../components/PlayerModal.jsx';
 import NegotiationModal from '../components/NegotiationModal.jsx';
+import ComingUp from '../components/ComingUp.jsx';
 import { getTeam, getTeams, capLimit, currentSeason, offseasonStep, resignOpen } from '../data/teams.js';
 import { getPlayers, teamCapUsed } from '../data/players.js';
 import { getPicks } from '../data/picks.js';
@@ -14,7 +15,7 @@ import { usePlayerTraits } from '../data/traits.js';
 import { useNegotiations } from '../data/negotiations.js';
 import { currentPhase } from '../data/teams.js';
 
-// A coach's home: his team in its colors, the offseason road map, contracts to deal with, next draft and his conference.
+// A coach's home: his team in its colors, countdowns to the next league events, the offseason road map, contracts to deal with, next draft and his conference.
 export default function DashboardPage({ viewer, reload }) {
   const [open, setOpen] = useState(null);
   const [talk, setTalk] = useState(null);
@@ -30,6 +31,7 @@ export default function DashboardPage({ viewer, reload }) {
   return (
     <div className="team-page dashboard" style={{ '--team': team.color, '--team-accent': team.accent }}>
       <DashHero team={team} capUsed={teamCapUsed(team.id)} capLimit={capLimit()} coachName={viewer.display_name || viewer.username} />
+      <ComingUp />
       <div className="two-col wide-left">
         <OffseasonSteps current={offseasonStep()} compact />
         <PickList picks={draftPicks} currentSeason={currentSeason()} title={`Season ${currentSeason()} draft`} />

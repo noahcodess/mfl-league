@@ -6,13 +6,14 @@ import MoodTag from './MoodTag.jsx';
 import PlayerMoney from './PlayerMoney.jsx';
 import PlayerSkills from './PlayerSkills.jsx';
 import Tabs from './Tabs.jsx';
+import PastTeams from './PastTeams.jsx';
 import { isRetiring, maxAge } from '../data/players.js';
 import { contractOf, yearsLeft, contractLabel } from '../data/contracts.js';
 import { POSITION_NAMES } from '../data/positions.js';
 import { money, heightLabel } from '../lib/format.js';
 import { flagFor } from '../lib/flags.js';
 
-// Full player card: bio up top, then tabs for skills (archetype, bars) and contract & money. Potential only shows to
+// Full player card: bio up top, then tabs for skills (archetype, bars), contract & money, and past teams. Potential only shows to
 // the player's own team, the commissioner and scouts.
 export default function PlayerModal({ player, team, canSeePotential, potential, traits, onClose }) {
   if (!player) return null;
@@ -56,6 +57,7 @@ export default function PlayerModal({ player, team, canSeePotential, potential, 
         {player.notes.length > 0 && <ul className="pcard-flags">{player.notes.map((n) => <li key={n}>{n}</li>)}</ul>}
             </>
           ) },
+          { key: 'past', label: 'Past teams', render: () => <PastTeams player={player} /> },
         ]} />
     </Modal>
   );

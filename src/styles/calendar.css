@@ -1,0 +1,35 @@
+/* The league calendar: the commissioner's schedule editor and draft settings, the Coming up countdowns, the schedule notice, and a player's past teams. */
+.sched-list { list-style: none; margin: 10px 0 0; padding: 0; display: grid; gap: 6px; }
+.sched-list li { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; padding: 8px 10px; background: var(--panel2); border: 2px solid #000; border-left: 4px solid var(--line); }
+.sched-list li.set { border-left-color: var(--gold); }
+.sched-name { flex: 1; min-width: 180px; display: flex; flex-direction: column; } .sched-name small { color: var(--dim); }
+.sched-list input, .dset-group input { background: #000; color: var(--text); border: 2px solid var(--line); padding: 6px 8px; font-family: var(--label); font-size: 14px; color-scheme: dark; }
+.dsettings-top { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 8px; }
+.dset-group { border: 2px solid var(--line); padding: 10px 12px; margin: 0 0 10px; display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 8px 14px; }
+.dset-group legend { font-family: var(--label); font-weight: 800; color: var(--gold); padding: 0 6px; }
+.dset-group label { display: flex; align-items: center; justify-content: space-between; gap: 8px; font-size: 13px; color: var(--dim); }
+.dset-group input { width: 90px; text-align: right; }
+.coming-up ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.coming-up li > a, .coming-up li { display: flex; align-items: center; gap: 10px; color: var(--text); }
+.coming-up li { padding: 8px 10px; background: var(--panel2); border: 2px solid #000; }
+.coming-up li.first { border-color: var(--team, var(--gold)); }
+.coming-up li > a { flex: 1; } .coming-up li > a:hover { text-decoration: none; }
+.cu-name { flex: 1; display: flex; flex-direction: column; } .cu-name small { color: var(--dim); }
+.cu-clock { font-family: var(--label); font-weight: 900; font-size: 20px; color: var(--gold); }
+.cu-clock.soon { color: #ff6b4a; animation: blink 1.4s ease-in-out infinite; }
+.sched-notice { display: flex; align-items: center; justify-content: center; gap: 10px; flex-wrap: wrap; padding: 8px 14px; background: #1d2a12; border-bottom: 2px solid #000; color: #dff5c4; font-family: var(--label); }
+.sched-bell { animation: ring-bell 1.2s ease-in-out 3; display: inline-block; }
+@keyframes ring-bell { 20% { transform: rotate(18deg); } 40% { transform: rotate(-14deg); } 60% { transform: rotate(8deg); } 80% { transform: rotate(-4deg); } }
+.career-draft { padding: 10px 12px; margin-bottom: 10px; background: #1d1a08; border: 2px solid var(--gold); color: var(--text); }
+.career-draft small { color: var(--dim); }
+.career-list { list-style: none; margin: 0; padding: 0 0 0 14px; border-left: 3px solid var(--line); display: grid; gap: 10px; }
+.career-list > li { position: relative; padding: 8px 10px; background: var(--panel2); border: 2px solid #000; border-left: 4px solid var(--team, var(--line)); }
+.career-list > li::before { content: ''; position: absolute; left: -24px; top: 16px; width: 12px; height: 12px; background: var(--team, var(--line)); border: 2px solid #000; }
+.career-list > li.now { box-shadow: 0 0 0 2px #ffd23f44; }
+.career-team { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.career-tag { background: var(--good); color: #000; font-weight: 800; font-size: 11px; padding: 1px 6px; }
+.career-deals { list-style: none; margin: 6px 0 0; padding: 0; display: grid; gap: 3px; font-size: 13px; }
+.career-deals li { display: flex; gap: 8px; flex-wrap: wrap; align-items: baseline; }
+.career-deals em { color: var(--dim); font-style: normal; margin-left: auto; }
+.career-left { margin-top: 6px; color: var(--warn); font-size: 13px; }
+.career-note { margin-top: 10px; font-size: 12px; }

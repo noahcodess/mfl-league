@@ -10,8 +10,12 @@ import { inSandbox } from '../data/sandbox.js';
 import SandboxButton from '../components/SandboxButton.jsx';
 import { advanceOffseason, undoLastStep, lastSnapshotLabel } from '../data/leagueEngine.js';
 import { previewStep } from '../lib/stepPreview.js';
+import Tabs from '../components/Tabs.jsx';
+import ScheduleEditor from '../components/ScheduleEditor.jsx';
+import DraftSettings from '../components/DraftSettings.jsx';
+import { links } from '../lib/router.js';
 
-// Commissioner's calendar: see what the next step will do, run it (after confirming), or undo the last one.
+// League Control, in tabs: the offseason calendar (preview, run or undo the next step), the schedule (real dates), and draft settings.
 export default function LeagueControlPage({ canControl, reload, viewerKey }) {
   const [confirm, setConfirm] = useState(null); // 'run' | 'undo'
   const [busy, setBusy] = useState(false);
@@ -52,37 +56,44 @@ export default function LeagueControlPage({ canControl, reload, viewerKey }) {
       </div>
       {!canControl && <div className="notice">View only. The commissioner runs these steps with his key.</div>}
       {note && <div className={`notice ${note.ok ? 'good' : 'bad'}`}>{note.text}</div>}
-      <div className="two-col wide-left">
-        <div>
-          {inOffseason && step === FA_WINDOW && <FaRoundCard canControl={canControl} onDone={async () => { setVersion((v) => v + 1); await reload(); }} />}
-          {inOffseason ? (
-            <section className="card next-step">
-              <h3>Up next: {name}</h3>
-              <p>{help}</p>
-              <p className="preview">{preview.text}</p>
-              {preview.list.length > 0 && (
-                <details className="preview-list"><summary>See all {preview.list.length}</summary>
-                  <ul>{preview.list.map((p) => <li key={p.id}>{p.name} <span className="dim">· {p.position} · age {p.age}</span></li>)}</ul>
-                </details>
+      <Tabs tabs={[
+        { key: 'offseason', label: '📆 Offseason', render: () => (
+          <div className="two-col wide-left">
+            <div>
+              {inOffseason && step === FA_WINDOW && <FaRoundCard canControl={canControl} onDone={async () => { setVersion((v) => v + 1); await reload(); }} />}
+              {inOffseason ? (
+                <section className="card next-step">
+                  <h3>Up next: {name}</h3>
+                  <p>{help}</p>
+                  <p className="preview">{preview.text}</p>
+              {step === FA_WINDOW && <p><a className="btn" href={links.draft}>🏈 Go to the draft room to start the draft</a></p>}
+                  {preview.list.length > 0 && (
+                    <details className="preview-list"><summary>See all {preview.list.length}</summary>
+                      <ul>{preview.list.map((p) => <li key={p.id}>{p.name} <span className="dim">· {p.position} · age {p.age}</span></li>)}</ul>
+                    </details>
+                  )}
+                  <div className="step-actions">
+                    <button className={`btn${step === FA_WINDOW ? ' ghost' : ''}`} disabled={!canControl || busy} onClick={() => setConfirm('run')}>{step === FA_WINDOW ? 'Close free agency (finishes any picks left)' : `Run ${name}`}</button>
+                    {undoLabel && <button className="btn ghost" disabled={!canControl || busy} onClick={() => setConfirm('undo')}>Undo last step</button>}
+                  </div>
+                  {undoLabel && <p className="dim help">Undo puts the league back to: {undoLabel.toLowerCase()}.</p>}
+                </section>
+              ) : (
+                <section className="card next-step">
+                  <h3>{PHASE_NAMES[phase]}</h3>
+                  <p className="dim">The schedule and game weeks plug in here next.</p>
+                  {undoLabel && <button className="btn ghost" disabled={!canControl || busy} onClick={() => setConfirm('undo')}>Undo last step</button>}
+                </section>
               )}
-              <div className="step-actions">
-                <button className={`btn${step === FA_WINDOW ? ' ghost' : ''}`} disabled={!canControl || busy} onClick={() => setConfirm('run')}>{step === FA_WINDOW ? 'Close free agency and run the Draft' : `Run ${name}`}</button>
-                {undoLabel && <button className="btn ghost" disabled={!canControl || busy} onClick={() => setConfirm('undo')}>Undo last step</button>}
-              </div>
-              {undoLabel && <p className="dim help">Undo puts the league back to: {undoLabel.toLowerCase()}.</p>}
-            </section>
-          ) : (
-            <section className="card next-step">
-              <h3>{PHASE_NAMES[phase]}</h3>
-              <p className="dim">The schedule and game weeks plug in here next.</p>
-              {undoLabel && <button className="btn ghost" disabled={!canControl || busy} onClick={() => setConfirm('undo')}>Undo last step</button>}
-            </section>
-          )}
-          <DealInbox negotiations={negotiations} canControl={canControl} onDone={async () => { setVersion((v) => v + 1); await reload(); }} />
-          <LeagueLog events={leagueEvents()} />
-        </div>
-        <OffseasonSteps current={inOffseason ? step : OFFSEASON_STEPS.length + 1} title="Offseason calendar" />
-      </div>
+              <DealInbox negotiations={negotiations} canControl={canControl} onDone={async () => { setVersion((v) => v + 1); await reload(); }} />
+              <LeagueLog events={leagueEvents()} />
+            </div>
+            <OffseasonSteps current={inOffseason ? step : OFFSEASON_STEPS.length + 1} title="Offseason calendar" />
+          </div>
+        ) },
+        { key: 'schedule', label: '📅 Schedule', render: () => <ScheduleEditor canControl={canControl} /> },
+        { key: 'draft', label: '🏈 Draft', render: () => <DraftSettings canControl={canControl} /> },
+      ]} />
       {confirm && (
         <Modal onClose={() => !busy && setConfirm(null)}>
           <h2>⚠️ {confirm === 'run' ? `Move the league to ${name}?` : 'Undo the last step?'}</h2>

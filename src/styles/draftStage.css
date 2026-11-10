@@ -43,7 +43,8 @@
 .upnext li.mine { border-color: var(--gold); } .upnext-no { color: var(--gold); } .upnext-human { position: relative; } .upnext-human .dot { margin-left: 3px; width: 7px; height: 7px; }
 
 .ticker { position: fixed; left: 0; right: 0; bottom: 0; z-index: 4; display: flex; align-items: center; height: 40px; background: #050814f2; border-top: 2px solid var(--gold); overflow: hidden; }
-.ticker-tag { flex: none; height: 100%; display: flex; align-items: center; padding: 0 14px; background: var(--gold); color: #1a1000; font-family: var(--label); font-weight: 800; letter-spacing: 2px; font-size: 13px; }
+.ticker-window { position: relative; flex: 1; min-width: 0; height: 100%; overflow: hidden; display: flex; align-items: center; }
+.ticker-tag { position: relative; z-index: 2; box-shadow: 6px 0 10px #000; flex: none; height: 100%; display: flex; align-items: center; padding: 0 14px; background: var(--gold); color: #1a1000; font-family: var(--label); font-weight: 800; letter-spacing: 2px; font-size: 13px; }
 .ticker-track { display: flex; width: max-content; animation: crawl var(--speed, 40s) linear infinite; }
 .ticker-row { display: flex; }
 .ticker-item { display: inline-flex; align-items: center; gap: 6px; padding: 0 22px; font-family: var(--label); font-size: 14px; color: #dbe4ff; white-space: nowrap; border-right: 1px solid #ffffff22; }

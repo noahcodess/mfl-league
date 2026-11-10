@@ -13,6 +13,8 @@ import PickReveal from '../components/PickReveal.jsx';
 import RevealCountdown from '../components/RevealCountdown.jsx';
 import ProspectModal from '../components/ProspectModal.jsx';
 import Tabs from '../components/Tabs.jsx';
+import DraftNight from '../components/DraftNight.jsx';
+import { useSchedule, useLeagueNumbers } from '../data/schedule.js';
 import { useDraftClass, useDraftOrder } from '../data/draft.js';
 import { useDraftRoom } from '../data/draftRoom.js';
 import { useDraftFlags } from '../data/draftFlags.js';
@@ -45,6 +47,9 @@ export default function DraftPage({ viewer, canControl, stageRoute }) {
   const scouts = useMyScouts(myTeam ? viewerKey : null, version);
   const { flags, toggle } = useDraftFlags(myTeam);
   const presence = useCoachPresence(canControl);
+  const schedule = useSchedule(season);
+  const opens = useLeagueNumbers(['draft_room_opens_minutes']);
+  const draftAt = schedule?.find((r) => r.kind === 'draft')?.at || null;
 
   useEffect(() => {
     document.body.classList.toggle('stage-on', stage);
@@ -69,15 +74,11 @@ export default function DraftPage({ viewer, canControl, stageRoute }) {
   return (
     <div className={`draft-room${stage ? ' stage-mode' : ''}`}>
       <div className="draft-lights" aria-hidden="true"><i /><i /><i /><i /></div>
-      <DraftHeader season={season} info={info} isCoach={!!myTeam} stage={stage} onStage={() => setStage((s) => !s)} />
-      {canControl && !stage && <DraftControls season={season} info={info} prospects={prospects} presence={presence} coached={draft.coached} onChange={draft.refresh} />}
+      <DraftHeader season={season} info={info} draftAt={draftAt} isCoach={!!myTeam} stage={stage} onStage={() => setStage((s) => !s)} />
+      {canControl && !stage && <DraftControls season={season} info={info} draftAt={draftAt} prospects={prospects} presence={presence} coached={draft.coached} onChange={draft.refresh} />}
 
       {info.phase === 'pre' && (
-        <section className="preshow">
-          <div className="preshow-big">The Season {season} draft is coming</div>
-          <p>{prospects.length} prospects · {info.total} picks over 3 rounds · It starts once free agency is done.</p>
-          {myTeam && <p className="dim">Scout and ⚑ flag the players you want now. If your time ever runs out, the commissioner can auto pick your top flagged player.</p>}
-        </section>
+        <DraftNight season={season} startsAt={draftAt} opensMinutes={opens?.draft_room_opens_minutes ?? 15} now={now} prospects={prospects.length} isCoach={!!myTeam} />
       )}
       {(info.phase === 'live' || info.phase === 'paused') && (
         <>

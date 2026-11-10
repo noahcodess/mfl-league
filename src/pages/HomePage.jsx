@@ -1,5 +1,6 @@
 import React from 'react';
 import TeamWall from '../components/TeamWall.jsx';
+import ComingUp from '../components/ComingUp.jsx';
 import { getTeams, currentSeason, currentPhase, PHASE_NAMES } from '../data/teams.js';
 import { useOpenTeams } from '../data/openTeams.js';
 import { leagueLogo } from '../data/logos.js';
@@ -27,6 +28,7 @@ export default function HomePage({ signedIn }) {
           </div>
         </div>
       </section>
+      <ComingUp />
       <section className="card join">
         <h3>How to join</h3>
         <ol className="join-steps">

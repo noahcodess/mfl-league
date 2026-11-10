@@ -16,6 +16,7 @@ import FreeAgentsPage from './pages/FreeAgentsPage.jsx';
 import DraftPage from './pages/DraftPage.jsx';
 import SandboxBanner from './components/SandboxBanner.jsx';
 import DraftAlert from './components/DraftAlert.jsx';
+import ScheduleNotice from './components/ScheduleNotice.jsx';
 import { usePresenceHeartbeat } from './data/presence.js';
 import { inSandbox } from './data/sandbox.js';
 import { useHashRoute, homeFor } from './lib/router.js';
@@ -74,6 +75,7 @@ export default function App() {
       {!route.stage && <Header page={route.page} session={session} ready={step === 'ready'} live={live} onLeagueChange={reload} />}
       {!route.stage && <SandboxBanner />}
       {myTeam && !route.stage && <DraftAlert teamId={myTeam.id} page={route.page} />}
+      {!route.stage && <ScheduleNotice />}
       <main className="main"><div className="page" key={`${route.page}-${route.id || ''}-${step}`}><Screen route={route} session={session} step={step} reload={reload} /></div></main>
     </div>
   );

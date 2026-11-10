@@ -21,7 +21,7 @@ export function previewStep(step) {
       const list = onTeams.filter(isExpiring);
       return { text: `The re-signing window closes and free agency opens. Bot teams re-sign who they want to keep, anyone still unsigned (up to ${list.length}) joins the ${getFreeAgents().length} free agents already out there, and new street free agents fill the pool if it's thin. Deals waiting for approval must be handled first.`, list };
     }
-    case 3: return { text: `Free agency closes: bot teams fill any empty roster spots with leftover free agents and unanswered offers expire. Run your free agency rounds first (${faRound()} of ${faRounds()} done). The draft room isn't built yet, so the draft itself is skipped for now.`, list: [] };
+    case 3: return { text: `Free agency closes: bot teams fill any empty roster spots with leftover free agents and unanswered offers expire. Run your free agency rounds first (${faRound()} of ${faRounds()} done). Start the draft from the draft room first; any picks still left get made automatically when this runs.`, list: [] };
     case 4: return { text: 'Training camp ends and the regular season begins.', list: [] };
     default: return { text: '', list: [] };
   }

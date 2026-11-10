@@ -2,11 +2,12 @@ import React, { useState } from 'react';
 import { leagueLogo } from '../data/logos.js';
 import { alertsState, askForAlerts } from '../data/draftTurn.js';
 import { roundOf } from '../lib/draftClock.js';
+import { whenText } from '../data/schedule.js';
 
 // The draft room's title bar: MFL DRAFT, the season, where the draft is at, plus pick alerts and stage mode buttons.
-export default function DraftHeader({ season, info, isCoach, stage, onStage }) {
+export default function DraftHeader({ season, info, draftAt, isCoach, stage, onStage }) {
   const [alerts, setAlerts] = useState(alertsState());
-  const status = info.phase === 'pre' ? 'Starts after free agency'
+  const status = info.phase === 'pre' ? (draftAt ? `Draft night · ${whenText(draftAt)}` : 'Draft night not set yet')
     : info.phase === 'done' ? `Complete · ${info.made} picks`
       : `${roundOf(info.current)} · #${info.current?.pick_no ?? '-'} of ${info.total}`;
   return (

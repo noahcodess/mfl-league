@@ -4,12 +4,14 @@ import Headshot from './Headshot.jsx';
 import StarRating from './StarRating.jsx';
 import GradeStamp from './GradeStamp.jsx';
 import CommishPickModal from './CommishPickModal.jsx';
-import { getTeam } from '../data/teams.js';
+import { getTeam, currentPhase, offseasonStep, FA_WINDOW } from '../data/teams.js';
+import { faRound, faRounds } from '../data/freeAgency.js';
+import { whenText } from '../data/schedule.js';
 import { links } from '../lib/router.js';
 import { startDraft, decidePick, announcePick, undoPick, pauseDraft, autoPick, pickFor, simDraft } from '../data/draftActions.js';
 
 // The commissioner's desk: accept/deny picks, announce them, handle a coach whose time ran out, pause, go back, auto pick, sim, open the stage.
-export default function DraftControls({ season, info, prospects, presence, coached, onChange }) {
+export default function DraftControls({ season, info, draftAt, prospects, presence, coached, onChange }) {
   const [choosing, setChoosing] = useState(false);
   const [err, setErr] = useState('');
   const act = (fn) => async (...a) => { setErr(''); try { await fn(...a); onChange(); } catch (e) { setErr(e.message); throw e; } };
@@ -28,10 +30,21 @@ export default function DraftControls({ season, info, prospects, presence, coach
       </div>
       {err && <p className="notice bad">{err}</p>}
 
-      {info.phase === 'pre' && (
-        <ConfirmButton label={`🏈 Start the Season ${season} draft`} title={`Start the Season ${season} draft?`} yes="Start the draft"
-          text="The first team goes on the clock in 10 seconds. Every coach sees it live. Free agency rounds must be finished first." onConfirm={act(startDraft)} />
-      )}
+      {info.phase === 'pre' && (() => {
+        const atDraft = currentPhase() === 'offseason' && offseasonStep() === FA_WINDOW;
+        const faDone = faRound() >= faRounds();
+        const why = !atDraft ? 'The draft comes after free agency (the offseason has to reach the Draft step).' : !faDone ? `Finish free agency first: ${faRound()} of ${faRounds()} rounds done.` : null;
+        return (
+          <div className="desk-start">
+            <div>
+              <b>{draftAt ? `Draft night: ${whenText(draftAt)}` : 'No draft night set yet'}</b>
+              <small>{why || 'Ready. You can start now, early or on time. Set the time in League Control → Schedule.'}</small>
+            </div>
+            <ConfirmButton className="btn start-draft" label="▶ START DRAFT" disabled={!!why} title={`Start the Season ${season} draft now?`} yes="Start the draft"
+              text="The first team goes on the clock in 10 seconds and every coach sees it live." onConfirm={act(startDraft)} />
+          </div>
+        );
+      })()}
 
       {p && p.status === 'pending' && (
         <div className="desk-pick">
