@@ -20,7 +20,7 @@ export default function BiddingBoard({ board }) {
           </div>
         );
       })}
-      <p className="dim board-note">The tick is where he'd sign. After each round he picks the highest meter he'd sign at, and he gets a little less picky every round.</p>
+      <p className="dim board-note">The top row is the team he likes most, not always the most money. If it's past the tick when the round runs, he signs there. He gets a little less picky every round.</p>
     </div>
   );
 }

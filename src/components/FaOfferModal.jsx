@@ -9,6 +9,7 @@ import { getFaQuote, getFaBoard, makeFaOffer, withdrawFaOffer, faOpen, faRound, 
 import { tierOf } from '../lib/tiers.js';
 import { money, plural } from '../lib/format.js';
 import { getTeam } from '../data/teams.js';
+import { PERSONALITIES, LEFT_HOW } from '../lib/personalities.js';
 
 // Make (or change, or pull) an offer to one free agent. He answers when the commissioner runs the next round.
 export const FA_JERSEY = { color: '#3a3f47', accent: '#9aa4b2' };
@@ -72,11 +73,17 @@ export default function FaOfferModal({ player, myTeam, canOffer, potential, onCl
           {old && <div><span>Last team</span><b>{old.name}</b></div>}
         </div>
       )}
+      {quote?.type && (
+        <div className="fa-type"><b>{PERSONALITIES[quote.type]?.label}</b> <span className="dim">{PERSONALITIES[quote.type]?.note}
+          {quote.type === 'hometown' && quote.favorite_team && ` Grew up a ${getTeam(quote.favorite_team)?.name || quote.favorite_team} fan.`}</span></div>
+      )}
+      {quote?.grudge === 0 && <div className="notice grudge">“{quote.grudge_line}” <span className="dim">He won't sign with you this offseason.</span></div>}
+      {quote?.grudge > 0 && quote.left_how && <div className="notice">{LEFT_HOW[quote.left_how]}</div>}
       <BiddingBoard board={board} />
       {!open && <div className="notice">Offers open during the Free agency step. {faRound() >= faRounds() ? 'This year\'s rounds are done.' : ''}</div>}
       {open && !canOffer && <div className="notice">Only a team's coach can make offers.</div>}
       {error && <div className="form-error">{error}</div>}
-      {open && canOffer && quote && (
+      {open && canOffer && quote && quote.grudge !== 0 && (
         <>
           {live != null && (
             <div className="my-meter"><span>His interest in this offer</span><InterestMeter value={live} mine /><b>{live >= SIGN_LINE ? 'He\'d sign' : `${live}%`}</b></div>

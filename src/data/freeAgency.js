@@ -26,7 +26,7 @@ export function useFaOffers(viewerKey, version) {
 }
 
 export async function getFaQuote(playerId) {
-  if (DEMO) return { ask: 85000, years: 2, max_years: 3, market: 80000, round: 0, rounds: 4, cap_room: 1500000, offers_out: 1, interest: 3, mine: null, need: { starter: [80000, 75000, 80000], backup: [95000, 90000, 95000] } };
+  if (DEMO) return { ask: 85000, years: 2, max_years: 3, market: 80000, round: 0, rounds: 4, cap_room: 1500000, offers_out: 1, interest: 3, mine: null, need: { starter: [80000, 75000, 80000], backup: [95000, 90000, 95000] }, type: 'ring_chaser', favorite_team: 'snm', grudge: 1 };
   const { data, error } = await db.rpc('fa_quote', { p_player: playerId });
   if (error) throw new Error(clean(error.message));
   return data;

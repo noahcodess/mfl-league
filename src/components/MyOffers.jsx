@@ -17,8 +17,10 @@ export default function MyOffers({ team, offers, onOpen }) {
       <ul className="fa-rules">
         <li>💸 Make up to {maxOpenOffers()} offers at a time, any size that fits your cap.</li>
         <li>🔁 The commissioner runs a few rounds. Each round every player picks the best offer he'll take.</li>
-        <li>⭐ Money matters most, but starting jobs, winning teams and old teams matter too.</li>
-        <li>📉 Nobody bites? Players get less picky every round. Big names may wait out round 1.</li>
+        <li>⭐ Each player has a personality: some chase rings, some want to start, some only want money.</li>
+        <li>📊 The top of a player's bidding board is the team he likes most, and that team gets him.</li>
+        <li>🚪 Let a guy go without an offer and he may refuse to come back this offseason.</li>
+        <li>📉 Nobody bites? Players get less picky every round. Big names may wait it out.</li>
         <li>✅ Signings go to the commissioner to approve, like re-signings.</li>
       </ul>
       {team && (

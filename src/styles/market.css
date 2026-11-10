@@ -44,3 +44,5 @@
 .meter-line { position: absolute; top: -2px; bottom: -2px; width: 2px; background: #fff; box-shadow: 0 0 0 1px #000; }
 .my-meter { display: grid; grid-template-columns: auto 1fr auto; gap: 10px; align-items: center; margin: 4px 0 10px; font-size: 13px; }
 .my-meter b { font-family: var(--pixel); font-size: 12px; min-width: 64px; text-align: right; }
+.fa-type { margin: 10px 0 0; font-size: 13px; }
+.notice.grudge { border-color: var(--bad); color: var(--text); font-style: italic; }
