@@ -5,7 +5,7 @@ import { store } from '../data/store.js';
 import { reviewDeal } from '../data/negotiations.js';
 import { money } from '../lib/format.js';
 
-// League office inbox: deals coaches agreed with players, waiting for the commissioner to approve or deny.
+// League office inbox: re-signings and free agency signings coaches agreed to, waiting for the commissioner to approve or deny.
 export default function DealInbox({ negotiations, canControl, onDone }) {
   const [busy, setBusy] = useState(null);
   const [error, setError] = useState('');
@@ -21,13 +21,13 @@ export default function DealInbox({ negotiations, canControl, onDone }) {
     <section className="card">
       <h3>Deals waiting for approval <span className="count">{waiting.length}</span></h3>
       {error && <div className="form-error">{error}</div>}
-      {!waiting.length && <p className="dim">Nothing waiting. Agreed re-signings land here.</p>}
+      {!waiting.length && <p className="dim">Nothing waiting. Agreed re-signings and free agency signings land here.</p>}
       {waiting.map((n) => {
         const team = getTeam(n.team_id);
         return (
           <div key={n.id} className="deal-row">
             {team && <TeamBadge team={team} size="sm" />}
-            <span className="deal-text"><b>{nameOf(n.player_id)}</b><small>{n.offer.years} yr · {money(n.offer.per_year)}/yr · {n.offer.role} · asked {money(n.ask_per_year)}</small></span>
+            <span className="deal-text"><b>{nameOf(n.player_id)}</b> <span className={`deal-kind ${n.kind}`}>{n.kind === 'free_agency' ? 'Signing' : 'Re-sign'}</span><small>{n.offer.years} yr · {money(n.offer.per_year)}/yr · {n.offer.role} · asked {money(n.ask_per_year)}</small></span>
             <button className="btn small" disabled={!canControl || busy === n.id} onClick={() => act(n, true)}>Approve</button>
             <button className="btn small danger" disabled={!canControl || busy === n.id} onClick={() => act(n, false)}>Deny</button>
           </div>

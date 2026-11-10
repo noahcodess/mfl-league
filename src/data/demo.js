@@ -3,8 +3,13 @@ import { store } from './store.js';
 
 const params = import.meta.env.DEV ? new URLSearchParams(window.location.search) : null;
 export const DEMO = params ? params.get('demo') : null;
-// Test-only: ?step=3 pretends the league is at that offseason step.
-if (DEMO && params.get('step')) store.league.meta.offseasonStep = Number(params.get('step'));
+// Test-only: ?step=3 pretends the league is at that offseason step (&round=N for free agency). Re-applied after live data loads.
+export function applyDemoOverrides() {
+  if (!DEMO) return;
+  if (params.get('step')) store.league.meta.offseasonStep = Number(params.get('step'));
+  if (params.get('round')) store.league.meta.faRound = Number(params.get('round'));
+}
+applyDemoOverrides();
 
 const coach = { user_id: 'd1', username: 'noah', role: 'coach', team_id: 'snm', display_name: 'Noah', must_change_password: false };
 const commish = { user_id: 'd0', username: 'sserg', role: 'commissioner', team_id: null, display_name: 'SSerg', must_change_password: false };

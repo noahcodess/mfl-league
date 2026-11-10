@@ -6,7 +6,7 @@ export const OFFSEASON_STEPS = [
   ['Birthday Day', 'Every player gets a year older.'],
   ['Retirements', 'Players past the max age (27) retire. Jerseys can be retired.'],
   ['Re-signing', 'Expiring contracts end. Teams re-sign their own players before the market opens.'],
-  ['Free agency', 'Anyone not re-signed is up for grabs. Scouts reveal potential.'],
+  ['Free agency', 'Anyone not re-signed is up for grabs. Teams bid, players pick over a few rounds.'],
   ['Draft', 'Rookies join the league, live in the draft room.'],
   ['Training camp', 'Set depth charts before Week 1.'],
 ];

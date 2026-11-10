@@ -1,5 +1,6 @@
 // Plain-English preview of what the next offseason step will do, worked out from the current league data.
-import { getAllPlayers, isRetiring, maxAge } from '../data/players.js';
+import { getAllPlayers, getFreeAgents, isRetiring, maxAge } from '../data/players.js';
+import { faRound, faRounds } from '../data/freeAgency.js';
 import { isExpiring } from '../data/contracts.js';
 import { plural } from './format.js';
 
@@ -21,9 +22,9 @@ export function previewStep(step) {
     }
     case 3: {
       const list = onTeams.filter(isExpiring);
-      return { text: `The re-signing window closes. Bot teams re-sign the players they want to keep, then anyone still unsigned (up to ${list.length}) becomes a free agent. Deals waiting for approval must be handled first.`, list };
+      return { text: `The re-signing window closes and free agency opens. Bot teams re-sign who they want to keep, anyone still unsigned (up to ${list.length}) joins the ${getFreeAgents().length} free agents already out there, and new street free agents fill the pool if it's thin. Deals waiting for approval must be handled first.`, list };
     }
-    case 4: return { text: 'The draft room isn\'t built yet, so this step is skipped for now.', list: [] };
+    case 4: return { text: `Free agency closes: bot teams fill any empty roster spots with leftover free agents and unanswered offers expire. Run your free agency rounds first (${faRound()} of ${faRounds()} done). The draft room isn't built yet, so the draft itself is skipped for now.`, list: [] };
     case 5: return { text: 'Training camp ends and the regular season begins.', list: [] };
     default: return { text: '', list: [] };
   }

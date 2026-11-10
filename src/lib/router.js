@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-// Tiny hash router: '' = home, '#league', '#team-<id>' = roster, '#data-check', '#login', '#console'.
+// Tiny hash router: '' = home, '#league', '#team-<id>' = roster, '#free-agents', '#data-check', '#login', '#console', '#control'.
 export function parseHash(hash) {
   const h = (hash || '').replace(/^#/, '');
   if (h.startsWith('team-')) return { page: 'team', id: h.slice(5) };
@@ -9,6 +9,7 @@ export function parseHash(hash) {
   if (h === 'console') return { page: 'console' };
   if (h === 'control') return { page: 'control' };
   if (h === 'league') return { page: 'league' };
+  if (h === 'free-agents') return { page: 'freeAgents' };
   return { page: 'home' };
 }
 
@@ -30,6 +31,7 @@ export const links = {
   login: '#login',
   console: '#console',
   control: '#control',
+  freeAgents: '#free-agents',
 };
 
 // Where someone lands after logging in.

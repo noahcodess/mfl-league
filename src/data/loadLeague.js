@@ -1,6 +1,8 @@
 // Loads teams, players, picks, issues and settings from the database into the store, in the same shape as the import.
 import { db } from './supabase.js';
 import { store } from './store.js';
+import { selectAll } from './selectAll.js';
+import { applyDemoOverrides } from './demo.js';
 
 const rating = (stars, rank) => (stars == null ? null : { stars: Number(stars), rank });
 
@@ -16,10 +18,10 @@ const toPlayer = (p) => ({
   id: p.id, teamId: p.team_id, name: p.name, position: p.position, depth: p.depth, slot: p.slot,
   stars: p.stars == null ? null : Number(p.stars), elite: p.elite, age: p.age, mood: p.mood,
   nationality: p.nationality, notes: p.notes ?? [], number: p.number, playStyle: p.play_style, looks: p.looks || {},
-  status: p.status,
+  status: p.status, previousTeamId: p.previous_team_id,
 });
 
-const toContract = (c) => ({ perYear: c.per_year, total: c.total, firstSeason: c.first_season, lastSeason: c.last_season, source: c.source });
+const toContract = (c) => ({ perYear: c.per_year, total: c.total, firstSeason: c.first_season, lastSeason: c.last_season, source: c.source, role: c.role });
 const toEvent = (e) => ({ id: e.id, season: e.season, phase: e.phase, kind: e.kind, playerId: e.player_id, teamId: e.team_id, summary: e.summary, data: e.data, at: e.created_at });
 
 const toPick = (p) => ({ ownerId: p.owner_id, originalCode: p.original_code, season: p.season, round: p.round });
@@ -30,11 +32,11 @@ export async function loadLeague() {
   try {
     const [teams, players, picks, issues, settings, contracts, events] = await Promise.all([
       db.from('teams').select('*'),
-      db.from('players').select('*').order('id'),
+      selectAll(() => db.from('players').select('*').neq('status', 'retired').order('id')),
       db.from('picks').select('*'),
       db.from('import_issues').select('*').order('id'),
       db.from('league_settings').select('*'),
-      db.from('contracts').select('*').eq('status', 'active'),
+      selectAll(() => db.from('contracts').select('*').eq('status', 'active').order('id')),
       db.from('league_events').select('*').order('id', { ascending: false }).limit(80),
     ]);
     const failed = [teams, players, picks, settings, contracts].find((r) => r.error);
@@ -42,7 +44,8 @@ export async function loadLeague() {
     const meta = Object.fromEntries(settings.data.map((s) => [s.key, s.value]));
     const byPlayer = Object.fromEntries(contracts.data.map((c) => [c.player_id, toContract(c)]));
     store.league = {
-      meta: { capLimit: meta.cap_limit, currentSeason: meta.current_season, phase: meta.phase, maxAge: meta.max_age ?? 27, agedForSeason: meta.aged_for_season ?? 0, testMode: meta.test_mode === true, offseasonStep: meta.offseason_step ?? 0 },
+      meta: { capLimit: meta.cap_limit, currentSeason: meta.current_season, phase: meta.phase, maxAge: meta.max_age ?? 27, agedForSeason: meta.aged_for_season ?? 0, testMode: meta.test_mode === true, offseasonStep: meta.offseason_step ?? 0,
+        faRound: meta.fa_round ?? 0, faRounds: meta.fa_rounds ?? 4, maxRoster: meta.max_roster ?? 45, maxOpenOffers: meta.max_open_offers ?? 6 },
       teams: teams.data.map(toTeam),
       players: players.data.map((p) => ({ ...toPlayer(p), contract: byPlayer[p.id] || null })),
       picks: picks.data.map(toPick),
@@ -51,6 +54,7 @@ export async function loadLeague() {
     if (!issues.error) store.issues = issues.data.map(toIssue);
     store.events = events.error ? [] : events.data.map(toEvent);
     store.source = 'live';
+    applyDemoOverrides();
     return true;
   } catch (e) {
     console.warn('Using bundled league data:', e?.message || e);

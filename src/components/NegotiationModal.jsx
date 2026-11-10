@@ -6,11 +6,9 @@ import { getQuote, sendOffer } from '../data/negotiations.js';
 import { topPriority } from '../lib/playerTraits.js';
 import { tierOf } from '../lib/tiers.js';
 import { money } from '../lib/format.js';
+import OfferForm, { snapMoney as snap } from './OfferForm.jsx';
 
 // Re-signing talks with one player: his ask and personality, your offer (years, money, role), and his answers.
-const STEP = 5000;
-const snap = (n) => Math.max(10000, Math.round(n / STEP) * STEP);
-
 export default function NegotiationModal({ player, team, traits, negotiation, windowOpen, onClose, onChanged }) {
   const [quote, setQuote] = useState(null);
   const [years, setYears] = useState(1);
@@ -87,23 +85,8 @@ export default function NegotiationModal({ player, team, traits, negotiation, wi
         </button>
       )}
       {!done && quote && (
-        <div className="nego-form">
-          <div className="seg">{[1, 2, 3].map((y) => (
-            <button key={y} className={years === y ? 'on' : ''} disabled={y > quote.max_years} onClick={() => setYears(y)}>{y} yr</button>
-          ))}</div>
-          <div className="money-step">
-            <button onClick={() => setPerYear(snap(perYear - STEP))}>−</button>
-            <input value={money(perYear)} readOnly aria-label="Per year" />
-            <button onClick={() => setPerYear(snap(perYear + STEP))}>+</button>
-            <button className="chip-btn" onClick={() => setPerYear(snap(quote.ask))}>His ask</button>
-            <button className="chip-btn" onClick={() => setPerYear(snap(quote.market))}>Market</button>
-          </div>
-          <div className="seg">{['starter', 'backup'].map((r) => (
-            <button key={r} className={role === r ? 'on' : ''} onClick={() => setRole(r)}>{r === 'starter' ? 'Starter' : 'Backup'}</button>
-          ))}</div>
-          <div className="nego-total">Total {money(perYear * years)}{perYear * years > 1000000 && <span className="warn"> · over the $1M max</span>}</div>
-          <button className="btn wide" disabled={!canSend} onClick={() => offer()}>{busy ? 'Waiting for his answer...' : 'Send offer'}</button>
-        </div>
+        <OfferForm quote={quote} years={years} setYears={setYears} perYear={perYear} setPerYear={setPerYear} role={role} setRole={setRole}
+          canSend={canSend} busy={busy} onSend={() => offer()} busyLabel="Waiting for his answer..." />
       )}
     </Modal>
   );

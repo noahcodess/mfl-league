@@ -12,6 +12,7 @@ import './styles/league.css';
 import './styles/auth.css';
 import './styles/console.css';
 import './styles/roster.css';
+import './styles/market.css';
 import './styles/home.css';
 import './styles/motion.css';
 
