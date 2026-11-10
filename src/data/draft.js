@@ -14,7 +14,7 @@ function demoClass(season) {
   return names.map((name, i) => {
     const r = seeded(`demo-prospect-${i}`);
     const stars = [1, 1.5, 2, 2.5, 3, 1.5, 2, 3.5][i];
-    return { id: `demo-dr-${i}`, name, position: pos[r(pos.length)], stars, age: 21 + r(3), status: 'prospect', notes: [],
+    return { id: `demo-dr-${i}`, name, position: pos[r(pos.length)], stars, age: 21 + r(2), status: 'prospect', notes: [],
       nationality: ['Nigeria', 'USA', 'USA', 'Australia', 'USA', 'Samoa', 'USA', 'Canada'][i], college: ['Alabama', 'Ohio State', 'Utah', 'Oregon', 'LSU', 'Washington', 'Georgia', 'Michigan'][i],
       height: 70 + r(8), weight: 190 + r(120), draftSeason: season,
       collegeStats: { class: 'Senior', games: 13, stats: [['Tackles', 40 + r(40)], ['Sacks', 2 + r(10)], ['INT', r(4)], ['Forced fumbles', r(4)]], honors: i % 3 === 0 ? ['All-Conference First Team'] : [] } };
@@ -31,4 +31,17 @@ export function useDraftClass(season) {
     return () => { live = false; };
   }, [season]);
   return list;
+}
+
+// The draft order (slot 1 picks first, same order every round) and who owns each pick now.
+export function useDraftOrder(season) {
+  const [order, setOrder] = useState(null);
+  useEffect(() => {
+    let live = true;
+    if (DEMO) { setOrder(['dst', 'wrf', 'drf', 'ocn', 'pln', 'ocm', 'wsl', 'ddc', 'ntw', 'edc', 'flf', 'snm', 'void', 'tga', 'crf', 'lsc']); return undefined; }
+    db.from('draft_order').select('slot, team_id').eq('season', season).order('slot')
+      .then(({ data }) => { if (live) setOrder((data || []).map((r) => r.team_id)); });
+    return () => { live = false; };
+  }, [season]);
+  return order;
 }

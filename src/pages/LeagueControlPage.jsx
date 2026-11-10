@@ -7,6 +7,7 @@ import FaRoundCard from '../components/FaRoundCard.jsx';
 import { useNegotiations } from '../data/negotiations.js';
 import { currentSeason, currentPhase, offseasonStep, leagueEvents, PHASE_NAMES, FA_WINDOW } from '../data/teams.js';
 import { inSandbox } from '../data/sandbox.js';
+import SandboxButton from '../components/SandboxButton.jsx';
 import { advanceOffseason, undoLastStep, lastSnapshotLabel } from '../data/leagueEngine.js';
 import { previewStep } from '../lib/stepPreview.js';
 
@@ -42,6 +43,12 @@ export default function LeagueControlPage({ canControl, reload, viewerKey }) {
     <div>
       <div className="console-head">
         <div><h1>League Control</h1><div className="dim">Season {currentSeason()} · {PHASE_NAMES[phase]}. You set the pace; the league does the rest.</div></div>
+        {canControl && (
+          <div className="test-card">
+            <span>{inSandbox() ? '🧪 TEST mode is on. Leaving it resets the league.' : '🧪 Try anything first: TEST mode resets when you leave it.'}</span>
+            <SandboxButton onChanged={reload} />
+          </div>
+        )}
       </div>
       {!canControl && <div className="notice">View only. The commissioner runs these steps with his key.</div>}
       {note && <div className={`notice ${note.ok ? 'good' : 'bad'}`}>{note.text}</div>}

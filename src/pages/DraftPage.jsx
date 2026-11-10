@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import PlayerTile from '../components/PlayerTile.jsx';
 import ProspectModal from '../components/ProspectModal.jsx';
+import DraftOrder from '../components/DraftOrder.jsx';
 import { FA_JERSEY } from '../components/FaOfferModal.jsx';
-import { useDraftClass } from '../data/draft.js';
+import { useDraftClass, useDraftOrder } from '../data/draft.js';
 import { useMyScouts } from '../data/scouting.js';
 import { usePotentials } from '../data/potentials.js';
 import { currentSeason } from '../data/teams.js';
@@ -22,6 +23,7 @@ export default function DraftPage({ viewer }) {
   const [version, setVersion] = useState(0);
   const viewerKey = viewer ? `${viewer.user_id}-${viewer.team_id}-${viewer.role}-${version}` : null;
   const prospects = useDraftClass(season);
+  const order = useDraftOrder(season);
   const potentials = usePotentials(viewerKey);
   const scouts = useMyScouts(viewer?.role === 'coach' ? viewerKey : null, version);
   const scoutedIds = new Set(scouts?.scouted || []);
@@ -35,6 +37,7 @@ export default function DraftPage({ viewer }) {
         <p className="dim">Rookies come in about 2 stars under their potential. Send scouts to find the gems. Anyone not drafted becomes a free agent.</p>
         {scouts && <p className="scout-count">🔭 {scouts.draft} draft scouts left · {scoutedIds.size} players scouted</p>}
       </div>
+      <div className="two-col wide-left">
       <section className="card">
         <div className="fa-filters">
           <div className="pos-chips">
@@ -54,6 +57,8 @@ export default function DraftPage({ viewer }) {
           ))}
         </div>
       </section>
+      <DraftOrder season={season} order={order} myTeamId={viewer?.role === 'coach' ? viewer.team_id : null} />
+      </div>
       {open && (
         <ProspectModal player={open} potential={potentials.map[open.id] ?? null} scouts={scouts} scouted={scoutedIds.has(open.id)}
           onScouted={() => setVersion((v) => v + 1)} onClose={() => setOpen(null)} />

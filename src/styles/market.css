@@ -57,3 +57,10 @@
 .college-stats b { font-family: var(--pixel); font-size: 16px; color: var(--text); }
 .honors { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
 .honor { font-size: 12px; padding: 3px 8px; background: #2c2710; color: #e7d97a; border: 1px solid #000; }
+.draft-order { align-self: start; }
+.order-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 4px; }
+.order-list li { display: grid; grid-template-columns: 44px auto 1fr; gap: 8px; align-items: center; padding: 4px 6px; background: var(--panel2); border: 1px solid #000; }
+.order-list li.mine { border-color: var(--good); box-shadow: inset 3px 0 0 var(--good); }
+.pick-no { font-family: var(--pixel); font-size: 12px; color: #d6cf4c; }
+.order-team { font-size: 13px; }
+.no-pick { width: 28px; text-align: center; color: var(--faint); }

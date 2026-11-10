@@ -9,3 +9,4 @@ body:has(.app.sandbox) { background-image: radial-gradient(#ffffff08 1px, transp
 .step-live { font-family: var(--pixel); font-size: 11px; padding: 2px 6px; border: 1px solid #000; }
 .step-live.real { background: #3a1010; color: var(--bad); }
 .step-live.test { background: #10301e; color: #8ff0b4; }
+.test-card { display: flex; align-items: center; gap: 10px; padding: 8px 12px; background: #0d2416; border: 2px solid #1d4a32; font-size: 13px; color: #b9f3cf; }

@@ -77,5 +77,8 @@ h3 { font-size: 15px; margin: 0 0 12px; color: var(--gold); font-weight: 500; te
 @media (max-width: 860px) {
   .two-col, .two-col.wide-left { grid-template-columns: 1fr; }
   .season, .brand span { display: none; }
-  .header { gap: 10px; padding: 8px 12px; }
+  .header { gap: 8px 10px; padding: 8px 12px; flex-wrap: wrap; }
+  .header .nav { order: 3; width: 100%; overflow-x: auto; white-space: nowrap; scrollbar-width: none; }
+  .header-right { gap: 8px; }
+  .sandbox-banner { position: static; }
 }
