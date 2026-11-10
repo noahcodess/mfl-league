@@ -4,6 +4,7 @@ import Headshot from './Headshot.jsx';
 import StarRating from './StarRating.jsx';
 import MoodTag from './MoodTag.jsx';
 import PlayerMoney from './PlayerMoney.jsx';
+import AttributeBars from './AttributeBars.jsx';
 import { isRetiring, maxAge } from '../data/players.js';
 import { contractOf, yearsLeft, contractLabel } from '../data/contracts.js';
 import { POSITION_NAMES } from '../data/positions.js';
@@ -35,6 +36,7 @@ export default function PlayerModal({ player, team, canSeePotential, potential, 
         </div>
         {isRetiring(player) && <div className="notice bad">Retiring this offseason: turns {player.age + 1} at the offseason birthday, past the max age of {maxAge()}.</div>}
         {player.playStyle && <p className="pcard-style"><span>Play style</span>{player.playStyle}</p>}
+        <AttributeBars player={player} potential={canSeePotential ? potential : null} />
         <h3>Contract</h3>
         {c ? (
           <div className="pcard-grid">

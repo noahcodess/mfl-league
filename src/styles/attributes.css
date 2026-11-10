@@ -1,0 +1,11 @@
+/* Attribute bars, styled like a retro game card: yellow fill for the rating now, a yellow outline for the ceiling. */
+.attrs { margin: 14px 0 6px; }
+.attr-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 10px 16px; }
+.attr-label { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 3px;
+  font-family: var(--pixel); font-size: 11px; text-transform: uppercase; letter-spacing: .5px; color: var(--text); }
+.attr-label b { color: #d6cf4c; }
+.attr.core .attr-label span { color: var(--dim); }
+.abar { position: relative; height: 16px; background: #000; border: 2px solid #000; box-shadow: 0 0 0 1px #ffffff22; }
+.abar-fill { position: absolute; left: 0; top: 0; bottom: 0; background: #d6cf4c; transition: width .4s ease-out; }
+.abar-ceil { position: absolute; left: 0; top: 0; bottom: 0; border: 2px solid #d6cf4c; box-sizing: border-box; }
+.attr-note { font-size: 11.5px; margin: 8px 0 0; }

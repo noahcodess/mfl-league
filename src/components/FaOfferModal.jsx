@@ -4,6 +4,7 @@ import Headshot from './Headshot.jsx';
 import StarRating from './StarRating.jsx';
 import OfferForm, { snapMoney } from './OfferForm.jsx';
 import BiddingBoard from './BiddingBoard.jsx';
+import AttributeBars from './AttributeBars.jsx';
 import InterestMeter, { SIGN_LINE } from './InterestMeter.jsx';
 import { getFaQuote, getFaBoard, makeFaOffer, withdrawFaOffer, faOpen, faRound, faRounds } from '../data/freeAgency.js';
 import { tierOf } from '../lib/tiers.js';
@@ -79,6 +80,7 @@ export default function FaOfferModal({ player, myTeam, canOffer, potential, onCl
       )}
       {quote?.grudge === 0 && <div className="notice grudge">“{quote.grudge_line}” <span className="dim">He won't sign with you this offseason.</span></div>}
       {quote?.grudge > 0 && quote.left_how && <div className="notice">{LEFT_HOW[quote.left_how]}</div>}
+      <AttributeBars player={player} potential={potential} />
       <BiddingBoard board={board} />
       {!open && <div className="notice">Offers open during the Free agency step. {faRound() >= faRounds() ? 'This year\'s rounds are done.' : ''}</div>}
       {open && !canOffer && <div className="notice">Only a team's coach can make offers.</div>}
