@@ -14,6 +14,7 @@ import DashboardPage from './pages/DashboardPage.jsx';
 import LeagueControlPage from './pages/LeagueControlPage.jsx';
 import FreeAgentsPage from './pages/FreeAgentsPage.jsx';
 import DraftPage from './pages/DraftPage.jsx';
+import DraftDeskPage from './pages/DraftDeskPage.jsx';
 import SandboxBanner from './components/SandboxBanner.jsx';
 import DraftAlert from './components/DraftAlert.jsx';
 import ScheduleNotice from './components/ScheduleNotice.jsx';
@@ -54,6 +55,11 @@ function Screen({ route, session, step, reload }) {
   if (route.page === 'draft') {
     const p = step === 'ready' ? session.profile : null;
     return <DraftPage viewer={p} canControl={p?.role === 'commissioner'} stageRoute={route.stage} />;
+  }
+  if (route.page === 'draftDesk') {
+    if (step === 'login') return <LoginPage />;
+    if (step !== 'ready') return null;
+    return session.profile.role === 'commissioner' ? <DraftDeskPage viewer={session.profile} /> : <div className="notice bad">Commissioner only.</div>;
   }
   if (route.page === 'freeAgents') return <FreeAgentsPage viewer={step === 'ready' ? session.profile : null} />;
   if (route.page === 'dataCheck') return <DataCheckPage />;

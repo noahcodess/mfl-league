@@ -9,7 +9,7 @@ const clean = (msg = '') => (msg.includes('not allowed') ? 'Only the commissione
 export const SCHEDULE_EVENTS = [
   ['birthday', 'Birthday & Farewell'], ['resign', 'Re-signing opens'], ['fa_open', 'Free agency opens'],
   ['fa_round_1', 'Free agency round 1'], ['fa_round_2', 'Free agency round 2'], ['fa_round_3', 'Free agency round 3'], ['fa_round_4', 'Free agency round 4'],
-  ['draft', 'Draft night'], ['camp', 'Training camp'], ['season_start', 'Season kickoff'],
+  ['draft', 'Draft night'], ['camp', 'Training camp'], ['season_start', 'Season kickoff'], ['craft_bowl', 'Craft Bowl'],
 ];
 
 // Test-only calendar (&sched=open puts draft night 8 minutes out, so the room is open).
@@ -32,9 +32,10 @@ export function useSchedule(season, version = 0) {
   return rows;
 }
 
-export async function setScheduleItem(kind, label, atIso) {
+// Dates must stay in calendar order, and next season's dates must come after this season ends (the server checks).
+export async function setScheduleItem(season, kind, label, atIso) {
   if (DEMO) return {};
-  const { data, error } = await db.rpc('set_schedule', { p_kind: kind, p_label: label, p_at: atIso });
+  const { data, error } = await db.rpc('set_schedule_for', { p_season: season, p_kind: kind, p_label: label, p_at: atIso });
   if (error) throw new Error(clean(error.message));
   return data;
 }

@@ -5,10 +5,12 @@ import { links } from '../lib/router.js';
 
 // Team hub card: the next league events the commissioner put on the calendar, each with a live countdown.
 export default function ComingUp({ max = 4 }) {
-  const rows = useSchedule(currentSeason());
+  const thisSeason = useSchedule(currentSeason());
+  const nextSeason = useSchedule(currentSeason() + 1);
+  const rows = [...(thisSeason || []), ...(nextSeason || []).map((r) => ({ ...r, label: `Season ${currentSeason() + 1} ${r.label}`, kind: `n-${r.kind}` }))];
   const [now, setNow] = useState(Date.now());
   useEffect(() => { const t = setInterval(() => setNow(Date.now()), 1000); return () => clearInterval(t); }, []);
-  const next = (rows || []).filter((r) => Date.parse(r.at) > now - 3600e3).slice(0, max);
+  const next = rows.sort((a, b) => Date.parse(a.at) - Date.parse(b.at)).filter((r) => Date.parse(r.at) > now - 3600e3).slice(0, max);
   if (!next.length) return null;
   return (
     <section className="card coming-up">

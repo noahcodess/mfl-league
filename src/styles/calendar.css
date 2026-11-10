@@ -33,3 +33,21 @@
 .career-deals em { color: var(--dim); font-style: normal; margin-left: auto; }
 .career-left { margin-top: 6px; color: var(--warn); font-size: 13px; }
 .career-note { margin-top: 10px; font-size: 12px; }
+.sched-seasons { max-width: 320px; margin-bottom: 8px; }
+
+/* Commissioner desk window: plain and technical on purpose */
+.desk-page { padding: 12px; font-size: 13px; }
+.desk-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; padding: 8px 12px; margin-bottom: 10px; background: #000; border: 2px solid var(--gold); font-family: var(--label); }
+.desk-top > div:first-child { display: flex; flex-direction: column; } .desk-top small { color: var(--dim); }
+.desk-now { display: flex; align-items: center; gap: 10px; } .desk-now b { font-size: 26px; font-weight: 900; color: var(--good); } .desk-now b.hot { color: var(--bad); }
+.desk-now em { color: var(--gold); font-style: normal; font-weight: 700; }
+.desk-cols { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); gap: 10px; }
+.desk-panel { background: var(--panel); border: 2px solid var(--line); padding: 10px; max-height: 70vh; overflow-y: auto; }
+.desk-links { display: flex; gap: 6px; flex-wrap: wrap; }
+.cboard-top { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 8px; } .cboard-top .seg { min-width: 240px; }
+.ctable { width: 100%; border-collapse: collapse; } .ctable th { text-align: left; color: var(--dim); font-weight: 700; padding: 4px 6px; border-bottom: 2px solid var(--line); position: sticky; top: -10px; background: var(--panel); }
+.ctable td { padding: 4px 6px; border-bottom: 1px solid var(--line2); } .ctable td small { color: var(--dim); }
+.ctable .mono { font-family: ui-monospace, monospace; color: var(--link); } .ctable .flagged { color: #ff6b3d; }
+.desk-bar { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; padding: 6px 10px; margin-bottom: 12px; background: #000c; border: 2px solid var(--gold); font-family: var(--label); }
+.desk-bar b { color: var(--gold); margin-right: auto; } .desk-bar-alert { color: #fff; background: #b8860b; padding: 2px 8px; font-weight: 800; animation: blink 1.2s ease-in-out infinite; }
+@media (max-width: 900px) { .desk-cols { grid-template-columns: 1fr; } }

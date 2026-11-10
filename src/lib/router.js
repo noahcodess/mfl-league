@@ -12,6 +12,7 @@ export function parseHash(hash) {
   if (h === 'free-agents') return { page: 'freeAgents' };
   if (h === 'draft') return { page: 'draft' };
   if (h === 'draft-stage') return { page: 'draft', stage: true };
+  if (h === 'draft-desk') return { page: 'draftDesk', stage: true };
   return { page: 'home' };
 }
 
@@ -36,6 +37,7 @@ export const links = {
   freeAgents: '#free-agents',
   draft: '#draft',
   draftStage: '#draft-stage',
+  draftDesk: '#draft-desk',
 };
 
 // Where someone lands after logging in.

@@ -7,11 +7,13 @@ import CommishPickModal from './CommishPickModal.jsx';
 import { getTeam, currentPhase, offseasonStep, FA_WINDOW } from '../data/teams.js';
 import { faRound, faRounds } from '../data/freeAgency.js';
 import { whenText } from '../data/schedule.js';
+import { openDeskWindow } from '../data/draftIntel.js';
+import { inSandbox } from '../data/sandbox.js';
 import { links } from '../lib/router.js';
 import { startDraft, decidePick, announcePick, undoPick, pauseDraft, autoPick, pickFor, simDraft } from '../data/draftActions.js';
 
 // The commissioner's desk: accept/deny picks, announce them, handle a coach whose time ran out, pause, go back, auto pick, sim, open the stage.
-export default function DraftControls({ season, info, draftAt, prospects, presence, coached, onChange }) {
+export default function DraftControls({ season, info, draftAt, prospects, presence, coached, onChange, hideWindowLink }) {
   const [choosing, setChoosing] = useState(false);
   const [err, setErr] = useState('');
   const act = (fn) => async (...a) => { setErr(''); try { await fn(...a); onChange(); } catch (e) { setErr(e.message); throw e; } };
@@ -26,19 +28,22 @@ export default function DraftControls({ season, info, draftAt, prospects, presen
     <section className="desk">
       <div className="desk-head">
         <b>🎛️ Commissioner desk</b>
-        <a className="btn small ghost" href={links.draftStage} target="_blank" rel="noreferrer">📺 Open stage in a new window</a>
+        <div className="desk-links">
+          {!hideWindowLink && <button className="btn small" onClick={openDeskWindow}>🎛️ Open desk window</button>}
+          <button className="btn small ghost" onClick={() => window.open(`${window.location.href.split('#')[0]}${links.draftStage}`, 'mfl-stage', 'popup=yes,width=1600,height=900')}>📺 Open stage window</button>
+        </div>
       </div>
       {err && <p className="notice bad">{err}</p>}
 
       {info.phase === 'pre' && (() => {
         const atDraft = currentPhase() === 'offseason' && offseasonStep() === FA_WINDOW;
         const faDone = faRound() >= faRounds();
-        const why = !atDraft ? 'The draft comes after free agency (the offseason has to reach the Draft step).' : !faDone ? `Finish free agency first: ${faRound()} of ${faRounds()} rounds done.` : null;
+        const why = inSandbox() ? null : !atDraft ? 'The draft comes after free agency (the offseason has to reach the Draft step).' : !faDone ? `Finish free agency first: ${faRound()} of ${faRounds()} rounds done.` : null;
         return (
           <div className="desk-start">
             <div>
               <b>{draftAt ? `Draft night: ${whenText(draftAt)}` : 'No draft night set yet'}</b>
-              <small>{why || 'Ready. You can start now, early or on time. Set the time in League Control → Schedule.'}</small>
+              <small>{why || (inSandbox() ? '🧪 TEST mode: you can start the draft at any step to try it out.' : 'Ready. You can start now, early or on time. Set the time in League Control → Schedule.')}</small>
             </div>
             <ConfirmButton className="btn start-draft" label="▶ START DRAFT" disabled={!!why} title={`Start the Season ${season} draft now?`} yes="Start the draft"
               text="The first team goes on the clock in 10 seconds and every coach sees it live." onConfirm={act(startDraft)} />

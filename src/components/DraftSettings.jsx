@@ -2,6 +2,10 @@ import React, { useState } from 'react';
 import ConfirmButton from './ConfirmButton.jsx';
 import { useLeagueNumbers, setLeagueNumber } from '../data/schedule.js';
 import { links } from '../lib/router.js';
+import { startDraft } from '../data/draftActions.js';
+import { openDeskWindow } from '../data/draftIntel.js';
+import { inSandbox } from '../data/sandbox.js';
+import { currentSeason } from '../data/teams.js';
 
 // Every number the commissioner can tune for the draft and rooms, grouped so it's easy to find.
 const GROUPS = [
@@ -25,10 +29,13 @@ export default function DraftSettings({ canControl }) {
   return (
     <div className="dsettings">
       <div className="dsettings-top">
-        <a className="btn" href={links.draft}>🏈 Open the draft room (your desk)</a>
-        <a className="btn ghost" href={links.draftStage} target="_blank" rel="noreferrer">📺 Open the stage window</a>
+        <ConfirmButton className="btn start-draft" label="▶ START DRAFT" disabled={!canControl} title={`Start the Season ${currentSeason()} draft now?`} yes="Start the draft"
+          text={inSandbox() ? '🧪 TEST mode: this works at any step and resets when you leave TEST.' : 'Free agency has to be finished. The first team goes on the clock in 10 seconds and every coach sees it live.'}
+          onConfirm={async () => { await startDraft(); window.location.hash = links.draft; }} />
+        <a className="btn" href={links.draft}>🏈 Draft room</a>
+        <button className="btn ghost" onClick={openDeskWindow}>🎛️ Desk window</button>
       </div>
-      <p className="dim">Start the draft from the Commissioner desk in the draft room. You can start any time once free agency is done; the draft night time is set in the Schedule tab.</p>
+      <p className="dim">Start the draft here or from the desk. Real league: any time once free agency is done. TEST mode: any time. The draft night time is set in the Schedule tab. On draft night, share the Draft room on your main screen and drag the Desk window to your second monitor: it has the picks before they're revealed, every potential, and who scouted and flagged whom.</p>
       {GROUPS.map(([title, items]) => (
         <fieldset key={title} className="dset-group">
           <legend>{title}</legend>

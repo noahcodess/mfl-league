@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import DraftHeader from '../components/DraftHeader.jsx';
 import OnTheClock from '../components/OnTheClock.jsx';
 import DraftUpNext from '../components/DraftUpNext.jsx';
-import DraftControls from '../components/DraftControls.jsx';
+import DeskBar from '../components/DeskBar.jsx';
 import DraftBoard from '../components/DraftBoard.jsx';
 import DraftResults from '../components/DraftResults.jsx';
 import DraftRecap from '../components/DraftRecap.jsx';
@@ -75,7 +75,7 @@ export default function DraftPage({ viewer, canControl, stageRoute }) {
     <div className={`draft-room${stage ? ' stage-mode' : ''}`}>
       <div className="draft-lights" aria-hidden="true"><i /><i /><i /><i /></div>
       <DraftHeader season={season} info={info} draftAt={draftAt} isCoach={!!myTeam} stage={stage} onStage={() => setStage((s) => !s)} />
-      {canControl && !stage && <DraftControls season={season} info={info} draftAt={draftAt} prospects={prospects} presence={presence} coached={draft.coached} onChange={draft.refresh} />}
+      {canControl && !stage && <DeskBar season={season} info={info} draftAt={draftAt} prospects={prospects} presence={presence} coached={draft.coached} onChange={draft.refresh} />}
 
       {info.phase === 'pre' && (
         <DraftNight season={season} startsAt={draftAt} opensMinutes={opens?.draft_room_opens_minutes ?? 15} now={now} prospects={prospects.length} isCoach={!!myTeam} />

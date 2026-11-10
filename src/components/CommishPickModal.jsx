@@ -5,9 +5,9 @@ import StarRating from './StarRating.jsx';
 import { FA_JERSEY } from './FaOfferModal.jsx';
 
 // The commissioner searches the board and makes the pick for the team on the clock (with one more "are you sure").
-export default function CommishPickModal({ team, prospects, onPick, onClose }) {
+export default function CommishPickModal({ team, prospects, onPick, onClose, initial }) {
   const [q, setQ] = useState('');
-  const [sure, setSure] = useState(null);
+  const [sure, setSure] = useState(initial || null);
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState('');
   const hits = prospects.filter((p) => `${p.name} ${p.position} ${p.college}`.toLowerCase().includes(q.toLowerCase())).sort((a, b) => b.stars - a.stars).slice(0, 30);
