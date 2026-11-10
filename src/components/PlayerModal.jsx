@@ -8,7 +8,7 @@ import PlayerSkills from './PlayerSkills.jsx';
 import { isRetiring, maxAge } from '../data/players.js';
 import { contractOf, yearsLeft, contractLabel } from '../data/contracts.js';
 import { POSITION_NAMES } from '../data/positions.js';
-import { money } from '../lib/format.js';
+import { money, heightLabel } from '../lib/format.js';
 import { flagFor } from '../lib/flags.js';
 
 // Full player card: bio, rating, contract and cap hit. Potential only shows to the player's own team and the commissioner.
@@ -29,6 +29,8 @@ export default function PlayerModal({ player, team, canSeePotential, potential, 
         </div>
         <div className="pcard-grid">
           <div><span>Age</span><b>{player.age ?? '-'}</b></div>
+          <div><span>Height</span><b>{heightLabel(player.height)}</b></div>
+          <div><span>Weight</span><b>{player.weight ? `${player.weight} lbs` : '-'}</b></div>
           <div><span>Country</span><b>{flagFor(player.nationality || 'USA')} {player.nationality || 'USA'}</b></div>
           <div><span>Mood</span><b><MoodTag mood={player.mood} /></b></div>
           <div className="pot"><span>Potential</span><b>{!canSeePotential ? '🔒 Hidden' : potential === undefined ? <span className="dim">Loading...</span> : potential === null ? <span className="dim">Not rated</span>

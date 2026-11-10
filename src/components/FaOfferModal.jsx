@@ -8,7 +8,7 @@ import PlayerSkills from './PlayerSkills.jsx';
 import InterestMeter, { SIGN_LINE } from './InterestMeter.jsx';
 import { getFaQuote, getFaBoard, makeFaOffer, withdrawFaOffer, faOpen, faRound, faRounds } from '../data/freeAgency.js';
 import { tierOf } from '../lib/tiers.js';
-import { money, plural } from '../lib/format.js';
+import { money, plural, heightLabel } from '../lib/format.js';
 import { getTeam } from '../data/teams.js';
 import { PERSONALITIES, LEFT_HOW } from '../lib/personalities.js';
 
@@ -59,7 +59,7 @@ export default function FaOfferModal({ player, myTeam, canOffer, potential, onCl
         <Headshot player={player} team={FA_JERSEY} size={64} />
         <div>
           <h2>{player.name}</h2>
-          <div className="nego-sub">{player.position} · Age {player.age} · <StarRating value={player.stars} elite={player.elite} />
+          <div className="nego-sub">{player.position} · Age {player.age} · {heightLabel(player.height)}{player.weight ? `, ${player.weight} lbs` : ''} · <StarRating value={player.stars} elite={player.elite} />
             {potential != null && <> · POT <StarRating value={potential} elite={potential === 5} /></>}</div>
           <div className={`tier tier-${tier.key}`} title={tier.note}>{tier.label}{player.nationality && player.nationality !== 'USA' ? ` · ${player.nationality}` : ''}</div>
         </div>

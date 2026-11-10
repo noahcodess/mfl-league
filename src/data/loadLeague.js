@@ -18,7 +18,7 @@ const toPlayer = (p) => ({
   id: p.id, teamId: p.team_id, name: p.name, position: p.position, depth: p.depth, slot: p.slot,
   stars: p.stars == null ? null : Number(p.stars), elite: p.elite, age: p.age, mood: p.mood,
   nationality: p.nationality, notes: p.notes ?? [], number: p.number, playStyle: p.play_style, looks: p.looks || {},
-  status: p.status, previousTeamId: p.previous_team_id,
+  status: p.status, previousTeamId: p.previous_team_id, height: p.height_in, weight: p.weight_lb,
 });
 
 const toContract = (c) => ({ perYear: c.per_year, total: c.total, firstSeason: c.first_season, lastSeason: c.last_season, source: c.source, role: c.role });

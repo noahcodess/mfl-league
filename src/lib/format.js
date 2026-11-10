@@ -22,3 +22,6 @@ export function shortDate(iso) {
 
 // Attribute ratings are stored 1-99 for precision and shown out of 10. A 10 is rare (98+); 9 = really good.
 export const outOf10 = (v) => (v >= 98 ? 10 : Math.max(1, Math.min(9, Math.round(v / 10))));
+
+// Height in inches to feet and inches, like 6'2".
+export const heightLabel = (inches) => (inches ? `${Math.floor(inches / 12)}'${inches % 12}"` : '-');

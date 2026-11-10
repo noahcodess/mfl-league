@@ -7682,7 +7682,9 @@
     "beard": "stubble",
     "eyes": "#6f9a92",
     "chain": true
-   }
+   },
+   "height": 74,
+   "weight": 225
   },
   {
    "id": "snm-02",
@@ -7729,7 +7731,9 @@
     "eyeShape": "normal",
     "headband": false,
     "beard": "none"
-   }
+   },
+   "height": 76,
+   "weight": 212
   },
   {
    "id": "snm-04",
