@@ -5,6 +5,7 @@ import StarRating from './StarRating.jsx';
 import OfferForm, { snapMoney } from './OfferForm.jsx';
 import BiddingBoard from './BiddingBoard.jsx';
 import PlayerSkills from './PlayerSkills.jsx';
+import ScoutButton from './ScoutButton.jsx';
 import InterestMeter, { SIGN_LINE } from './InterestMeter.jsx';
 import { getFaQuote, getFaBoard, makeFaOffer, withdrawFaOffer, faOpen, faRound, faRounds } from '../data/freeAgency.js';
 import { tierOf } from '../lib/tiers.js';
@@ -15,7 +16,7 @@ import { PERSONALITIES, LEFT_HOW } from '../lib/personalities.js';
 // Make (or change, or pull) an offer to one free agent. He answers when the commissioner runs the next round.
 export const FA_JERSEY = { color: '#3a3f47', accent: '#9aa4b2' };
 
-export default function FaOfferModal({ player, myTeam, canOffer, potential, onClose, onChanged }) {
+export default function FaOfferModal({ player, myTeam, canOffer, potential, scouts, scouted, onClose, onChanged }) {
   const [quote, setQuote] = useState(null);
   const [years, setYears] = useState(1);
   const [perYear, setPerYear] = useState(50000);
@@ -80,6 +81,7 @@ export default function FaOfferModal({ player, myTeam, canOffer, potential, onCl
       )}
       {quote?.grudge === 0 && <div className="notice grudge">“{quote.grudge_line}” <span className="dim">He won't sign with you this offseason.</span></div>}
       {quote?.grudge > 0 && quote.left_how && <div className="notice">{LEFT_HOW[quote.left_how]}</div>}
+      {scouts && <ScoutButton player={player} left={scouts.fa} scouted={scouted} known={potential != null} onScouted={() => onChanged?.()} />}
       <PlayerSkills player={player} potential={potential} />
       <BiddingBoard board={board} />
       {!open && <div className="notice">Offers open during the Free agency step. {faRound() >= faRounds() ? 'This year\'s rounds are done.' : ''}</div>}

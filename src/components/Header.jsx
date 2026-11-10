@@ -18,6 +18,7 @@ export default function Header({ page, session, ready, live }) {
         {!myTeam && <a className={page === 'home' ? 'on' : ''} href={links.home}>Home</a>}
         <a className={page === 'league' ? 'on' : ''} href={links.league}>League</a>
         <a className={page === 'freeAgents' ? 'on' : ''} href={links.freeAgents}>Free Agents</a>
+        <a className={page === 'draft' ? 'on' : ''} href={links.draft}>Draft</a>
         <a className={page === 'dataCheck' ? 'on' : ''} href={links.dataCheck}>Data Check</a>
         {isCommish && <a className={page === 'control' ? 'on' : ''} href={links.control}>League Control</a>}
         {isCommish && <a className={page === 'console' ? 'on' : ''} href={links.console}>Accounts</a>}

@@ -10,6 +10,7 @@ export function parseHash(hash) {
   if (h === 'control') return { page: 'control' };
   if (h === 'league') return { page: 'league' };
   if (h === 'free-agents') return { page: 'freeAgents' };
+  if (h === 'draft') return { page: 'draft' };
   return { page: 'home' };
 }
 
@@ -32,6 +33,7 @@ export const links = {
   console: '#console',
   control: '#control',
   freeAgents: '#free-agents',
+  draft: '#draft',
 };
 
 // Where someone lands after logging in.

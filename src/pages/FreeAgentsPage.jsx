@@ -7,6 +7,7 @@ import { getTeam } from '../data/teams.js';
 import { OFFENSE, DEFENSE } from '../data/positions.js';
 import { usePotentials } from '../data/potentials.js';
 import { useFaOffers, faOpen, faRound, faRounds } from '../data/freeAgency.js';
+import { useMyScouts } from '../data/scouting.js';
 
 // The free agent market: every unsigned player, filter by position, sort, and make offers during free agency.
 const SORTS = {
@@ -25,7 +26,8 @@ export default function FreeAgentsPage({ viewer }) {
   const [open, setOpen] = useState(null);
   const [version, setVersion] = useState(0);
   const viewerKey = viewer ? `${viewer.user_id}-${viewer.team_id}-${viewer.role}` : null;
-  const potentials = usePotentials(viewerKey);
+  const potentials = usePotentials(viewerKey && `${viewerKey}-${version}`);
+  const scouts = useMyScouts(viewer?.role === 'coach' ? viewerKey : null, version);
   const offers = useFaOffers(viewerKey, version);
   const myTeam = viewer?.role === 'coach' && viewer.team_id ? getTeam(viewer.team_id) : null;
   const myOffers = offers.filter((o) => o.team_id === myTeam?.id);
@@ -67,6 +69,7 @@ export default function FreeAgentsPage({ viewer }) {
       </div>
       {open && (
         <FaOfferModal player={open} myTeam={myTeam} canOffer={!!myTeam} potential={potentials.map[open.id] ?? null}
+          scouts={scouts} scouted={(scouts?.scouted || []).includes(open.id)}
           onClose={() => setOpen(null)} onChanged={() => setVersion((v) => v + 1)} />
       )}
     </div>

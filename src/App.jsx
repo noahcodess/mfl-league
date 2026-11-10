@@ -13,6 +13,7 @@ import HomePage from './pages/HomePage.jsx';
 import DashboardPage from './pages/DashboardPage.jsx';
 import LeagueControlPage from './pages/LeagueControlPage.jsx';
 import FreeAgentsPage from './pages/FreeAgentsPage.jsx';
+import DraftPage from './pages/DraftPage.jsx';
 import { useHashRoute, homeFor } from './lib/router.js';
 import { brandColors } from './lib/color.js';
 import { useSession, loginStep } from './data/session.js';
@@ -45,6 +46,7 @@ function Screen({ route, session, step, reload }) {
     return p?.role === 'coach' && p.team_id ? <DashboardPage viewer={p} reload={reload} /> : <HomePage signedIn={!!p} />;
   }
   if (route.page === 'team') return <TeamPage teamId={route.id} viewer={step === 'ready' ? session.profile : null} />;
+  if (route.page === 'draft') return <DraftPage viewer={step === 'ready' ? session.profile : null} />;
   if (route.page === 'freeAgents') return <FreeAgentsPage viewer={step === 'ready' ? session.profile : null} />;
   if (route.page === 'dataCheck') return <DataCheckPage />;
   return <LeaguePage />;

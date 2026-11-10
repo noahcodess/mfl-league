@@ -14,11 +14,11 @@ const toTeam = (t) => ({
   capUsedReported: t.cap_used_reported, reserved: t.reserved,
 });
 
-const toPlayer = (p) => ({
+export const toPlayer = (p) => ({
   id: p.id, teamId: p.team_id, name: p.name, position: p.position, depth: p.depth, slot: p.slot,
   stars: p.stars == null ? null : Number(p.stars), elite: p.elite, age: p.age, mood: p.mood,
   nationality: p.nationality, notes: p.notes ?? [], number: p.number, playStyle: p.play_style, looks: p.looks || {},
-  status: p.status, previousTeamId: p.previous_team_id, height: p.height_in, weight: p.weight_lb,
+  status: p.status, previousTeamId: p.previous_team_id, height: p.height_in, weight: p.weight_lb, rookieSeason: p.rookie_season, college: p.college, collegeStats: p.college_stats, draftSeason: p.draft_season,
 });
 
 const toContract = (c) => ({ perYear: c.per_year, total: c.total, firstSeason: c.first_season, lastSeason: c.last_season, source: c.source, role: c.role });
@@ -32,7 +32,7 @@ export async function loadLeague() {
   try {
     const [teams, players, picks, issues, settings, contracts, events] = await Promise.all([
       db.from('teams').select('*'),
-      selectAll(() => db.from('players').select('*').neq('status', 'retired').order('id')),
+      selectAll(() => db.from('players').select('*').in('status', ['active', 'free_agent']).order('id')),
       db.from('picks').select('*'),
       db.from('import_issues').select('*').order('id'),
       db.from('league_settings').select('*'),
