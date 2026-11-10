@@ -5,24 +5,27 @@ import { money } from '../lib/format.js';
 const STEP = 5000;
 export const snapMoney = (n) => Math.max(10000, Math.round(n / STEP) * STEP);
 
-export default function OfferForm({ quote, years, setYears, perYear, setPerYear, role, setRole, canSend, busy, onSend, sendLabel = 'Send offer', busyLabel = 'Sending...' }) {
+export default function OfferForm({ maxPerYear = Infinity, quote, years, setYears, perYear, setPerYear, role, setRole, canSend, busy, onSend, sendLabel = 'Send offer', busyLabel = 'Sending...' }) {
+  const max = Math.min(maxPerYear, Math.floor(1000000 / years / STEP) * STEP); // cap room and the $1M total limit
+  const set = (n) => setPerYear(Math.min(max, snapMoney(n)));
   return (
     <div className="nego-form">
       <div className="seg">{[1, 2, 3].map((y) => (
         <button key={y} className={years === y ? 'on' : ''} disabled={y > quote.max_years} onClick={() => setYears(y)}>{y} yr</button>
       ))}</div>
       <div className="money-step">
-        <button onClick={() => setPerYear(snapMoney(perYear - STEP))} aria-label="Less">−</button>
+        <button onClick={() => set(perYear - STEP)} aria-label="Less">−</button>
         <input value={money(perYear)} readOnly aria-label="Per year" />
-        <button onClick={() => setPerYear(snapMoney(perYear + STEP))} aria-label="More">+</button>
-        <button className="chip-btn" onClick={() => setPerYear(snapMoney(quote.ask))}>His ask</button>
-        <button className="chip-btn" onClick={() => setPerYear(snapMoney(quote.market))}>Market</button>
+        <button onClick={() => set(perYear + STEP)} disabled={perYear + STEP > max} aria-label="More">+</button>
+        <button className="chip-btn" onClick={() => set(quote.ask)}>His ask</button>
+        <button className="chip-btn" onClick={() => set(quote.market)}>Market</button>
       </div>
       <div className="seg">{['starter', 'backup'].map((r) => (
         <button key={r} className={role === r ? 'on' : ''} onClick={() => setRole(r)}>{r === 'starter' ? 'Starter' : 'Backup'}</button>
       ))}</div>
-      <div className="nego-total">Total {money(perYear * years)}{perYear * years > 1000000 && <span className="warn"> · over the $1M max</span>}</div>
-      <button className="btn wide" disabled={!canSend} onClick={onSend}>{busy ? busyLabel : sendLabel}</button>
+      <div className="nego-total">Total {money(perYear * years)}{perYear * years > 1000000 && <span className="warn"> · over the $1M max</span>}
+        {perYear > maxPerYear && <span className="warn"> · over your cap room</span>}</div>
+      <button className="btn wide" disabled={!canSend || perYear > max} onClick={onSend}>{busy ? busyLabel : sendLabel}</button>
     </div>
   );
 }

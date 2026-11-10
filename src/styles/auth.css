@@ -30,3 +30,4 @@
 .stack-form { display: flex; flex-direction: column; gap: 12px; }
 .login-steps { text-align: left; margin: 18px 0 0; padding: 12px 12px 12px 30px; background: #0006; border: 2px solid #000; color: var(--dim); font-size: 13px; line-height: 1.55; }
 .login-steps li::marker { font-family: var(--pixel); color: var(--gold); }
+.login-as { margin-bottom: 14px; }

@@ -3,7 +3,9 @@ import Modal from './Modal.jsx';
 import Headshot from './Headshot.jsx';
 import StarRating from './StarRating.jsx';
 import OfferForm, { snapMoney } from './OfferForm.jsx';
-import { getFaQuote, makeFaOffer, withdrawFaOffer, faOpen, faRound, faRounds, maxOpenOffers, READS } from '../data/freeAgency.js';
+import BiddingBoard from './BiddingBoard.jsx';
+import InterestMeter, { SIGN_LINE } from './InterestMeter.jsx';
+import { getFaQuote, getFaBoard, makeFaOffer, withdrawFaOffer, faOpen, faRound, faRounds, maxOpenOffers } from '../data/freeAgency.js';
 import { tierOf } from '../lib/tiers.js';
 import { money, plural } from '../lib/format.js';
 import { getTeam } from '../data/teams.js';
@@ -16,7 +18,7 @@ export default function FaOfferModal({ player, myTeam, canOffer, potential, onCl
   const [years, setYears] = useState(1);
   const [perYear, setPerYear] = useState(50000);
   const [role, setRole] = useState('backup');
-  const [read, setRead] = useState(null);
+  const [board, setBoard] = useState(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
   const tier = tierOf(player);
@@ -25,20 +27,24 @@ export default function FaOfferModal({ player, myTeam, canOffer, potential, onCl
   useEffect(() => {
     getFaQuote(player.id).then((q) => {
       setQuote(q);
-      if (q.mine) { setYears(q.mine.years); setPerYear(q.mine.per_year); setRole(q.mine.role); setRead(q.mine.read); }
+      if (q.mine) { setYears(q.mine.years); setPerYear(q.mine.per_year); setRole(q.mine.role); }
       else { setYears(q.years); setPerYear(snapMoney(q.ask)); setRole(player.stars >= 3 ? 'starter' : 'backup'); }
     }).catch((e) => setError(e.message));
+    getFaBoard(player.id).then(setBoard).catch(() => setBoard([]));
   }, [player.id]);
+  const refreshBoard = () => getFaBoard(player.id).then(setBoard).catch(() => {});
+  const need = quote?.need?.[role]?.[years - 1];
+  const live = need ? Math.min(100, Math.round((SIGN_LINE * perYear) / need)) : null;
 
   const send = async () => {
     setBusy(true); setError('');
-    try { const r = await makeFaOffer(player.id, years, perYear, role); setRead(r.read); setQuote((q) => ({ ...q, mine: { years, per_year: perYear, role } })); onChanged?.(); }
+    try { await makeFaOffer(player.id, years, perYear, role); setQuote((q) => ({ ...q, mine: { years, per_year: perYear, role } })); refreshBoard(); onChanged?.(); }
     catch (e) { setError(e.message); }
     setBusy(false);
   };
   const pull = async () => {
     setBusy(true); setError('');
-    try { await withdrawFaOffer(player.id); setRead(null); setQuote((q) => ({ ...q, mine: null })); onChanged?.(); } catch (e) { setError(e.message); }
+    try { await withdrawFaOffer(player.id); setQuote((q) => ({ ...q, mine: null })); refreshBoard(); onChanged?.(); } catch (e) { setError(e.message); }
     setBusy(false);
   };
 
@@ -66,17 +72,16 @@ export default function FaOfferModal({ player, myTeam, canOffer, potential, onCl
           {old && <div><span>Last team</span><b>{old.name}</b></div>}
         </div>
       )}
-      <p className="dim fa-how">
-        Free agency runs in {faRounds()} rounds. After each round, every player picks the best offer he'll take: money first, but playing time,
-        a winning team and loyalty to his old team count too. Nobody signs? He gets less picky next round.
-      </p>
-      {read && <div className={`notice read-${read}`}><b>{READS[read].label}.</b> {READS[read].note}</div>}
+      <BiddingBoard board={board} />
       {!open && <div className="notice">Offers open during the Free agency step. {faRound() >= faRounds() ? 'This year\'s rounds are done.' : ''}</div>}
       {open && !canOffer && <div className="notice">Only a team's coach can make offers.</div>}
       {error && <div className="form-error">{error}</div>}
       {open && canOffer && quote && (
         <>
-          <OfferForm quote={quote} years={years} setYears={setYears} perYear={perYear} setPerYear={setPerYear} role={role} setRole={setRole}
+          {live != null && (
+            <div className="my-meter"><span>His interest in this offer</span><InterestMeter value={live} mine /><b>{live >= SIGN_LINE ? 'He\'d sign' : `${live}%`}</b></div>
+          )}
+          <OfferForm maxPerYear={quote.cap_room ?? Infinity} quote={quote} years={years} setYears={setYears} perYear={perYear} setPerYear={setPerYear} role={role} setRole={setRole}
             canSend={!busy} busy={busy} onSend={send} sendLabel={quote.mine ? 'Update offer' : 'Make offer'} />
           {quote.mine && <button className="btn wide ghost" disabled={busy} onClick={pull}>Pull my offer</button>}
           <p className="dim help">You have {quote.offers_out} of {maxOpenOffers()} offers out. Round {Math.min(faRound() + 1, faRounds())} of {faRounds()} is next.</p>

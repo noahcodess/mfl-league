@@ -3,7 +3,7 @@ import Headshot from './Headshot.jsx';
 import StarRating from './StarRating.jsx';
 import { capHit, isRetiring } from '../data/players.js';
 import { isExpiring } from '../data/contracts.js';
-import { offseasonStep, currentPhase } from '../data/teams.js';
+import { resignOpen } from '../data/teams.js';
 import { money } from '../lib/format.js';
 import { askingPrice } from '../lib/marketValue.js';
 
@@ -25,7 +25,7 @@ export default function ContractWatch({ players, team, potentials, traits = {}, 
   const talkOf = (id) => negotiations.find((n) => n.player_id === id && n.status !== 'denied');
   const retiring = players.filter(isRetiring);
   const expiring = players.filter((p) => isExpiring(p) && !isRetiring(p)).sort((a, b) => (b.stars || 0) - (a.stars || 0));
-  const windowOpen = currentPhase() === 'offseason' && offseasonStep() === 3;
+  const windowOpen = resignOpen();
   return (
     <div className="two-col">
       <section className="card">

@@ -6,6 +6,12 @@ import { DEMO, demoSession } from './demo.js';
 
 const SIGNED_OUT = { status: 'out', user: null, profile: null, keyStatus: null, unlocked: false };
 
+// TEMPORARY (testing): "Log in as commissioner" lets the site owner see the site exactly as the commissioner does
+// while test mode is on. Remove with test mode. Anyone else who picks it just logs in normally.
+const VIEW_KEY = 'mfl-view-as';
+export function setViewAs(v) { try { if (v) window.localStorage.setItem(VIEW_KEY, v); else window.localStorage.removeItem(VIEW_KEY); } catch { /* storage blocked */ } }
+function viewAs() { try { return window.localStorage.getItem(VIEW_KEY); } catch { return null; } }
+
 async function readSession() {
   const { data } = await db.auth.getSession();
   const user = data.session?.user;
@@ -15,6 +21,9 @@ async function readSession() {
   if (profile.role !== 'commissioner') {
     // The site owner gets commissioner powers while test mode is on (the database decides).
     const { data: testCommish } = profile.site_owner ? await db.rpc('is_commissioner') : { data: false };
+    if (viewAs() === 'commissioner' && testCommish === true) {
+      return { status: 'in', user, profile: { ...profile, role: 'commissioner', team_id: null, test_commish: true }, keyStatus: 'set', unlocked: true };
+    }
     return { status: 'in', user, profile, keyStatus: null, unlocked: testCommish === true };
   }
   const [{ data: keyStatus }, { data: unlocked }] = await Promise.all([db.rpc('commish_key_status'), db.rpc('is_commissioner')]);
@@ -58,6 +67,7 @@ export async function signIn(username, password) {
 }
 
 export async function signOut(isCommissioner) {
+  setViewAs(null);
   if (isCommissioner) await db.rpc('lock_commish');
   await db.auth.signOut();
 }

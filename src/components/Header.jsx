@@ -27,7 +27,7 @@ export default function Header({ page, session, ready, live }) {
           <span className={`live-dot${live ? ' on' : ''}`} /> Season {currentSeason()} · {PHASE_NAMES[currentPhase()]}
         </span>
         {session.status === 'in' ? (
-          <span className="who">{p.site_owner && <span className="owner-tag" title={session.unlocked ? 'Test mode: full commissioner powers' : 'Site owner: you can see everything, change nothing'}>{session.unlocked ? 'OWNER · TEST' : 'OWNER'}</span>}<b>{p.username}</b><button className="btn small ghost" onClick={() => signOut(p.role === 'commissioner')}>Log out</button></span>
+          <span className="who">{p.site_owner && <span className="owner-tag" title={p.test_commish ? 'Testing: seeing the site as the commissioner' : session.unlocked ? 'Test mode: full commissioner powers' : 'Site owner: you can see everything, change nothing'}>{p.test_commish ? 'COMMISH · TEST' : session.unlocked ? 'OWNER · TEST' : 'OWNER'}</span>}<b>{p.username}</b><button className="btn small ghost" onClick={() => signOut(p.role === 'commissioner' && !p.test_commish)}>Log out</button></span>
         ) : session.status === 'out' && <a className="btn small" href={links.login}>Log in</a>}
       </div>
     </header>

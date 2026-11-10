@@ -6,7 +6,7 @@ import PickList from '../components/PickList.jsx';
 import ConferenceTable from '../components/ConferenceTable.jsx';
 import PlayerModal from '../components/PlayerModal.jsx';
 import NegotiationModal from '../components/NegotiationModal.jsx';
-import { getTeam, getTeams, capLimit, currentSeason, offseasonStep } from '../data/teams.js';
+import { getTeam, getTeams, capLimit, currentSeason, offseasonStep, resignOpen } from '../data/teams.js';
 import { getPlayers, teamCapUsed } from '../data/players.js';
 import { getPicks } from '../data/picks.js';
 import { usePotentials } from '../data/potentials.js';
@@ -38,7 +38,7 @@ export default function DashboardPage({ viewer, reload }) {
       <ConferenceTable name={team.conference} teams={getTeams().filter((t) => t.conference === team.conference)} />
       <PlayerModal player={open} team={team} canSeePotential traits={open ? traits[open.id] : null} potential={open && potentials.loaded ? (potentials.map[open.id] ?? null) : undefined} onClose={() => setOpen(null)} />
       {talk && (
-        <NegotiationModal player={talk} team={team} traits={traits[talk.id]} windowOpen={currentPhase() === 'offseason' && offseasonStep() === 3}
+        <NegotiationModal player={talk} team={team} traits={traits[talk.id]} windowOpen={resignOpen()}
           negotiation={negotiations.find((n) => n.player_id === talk.id && ['open', 'agreed', 'walked'].includes(n.status))}
           onClose={() => setTalk(null)} onChanged={() => { setVersion((v) => v + 1); reload?.(); }} />
       )}

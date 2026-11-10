@@ -5,7 +5,7 @@ import Modal from '../components/Modal.jsx';
 import DealInbox from '../components/DealInbox.jsx';
 import FaRoundCard from '../components/FaRoundCard.jsx';
 import { useNegotiations } from '../data/negotiations.js';
-import { currentSeason, currentPhase, offseasonStep, leagueEvents, PHASE_NAMES } from '../data/teams.js';
+import { currentSeason, currentPhase, offseasonStep, leagueEvents, PHASE_NAMES, FA_WINDOW } from '../data/teams.js';
 import { advanceOffseason, undoLastStep, lastSnapshotLabel } from '../data/leagueEngine.js';
 import { previewStep } from '../lib/stepPreview.js';
 
@@ -46,7 +46,7 @@ export default function LeagueControlPage({ canControl, reload, viewerKey }) {
       {note && <div className={`notice ${note.ok ? 'good' : 'bad'}`}>{note.text}</div>}
       <div className="two-col wide-left">
         <div>
-          {inOffseason && step === 4 && <FaRoundCard canControl={canControl} onDone={async () => { setVersion((v) => v + 1); await reload(); }} />}
+          {inOffseason && step === FA_WINDOW && <FaRoundCard canControl={canControl} onDone={async () => { setVersion((v) => v + 1); await reload(); }} />}
           {inOffseason ? (
             <section className="card next-step">
               <h3>Up next: {name}</h3>
@@ -58,7 +58,7 @@ export default function LeagueControlPage({ canControl, reload, viewerKey }) {
                 </details>
               )}
               <div className="step-actions">
-                <button className={`btn${step === 4 ? ' ghost' : ''}`} disabled={!canControl || busy} onClick={() => setConfirm('run')}>{step === 4 ? 'Close free agency and run the Draft' : `Run ${name}`}</button>
+                <button className={`btn${step === FA_WINDOW ? ' ghost' : ''}`} disabled={!canControl || busy} onClick={() => setConfirm('run')}>{step === FA_WINDOW ? 'Close free agency and run the Draft' : `Run ${name}`}</button>
                 {undoLabel && <button className="btn ghost" disabled={!canControl || busy} onClick={() => setConfirm('undo')}>Undo last step</button>}
               </div>
               {undoLabel && <p className="dim help">Undo puts the league back to: {undoLabel.toLowerCase()}.</p>}

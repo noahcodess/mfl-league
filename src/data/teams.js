@@ -38,10 +38,15 @@ export function currentPhase() {
 
 export const PHASE_NAMES = { offseason: 'Offseason', regular_season: 'Regular Season', playoffs: 'Playoffs' };
 
-// Which offseason step is up next (0 = Birthday Day ... 5 = Training camp).
+// Which offseason step is up next (0 = Birthday & Farewell ... 4 = Training camp).
 export function offseasonStep() {
   return store.league.meta.offseasonStep ?? 0;
 }
+
+// The step number is the NEXT step to run, so a window is open right after its step runs.
+export const RESIGN_WINDOW = 2; // after Re-signing runs
+export const FA_WINDOW = 3; // after Free agency runs
+export const resignOpen = () => currentPhase() === 'offseason' && offseasonStep() === RESIGN_WINDOW;
 
 export function leagueEvents() {
   return store.events || [];
