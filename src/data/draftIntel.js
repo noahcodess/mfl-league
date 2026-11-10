@@ -26,8 +26,12 @@ export function useDraftIntel(season, enabled) {
   return intel;
 }
 
-// Opens the commissioner desk in its own browser window (not a tab), sized to drag onto a second monitor.
-export function openDeskWindow() {
-  const url = `${window.location.href.split('#')[0]}#draft-desk`;
-  window.open(url, 'mfl-commish-desk', 'popup=yes,width=1180,height=920,left=60,top=40');
+// Opens a page in its own small browser window (about half the screen, not a tab, not full screen) to drag onto another monitor.
+export function openHalfWindow(hash, name) {
+  const w = Math.round((window.screen.availWidth || 1440) / 2);
+  const h = Math.round((window.screen.availHeight || 900) * 0.8);
+  const url = `${window.location.href.split('#')[0]}${hash}`;
+  const win = window.open(url, name, `width=${w},height=${h},left=40,top=40,resizable=yes,scrollbars=yes`);
+  try { win?.resizeTo(w, h); } catch { /* the browser decides */ }
 }
+export const openDeskWindow = () => openHalfWindow('#draft-desk', 'mfl-commish-desk');

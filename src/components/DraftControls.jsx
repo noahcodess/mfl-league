@@ -7,7 +7,7 @@ import CommishPickModal from './CommishPickModal.jsx';
 import { getTeam, currentPhase, offseasonStep, FA_WINDOW } from '../data/teams.js';
 import { faRound, faRounds } from '../data/freeAgency.js';
 import { whenText } from '../data/schedule.js';
-import { openDeskWindow } from '../data/draftIntel.js';
+import { openDeskWindow, openHalfWindow } from '../data/draftIntel.js';
 import { inSandbox } from '../data/sandbox.js';
 import { links } from '../lib/router.js';
 import { startDraft, decidePick, announcePick, undoPick, pauseDraft, autoPick, pickFor, simDraft } from '../data/draftActions.js';
@@ -30,7 +30,7 @@ export default function DraftControls({ season, info, draftAt, prospects, presen
         <b>🎛️ Commissioner desk</b>
         <div className="desk-links">
           {!hideWindowLink && <button className="btn small" onClick={openDeskWindow}>🎛️ Open desk window</button>}
-          <button className="btn small ghost" onClick={() => window.open(`${window.location.href.split('#')[0]}${links.draftStage}`, 'mfl-stage', 'popup=yes,width=1600,height=900')}>📺 Open stage window</button>
+          <button className="btn small ghost" onClick={() => openHalfWindow(links.draftStage, 'mfl-stage')}>📺 Open stage window</button>
         </div>
       </div>
       {err && <p className="notice bad">{err}</p>}
