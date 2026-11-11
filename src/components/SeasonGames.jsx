@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import ConfirmButton from './ConfirmButton.jsx';
 import GameOdds from './GameOdds.jsx';
-import { useSeasonGames, lastWinPct, saveSchedule, setWeekOrder, setGameTime, setGamePrime, swapWeeks } from '../data/games.js';
+import { useSeasonGames, lastWinPct, rivalPairs, saveSchedule, setWeekOrder, setGameTime, setGameWindow, setWeekWindows, swapWeeks, WINDOWS, PRIME_PLAN } from '../data/games.js';
 import { getTeams, currentSeason } from '../data/teams.js';
 import { makeSchedule, checkSchedule } from '../lib/scheduleGen.js';
 
@@ -9,30 +9,33 @@ const RANK = { great: 0, good: 1, okay: 2, blowout: 3, bad: 4 };
 const toInput = (iso) => { if (!iso) return ''; const d = new Date(iso); d.setMinutes(d.getMinutes() - d.getTimezoneOffset()); return d.toISOString().slice(0, 16); };
 
 // Commissioner's Desk → Schedule → Regular season games. Generate the 96 games (12 each: 7 conference, 5 other, 6 home),
-// then shape each week: drag games into order, order every week by best matchups, pick a Thursday night game,
-// set kickoff times, or swap whole weeks. Every game shows its rating and each team's chance to win.
+// then shape each week: drag games into order, send the best matchups to prime time, pick each game's broadcast window
+// (Thursday/Saturday/Sunday/Monday night or day games), set kickoff times, or swap whole weeks. Every game shows its rating and each team's chance to win.
 export default function SeasonGames({ canControl }) {
   const season = currentSeason();
   const [version, setVersion] = useState(0);
   const [week, setWeek] = useState(1);
   const [drag, setDrag] = useState(null);
   const [error, setError] = useState('');
-  const games = useSeasonGames(season, version);
+  const all = useSeasonGames(season, version);
+  const games = all && all.filter((g) => g.kind === 'regular');
   const refresh = () => setVersion((v) => v + 1);
   const act = async (fn) => { setError(''); try { await fn(); refresh(); } catch (e) { setError(e.message); } };
   const played = (games || []).some((g) => g.status !== 'scheduled');
 
   const generate = async () => {
     const teams = getTeams();
-    const g = makeSchedule(teams, await lastWinPct());
+    const g = makeSchedule(teams, await lastWinPct(), Math.random, await rivalPairs());
     const problems = checkSchedule(g, teams);
     if (problems.length) throw new Error(problems[0]);
     await saveSchedule(season, g);
   };
+  // Best game of each week → Sunday night, next → Monday night, then Thursday and Saturday night; rivalries count as better.
   const bestFirst = () => act(async () => {
     for (let w = 1; w <= 12; w += 1) {
-      const wk = games.filter((g) => g.week === w).sort((a, b) => RANK[a.odds?.rating] - RANK[b.odds?.rating] || Math.abs(a.odds.home_win - 0.5) - Math.abs(b.odds.home_win - 0.5));
-      await setWeekOrder(season, w, wk.map((g) => g.id));
+      const wk = games.filter((g) => g.week === w).sort((a, b) => (RANK[a.odds?.rating] - (a.rivalry ? 1.5 : 0)) - (RANK[b.odds?.rating] - (b.rivalry ? 1.5 : 0))
+        || Math.abs(a.odds.home_win - 0.5) - Math.abs(b.odds.home_win - 0.5));
+      await setWeekWindows(season, w, wk.map((g) => g.id), wk.map((_, i) => PRIME_PLAN[i] || 'sun_day'));
     }
   });
 
@@ -59,10 +62,10 @@ export default function SeasonGames({ canControl }) {
   return (
     <div className="sg">
       <div className="sg-tools">
-        <button className="btn small" disabled={!canControl} onClick={bestFirst}>⭐ Order every week by best matchups</button>
+        <button className="btn small" disabled={!canControl} onClick={bestFirst}>⭐ Best matchups to prime time (every week)</button>
         {!played && <ConfirmButton className="btn small ghost" label="🎲 Regenerate" disabled={!canControl} title="Throw this schedule out and make a new one?" yes="Regenerate"
           text="All kickoff times and Thursday picks are lost." onConfirm={() => act(generate)} />}
-        <span className="dim">Drag games to reorder a week. The first game is the headliner.</span>
+        <span className="dim">The best games land late in the week: Sunday night, then Monday night. Drag games to reorder a week by hand.</span>
       </div>
       <div className="sg-weeks">{Array.from({ length: 12 }, (_, i) => <button key={i} className={week === i + 1 ? 'on' : ''} onClick={() => setWeek(i + 1)}>W{i + 1}</button>)}</div>
       <div className="sg-weekhead">
@@ -74,11 +77,14 @@ export default function SeasonGames({ canControl }) {
       <ol className="sg-list">
         {wk.map((g) => (
           <li key={g.id} draggable={canControl} onDragStart={() => setDrag(g.id)} onDragOver={(e) => e.preventDefault()} onDrop={() => drop(g.id)}
-            className={`${drag === g.id ? 'dragging' : ''}${g.prime ? ' prime' : ''}`}>
+            className={`${drag === g.id ? 'dragging' : ''}${g.prime?.endsWith('night') ? ' prime' : ''}`}>
             <span className="sg-grip" title="Drag to reorder">⠿</span>
             <GameOdds game={g} />
             <span className="sg-controls">
-              <button className={`btn small${g.prime ? '' : ' ghost'}`} disabled={!canControl} onClick={() => act(() => setGamePrime(g.id, !g.prime))} title="Thursday night game">🌙 {g.prime ? 'Thursday night' : 'Thursday?'}</button>
+              <select value={g.prime || ''} disabled={!canControl} onChange={(e) => act(() => setGameWindow(g.id, e.target.value))} title="Broadcast window">
+                <option value="">📺 Pick a broadcast window</option>
+                {WINDOWS.map(([k, label, net]) => <option key={k} value={k}>{label}{net ? ` (${net})` : ' (FOX/CBS)'}</option>)}
+              </select>
               <input type="datetime-local" value={toInput(g.starts_at)} disabled={!canControl}
                 onChange={(e) => act(() => setGameTime(g.id, e.target.value ? new Date(e.target.value).toISOString() : null))} />
             </span>

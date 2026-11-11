@@ -1,7 +1,8 @@
 // Season schedule generator. 16 teams in 2 conferences of 8, 12 weeks, every team plays once a week:
 // - 7 conference games (everyone in your conference once) and 5 against the other conference
 // - exactly 6 home and 6 away
-// - teams with a better win % last season lean toward playing each other across conferences (a slight lean, not a lock).
+// - teams with a better win % last season lean toward playing each other across conferences (a slight lean, not a lock)
+// - rivals always meet (conference rivals do anyway; cross-conference rivals are built in whenever possible).
 // Returns [{ week, home, away, conference }]. checkSchedule() lists anything that breaks the rules (empty = good).
 
 const shuffle = (arr, rng) => { const a = [...arr]; for (let i = a.length - 1; i > 0; i -= 1) { const j = Math.floor(rng() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
@@ -20,18 +21,22 @@ function roundRobin(ids, rng) {
 
 // 5 rounds of cross-conference games. Built from shifted pairings (always valid), scored by how close the teams' records
 // are, then picked at random from the better-matched quarter. That's the "slight" lean toward good-vs-good.
-function crossRounds(A, B, rank, rng, tries = 2500) {
+// Rival pairs from opposite conferences are all but required: a candidate missing one is pushed to the bottom.
+function crossRounds(A, B, rank, rng, rivals = [], tries = 2500) {
   const cands = [];
   for (let t = 0; t < tries; t += 1) {
     const a = shuffle(A, rng);
     const b = shuffle(B, rng);
     const shifts = shuffle([0, 1, 2, 3, 4, 5, 6, 7], rng).slice(0, 5);
     const rounds = shifts.map((s) => a.map((x, i) => [x, b[(i + s) % 8]]));
-    const score = rounds.flat().reduce((sum, [x, y]) => sum + Math.abs(rank[x] - rank[y]), 0);
+    const has = new Set(rounds.flat().map(([x, y]) => [x, y].sort().join('-')));
+    const missing = rivals.filter((r) => !has.has([...r].sort().join('-'))).length;
+    const score = rounds.flat().reduce((sum, [x, y]) => sum + Math.abs(rank[x] - rank[y]), 0) + missing * 1000;
     cands.push({ rounds, score });
   }
   cands.sort((x, y) => x.score - y.score);
-  const pool = cands.slice(0, Math.ceil(cands.length / 4));
+  const best = cands[0].score;
+  const pool = cands.slice(0, Math.ceil(cands.length / 4)).filter((c) => c.score < Math.floor(best / 1000) * 1000 + 1000);
   return pool[Math.floor(rng() * pool.length)].rounds;
 }
 
@@ -56,8 +61,8 @@ function orient(edges, ids, rng) {
   }
 }
 
-// teams: [{ id, conference }], winPct: { teamId: 0..1 } from last season (missing = .500).
-export function makeSchedule(teams, winPct = {}, rng = Math.random) {
+// teams: [{ id, conference }], winPct: { teamId: 0..1 } from last season (missing = .500), rivals: [[a, b], ...].
+export function makeSchedule(teams, winPct = {}, rng = Math.random, rivals = []) {
   const confs = [...new Set(teams.map((t) => t.conference))].sort();
   if (confs.length !== 2) throw new Error('The schedule needs exactly 2 conferences');
   const [A, B] = confs.map((c) => teams.filter((t) => t.conference === c).map((t) => t.id));
@@ -68,7 +73,8 @@ export function makeSchedule(teams, winPct = {}, rng = Math.random) {
   const rrA = roundRobin(A, rng);
   const rrB = roundRobin(B, rng);
   const confWeeks = rrA.map((r, i) => [...r, ...rrB[i]]);
-  const xWeeks = crossRounds(A, B, rank, rng);
+  const cross = rivals.filter(([x, y]) => A.includes(x) !== A.includes(y));
+  const xWeeks = crossRounds(A, B, rank, rng, cross);
 
   // Mix the 5 cross-conference weeks in among the 7 conference weeks (never 3 in a row).
   let order;

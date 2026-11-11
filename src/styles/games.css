@@ -33,3 +33,21 @@
   .godds { grid-template-columns: 1fr auto 1fr; grid-template-areas: 'away at home' 'bar bar bar' 'rating rating rating'; } .grating { justify-self: start; }
 }
 .tsched .grating { grid-area: auto; }
+.godds-tags { grid-area: rating; display: flex; flex-direction: column; align-items: flex-end; gap: 3px; } .godds-tags .grating { grid-area: auto; }
+.grival { padding: 2px 8px; border: 2px solid #000; background: #8b1e1e; font-size: 11px; font-weight: 800; white-space: nowrap; }
+.gnet { padding: 2px 8px; border: 2px solid #000; background: #10203a; font-size: 11px; font-weight: 800; white-space: nowrap; color: #9fd0ff; }
+.sg-list li:first-child { border-color: #000; box-shadow: none; } .sg-list li.prime { background: linear-gradient(90deg, #1b1840, var(--panel2)); }
+.sg-controls select { max-width: 240px; }
+@media (max-width: 640px) { .godds-tags { flex-direction: row; flex-wrap: wrap; align-items: center; justify-self: start; } }
+.ts-opp small.riv { color: #ff8a8a; font-weight: 800; }
+.rivals { margin-top: 16px; } .rival-list { list-style: none; margin: 0 0 10px; padding: 0; display: grid; gap: 4px; }
+.rival-list li { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; padding: 6px 8px; background: var(--panel2); border-left: 4px solid #8b1e1e; }
+.rival-list em { color: var(--gold); } .rival-list .btn { margin-left: auto; } .vs { color: var(--dim); font-weight: 800; }
+.rival-add, .pre-form { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.pre { display: grid; gap: 12px; } .pre-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.pre-list li { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; padding: 8px 10px; background: var(--panel2); border: 2px solid #000; }
+.live-games h2 { margin: 0 0 10px; } .live-games ol { list-style: none; margin: 0 0 8px; padding: 0; display: grid; gap: 8px; }
+.live-games li { padding: 10px 12px; background: var(--panel); border: 2px solid #000; border-radius: 12px; animation: feed-in .4s ease-out both; }
+.live-games li.prime { background: linear-gradient(120deg, #1b1840, var(--panel)); border-color: #5b4bd6; }
+.lg-top { display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; margin-bottom: 8px; font-size: 13px; }
+.lg-window { color: #9fd0ff; font-weight: 800; } .lg-clock { color: var(--gold); font-weight: 800; font-variant-numeric: tabular-nums; }

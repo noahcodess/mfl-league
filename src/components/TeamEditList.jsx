@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import TeamBadge from './TeamBadge.jsx';
 import TeamEditor from './TeamEditor.jsx';
+import RivalryList from './RivalryList.jsx';
 import { getTeams, getConferences } from '../data/teams.js';
 
-// Commissioner's Desk → Teams: every team as a card (logo, name, abbreviation, colors). Tap one to edit it.
+// Commissioner's Desk → Teams: every team as a card (logo, name, abbreviation, colors; tap one to edit it), and the rivalries.
 export default function TeamEditList({ canControl, reload }) {
   const [open, setOpen] = useState(null);
   return (
@@ -23,6 +24,7 @@ export default function TeamEditList({ canControl, reload }) {
           </div>
         </section>
       ))}
+      <RivalryList canControl={canControl} />
       {open && <TeamEditor team={open} canControl={canControl} onClose={() => setOpen(null)} onSaved={reload} />}
     </div>
   );

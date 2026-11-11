@@ -8,7 +8,7 @@ export const STAGES = {
   resign: { icon: '✍️', title: 'Re-signing window', next: 'fa_open' },
   fa: { icon: '💰', title: 'Free agency', next: 'draft' },
   draft: { icon: '🏈', title: 'Draft night', next: 'camp' },
-  camp: { icon: '🏋️', title: 'Training camp', next: 'season_start' },
+  camp: { icon: '🏟️', title: 'Preseason', next: 'season_start' },
   season: { icon: '🏟️', title: 'Regular season', next: 'trade_deadline' },
 };
 
