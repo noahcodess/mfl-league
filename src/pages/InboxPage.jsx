@@ -4,11 +4,13 @@ import ConfirmButton from '../components/ConfirmButton.jsx';
 import { decideNumber } from '../data/coaches.js';
 import { decideJersey } from '../data/jerseys.js';
 import UniformSprite from '../components/UniformSprite.jsx';
+import DripRequestPreview from '../components/DripRequestPreview.jsx';
+import { decideDrip } from '../data/drip.js';
 import { links } from '../lib/router.js';
 import { shortDate } from '../lib/format.js';
 
 // Your inbox: trade offers and answers, trade block alerts, league news. The commissioner also gets every coach edit (View coach)
-// and number and jersey change requests (Approve / Deny, jerseys with a preview).
+// and drip, number and jersey change requests (Accept / Decline, with before and after pictures).
 export default function InboxPage({ viewer }) {
   const { mail, lastRead, markAllRead } = useInbox(viewer?.user_id);
   useEffect(() => {
@@ -28,6 +30,7 @@ export default function InboxPage({ viewer }) {
               <b>{m.title}</b>
               {m.body && <p>{m.body}</p>}
               {m.kind === 'jersey_request' && m.data?.colors && <span className="mail-jersey"><UniformSprite colors={m.data.colors} scale={2} /></span>}
+              {m.kind === 'drip_request' && m.data?.after && <DripRequestPreview data={m.data} />}
               <small className="dim">{shortDate(m.createdAt)}{m.toCommish ? ' · commissioner notice' : ''}</small>
             </div>
             {m.kind.startsWith('trade') && <a className="btn small ghost" href={links.trades}>Open trades</a>}
@@ -36,6 +39,12 @@ export default function InboxPage({ viewer }) {
               <span className="mail-btns">
                 <ConfirmButton className="btn small good" label="Approve" title={`Approve the ${m.data.name} jersey?`} yes="Approve" text="It becomes the team's uniform right away." onConfirm={() => decideJersey(m.data.request, true, m.data.team)} />
                 <ConfirmButton className="btn small ghost" label="Deny" title="Deny this jersey change?" yes="Deny" onConfirm={() => decideJersey(m.data.request, false, m.data.team)} />
+              </span>
+            )}
+            {m.kind === 'drip_request' && m.data?.request && (
+              <span className="mail-btns">
+                <ConfirmButton className="btn small good" label="Accept" title={`Accept this ${String(m.data.item).toLowerCase()} change?`} yes="Accept" text="It goes on right away, and he waits 2 weeks before his next change." onConfirm={() => decideDrip(m.data.request, true)} />
+                <ConfirmButton className="btn small ghost" label="Decline" title="Decline this drip change?" yes="Decline" onConfirm={() => decideDrip(m.data.request, false)} />
               </span>
             )}
             {m.kind === 'number_request' && m.data?.request && (

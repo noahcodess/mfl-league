@@ -1,9 +1,8 @@
-// A detailed close-up of a player's helmet from the side (facing left), 48x44 pixels: shell shading, each model's own features
-// and facemask, chin strap, ear hole, the team's stripe and its logo on the side.
-//   Axiom: angular "spaceship" panels and vent slots, white bumper plate, wide flat bars.
-//   SpeedFlex: front flex panel, side vents, jaw rivets, Riddell bumper, three-bar mask.
-//   F7: ridge lines over the crown, side strap and buckle, Schutt plate, tall cage mask.
-//   Vicis Zero2: perforated dot pattern, seam line, hex vent, rounded mask with a nose bar.
+// A detailed close-up of a player's helmet from the side (facing left), 48x44 pixels: each model's own silhouette, shading,
+// features and facemask, chin strap, ear hole, the team's stripe and its logo on the side.
+//   Axiom: long, low, sleek shell with black stealth cutouts, white bumper plate, thick integrated mask.
+//   SpeedFlex: tall round dome, front flex panel, big jaw flap with clips, side vents, thin bars.
+//   F7: boxy shell with raised ridges, side strap and buckle, Schutt plate, tall cage mask.
 import { shade } from './pixels.js';
 
 const W = 48, H = 44, INK = '#140d0a';
@@ -27,17 +26,20 @@ function grid() {
   return g;
 }
 
-const RY = { vicis: 16 };
+// Silhouettes: Axiom long and low, SpeedFlex a tall dome with a big jaw flap, F7 boxy (squarer curve).
+const SHAPE = { axiom: { cx: 27, cy: 20, rx: 19, ry: 13, p: 2, jaw: [20, 34, 27, 37] }, speedflex: { cx: 27, cy: 19, rx: 16, ry: 16, p: 2, jaw: [19, 33, 25, 39] },
+  f7: { cx: 27, cy: 19, rx: 17, ry: 15, p: 3.2, jaw: [21, 33, 27, 36] } };
 function inShell(x, y, model) {
-  const ry = RY[model] || 15;
-  const e = ((x - 27) / 17) ** 2 + ((y - 19) / ry) ** 2 <= 1;
-  const jaw = x >= 21 && x <= 33 && y >= 26 && y <= 37 && !((x <= 22 && y >= 36) || (x >= 32 && y >= 36));
+  const s = SHAPE[model] || SHAPE.speedflex;
+  const e = Math.abs((x - s.cx) / s.rx) ** s.p + Math.abs((y - s.cy) / s.ry) ** s.p <= 1;
+  const [j0, j1, jt, jb] = s.jaw;
+  const jaw = x >= j0 && x <= j1 && y >= jt && y <= jb && !((x <= j0 + 1 && y >= jb - 1) || (x >= j1 - 1 && y >= jb - 1));
   if (!e && !jaw) return false;
-  if (x < 21 && y > 16) return false;
-  if (y > 31 && x > 35) return false;
+  if (x < j0 && y > 16) return false;
+  if (y > 31 && x > j1 + 2) return false;
   return true;
 }
-const topY = (x, model) => Math.ceil(19 - (RY[model] || 15) * Math.sqrt(Math.max(0, 1 - ((x - 27) / 17) ** 2)));
+const topY = (x, model) => { for (let y = 0; y < H; y++) if (inShell(x, y, model)) return y; return H; };
 
 function shell(g, C, model) {
   const c = C.helmet;
@@ -61,53 +63,46 @@ function design(g, C, model, d) {
 }
 
 function features(g, C, model) {
-  const v = shade(C.helmet, 0.35), hi = shade(C.helmet, 1.55);
+  const v = '#141518', hi = shade(C.helmet, 1.55), lo = shade(C.helmet, 0.6);
   if (model === 'axiom') {
-    // the "spaceship": angular raised panels with black cutouts between them
-    g.poly([[15, 9], [21, 5], [24, 6], [18, 11]], v); g.line(15, 8, 21, 4, hi);
-    g.poly([[26, 4], [33, 5], [33, 7], [26, 6]], v); g.line(26, 3, 33, 4, hi);
-    g.poly([[23, 10], [30, 8], [32, 10], [25, 12]], v); g.line(23, 9, 30, 7, hi);
-    g.poly([[35, 8], [40, 11], [41, 14], [36, 11]], v); g.line(36, 7, 41, 11, hi);
-    g.poly([[39, 21], [42, 21], [43, 24], [41, 27], [38, 24]], v);
-    g.poly([[32, 27], [36, 26], [36, 28], [32, 29]], v);
-    g.rect(12, 12, 8, 2, '#eef0f2'); g.rect(13, 12, 5, 1, '#c8102e'); // Riddell plate
+    // stealth cutouts: long black blades sweeping back over a low, sleek shell
+    g.poly([[13, 11], [22, 6], [26, 7], [16, 12]], v); g.line(13, 10, 22, 5, hi);
+    g.poly([[24, 9], [36, 7], [37, 9], [26, 11]], v); g.line(24, 8, 36, 6, hi);
+    g.poly([[38, 9], [44, 14], [44, 17], [38, 12]], v);
+    g.poly([[40, 22], [44, 21], [45, 25], [41, 27]], v);
+    g.poly([[30, 28], [35, 27], [35, 30], [30, 31]], v);
+    g.rect(10, 13, 9, 2, '#eef0f2'); g.rect(12, 13, 5, 1, '#c8102e'); // Riddell plate
   } else if (model === 'speedflex') {
-    g.line(14, 8, 14, 13, v); g.line(14, 8, 21, 5, v); g.line(21, 5, 22, 10, v); // flex panel
-    g.line(15, 9, 20, 7, hi);
-    g.line(30, 9, 35, 8, v, 2); g.line(37, 13, 41, 16, v, 2); // vents
-    g.rect(25, 29, 2, 2, '#cfd3d8'); g.rect(25, 33, 2, 2, '#cfd3d8'); g.set(25, 29, '#ffffff'); g.set(25, 33, '#ffffff'); // jaw rivets
-    g.rect(12, 12, 8, 2, '#eef0f2'); g.rect(13, 12, 5, 1, '#c8102e');
-    g.rect(27, 23, 2, 2, INK); // ear hole
-  } else if (model === 'f7') {
-    for (let x = 14; x <= 41; x++) { const t = topY(x, model); g.set(x, t + 4, v); g.set(x, t + 8, shade(C.helmet, 0.6)); }
-    g.line(24, 11, 23, 25, '#18191c', 2); g.rect(22, 15, 4, 3, '#cfd3d8'); g.rect(23, 16, 2, 1, '#18191c'); // strap and buckle
-    g.rect(37, 28, 3, 2, '#18191c'); g.set(38, 28, '#d9b44a'); // F7 badge
-    g.rect(28, 23, 2, 2, INK);
-  } else if (model === 'vicis') {
-    for (let y = 6; y <= 15; y++) for (let x = 19; x <= 32; x++) if ((x + y) % 2 === 0 && y % 2 === 0 && ((x - 25.5) / 7) ** 2 + ((y - 10.5) / 5) ** 2 <= 1) g.set(x, y, v);
-    g.line(14, 14, 24, 17, shade(C.helmet, 0.7)); g.line(24, 17, 41, 12, shade(C.helmet, 0.7)); // seam
-    g.rect(37, 21, 3, 5, v); g.set(38, 20, v); g.set(38, 26, v);
-    g.rect(29, 22, 3, 1, hi); g.rect(30, 21, 1, 3, hi); // side tab
-    g.rect(12, 12, 6, 2, '#eef0f2'); g.rect(13, 12, 4, 1, '#8a8f97');
+    // the flex panel: a raised U cut into the forehead
+    g.line(14, 13, 14, 8, v); g.line(14, 8, 18, 4, v); g.line(18, 4, 23, 3, v); g.line(23, 3, 24, 9, v); g.line(24, 9, 20, 12, v);
+    g.line(15, 9, 19, 5, hi); g.line(16, 10, 20, 6, shade(C.helmet, 1.25));
+    g.line(30, 8, 35, 7, v, 2); g.line(37, 12, 40, 15, v, 2); g.line(38, 20, 41, 22, v);
+    g.line(20, 26, 33, 26, lo); // jaw flap seam
+    g.rect(31, 29, 2, 2, '#cfd3d8'); g.rect(31, 34, 2, 2, '#cfd3d8'); g.set(31, 29, '#ffffff'); g.set(31, 34, '#ffffff'); // jaw clips
+    g.rect(11, 12, 8, 2, '#eef0f2'); g.rect(12, 12, 5, 1, '#c8102e');
+    g.rect(28, 21, 2, 2, v); // ear hole
+  } else {
+    // raised ridges front to back, each a light edge over a dark groove
+    [4, 8, 12].forEach((k) => { for (let x = 13; x <= 43; x++) { const t = topY(x, model); if (inShell(x, t + k, model)) { g.set(x, t + k - 1, hi); g.set(x, t + k, lo); } } });
+    g.line(25, 6, 23, 25, '#18191c', 2); g.rect(22, 14, 4, 3, '#cfd3d8'); g.rect(23, 15, 2, 1, '#18191c'); // strap and buckle
+    g.rect(36, 28, 3, 2, '#18191c'); g.set(37, 28, '#d9b44a'); // F7 badge
+    g.rect(29, 23, 2, 2, v);
   }
 }
 
 function mask(g, C, model) {
-  const m = C.mask, ms = shade(m, 0.7), mh = shade(m, 1.5);
-  if (model === 'f7') {
-    g.line(12, 16, 7, 19, m); g.line(7, 19, 7, 36, m); g.line(7, 36, 18, 38, ms);
-    [21, 25, 29, 33].forEach((y) => g.line(7, y, 22, y + 1, y % 2 ? m : ms));
-    g.line(7, 25, 12, 20, m); g.rect(11, 14, 8, 2, '#2a2b30'); g.rect(13, 14, 3, 1, '#cfd3d8');
-  } else if (model === 'axiom') {
-    g.line(12, 16, 9, 19, m); g.line(8, 19, 8, 33, m); g.line(9, 19, 9, 33, ms); g.line(9, 34, 18, 37, ms);
-    g.line(9, 21, 22, 21, m); g.line(9, 22, 22, 22, ms); g.line(9, 28, 22, 29, m); g.line(10, 33, 22, 33, ms);
-  } else if (model === 'vicis') {
-    g.line(12, 16, 7, 20, mh); g.line(6, 20, 6, 32, m); g.line(7, 33, 17, 37, m);
-    g.line(6, 22, 22, 22, mh); g.line(7, 27, 22, 28, m); g.line(8, 32, 21, 33, ms); g.line(12, 17, 14, 27, m);
-    g.set(7, 21, '#ffffff'); g.set(13, 22, '#ffffff');
-  } else {
-    g.line(12, 16, 8, 19, m); g.line(8, 19, 8, 34, m); g.line(8, 35, 18, 38, ms);
-    g.line(8, 22, 22, 22, m); g.line(8, 28, 22, 28, m); g.line(9, 33, 21, 33, ms);
+  const m = C.mask, ms = shade(m, 0.7);
+  if (model === 'f7') { // tall cage, lots of bars, plate on top
+    g.line(12, 16, 6, 19, m); g.line(6, 19, 6, 37, m); g.line(6, 37, 18, 39, ms);
+    [21, 25, 29, 33].forEach((y) => g.line(6, y, 22, y + 1, y % 2 ? m : ms));
+    g.line(9, 18, 9, 37, ms); g.line(12, 17, 12, 38, ms); g.line(6, 25, 12, 20, m);
+    g.rect(10, 13, 9, 3, '#2a2b30'); g.rect(12, 14, 4, 1, '#cfd3d8');
+  } else if (model === 'axiom') { // thick, low, integrated
+    g.line(10, 15, 7, 19, m); g.line(6, 19, 6, 33, m); g.line(7, 19, 7, 33, ms); g.line(7, 34, 19, 37, ms); g.line(7, 35, 19, 38, m);
+    g.line(7, 20, 21, 20, m); g.line(7, 21, 21, 21, ms); g.line(7, 28, 21, 29, m); g.line(7, 29, 21, 30, ms);
+  } else { // thin bars with an S-shaped side
+    g.line(12, 15, 8, 18, m); g.line(8, 18, 7, 22, m); g.line(7, 22, 9, 27, m); g.line(9, 27, 7, 32, m); g.line(7, 33, 18, 38, ms);
+    g.line(8, 21, 21, 21, m); g.line(8, 27, 21, 27, m); g.line(8, 32, 20, 33, ms);
   }
 }
 

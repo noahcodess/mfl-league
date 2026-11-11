@@ -53,7 +53,7 @@
 .drip-kits button, .drip-opts button, .drip-swatches button.none { font-size: 12px; padding: 4px 9px; background: var(--panel2); color: var(--text); border: 2px solid var(--line); cursor: pointer; }
 .drip-kits button.on, .drip-opts button.on { border-color: var(--gold); color: var(--gold); }
 .drip-editor { display: grid; gap: 8px; margin: 14px 0; }
-.drip-helmets { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.drip-helmets { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
 .drip-helmet { display: grid; justify-items: center; gap: 4px; padding: 8px 4px; background: #14171d; border: 2px solid var(--line); color: var(--text); cursor: pointer; font-size: 11px; }
 .drip-helmet.on { border-color: var(--gold); box-shadow: 0 0 0 1px var(--gold); }
 .drip-row { display: grid; grid-template-columns: 140px 1fr; align-items: center; gap: 10px; font-size: 13px; }
@@ -68,3 +68,8 @@
 @media (max-width: 560px) { .drip-helmets { grid-template-columns: repeat(2, 1fr); } .drip-row { grid-template-columns: 1fr; gap: 4px; } }
 .te-helmet { display: flex; align-items: center; gap: 12px; padding: 6px 10px; background: #14171d; border: 2px solid var(--line); }
 .te-helmet .field { flex: 1; }
+.drip-wait { margin: 10px 0 0; padding: 8px 10px; background: #2a2410; border: 2px solid #6b5a1c; color: var(--gold); font-size: 13px; }
+.drip-number { margin-top: 12px; } .drip-number input { width: 50px; text-align: center; font-weight: 700; font-size: 15px; margin-left: 4px; }
+.drip-too-many { color: var(--warn); font-size: 13px; align-self: center; }
+.drip-ba { display: inline-flex; align-items: center; gap: 10px; margin-top: 8px; padding: 6px 12px; background: linear-gradient(#2f6b2a, #24561f); border: 2px solid #183d14; }
+.drip-ba span { display: grid; justify-items: center; gap: 2px; } .drip-ba small { color: #dfe8dc; font-size: 11px; } .drip-ba b { color: #fff; font-size: 18px; }

@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import { useTradeMarks, toggleUntouchable, toggleTradeBlock, openTradeBuilder } from '../data/trades.js';
-import NumberRequest from './NumberRequest.jsx';
 
-// Buttons on a player card. Your player: untouchable (max 2), trade block, ask for a new number; locked if he asked out. Someone else's: "Trade for him" (not if he's untouchable).
+// Buttons on a player card. Your player: untouchable (max 2), trade block (numbers are changed on his Drip tab); locked if he asked out. Someone else's: "Trade for him" (not if he's untouchable).
 export default function TradeActions({ player, myTeamId, onDone }) {
   const [version, setVersion] = useState(0);
   const [err, setErr] = useState('');
@@ -26,7 +25,6 @@ export default function TradeActions({ player, myTeamId, onDone }) {
         <button className={`btn ghost${untouchable ? ' on' : ''}`} onClick={() => run(toggleUntouchable)}>{untouchable ? '🔒 Untouchable' : '🔓 Make untouchable'}</button>
         <button className={`btn ghost${onBlock ? ' on' : ''}`} onClick={() => run(toggleTradeBlock)}>{onBlock ? '📣 On the trade block' : '📣 Put on trade block'}</button>
       </>}
-      <NumberRequest player={player} />
       {err && <p className="notice bad">{err}</p>}
     </div>
   );
