@@ -10,7 +10,7 @@ import { seeded } from '../lib/seed.js';
 // Test-only stand-in class so screenshots work offline.
 const FIRST = ['Tobi', 'Cole', 'Jaxon', 'Lachlan', 'Darius', 'Sione', 'Marcus', 'Liam', 'Keon', 'Malik', 'Brody', 'Tre', 'Isaiah', 'Rowan', 'Dante', 'Kai'];
 const LAST = ['Adeyemi', 'Whitlock', 'Pruitt', 'Ashby', 'Gentry', 'Aumua', 'Haskins', 'Tremblay', 'Okafor', 'Banks', 'Reyes', 'Holloway', 'Mercer', 'Dunn', 'Vance', 'Pryor'];
-const SCHOOLS = ['Alabama', 'Ohio State', 'Utah', 'Oregon', 'LSU', 'Washington', 'Georgia', 'Michigan', 'Texas', 'Clemson'];
+const SCHOOLS = ['Ole Moo', 'Pig State', 'Villager Tech', 'Nether Dame', 'Redstone Tech', 'Enderman State', 'Creep-ton University', 'Bedrock State', 'Zombie A&M', 'Penn Steve'];
 export function demoClass(season, count = 60) {
   const pos = Object.keys(ATTRIBUTES);
   return Array.from({ length: count }, (_, i) => {

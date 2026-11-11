@@ -1,39 +1,42 @@
 import React, { useEffect, useState } from 'react';
-import CoachSprite from './CoachSprite.jsx';
 import { SHIRTS, PANTS, GLASSES, OUTFIT_COLORS, coachLooks } from '../lib/coachLooks.js';
 import { saveMyCoach } from '../data/coaches.js';
 
-// Your coach's outfit: 6 shirts, 6 pants, colors and glasses. The sprite above updates as you pick; Save keeps it.
+// Your coach's outfit, kept simple: pick Shirt, Pants or Glasses, then a style and a color. The coach at the top updates live.
 export default function CoachOutfit({ coach, team, onPreview, onSaved }) {
   const base = coachLooks(coach, team);
-  const [o, setO] = useState({ shirt: base.shirt, shirtColor: base.shirtColor, pants: base.pants, pantsColor: base.pantsColor, glasses: base.glasses || 'none' });
+  const start = { shirt: base.shirt, shirtColor: base.shirtColor, pants: base.pants, pantsColor: base.pantsColor, glasses: base.glasses || 'none' };
+  const [o, setO] = useState(start);
+  const [part, setPart] = useState('shirt');
   const [msg, setMsg] = useState('');
   useEffect(() => { onPreview(o); return () => onPreview(null); }, [o]); // eslint-disable-line react-hooks/exhaustive-deps
   const set = (k, v) => { setO((x) => ({ ...x, [k]: v })); setMsg(''); };
-  const save = async () => {
-    try { await saveMyCoach(o); setMsg('Saved ✓'); onSaved?.(); } catch (e) { setMsg(e.message); }
-  };
-  const pickRow = (list, key) => (
-    <div className="opick">
-      {list.map(([id, label]) => (
-        <button key={id} type="button" className={o[key] === id ? 'on' : ''} onClick={() => set(key, id)}>
-          {key !== 'glasses' && <CoachSprite coach={coach} team={team} looks={{ ...o, [key]: id }} height={56} />}
-          <span>{label}</span>
-        </button>
-      ))}
-    </div>
-  );
-  const colors = (key) => (
-    <div className="ocolors">{OUTFIT_COLORS.map((c) => <button key={c} type="button" aria-label={c} className={o[key] === c ? 'on' : ''} style={{ background: c }} onClick={() => set(key, c)} />)}
-      <button type="button" className={`team-swatch${o[key] === team.color ? ' on' : ''}`} style={{ background: team.color }} onClick={() => set(key, team.color)}>Team</button></div>
-  );
+  const changed = Object.keys(start).some((k) => start[k] !== o[k]);
+  const save = async () => { try { await saveMyCoach(o); setMsg('Saved ✓'); onSaved?.(); } catch (e) { setMsg(e.message); } };
+  const styles = { shirt: SHIRTS, pants: PANTS, glasses: GLASSES }[part];
+  const colorKey = { shirt: 'shirtColor', pants: 'pantsColor' }[part];
   return (
     <div className="outfit">
-      <h4>Shirt</h4>{pickRow(SHIRTS, 'shirt')}{colors('shirtColor')}
-      <h4>Pants</h4>{pickRow(PANTS, 'pants')}{colors('pantsColor')}
-      <h4>Glasses</h4>{pickRow(GLASSES, 'glasses')}
+      <div className="seg">
+        {[['shirt', '👕 Shirt'], ['pants', '👖 Pants'], ['glasses', '🕶️ Glasses']].map(([k, label]) => <button key={k} className={part === k ? 'on' : ''} onClick={() => setPart(k)}>{label}</button>)}
+      </div>
+      <div className="spills outfit-styles" key={part}>
+        {styles.map(([id, label]) => <button key={id} type="button" className={o[part] === id ? 'on' : ''} onClick={() => set(part, id)}>{label}</button>)}
+      </div>
+      {colorKey && (
+        <div className="ocolors" key={`c-${part}`}>
+          {OUTFIT_COLORS.map((c) => <button key={c} type="button" aria-label={c} className={o[colorKey] === c ? 'on' : ''} style={{ background: c }} onClick={() => set(colorKey, c)} />)}
+          <button type="button" className={`team-swatch${o[colorKey] === team.color ? ' on' : ''}`} style={{ background: team.color }} onClick={() => set(colorKey, team.color)}>Team</button>
+        </div>
+      )}
       <p className="dim">Your name, face and hair are set by the commissioner. He gets a notice when you change your outfit.</p>
-      <div className="confirm-actions">{msg && <span className={msg.startsWith('Saved') ? 'good' : 'bad'}>{msg}</span>}<button className="btn" onClick={save}>Save outfit</button></div>
+      {(changed || msg) && (
+        <div className="confirm-actions">
+          {msg && <span className={msg.startsWith('Saved') ? 'good' : 'bad'}>{msg}</span>}
+          {changed && <button className="btn ghost" onClick={() => setO(start)}>Undo</button>}
+          {changed && <button className="btn" onClick={save}>Save outfit</button>}
+        </div>
+      )}
     </div>
   );
 }

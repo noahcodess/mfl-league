@@ -13,7 +13,7 @@ export default function Tabs({ tabs, initial }) {
           </button>
         ))}
       </div>
-      <div className="tab-body">{current.render()}</div>
+      <div className="tab-body" key={current.key}>{current.render()}</div>
     </div>
   );
 }

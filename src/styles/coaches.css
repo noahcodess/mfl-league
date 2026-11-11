@@ -20,23 +20,11 @@
 .cbar { height: 12px; background: #000; border: 2px solid #000; margin: 3px 0; } .cbar i { display: block; height: 100%; background: linear-gradient(90deg, var(--team), var(--gold)); animation: grow .7s ease-out both; }
 @keyframes grow { from { width: 0 !important; } }
 .outfit h4 { margin: 12px 0 6px; font-family: var(--label); }
-.opick { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; }
-.opick button { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 6px 2px; background: var(--panel2); border: 2px solid #000; color: var(--text); font: inherit; font-size: 11px; font-family: var(--label); cursor: pointer; }
-.opick button.on { border-color: var(--gold); background: #ffd23f14; } .opick button:hover { filter: brightness(1.2); }
 .ocolors { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 8px; }
 .ocolors button { width: 26px; height: 26px; border: 2px solid #000; cursor: pointer; } .ocolors button.on { outline: 3px solid var(--gold); outline-offset: 1px; }
 .ocolors .team-swatch { width: auto; padding: 0 8px; color: #fff; font-size: 11px; font-weight: 800; text-shadow: 1px 1px 0 #000; }
-.oname { display: flex; align-items: center; gap: 10px; font-family: var(--label); } .oname input { flex: 1; background: #000; color: var(--text); border: 2px solid var(--line); padding: 6px 8px; font: inherit; }
-@media (max-width: 600px) { .opick { grid-template-columns: repeat(3, 1fr); } }
 .who-tag { display: inline-block; vertical-align: middle; margin-left: 6px; padding: 1px 7px; font-size: 11px; font-weight: 800; letter-spacing: 1px; border: 2px solid currentColor; font-family: var(--label); }
 .who-tag.person { color: var(--good); } .who-tag.bot { color: var(--dim); }
-.scheme-now { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; padding: 10px; background: #000; border: 2px solid var(--line); font-family: var(--label); }
-.auto-tag { background: var(--gold); color: #1a1000; font-weight: 900; padding: 1px 8px; letter-spacing: 2px; font-size: 12px; }
-.auto-toggle { display: flex; align-items: center; gap: 8px; margin: 10px 0 4px; font-family: var(--label); cursor: pointer; }
-.schemes { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 6px; }
-.schemes button { display: flex; flex-direction: column; gap: 3px; padding: 8px; text-align: left; background: var(--panel2); border: 2px solid #000; color: var(--text); font: inherit; font-family: var(--label); cursor: pointer; }
-.schemes button small { color: var(--dim); font-size: 12px; } .schemes button.on { border-color: var(--gold); background: #ffd23f14; } .schemes button:disabled { cursor: default; }
-.schemes button:disabled:not(.on) { opacity: .55; }
 .coach-editor { max-width: 980px; width: 96vw; }
 .ceditor { display: grid; grid-template-columns: 280px 1fr; gap: 18px; }
 .ceditor-preview { display: flex; flex-direction: column; gap: 10px; align-items: center; position: sticky; top: 0; align-self: start; }
@@ -54,3 +42,28 @@
 .numreq-form input { width: 60px; background: #000; color: var(--text); border: 2px solid var(--line); padding: 4px 6px; }
 .mail-btns { display: flex; gap: 6px; }
 @media (max-width: 760px) { .ceditor { grid-template-columns: 1fr; } .ceditor-preview { position: static; } }
+
+/* Coach profile v2: compact head, scheme sides with pills, Auto switch, outfit pills, sprite swap pop */
+@keyframes coach-swap { 0% { transform: translateY(6px) scale(.94); opacity: .4; } 60% { transform: translateY(-2px) scale(1.03); opacity: 1; } 100% { transform: none; } }
+.coach-sprite { animation: coach-swap .32s ease-out; } .coach-sprite.bob { animation: coach-swap .32s ease-out, coach-bob 2.6s ease-in-out .32s infinite; }
+.coach-card:hover .coach-sprite { animation: coach-wave .5s ease-in-out; } @keyframes coach-wave { 30% { transform: rotate(-5deg); } 70% { transform: rotate(4deg); } }
+.coach-id { display: flex; flex-direction: column; gap: 4px; align-items: flex-start; } .coach-id h2 { margin: 2px 0 0; }
+.coach-scheme-line { margin-top: 4px; font-family: var(--label); font-size: 13px; color: var(--dim); }
+.coach-legend { list-style: none; margin: 12px 0 0; padding: 0; display: grid; gap: 4px; font-size: 13px; color: var(--dim); } .coach-legend b { color: var(--text); margin-right: 4px; }
+.coach-ratings .attrs { margin: 0; }
+.sside { padding: 12px; margin-top: 10px; background: var(--panel2); border: 2px solid #000; border-left: 4px solid var(--team, var(--gold)); }
+.sside-head { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; font-family: var(--label); }
+.sside-head span { color: var(--dim); font-weight: 700; text-transform: uppercase; letter-spacing: 2px; font-size: 12px; }
+.sside-head b { font-size: 20px; animation: tab-in .25s ease-out both; }
+.sside-what { margin: 6px 0 0; color: var(--text); animation: tab-in .25s ease-out both; }
+.spills { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 10px; }
+.spills button { padding: 5px 10px; background: #000; border: 2px solid var(--line); color: var(--dim); font: inherit; font-family: var(--label); font-size: 13px; cursor: pointer; }
+.spills button:hover { color: var(--text); } .spills button.on { color: #1a1000; background: var(--gold); border-color: #000; font-weight: 800; }
+.switch { display: flex; align-items: center; gap: 10px; background: none; border: none; color: var(--text); font: inherit; font-family: var(--label); cursor: pointer; padding: 0; }
+.switch i { position: relative; width: 44px; height: 22px; background: #000; border: 2px solid var(--line); transition: background .2s; }
+.switch i::after { content: ''; position: absolute; top: 2px; left: 2px; width: 14px; height: 14px; background: var(--dim); transition: transform .2s, background .2s; }
+.switch.on i { background: #35d07f33; border-color: var(--good); } .switch.on i::after { transform: translateX(22px); background: var(--good); }
+.scheme-why { margin: 6px 0 0; font-size: 13px; }
+.outfit .seg { max-width: 380px; } .outfit-styles { margin-top: 12px; } .outfit .ocolors { margin-top: 12px; }
+.oname { display: flex; align-items: center; gap: 10px; font-family: var(--label); width: 100%; } .oname input { flex: 1; min-width: 0; background: #000; color: var(--text); border: 2px solid var(--line); padding: 6px 8px; font: inherit; }
+.modal.coach-modal { width: min(640px, 100%); max-width: 640px; } .modal.coach-editor { width: min(980px, 100%); }

@@ -30,6 +30,17 @@
 .logo-sm { transition: transform .15s; }
 .header { background-image: linear-gradient(90deg, transparent, color-mix(in srgb, var(--brand) 18%, transparent), transparent); background-size: 200% 100%; animation: sweep 9s linear infinite; }
 
+/* Smoother everywhere: tabs slide in, buttons press down, clickable cards lift, choices pop when picked */
+@keyframes tab-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+@keyframes picked { 0% { transform: scale(.92); } 60% { transform: scale(1.06); } 100% { transform: scale(1); } }
+.tab-body { animation: tab-in .22s ease-out both; }
+.tab-bar button { transition: color .15s, background .15s, border-color .15s; }
+.btn { transition: transform .08s, box-shadow .08s, filter .15s; }
+.btn:active:not(:disabled) { transform: translate(2px, 2px); box-shadow: none; }
+.coach-card, .tcard, .recap-team, .coach-tile, .tpick, .tasset.click, .results-list li.made { transition: transform .15s, filter .15s; }
+.coach-card:hover, .recap-team:hover, .coach-tile:hover:not(:disabled), .tpick:hover { transform: translateY(-2px); }
+.spills button.on, .echips button.on, .seg button.on, .ocolors button.on { animation: picked .25s ease-out; }
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }
 }

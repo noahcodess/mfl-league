@@ -1,44 +1,44 @@
 import React, { useState } from 'react';
-import { OFFENSES, DEFENSES, schemeName, autoScheme } from '../lib/schemes.js';
+import { OFFENSES, DEFENSES, schemeInfo, autoScheme } from '../lib/schemes.js';
 import { saveMyScheme } from '../data/coaches.js';
 import { store } from '../data/store.js';
 
-// The coach's scheme: pick an offense and a defense, or Auto (reads the roster). Plays get called mostly by game situation,
-// then by the scheme. Other teams' coaches show theirs read-only.
+// The coach's scheme, kept simple: an Auto switch, then one row of choices for offense and one for defense, with a line
+// explaining the one that's picked. Plays get called mostly by game situation, then by the scheme.
 export default function CoachScheme({ coach, team, mine, onSaved }) {
   const roster = store.league.players.filter((p) => p.teamId === team.id && (p.status ?? 'active') === 'active');
   const auto = autoScheme(roster);
-  const s = coach.scheme || { auto: true, offense: 'balanced', defense: 'balanced' };
-  const [pick, setPick] = useState({ auto: s.auto !== false, offense: s.offense, defense: s.defense });
+  const s = coach.scheme || {};
+  const [pick, setPick] = useState({ auto: s.auto !== false, offense: s.offense || 'balanced', defense: s.defense || 'balanced' });
   const [msg, setMsg] = useState('');
-  const live = pick.auto ? auto : pick;
+  const shown = pick.auto ? auto : pick;
+  const changed = pick.auto !== (s.auto !== false) || (!pick.auto && (pick.offense !== s.offense || pick.defense !== s.defense));
   const save = async () => { try { await saveMyScheme(pick.offense, pick.defense, pick.auto); setMsg('Saved ✓'); onSaved?.(); } catch (e) { setMsg(e.message); } };
-  const row = (list, key) => (
-    <div className="schemes">
-      {list.map(([id, label, what]) => (
-        <button key={id} type="button" disabled={!mine || pick.auto} className={live[key] === id ? 'on' : ''} onClick={() => setPick((p) => ({ ...p, [key]: id }))}>
-          <b>{label}</b><small>{what}</small>
-        </button>
-      ))}
-    </div>
-  );
+  const side = (label, icon, list, key) => {
+    const [, name, what] = schemeInfo(list, shown[key]);
+    return (
+      <div className="sside">
+        <div className="sside-head"><span>{icon} {label}</span><b key={shown[key]}>{name}</b></div>
+        <p className="sside-what" key={`w-${shown[key]}`}>{what}</p>
+        {mine && !pick.auto && (
+          <div className="spills">
+            {list.map(([id, n]) => <button key={id} type="button" className={pick[key] === id ? 'on' : ''} onClick={() => { setPick((p) => ({ ...p, [key]: id })); setMsg(''); }}>{n}</button>)}
+          </div>
+        )}
+      </div>
+    );
+  };
   return (
     <div className="scheme">
-      <div className="scheme-now">
-        <span>🏈 Offense: <b>{schemeName(OFFENSES, live.offense)}</b></span>
-        <span>🛡️ Defense: <b>{schemeName(DEFENSES, live.defense)}</b></span>
-        {pick.auto && <span className="auto-tag">AUTO</span>}
-      </div>
       {mine && (
-        <label className="auto-toggle">
-          <input type="checkbox" checked={pick.auto} onChange={(e) => setPick((p) => ({ ...p, auto: e.target.checked }))} />
-          <span><b>Auto</b>: pick the scheme from my roster</span>
-        </label>
+        <button type="button" className={`switch${pick.auto ? ' on' : ''}`} onClick={() => { setPick((p) => ({ ...p, auto: !p.auto, offense: auto.offense, defense: auto.defense })); setMsg(''); }}>
+          <i /><span><b>Auto</b> {pick.auto ? 'picks from your roster' : 'is off: you choose'}</span>
+        </button>
       )}
-      {pick.auto && <p className="dim">{auto.why}</p>}
-      <h4>Offense</h4>{row(OFFENSES, 'offense')}
-      <h4>Defense</h4>{row(DEFENSES, 'defense')}
-      {mine && <div className="confirm-actions">{msg && <span className={msg.startsWith('Saved') ? 'good' : 'bad'}>{msg}</span>}<button className="btn" onClick={save}>Save scheme</button></div>}
+      {pick.auto && <p className="dim scheme-why">Passing {auto.pass.toFixed(1)}★ vs run {auto.run.toFixed(1)}★ · pass rush {auto.rush.toFixed(1)}★ vs coverage {auto.cover.toFixed(1)}★</p>}
+      {side('Offense', '🏈', OFFENSES, 'offense')}
+      {side('Defense', '🛡️', DEFENSES, 'defense')}
+      {mine && (changed || msg) && <div className="confirm-actions">{msg && <span className={msg.startsWith('Saved') ? 'good' : 'bad'}>{msg}</span>}{changed && <button className="btn" onClick={save}>Save scheme</button>}</div>}
     </div>
   );
 }
