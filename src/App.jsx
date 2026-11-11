@@ -15,6 +15,9 @@ import LeagueControlPage from './pages/LeagueControlPage.jsx';
 import FreeAgentsPage from './pages/FreeAgentsPage.jsx';
 import DraftPage from './pages/DraftPage.jsx';
 import DraftDeskPage from './pages/DraftDeskPage.jsx';
+import TradesPage from './pages/TradesPage.jsx';
+import InboxPage from './pages/InboxPage.jsx';
+import TradeLauncher from './components/TradeLauncher.jsx';
 import SandboxBanner from './components/SandboxBanner.jsx';
 import DraftAlert from './components/DraftAlert.jsx';
 import ScheduleNotice from './components/ScheduleNotice.jsx';
@@ -56,6 +59,12 @@ function Screen({ route, session, step, reload }) {
     const p = step === 'ready' ? session.profile : null;
     return <DraftPage viewer={p} canControl={p?.role === 'commissioner' || !!p?.site_owner /* TEMPORARY: owner tests the desk */} stageRoute={route.stage} />;
   }
+  if (route.page === 'trades' || route.page === 'inbox') {
+    if (step === 'login') return <LoginPage />;
+    if (step !== 'ready') return null;
+    const p = session.profile;
+    return route.page === 'trades' ? <TradesPage viewer={p} canControl={p.role === 'commissioner' || !!p.site_owner} /> : <InboxPage viewer={p} />;
+  }
   if (route.page === 'draftDesk') {
     if (step === 'login') return <LoginPage />;
     if (step !== 'ready') return null;
@@ -83,6 +92,7 @@ export default function App() {
       {!route.stage && <SandboxBanner />}
       {myTeam && !route.stage && <DraftAlert teamId={myTeam.id} page={route.page} />}
       {!route.stage && <ScheduleNotice />}
+      <TradeLauncher myTeamId={myTeam?.id} />
       <main className="main"><div className="page" key={`${route.page}-${route.id || ''}-${step}`}><Screen route={route} session={session} step={step} reload={reload} /></div></main>
     </div>
   );

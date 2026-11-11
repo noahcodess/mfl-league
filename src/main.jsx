@@ -18,6 +18,7 @@ import './styles/sandbox.css';
 import './styles/layout.css';
 import './styles/home.css';
 import './styles/calendar.css';
+import './styles/trades.css';
 import './styles/draft.css';
 import './styles/draftStage.css';
 import './styles/draftReveal.css';

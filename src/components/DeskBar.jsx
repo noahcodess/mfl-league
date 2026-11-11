@@ -13,7 +13,7 @@ export default function DeskBar(props) {
       <div className="desk-bar">
         <b>🎛️ Commissioner</b>
         {alert && <span className="desk-bar-alert">{alert}</span>}
-        <button className="btn small" onClick={openDeskWindow}>Open desk window</button>
+        <button className="btn small" onClick={openDeskWindow}>🎛️ Commissioner Window: Draft Desk</button>
         <button className="btn small ghost" onClick={() => setHere((h) => !h)}>{here ? 'Hide desk' : 'Show desk here'}</button>
       </div>
       {here && <DraftControls {...props} />}

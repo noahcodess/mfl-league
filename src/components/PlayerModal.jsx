@@ -7,6 +7,7 @@ import PlayerMoney from './PlayerMoney.jsx';
 import PlayerSkills from './PlayerSkills.jsx';
 import Tabs from './Tabs.jsx';
 import PastTeams from './PastTeams.jsx';
+import TradeActions from './TradeActions.jsx';
 import { isRetiring, maxAge } from '../data/players.js';
 import { contractOf, yearsLeft, contractLabel } from '../data/contracts.js';
 import { POSITION_NAMES } from '../data/positions.js';
@@ -15,7 +16,7 @@ import { flagFor } from '../lib/flags.js';
 
 // Full player card: bio up top, then tabs for skills (archetype, bars), contract & money, and past teams. Potential only shows to
 // the player's own team, the commissioner and scouts.
-export default function PlayerModal({ player, team, canSeePotential, potential, traits, onClose }) {
+export default function PlayerModal({ player, team, canSeePotential, potential, traits, onClose, myTeamId }) {
   if (!player) return null;
   const c = contractOf(player);
   return (
@@ -30,6 +31,7 @@ export default function PlayerModal({ player, team, canSeePotential, potential, 
             <StarRating value={player.stars} elite={player.elite} showNumber />
           </div>
         </div>
+        <TradeActions player={player} myTeamId={myTeamId} onDone={onClose} />
         <div className="pcard-grid">
           <div><span>Age</span><b>{player.age ?? '-'}</b></div>
           <div><span>Height</span><b>{heightLabel(player.height)}</b></div>

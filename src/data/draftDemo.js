@@ -23,8 +23,8 @@ function selection(slot, player, how, status) {
 function setClock(delay) {
   const slot = slotNow();
   const human = slot?.team_id === 'snm' || slot?.team_id === 'crf';
-  const secs = !human ? 9 : slot.pick_no <= 5 ? 240 : slot.round === 1 ? 180 : slot.round === 2 ? 120 : 90;
-  demo.room = { ...demo.room, pick_state: 'clock', clock_starts_at: iso(delay * 1000), clock_ends_at: iso((delay + secs) * 1000) };
+  const secs = !slot ? 120 : slot.pick_no <= 5 ? 240 : slot.round === 1 ? 180 : 120;
+  demo.room = { ...demo.room, pick_state: 'clock', clock_starts_at: iso(delay * 1000), clock_ends_at: iso((delay + secs) * 1000), bot_pick_at: human ? null : iso((delay + 9) * 1000) };
 }
 
 function announce(countdown) {
@@ -63,7 +63,7 @@ export function runDemoRoom(season, setState) {
   emit();
   const t = setInterval(() => {
     const r = demo.room;
-    if (r?.status === 'live' && r.pick_state === 'clock' && !['snm', 'crf'].includes(slotNow()?.team_id) && Date.parse(r.clock_ends_at) <= Date.now()) { pickIn(null, 'bot'); emit(); }
+    if (r?.status === 'live' && r.pick_state === 'clock' && r.bot_pick_at && Date.parse(r.bot_pick_at) <= Date.now()) { pickIn(null, 'bot'); emit(); }
   }, 500);
   return () => clearInterval(t);
 }

@@ -51,6 +51,7 @@ export default function DraftPage({ viewer, canControl, stageRoute }) {
   const opens = useLeagueNumbers(['draft_room_opens_minutes']);
   const draftAt = schedule?.find((r) => r.kind === 'draft')?.at || null;
 
+  useEffect(() => { if (stageRoute) document.title = 'Commissioner Window: Draft Stage'; }, [stageRoute]);
   useEffect(() => {
     document.body.classList.toggle('stage-on', stage);
     return () => document.body.classList.remove('stage-on');

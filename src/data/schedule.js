@@ -7,9 +7,9 @@ const clean = (msg = '') => (msg.includes('not allowed') ? 'Only the commissione
 
 // Every event the commissioner can put a date on, in calendar order.
 export const SCHEDULE_EVENTS = [
-  ['birthday', 'Birthday & Farewell'], ['resign', 'Re-signing opens'], ['fa_open', 'Free agency opens'],
+  ['birthday', 'Birthday & Farewell'], ['resign', 'Re-signing opens'], ['trades_open', 'Trades open'], ['fa_open', 'Free agency opens'],
   ['fa_round_1', 'Free agency round 1'], ['fa_round_2', 'Free agency round 2'], ['fa_round_3', 'Free agency round 3'], ['fa_round_4', 'Free agency round 4'],
-  ['draft', 'Draft night'], ['camp', 'Training camp'], ['season_start', 'Season kickoff'], ['craft_bowl', 'Craft Bowl'],
+  ['draft', 'Draft night'], ['camp', 'Training camp'], ['season_start', 'Season kickoff'], ['trade_deadline', 'Trade deadline (after Week 8)'], ['craft_bowl', 'Craft Bowl'],
 ];
 
 // Test-only calendar (&sched=open puts draft night 8 minutes out, so the room is open).

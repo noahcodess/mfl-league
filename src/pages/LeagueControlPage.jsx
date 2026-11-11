@@ -13,6 +13,7 @@ import { previewStep } from '../lib/stepPreview.js';
 import Tabs from '../components/Tabs.jsx';
 import ScheduleEditor from '../components/ScheduleEditor.jsx';
 import DraftSettings from '../components/DraftSettings.jsx';
+import CommishTrades from '../components/CommishTrades.jsx';
 import { links } from '../lib/router.js';
 
 // League Control, in tabs: the offseason calendar (preview, run or undo the next step), the schedule (real dates), and draft settings.
@@ -93,6 +94,7 @@ export default function LeagueControlPage({ canControl, reload, viewerKey }) {
         ) },
         { key: 'schedule', label: '📅 Schedule', render: () => <ScheduleEditor canControl={canControl} /> },
         { key: 'draft', label: '🏈 Draft', render: () => <DraftSettings canControl={canControl} /> },
+        { key: 'trades', label: '🔁 Trades', render: () => <CommishTrades canControl={canControl} /> },
       ]} />
       {confirm && (
         <Modal onClose={() => !busy && setConfirm(null)}>

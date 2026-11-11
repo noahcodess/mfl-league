@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import DraftControls from '../components/DraftControls.jsx';
 import CommishBoard from '../components/CommishBoard.jsx';
 import CommishPickModal from '../components/CommishPickModal.jsx';
@@ -13,12 +13,15 @@ import { useSchedule } from '../data/schedule.js';
 import { pickFor } from '../data/draftActions.js';
 import { currentSeason, getTeam } from '../data/teams.js';
 import { useNow, readDraft, clockText, roundOf } from '../lib/draftClock.js';
+import { WINDOWS } from '../lib/windows.js';
+import CommishTrades from '../components/CommishTrades.jsx';
 
 // The commissioner desk window: meant to sit on a second monitor while the main screen (the draft room) is shared.
 // Shows what nobody else sees: the pick before it's revealed, every potential, who scouted and flagged whom, who's online.
 export default function DraftDeskPage({ viewer }) {
   const season = currentSeason();
   const [target, setTarget] = useState(null);
+  useEffect(() => { document.title = WINDOWS.draftDesk.title; }, []);
   const draft = useDraftRoom(season);
   const now = useNow(draft.offset);
   const info = readDraft(draft, now);
@@ -39,7 +42,7 @@ export default function DraftDeskPage({ viewer }) {
   return (
     <div className="desk-page">
       <header className="desk-top">
-        <div><b>MFL DRAFT · COMMISSIONER DESK</b><small>Season {season} · only you see this window · keep the draft room on your shared screen</small></div>
+        <div><b>COMMISSIONER WINDOW: DRAFT DESK</b><small>Season {season} · only you see this window · keep the draft room on your shared screen</small></div>
         {slot && (
           <div className="desk-now">
             {team && <TeamBadge team={team} size="sm" />}
@@ -56,6 +59,7 @@ export default function DraftDeskPage({ viewer }) {
           <CommishBoard prospects={prospects} potentials={potentials.map} intel={intel} canPick={!!slot && !draft.pending && info.phase !== 'pre'} onPickFor={setTarget} />
         </section>
         <section className="desk-panel">
+          <CommishTrades canControl compact />
           <DraftResults slots={draft.slots || []} picks={draft.picks || []} onPickNo={slot?.pick_no} />
         </section>
       </div>

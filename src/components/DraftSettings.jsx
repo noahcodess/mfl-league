@@ -33,9 +33,9 @@ export default function DraftSettings({ canControl }) {
           text={inSandbox() ? '🧪 TEST mode: this works at any step and resets when you leave TEST.' : 'Free agency has to be finished. The first team goes on the clock in 10 seconds and every coach sees it live.'}
           onConfirm={async () => { await startDraft(); window.location.hash = links.draft; }} />
         <a className="btn" href={links.draft}>🏈 Draft room</a>
-        <button className="btn ghost" onClick={openDeskWindow}>🎛️ Desk window</button>
+        <button className="btn ghost" onClick={openDeskWindow}>🎛️ Commissioner Window: Draft Desk</button>
       </div>
-      <p className="dim">Start the draft here or from the desk. Real league: any time once free agency is done. TEST mode: any time. The draft night time is set in the Schedule tab. On draft night, share the Draft room on your main screen and drag the Desk window to your second monitor: it has the picks before they're revealed, every potential, and who scouted and flagged whom.</p>
+      <p className="dim">Start the draft here or from the desk. Real league: any time once free agency is done. TEST mode: any time. The draft night time is set in the Schedule tab. On draft night, screen share the Draft room (or Commissioner Window: Draft Stage) and drag Commissioner Window: Draft Desk to your second monitor: it has the picks before they're revealed, every potential, and who scouted and flagged whom.</p>
       {GROUPS.map(([title, items]) => (
         <fieldset key={title} className="dset-group">
           <legend>{title}</legend>

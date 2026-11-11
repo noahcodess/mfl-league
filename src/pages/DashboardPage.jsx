@@ -38,7 +38,7 @@ export default function DashboardPage({ viewer, reload }) {
       </div>
       <ContractWatch players={players} team={team} potentials={potentials.map} traits={traits} negotiations={negotiations} onOpen={setOpen} onNegotiate={setTalk} />
       <ConferenceTable name={team.conference} teams={getTeams().filter((t) => t.conference === team.conference)} />
-      <PlayerModal player={open} team={team} canSeePotential traits={open ? traits[open.id] : null} potential={open && potentials.loaded ? (potentials.map[open.id] ?? null) : undefined} onClose={() => setOpen(null)} />
+      <PlayerModal player={open} team={team} myTeamId={viewer.team_id} canSeePotential traits={open ? traits[open.id] : null} potential={open && potentials.loaded ? (potentials.map[open.id] ?? null) : undefined} onClose={() => setOpen(null)} />
       {talk && (
         <NegotiationModal player={talk} team={team} traits={traits[talk.id]} windowOpen={resignOpen()}
           negotiation={negotiations.find((n) => n.player_id === talk.id && ['open', 'agreed', 'walked'].includes(n.status))}

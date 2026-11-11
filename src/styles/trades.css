@@ -1,0 +1,45 @@
+/* Trades and the inbox: the trade builder, trade cards, trade block, untouchables, the header bell and the inbox list. */
+.tasset { display: flex; align-items: center; gap: 8px; width: 100%; padding: 6px 8px; margin: 3px 0; text-align: left; font: inherit; font-family: var(--label);
+  color: var(--text); background: var(--panel2); border: 2px solid #000; border-left: 3px solid var(--line); }
+.tasset.click { cursor: pointer; } .tasset.click:hover { border-left-color: var(--gold); background: #ffffff0d; }
+.tasset.on { border-left-color: var(--good); background: #35d07f14; } .tasset.locked { opacity: .5; cursor: not-allowed; }
+.tasset-pos { min-width: 34px; font-weight: 800; color: var(--gold); font-size: 12px; }
+.tasset-name { flex: 1; font-weight: 600; } .tasset-pay { color: var(--dim); font-size: 12px; min-width: 48px; text-align: right; }
+.trade-modal { max-width: 640px; } .trade-modal.wide { max-width: 1060px; width: 96vw; }
+.tpick-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 8px; margin-top: 10px; }
+.tpick { display: flex; align-items: center; gap: 8px; padding: 8px; background: var(--panel2); border: 2px solid #000; border-left: 4px solid var(--team); color: var(--text); font: inherit; font-family: var(--label); cursor: pointer; text-align: left; }
+.tpick:hover { filter: brightness(1.2); }
+.tcols { display: grid; grid-template-columns: 1fr auto 1fr; gap: 10px; align-items: start; margin-top: 10px; }
+.tswap { align-self: center; font-size: 28px; color: var(--gold); animation: float 2.4s ease-in-out infinite; }
+.tcol { background: var(--panel); border: 2px solid #000; border-top: 4px solid var(--team, var(--line)); padding: 8px; min-width: 0; }
+.tcol-head { display: flex; justify-content: space-between; font-family: var(--label); margin-bottom: 6px; } .tcol-head .full { color: var(--warn); font-weight: 800; }
+.tcol-chosen { min-height: 60px; padding: 4px; margin-bottom: 8px; border: 2px dashed var(--line); }
+.tcol-chosen .tasset { animation: pop .25s ease-out both; }
+.tcol .search { width: 100%; margin: 6px 0; box-sizing: border-box; }
+.tcol-list { max-height: 300px; overflow-y: auto; }
+.seg.small button { padding: 4px 8px; font-size: 12px; }
+.timpact { display: flex; flex-wrap: wrap; gap: 8px 18px; margin: 10px 0; padding: 8px 10px; background: #000; border: 2px solid var(--line); font-family: var(--label); font-size: 13px; color: var(--dim); }
+.timpact b { color: var(--text); } .timpact .bad, .timpact .bad b { color: var(--bad); }
+.tnote { width: 100%; box-sizing: border-box; min-height: 52px; background: #000; color: var(--text); border: 2px solid var(--line); padding: 8px; font: inherit; }
+.btn.send-trade { background: var(--gold); color: #1a1000; font-weight: 800; }
+.tcard { background: var(--panel2); border: 2px solid #000; border-left: 4px solid var(--line); padding: 10px; margin-bottom: 10px; animation: rise .3s ease-out both; }
+.tcard-pending { border-left-color: var(--gold); } .tcard-accepted { border-left-color: var(--good); } .tcard-declined, .tcard-vetoed { border-left-color: var(--bad); opacity: .8; }
+.tcard header { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; font-family: var(--label); }
+.tcard-arrow { color: var(--gold); font-weight: 800; }
+.tcard-status { margin-left: auto; padding: 1px 8px; font-size: 12px; font-weight: 800; border: 2px solid currentColor; }
+.s-pending { color: var(--gold); } .s-accepted { color: var(--good); } .s-declined, .s-vetoed { color: var(--bad); } .s-cancelled, .s-expired { color: var(--dim); }
+.tcard-sides { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 8px; } .tcard-sides small { color: var(--dim); display: block; margin-bottom: 2px; }
+.tcard-note { margin: 8px 0 0; color: var(--text); } .tcard-bot { margin: 6px 0 0; font-size: 13px; }
+.tcard-btns { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 10px; }
+.trade-state { font-family: var(--label); font-weight: 700; } .page-head { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+.block-row, .mark-row { display: flex; align-items: center; gap: 8px; } .block-row .tasset, .mark-row .tasset { flex: 1; }
+.my-marks h3 { margin-top: 14px; } .my-marks h3:first-child { margin-top: 0; }
+.ctrades-window { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding: 10px; margin-bottom: 12px; background: #000; border: 2px solid var(--line); font-family: var(--label); }
+.ctrades-window p { flex-basis: 100%; margin: 4px 0 0; } .ctrades-window .good { color: var(--good); } .ctrades-window .bad { color: var(--bad); }
+.bell { position: relative; font-size: 18px; padding: 2px 6px; text-decoration: none !important; }
+.bell-n { position: absolute; top: -4px; right: -6px; min-width: 16px; height: 16px; padding: 0 3px; border-radius: 8px; background: var(--bad); color: #fff; font-size: 10px; font-weight: 800; font-family: var(--label); display: flex; align-items: center; justify-content: center; animation: pop .3s ease-out; }
+.mail { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.mail li { display: flex; align-items: flex-start; gap: 12px; padding: 10px 12px; background: var(--panel2); border: 2px solid #000; border-left: 4px solid var(--line); }
+.mail li.new { border-left-color: var(--gold); background: #ffd23f0d; }
+.mail-icon { font-size: 22px; } .mail-body { flex: 1; } .mail-body p { margin: 4px 0; color: var(--text); }
+@media (max-width: 800px) { .tcols { grid-template-columns: 1fr; } .tswap { transform: rotate(90deg); justify-self: center; } .tcard-sides { grid-template-columns: 1fr; } }

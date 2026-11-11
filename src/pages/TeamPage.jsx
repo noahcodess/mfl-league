@@ -49,7 +49,7 @@ export default function TeamPage({ teamId, viewer }) {
           <IssueList issues={issues} />
         </section>
       </div>
-      <PlayerModal player={open} team={team} canSeePotential={canSeePotential} potential={open && potentials.loaded ? (potentials.map[open.id] ?? null) : undefined} traits={open ? traits[open.id] : null} onClose={() => setOpen(null)} />
+      <PlayerModal player={open} team={team} myTeamId={viewer?.role === 'coach' ? viewer.team_id : null} canSeePotential={canSeePotential} potential={open && potentials.loaded ? (potentials.map[open.id] ?? null) : undefined} traits={open ? traits[open.id] : null} onClose={() => setOpen(null)} />
     </div>
   );
 }
