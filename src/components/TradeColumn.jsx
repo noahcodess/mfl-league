@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import TradeAsset from './TradeAsset.jsx';
+import TeamBadge from './TeamBadge.jsx';
 
 // One side of the trade builder: a team's players and picks to tap into the trade (up to the max), with a search.
 // Their untouchables are locked; players on the trade block get a 📣.
@@ -11,9 +12,15 @@ export default function TradeColumn({ title, team, assets, chosen, max, onToggle
   const players = assets.players.filter((p) => !q || `${p.name} ${p.position}`.toLowerCase().includes(q.toLowerCase()));
   return (
     <div className="tcol" style={{ '--team': team?.color }}>
-      <div className="tcol-head"><b>{title}</b><span className={full ? 'full' : ''}>{chosen.length}/{max}</span></div>
+      <div className="tcol-head">
+        {team && <TeamBadge team={team} size="md" />}
+        <div><small>{title}</small><b>{team?.name}</b></div>
+        <span className={`tcol-count${full ? ' full' : ''}`}>{chosen.length}/{max}</span>
+      </div>
       <div className="tcol-chosen">
-        {chosen.length ? chosen.map((x) => <TradeAsset key={x.id} item={x} selected onClick={() => onToggle(x)} />) : <p className="dim">Tap players or picks below to add them.</p>}
+        {chosen.length ? chosen.map((x) => <TradeAsset key={x.id} item={x} big selected onClick={() => onToggle(x)} />)
+          : <p className="dim">Tap players or picks below to add them (up to {max}).</p>}
+        {Array.from({ length: Math.max(0, max - chosen.length) }).map((_, i) => chosen.length > 0 && <div key={i} className="tslot" />)}
       </div>
       <div className="seg small">
         <button className={tab === 'players' ? 'on' : ''} onClick={() => setTab('players')}>Players ({assets.players.length})</button>

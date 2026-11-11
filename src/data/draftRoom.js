@@ -35,3 +35,16 @@ export function useDraftRoom(season) {
   }, [season, version]);
   return { ...(state || {}), loaded: state !== null, refresh: () => setVersion((v) => v + 1) };
 }
+
+// Just the room's status for settings screens: null (not started), or { status: 'live'|'paused'|'done', pickNo }.
+export function useDraftStatus(season, version = 0) {
+  const [status, setStatus] = useState(undefined);
+  useEffect(() => {
+    let live = true;
+    if (DEMO) { setStatus(null); return undefined; }
+    db.from('draft_room').select('status, pick_no').eq('season', season).maybeSingle()
+      .then(({ data }) => { if (live) setStatus(data ? { status: data.status, pickNo: data.pick_no } : null); });
+    return () => { live = false; };
+  }, [season, version]);
+  return status;
+}

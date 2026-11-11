@@ -49,12 +49,16 @@ export default function TradeBuilder({ myTeamId, partnerId, withPlayer, onClose,
   return (
     <Modal onClose={() => !busy && onClose()} className="trade-modal wide">
       <button className="modal-x" onClick={onClose} aria-label="Close">×</button>
-      <h2>🔁 Trade with the {them.name} {!partnerId && <button className="btn small ghost" onClick={() => { setPartner(null); setGet([]); }}>Change team</button>}</h2>
+      <div className="tbanner" style={{ '--a': me?.color, '--b': them.color }}>
+        <div className="tbanner-team"><TeamBadge team={me} size="lg" /><b>{me?.name}</b></div>
+        <div className="tbanner-mid"><span>TRADE</span><i>⇄</i>{!partnerId && <button className="btn small ghost" onClick={() => { setPartner(null); setGet([]); }}>Change team</button>}</div>
+        <div className="tbanner-team"><TeamBadge team={them} size="lg" /><b>{them.name}</b></div>
+      </div>
       {!marks.open && <p className="notice bad">Trading is closed right now. You can still build it; sending will be refused until it opens.</p>}
       <div className="tcols">
-        <TradeColumn title={`You send (${me?.code})`} team={me} assets={teamAssets(myTeamId)} chosen={give} max={MAX} onToggle={toggle(setGive)} untouchables={marks.untouchables} block={marks.block} />
+        <TradeColumn title="You send" team={me} assets={teamAssets(myTeamId)} chosen={give} max={MAX} onToggle={toggle(setGive)} untouchables={marks.untouchables} block={marks.block} />
         <div className="tswap">⇄</div>
-        <TradeColumn title={`You get (${them.code})`} team={them} assets={teamAssets(partner)} chosen={get} max={MAX} onToggle={toggle(setGet)} untouchables={marks.untouchables} block={marks.block} lockUntouchables />
+        <TradeColumn title="You get" team={them} assets={teamAssets(partner)} chosen={get} max={MAX} onToggle={toggle(setGet)} untouchables={marks.untouchables} block={marks.block} lockUntouchables />
       </div>
       <div className="timpact">
         <span className={myCap > capLimit() ? 'bad' : ''}>Your cap after: <b>{money(myCap)}</b> / {money(capLimit())}</span>

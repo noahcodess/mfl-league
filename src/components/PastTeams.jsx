@@ -7,7 +7,7 @@ import { money } from '../lib/format.js';
 const LEFT = { let_go: 'Not re-signed: went to free agency', talks_failed: 'Contract talks fell apart', walked: 'Walked in free agency' };
 const seasons = (a, b) => (a === b ? `Season ${a}` : `Seasons ${a}–${b}`);
 
-// "Past teams" tab: where he was drafted, then every team he's played for and the deals he signed, newest first.
+// "Past teams" tab: his draft pick, his college under it, then every team he's played for and the deals he signed, newest first.
 export default function PastTeams({ player }) {
   const history = usePlayerHistory(player);
   if (!history) return <p className="dim">Loading his history...</p>;
@@ -19,10 +19,10 @@ export default function PastTeams({ player }) {
     <div className="career">
       {drafted && (
         <div className="career-draft">
-          🎓 Drafted in the <b>Season {drafted.season} draft</b> · Round {drafted.round}, Pick {drafted.pick}{draftTeam ? ` by the ${draftTeam.name}` : ''}
-          {player.college && <small> out of {player.college}</small>}
+          🏈 Drafted in the <b>Season {drafted.season} draft</b> · Round {drafted.round}, Pick {drafted.pick}{draftTeam ? ` by the ${draftTeam.name}` : ''}
         </div>
       )}
+      {player.college && <div className="career-college">🎓 College: <b>{player.college}</b></div>}
       {!newestFirst.length && <p className="dim">{player.status === 'prospect' ? 'Still in college: no MFL teams yet.' : 'No teams on record yet.'}</p>}
       <ol className="career-list">
         {newestFirst.map((s, i) => {

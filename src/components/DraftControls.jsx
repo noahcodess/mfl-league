@@ -10,7 +10,7 @@ import { whenText } from '../data/schedule.js';
 import { openWindow } from '../lib/windows.js';
 import { inSandbox } from '../data/sandbox.js';
 import { links } from '../lib/router.js';
-import { startDraft, decidePick, announcePick, undoPick, pauseDraft, autoPick, pickFor, simDraft } from '../data/draftActions.js';
+import { restartDraftTest, startDraft, decidePick, announcePick, undoPick, pauseDraft, autoPick, pickFor, simDraft } from '../data/draftActions.js';
 
 // The commissioner's desk: accept/deny picks, announce them, handle a coach whose time ran out, pause, go back, auto pick, sim, open the stage.
 export default function DraftControls({ season, info, draftAt, prospects, presence, coached, onChange, hideWindowLink }) {
@@ -50,6 +50,14 @@ export default function DraftControls({ season, info, draftAt, prospects, presen
           </div>
         );
       })()}
+
+      {info.phase === 'done' && inSandbox() && (
+        <div className="desk-start">
+          <div><b>✅ Draft complete</b><small>🧪 TEST mode: you can take it all back and run it again.</small></div>
+          <ConfirmButton className="btn start-draft" label="🔄 RESTART DRAFT" title="Take the whole draft back and start over?" yes="Restart it"
+            text="Every rookie goes back on the board and undrafted players come back from free agency." onConfirm={act(restartDraftTest)} />
+        </div>
+      )}
 
       {p && p.status === 'pending' && (
         <div className="desk-pick">

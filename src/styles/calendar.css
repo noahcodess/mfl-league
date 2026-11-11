@@ -51,3 +51,6 @@
 .desk-bar { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; padding: 6px 10px; margin-bottom: 12px; background: #000c; border: 2px solid var(--gold); font-family: var(--label); }
 .desk-bar b { color: var(--gold); margin-right: auto; } .desk-bar-alert { color: #fff; background: #b8860b; padding: 2px 8px; font-weight: 800; animation: blink 1.2s ease-in-out infinite; }
 @media (max-width: 900px) { .desk-cols { grid-template-columns: 1fr; } }
+.career-college { padding: 8px 12px; margin: -4px 0 10px; background: var(--panel2); border: 2px solid #000; border-left: 4px solid var(--ice, #9fd3ff); }
+.dstatus { align-self: center; font-family: var(--label); font-weight: 800; padding: 8px 12px; border: 2px solid currentColor; }
+.dstatus.live { color: #ff6b6b; } .dstatus.done { color: var(--good); }

@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import ConfirmButton from './ConfirmButton.jsx';
 import { useLeagueNumbers, setLeagueNumber } from '../data/schedule.js';
 import { links } from '../lib/router.js';
-import { startDraft } from '../data/draftActions.js';
+import { startDraft, restartDraftTest } from '../data/draftActions.js';
+import { useDraftStatus } from '../data/draftRoom.js';
 import { openDeskWindow } from '../data/draftIntel.js';
 import { inSandbox } from '../data/sandbox.js';
 import { currentSeason } from '../data/teams.js';
@@ -20,6 +21,7 @@ export default function DraftSettings({ canControl }) {
   const [version, setVersion] = useState(0);
   const [edits, setEdits] = useState({});
   const nums = useLeagueNumbers(KEYS, version);
+  const room = useDraftStatus(currentSeason(), version);
   if (!nums) return <p className="dim">Loading settings...</p>;
   const changed = Object.entries(edits).filter(([k, v]) => v !== '' && Number(v) !== nums[k]);
   const save = async () => {
@@ -29,9 +31,17 @@ export default function DraftSettings({ canControl }) {
   return (
     <div className="dsettings">
       <div className="dsettings-top">
-        <ConfirmButton className="btn start-draft" label="▶ START DRAFT" disabled={!canControl} title={`Start the Season ${currentSeason()} draft now?`} yes="Start the draft"
-          text={inSandbox() ? '🧪 TEST mode: this works at any step and resets when you leave TEST.' : 'Free agency has to be finished. The first team goes on the clock in 10 seconds and every coach sees it live.'}
-          onConfirm={async () => { await startDraft(); window.location.hash = links.draft; }} />
+        {room === null && (
+          <ConfirmButton className="btn start-draft" label="▶ START DRAFT" disabled={!canControl} title={`Start the Season ${currentSeason()} draft now?`} yes="Start the draft"
+            text={inSandbox() ? '🧪 TEST mode: this works at any step and resets when you leave TEST.' : 'Free agency has to be finished. The first team goes on the clock in 10 seconds and every coach sees it live.'}
+            onConfirm={async () => { await startDraft(); window.location.hash = links.draft; }} />
+        )}
+        {room && room.status !== 'done' && <span className="dstatus live">🔴 Draft in progress · pick #{room.pickNo}</span>}
+        {room?.status === 'done' && <span className="dstatus done">✅ The Season {currentSeason()} draft is complete</span>}
+        {room && inSandbox() && (
+          <ConfirmButton className="btn ghost" label="🔄 Restart the draft (TEST)" disabled={!canControl} title="Take the whole draft back and start over?" yes="Restart it"
+            text="Every rookie goes back on the board and undrafted players come back from free agency. Only works in TEST mode." onConfirm={async () => { await restartDraftTest(); setVersion((x) => x + 1); }} />
+        )}
         <a className="btn" href={links.draft}>🏈 Draft room</a>
         <button className="btn ghost" onClick={openDeskWindow}>🎛️ Commissioner Window: Draft Desk</button>
       </div>

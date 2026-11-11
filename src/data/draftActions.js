@@ -21,4 +21,5 @@ export const pauseDraft = (pause) => call('draft_pause', { p_pause: pause });
 export const autoPick = () => call('draft_skip');
 export const pickFor = (playerId) => call('draft_pick_for', { p_player: playerId });
 export const simDraft = () => call('draft_sim_to_end');
+export const restartDraftTest = () => call('draft_restart_test');
 export const toggleFlag = (playerId) => call('toggle_draft_flag', { p_player: playerId });

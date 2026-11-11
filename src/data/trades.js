@@ -57,7 +57,7 @@ export function useTradeMarks(version = 0) {
 // A team's players and still-usable picks (this season's draft or later), for the trade builder.
 export const teamAssets = (teamId) => ({
   players: store.league.players.filter((p) => p.teamId === teamId && (p.status ?? 'active') === 'active').sort((a, b) => b.stars - a.stars),
-  picks: store.league.picks.filter((k) => k.ownerId === teamId && k.season >= currentSeason()).sort((a, b) => a.season - b.season || a.round - b.round),
+  picks: store.league.picks.filter((k) => k.ownerId === teamId && k.season >= currentSeason()).map((k) => ({ ...k, id: k.id ?? `${k.originalCode}-${k.season}-${k.round}` })).sort((a, b) => a.season - b.season || a.round - b.round),
 });
 
 const asItem = (x) => (x.position ? { player: x.id } : { pick: x.id });

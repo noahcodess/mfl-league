@@ -24,8 +24,8 @@ export default function TradeCard({ trade, myTeamId, commish, coached = [], onCh
         <small className="dim">{shortDate(trade.createdAt)}</small>
       </header>
       <div className="tcard-sides">
-        <div><small>{from.name} send</small>{items(trade.give).map((x) => <TradeAsset key={x.id} item={x} />)}</div>
-        <div><small>{to.name} send</small>{items(trade.get).map((x) => <TradeAsset key={x.id} item={x} />)}</div>
+        <div><div className="tside-head"><TeamBadge team={from} size="sm" /><small>{from.name} send</small></div>{items(trade.give).map((x) => <TradeAsset key={x.id} item={x} />)}</div>
+        <div><div className="tside-head"><TeamBadge team={to} size="sm" /><small>{to.name} send</small></div>{items(trade.get).map((x) => <TradeAsset key={x.id} item={x} />)}</div>
       </div>
       {trade.note && <p className="tcard-note">💬 {trade.note}</p>}
       {pending && toBot && <p className="dim tcard-bot">🤖 Computer-run team: it can't answer until AI coaches are built.{commish ? ' You can accept or veto it.' : ''}</p>}
