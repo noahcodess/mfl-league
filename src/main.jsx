@@ -19,6 +19,7 @@ import './styles/layout.css';
 import './styles/home.css';
 import './styles/calendar.css';
 import './styles/trades.css';
+import './styles/coaches.css';
 import './styles/draft.css';
 import './styles/draftStage.css';
 import './styles/draftReveal.css';

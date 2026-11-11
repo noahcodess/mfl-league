@@ -7,6 +7,7 @@ import ConferenceTable from '../components/ConferenceTable.jsx';
 import PlayerModal from '../components/PlayerModal.jsx';
 import NegotiationModal from '../components/NegotiationModal.jsx';
 import ComingUp from '../components/ComingUp.jsx';
+import CoachCard from '../components/CoachCard.jsx';
 import { getTeam, getTeams, capLimit, currentSeason, offseasonStep, resignOpen } from '../data/teams.js';
 import { getPlayers, teamCapUsed } from '../data/players.js';
 import { getPicks } from '../data/picks.js';
@@ -31,6 +32,7 @@ export default function DashboardPage({ viewer, reload }) {
   return (
     <div className="team-page dashboard" style={{ '--team': team.color, '--team-accent': team.accent }}>
       <DashHero team={team} capUsed={teamCapUsed(team.id)} capLimit={capLimit()} coachName={viewer.display_name || viewer.username} />
+      <CoachCard team={team} mine />
       <ComingUp />
       <div className="two-col wide-left">
         <OffseasonSteps current={offseasonStep()} compact />

@@ -3,6 +3,7 @@ import TeamBadge from '../components/TeamBadge.jsx';
 import RatingChip from '../components/RatingChip.jsx';
 import CapBar from '../components/CapBar.jsx';
 import Roster from '../components/Roster.jsx';
+import CoachCard from '../components/CoachCard.jsx';
 import PlayerModal from '../components/PlayerModal.jsx';
 import PickList from '../components/PickList.jsx';
 import IssueList from '../components/IssueList.jsx';
@@ -41,6 +42,7 @@ export default function TeamPage({ teamId, viewer }) {
         </div>
         <CapBar used={teamCapUsed(team.id)} limit={capLimit()} />
       </div>
+      <CoachCard team={team} mine={isMine && viewer?.role === 'coach'} />
       <Roster players={players} vacancies={getVacancies(team.id)} team={team} onOpen={setOpen} insider={canSeePotential ? potentials.map : null} />
       <div className="two-col">
         <PickList picks={getPicks(team.id)} currentSeason={currentSeason()} />

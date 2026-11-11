@@ -1,0 +1,44 @@
+// Coaches: every team's coach (name, look, 5 ratings, potential), plus the coach's own outfit/name changes.
+import { useEffect, useState } from 'react';
+import { db } from './supabase.js';
+import { DEMO } from './demo.js';
+
+const clean = (msg = '') => (msg.includes('not allowed') ? 'Only the commissioner can do this.' : msg.replace(/^.*?ERROR:\s*/, '') || 'Could not reach the league server.');
+
+// The 5 coach ratings that make up his stars. Every effect is slight.
+export const COACH_RATINGS = [
+  ['motivation', 'Motivation', 'His players develop a little faster.'],
+  ['clutch', 'Clutch', 'A small boost in clutch-time moments.'],
+  ['legacy', 'Legacy', 'All-time record, Craft Bowls won and more. Grows with his career.'],
+  ['recruiting', 'Recruiting', 'Free agents are a little more interested in his team.'],
+  ['game_planning', 'Game Planning', 'His scheme runs a little better on game day.'],
+];
+
+// Stars from the 5 ratings, on the same scale as players (matches the database's coach_stars).
+export function coachStars(r = {}) {
+  const avg = COACH_RATINGS.reduce((s, [k]) => s + (Number(r[k]) || 50), 0) / COACH_RATINGS.length;
+  return Math.max(0.5, Math.min(5, Math.round(((avg - 28) / 13) * 2) / 2));
+}
+
+const DEMO_COACH = (teamId) => ({ team_id: teamId, name: teamId === 'snm' ? 'Noah' : 'Andre Irby', potential: teamId === 'snm' ? 5 : 3,
+  ratings: { motivation: 72, clutch: 68, legacy: 58, recruiting: 75, game_planning: 71 },
+  looks: teamId === 'snm' ? { skin: '#f3cfb3', hair: '#d9b871', style: 'messy', head: 'oval', eyes: '#4f7fa8', mouth: 'smirk', beard: 'none', glasses: 'sun', shirt: 'hoodie', shirtColor: '#2f6fd6', pants: 'sweats', pantsColor: '#1b1b1f' } : {} });
+
+// Every coach, as teamId -> coach. Refreshes when `version` changes.
+export function useCoaches(version = 0) {
+  const [map, setMap] = useState(null);
+  useEffect(() => {
+    let live = true;
+    if (DEMO) { setMap(Object.fromEntries(['snm', 'crf', 'lsc', 'dst'].map((t) => [t, DEMO_COACH(t)]))); return undefined; }
+    db.from('coaches').select('*').then(({ data }) => { if (live) setMap(Object.fromEntries((data || []).map((c) => [c.team_id, c]))); });
+    return () => { live = false; };
+  }, [version]);
+  return map;
+}
+
+export async function saveMyCoach(name, outfit) {
+  if (DEMO) return {};
+  const { data, error } = await db.rpc('set_my_coach', { p_name: name || null, p_outfit: outfit });
+  if (error) throw new Error(clean(error.message));
+  return data;
+}
