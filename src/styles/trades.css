@@ -72,3 +72,5 @@
 .tcard-verdict { margin: 8px 0 0; padding: 8px 12px; background: #000; border-left: 4px solid var(--bad); animation: tab-in .3s ease-out both; }
 .tcard-verdict.yes { border-left-color: var(--good); } .tcard-verdict b { font-family: var(--label); }
 .tcard-verdict ul { margin: 4px 0 0; padding-left: 18px; font-size: 14px; }
+.botweek { display: flex; gap: 14px; align-items: center; justify-content: space-between; flex-wrap: wrap; margin: 10px 0; padding: 10px 12px; background: var(--panel2); border: 2px solid #000; border-left: 4px solid var(--gold); }
+.botweek > div { flex: 1; min-width: 240px; } .botweek p { margin: 4px 0 0; font-size: 13px; } .botweek-result { color: var(--good); font-weight: 700; }

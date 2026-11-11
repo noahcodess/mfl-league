@@ -32,7 +32,7 @@ export default function TradeCard({ trade, myTeamId, commish, coached = [], onCh
       </div>
       {trade.note && <p className="tcard-note">💬 {trade.note}</p>}
       {pending && toBot && !interim && <p className="tcard-bot think">🤖 Their coach is thinking it over<i>.</i><i>.</i><i>.</i> Bots answer in a few minutes.{commish ? ' You can still accept or veto first.' : ''}</p>}
-      {pending && interim && <p className="dim tcard-bot">🪑 Reserved team with an interim coach: the commissioner answers this one.</p>}
+      {pending && interim && <p className="dim tcard-bot">🪑 Reserved team with no head coach yet: the commissioner answers this one.</p>}
       {!pending && verdict && trade.decidedBy === 'bot' && (
         <div className={`tcard-verdict ${verdict.accept ? 'yes' : 'no'}`}>
           <b>🤖 {to.code} coach: {verdict.accept ? 'Deal.' : 'No deal.'}</b>

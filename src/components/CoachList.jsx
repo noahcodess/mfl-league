@@ -17,7 +17,7 @@ export default function CoachList({ canControl }) {
   if (!coaches) return <p className="dim">Loading coaches...</p>;
   return (
     <div>
-      <p className="dim">Every team's coach. Coaches can only change their own outfit and scheme (you get a notice when they do). You can change everything here.</p>
+      <p className="dim">Every team's coach. Coaches can only change their own outfit and scheme (you get a notice when they do). You can change everything here. Reserved teams show N/A until their coach joins; you can still set them up ahead of time.</p>
       <div className="coach-grid">
         {getTeams().map((t) => {
           const c = coaches[t.id];
@@ -28,7 +28,7 @@ export default function CoachList({ canControl }) {
               <CoachSprite coach={c} team={t} height={84} />
               <div>
                 <span className="coach-tile-team"><TeamBadge team={t} size="xs" /> {t.code}</span>
-                <b>Coach {c.name}</b>
+                <b>{t.reserved && !human ? 'Head coach: N/A' : `Coach ${c.name}`}</b>
                 <WhoTag human={human} reserved={t.reserved} />
                 <StarRating value={coachStars(c.ratings)} />
               </div>

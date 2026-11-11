@@ -1,0 +1,1 @@
+-- 047c (applied live): bot plan thresholds widened: rebuild only when score < -0.6 (was -0.35).

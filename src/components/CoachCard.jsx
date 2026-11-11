@@ -8,7 +8,7 @@ import { archetype, teamMode } from '../lib/botBrain.js';
 import { useCoaches, coachStars } from '../data/coaches.js';
 import { useCoachedTeams } from '../data/coached.js';
 
-// "You're the coach" card on the team hub (or "Head coach" on any team page, with a bot's plan and type). Tap it for his profile.
+// "You're the coach" card on the team hub (or "Head coach" on any team page, with a bot's plan and type; N/A for reserved seats). Tap it for his profile.
 export default function CoachCard({ team, mine }) {
   const [version, setVersion] = useState(0);
   const [open, setOpen] = useState(false);
@@ -17,6 +17,18 @@ export default function CoachCard({ team, mine }) {
   const human = useCoachedTeams().includes(team.id);
   const brain = useCoachBrain(team.id);
   if (!coach) return null;
+  if (team.reserved && !human) {
+    return (
+      <div className="coach-card coach-card-na" style={{ '--team': team.color }}>
+        <div className="coach-na-seat">🪑</div>
+        <div className="coach-card-body">
+          <small>Head coach</small>
+          <b>N/A <WhoTag reserved /></b>
+          <span className="coach-card-cta">Reserved for a coach joining soon.</span>
+        </div>
+      </div>
+    );
+  }
   return (
     <>
       <button type="button" className="coach-card" style={{ '--team': team.color, '--team-accent': team.accent }} onClick={() => setOpen(true)}>

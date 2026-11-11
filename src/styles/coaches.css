@@ -87,3 +87,5 @@
 .cbrain-trade { padding: 10px 12px; background: #000; border: 2px solid var(--line); }
 .cbrain-trade b { font-size: 20px; font-family: var(--label); } .cbrain-trade b.good { color: var(--good); } .cbrain-trade b.bad { color: var(--bad); } .cbrain-trade b.gold { color: var(--gold); }
 .cbrain-trade p { margin: 4px 0 0; font-size: 13px; }
+.coach-card-na { cursor: default; } .coach-card-na:hover { filter: none; }
+.coach-na-seat { width: 84px; height: 104px; display: grid; place-items: center; font-size: 46px; opacity: .55; background: radial-gradient(ellipse at 50% 92%, #0007 0 30%, transparent 32%); }

@@ -6,7 +6,10 @@ export const ARCHETYPES = {
   old_school: { name: 'Old School', icon: '📼', line: 'Trusts his guys. Rarely trades, and values proven vets.', trade: 'Toughest in the league to trade with' },
   moneyball: { name: 'Moneyball', icon: '🧮', line: 'All about value per dollar. Cheap contracts and smart deals.', trade: 'Hates big contracts coming back' },
   steady: { name: 'Steady Hand', icon: '⚖️', line: 'Patient and balanced. Only moves when the price is right.', trade: 'Fair, but never gives anything away' },
-  caretaker: { name: 'Interim Coach', icon: '🪑', line: 'Holding the seat for a future coach. Keeps the roster full and makes no trades.', trade: 'The commissioner answers trades for this team' },
+  former_player: { name: 'The Former Player', icon: '🏈', line: 'Played in this league. Trusts tough, proven players and his gut.', trade: 'Wants real football players back, not just picks' },
+  dealmaker: { name: 'The Dealmaker', icon: '📞', line: 'Always on the phone. Will talk about anyone and loves a busy deadline.', trade: 'Most open to a deal in the league' },
+  talent_scout: { name: 'The Talent Scout', icon: '🔭', line: 'Lives in the film room. Swears by upside and hunts late-round gems.', trade: 'Prizes young players with high potential' },
+  caretaker: { name: 'No head coach yet', icon: '🪑', line: 'This seat is reserved for a coach joining soon. The roster stays full and the team makes no trades.', trade: 'The commissioner answers trades for this team' },
 };
 export const archetype = (key) => ARCHETYPES[key] || ARCHETYPES.steady;
 
@@ -19,10 +22,10 @@ export const teamMode = (key) => MODES[key] || MODES.balanced;
 
 export const VALUES = [['picks', 'Draft picks'], ['youth', 'Young talent'], ['stars', 'Star power'], ['cap', 'Cap savings']];
 
-// 'person' | 'bot' | 'interim' with its label.
+// 'person' | 'bot' | 'interim' (reserved seat, no head coach yet) with its label.
 export function whoTag({ human, reserved }) {
   if (human) return { cls: 'person', label: '👤 Player' };
-  if (reserved) return { cls: 'interim', label: '🪑 Interim' };
+  if (reserved) return { cls: 'interim', label: '🪑 Reserved' };
   return { cls: 'bot', label: '🤖 Bot' };
 }
 
