@@ -38,12 +38,12 @@ export default function BirthdayView({ done, canControl, reload }) {
       </div>
       <p className="bday-line">{done
         ? `Every player is a year older. ${retired.length} player${retired.length === 1 ? '' : 's'} said farewell.`
-        : 'When the commissioner runs Birthday & Farewell, every player turns a year older. Every 27 year old retires, and a few 26 year olds retire early.'}</p>
+        : 'When the commissioner runs Birthday & Farewell, every player turns a year older. Players 25 and under go up 1 star (up to their potential), 25 year olds can slip instead, 26 and 27 don\'t grow. Every 27 year old retires, and a few 26 year olds retire early.'}</p>
       {!done && canControl && (
         <div className="bday-start">
           <p>📺 <b>Tip:</b> share your screen before you press Start (or before the countdown hits 0) so everyone watches the farewell show together.</p>
           <ConfirmButton className="btn big" label="▶ Start Birthday & Farewell" title="Start Birthday & Farewell now?" yes="Start it"
-            text="Every player turns a year older, retirements happen, and the farewell show plays on this screen."
+            text="Every player turns a year older, young players go up a star, retirements happen, and the farewell show plays on this screen."
             onConfirm={async () => { setError(''); try { await advanceOffseason(); await reload?.(); } catch (e) { setError(e.message); } }} />
           {error && <p className="form-error">{error}</p>}
         </div>

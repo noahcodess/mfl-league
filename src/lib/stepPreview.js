@@ -11,7 +11,7 @@ export function previewStep(step) {
     case 0: {
       const n = players.filter((p) => p.age != null && p.age < 60).length;
       const list = players.filter(isRetiring);
-      return { text: `${plural(n, 'player')} turn a year older, young players with room to grow may gain stars (their bars rise with them), then ${plural(list.length, 'player')} past the max age of ${maxAge()} retire and leave their teams.`, list };
+      return { text: `${plural(n, 'player')} turn a year older, players 25 and under go up 1 star toward their potential (25 year olds may slip instead, 26 and 27 don't grow), then ${plural(list.length, 'player')} past the max age of ${maxAge()} retire and leave their teams.`, list };
     }
     case 1: {
       const list = onTeams.filter(isExpiring);

@@ -56,3 +56,15 @@ export const saveCoach = (teamId, name, looks, ratings, potential) => call('set_
 export const saveCoachScheme = (teamId, scheme) => call('set_coach_scheme', { p_team: teamId, p_scheme: scheme });
 export const requestNumber = (playerId, number) => call('request_number_change', { p_player: playerId, p_number: number });
 export const decideNumber = (requestId, approve) => call('decide_number_change', { p_request: requestId, p_approve: approve });
+// Number changes still waiting on the commissioner for a team: Map(playerId -> requested number).
+export function usePendingNumbers(teamId, version = 0) {
+  const [map, setMap] = useState(new Map());
+  useEffect(() => {
+    let live = true;
+    if (DEMO || !teamId) return undefined;
+    db.from('number_requests').select('player_id, to_number').eq('team_id', teamId).eq('status', 'pending')
+      .then(({ data }) => { if (live) setMap(new Map((data || []).map((r) => [r.player_id, r.to_number]))); });
+    return () => { live = false; };
+  }, [teamId, version]);
+  return map;
+}

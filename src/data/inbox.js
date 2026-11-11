@@ -36,4 +36,5 @@ export function useInbox(userId) {
 }
 
 export const MAIL_ICON = { trade_offer: '🔁', trade_declined: '✋', trade_vetoed: '⛔', trade_done: '🤝', trade_block: '📣', trade_window: '🚦',
-  coach_edit: '🧢', number_request: '🔢', number_approved: '✅', number_denied: '✋' };
+  coach_edit: '🧢', number_request: '🔢', number_approved: '✅', number_denied: '✋',
+  jersey_request: '👕', jersey_approved: '✅', jersey_denied: '✋', trade_request: '📣', morale: '🚪' };

@@ -53,3 +53,4 @@
 .creq { display: flex; align-items: center; gap: 12px; padding: 8px 12px; background: var(--panel2); border-left: 4px solid var(--team, var(--line)); margin-bottom: 6px; }
 .creq > span { flex: 1; } .creq b { display: block; } .creq small { color: var(--dim); }
 @media (max-width: 560px) { .locker-counts { gap: 4px; } .lc small { font-size: 9px; } .cb-legacy { grid-template-columns: 1fr; } }
+

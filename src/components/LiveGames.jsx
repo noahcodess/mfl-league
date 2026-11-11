@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import GameOdds from './GameOdds.jsx';
+import GameUniforms from './GameUniforms.jsx';
 import { useSeasonGames, networkFor, windowLabel } from '../data/games.js';
 import { currentSeason, currentWeek, getTeam } from '../data/teams.js';
 import { untilText } from '../data/schedule.js';
@@ -35,6 +36,7 @@ export default function LiveGames({ kind }) {
                 <span className="lg-clock">{g.status === 'final' ? `Final: ${g.away_score}-${g.home_score}` : left == null ? 'Kickoff time to be set' : left > 0 ? `Kickoff in ${untilText(left)}` : '🔴 Game time'}</span>
               </div>
               <GameOdds game={g} />
+              <GameUniforms game={g} />
             </li>
           );
         })}

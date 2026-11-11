@@ -30,5 +30,6 @@ import './styles/desk.css';
 import './styles/games.css';
 import './styles/motion.css';
 import './styles/morale.css';
+import './styles/uniforms.css';
 
 createRoot(document.getElementById('root')).render(<App />);

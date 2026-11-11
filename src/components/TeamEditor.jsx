@@ -2,13 +2,14 @@ import React, { useState } from 'react';
 import Modal from './Modal.jsx';
 import TeamBadge from './TeamBadge.jsx';
 import ConfirmButton from './ConfirmButton.jsx';
+import TeamJerseys from './TeamJerseys.jsx';
 import { getConferences } from '../data/teams.js';
 import { logoFor } from '../data/logos.js';
 import { updateTeam, uploadTeamLogo, resetTeamLogo } from '../data/commishEdit.js';
 import { prepareLogo } from '../lib/logoCheck.js';
 
 // Commissioner: edit one team. Location + team name (the full name is both: Ocean Monument + Guardians), abbreviation,
-// conference, colors, and the logo (PNG with a see-through background).
+// conference, colors, the logo (PNG with a see-through background) and the four jerseys.
 export default function TeamEditor({ team, canControl, onClose, onSaved }) {
   const split = (team.name || '').match(/^(.*)\s(\S+)$/) || [null, team.name, ''];
   const [f, setF] = useState({ location: team.location || split[1], nickname: team.nickname || split[2], code: team.code, conference: team.conference, color: team.color, accent: team.accent });
@@ -60,6 +61,7 @@ export default function TeamEditor({ team, canControl, onClose, onSaved }) {
         )}
         {logo && <span className="te-new">✅ New logo ready. Save to use it.</span>}
       </div>
+      <TeamJerseys team={team} canControl={canControl} />
       {f.code !== team.code && <p className="dim">Changing the abbreviation also renames all of this team's draft picks.</p>}
       {error && <p className="form-error">{error}</p>}
       <div className="modal-actions">

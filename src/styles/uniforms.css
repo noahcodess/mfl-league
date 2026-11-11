@@ -1,0 +1,39 @@
+/* Uniforms: jersey cards, the jersey editor, numbers editor. */
+.uniform-sprite { image-rendering: pixelated; display: block; }
+.jersey-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; margin-top: 12px; }
+.jersey-card { display: grid; justify-items: center; gap: 4px; padding: 12px 8px; background: var(--panel2); border: 2px solid var(--line); text-align: center; }
+.jersey-card.pending { border-style: dashed; border-color: var(--gold); }
+.jersey-stage { padding: 8px 18px 4px; background: radial-gradient(ellipse at 50% 92%, rgba(0,0,0,.45) 0 30%, transparent 31%), linear-gradient(#2f6b2a, #24561f); border: 2px solid #183d14; }
+.jersey-card small { color: var(--dim); font-size: 11px; }
+.jersey-pending { font-size: 11px; color: var(--gold); }
+.jersey-editor { display: grid; grid-template-columns: auto 1fr; gap: 18px; margin-top: 12px; align-items: start; }
+.je-preview { display: grid; justify-items: center; gap: 6px; padding: 14px 22px; background: linear-gradient(#2f6b2a, #24561f); border: 2px solid #183d14; }
+.je-preview small { color: #dfe8dc; font-size: 11px; }
+.je-parts { display: grid; gap: 6px; margin-top: 8px; }
+.je-part { display: grid; grid-template-columns: 170px 44px 1fr; align-items: center; gap: 8px; font-size: 13px; }
+.je-part input[type=color] { width: 44px; height: 28px; padding: 0; border: 2px solid var(--line); background: none; cursor: pointer; }
+.je-swatches { display: flex; gap: 4px; flex-wrap: wrap; }
+.je-swatches button { width: 20px; height: 20px; border: 2px solid var(--line); cursor: pointer; padding: 0; }
+.je-swatches button.on { border-color: var(--gold); outline: 1px solid var(--gold); }
+.je-note { font-size: 12px; margin: 6px 0 0; }
+.je-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 12px; }
+.je-decide { display: flex; gap: 6px; justify-content: center; margin-top: 6px; }
+.te-jerseys { display: grid; gap: 4px; margin: 14px 0; padding-top: 12px; border-top: 2px solid var(--line); }
+.mail-jersey { display: inline-block; margin-top: 6px; padding: 4px 8px; background: linear-gradient(#2f6b2a, #24561f); }
+.numreq-head { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+.numreq-list { list-style: none; margin: 10px 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 6px; }
+.numreq-list li { display: flex; align-items: center; gap: 8px; padding: 5px 8px; background: var(--panel2); border: 1px solid var(--line); }
+.numreq-list li.changed { border-color: var(--gold); } .numreq-list li.dupe { border-color: var(--bad); }
+.numreq-name { flex: 1; min-width: 0; } .numreq-name b { display: block; font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } .numreq-name small { color: var(--dim); font-size: 11px; }
+.numreq-hash { color: var(--dim); font-weight: 700; }
+.numreq-list input { width: 44px; text-align: center; font-weight: 700; font-size: 15px; }
+.numreq-actions { display: flex; justify-content: flex-end; gap: 8px; }
+.numreq-sent { color: var(--good); font-weight: 600; }
+.uniforms { display: grid; gap: 16px; }
+@media (max-width: 640px) { .jersey-editor { grid-template-columns: 1fr; } .je-part { grid-template-columns: 1fr 44px; } .je-swatches { grid-column: 1 / -1; } }
+.game-uniforms { display: flex; justify-content: space-between; gap: 10px; margin-top: 8px; padding: 6px 10px 2px; background: linear-gradient(#2f6b2a, #24561f); border: 2px solid #183d14; }
+.game-uniforms span { display: flex; align-items: flex-end; gap: 6px; }
+.game-uniforms span:last-child { flex-direction: row-reverse; }
+.game-uniforms small { font-size: 11px; color: #dfe8dc; padding-bottom: 4px; }
+.te-jerseys .jersey-grid { grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.te-jerseys .jersey-stage { padding: 6px 6px 2px; }
