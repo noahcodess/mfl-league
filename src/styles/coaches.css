@@ -28,3 +28,29 @@
 .ocolors .team-swatch { width: auto; padding: 0 8px; color: #fff; font-size: 11px; font-weight: 800; text-shadow: 1px 1px 0 #000; }
 .oname { display: flex; align-items: center; gap: 10px; font-family: var(--label); } .oname input { flex: 1; background: #000; color: var(--text); border: 2px solid var(--line); padding: 6px 8px; font: inherit; }
 @media (max-width: 600px) { .opick { grid-template-columns: repeat(3, 1fr); } }
+.who-tag { display: inline-block; vertical-align: middle; margin-left: 6px; padding: 1px 7px; font-size: 11px; font-weight: 800; letter-spacing: 1px; border: 2px solid currentColor; font-family: var(--label); }
+.who-tag.person { color: var(--good); } .who-tag.bot { color: var(--dim); }
+.scheme-now { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; padding: 10px; background: #000; border: 2px solid var(--line); font-family: var(--label); }
+.auto-tag { background: var(--gold); color: #1a1000; font-weight: 900; padding: 1px 8px; letter-spacing: 2px; font-size: 12px; }
+.auto-toggle { display: flex; align-items: center; gap: 8px; margin: 10px 0 4px; font-family: var(--label); cursor: pointer; }
+.schemes { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 6px; }
+.schemes button { display: flex; flex-direction: column; gap: 3px; padding: 8px; text-align: left; background: var(--panel2); border: 2px solid #000; color: var(--text); font: inherit; font-family: var(--label); cursor: pointer; }
+.schemes button small { color: var(--dim); font-size: 12px; } .schemes button.on { border-color: var(--gold); background: #ffd23f14; } .schemes button:disabled { cursor: default; }
+.schemes button:disabled:not(.on) { opacity: .55; }
+.coach-editor { max-width: 980px; width: 96vw; }
+.ceditor { display: grid; grid-template-columns: 280px 1fr; gap: 18px; }
+.ceditor-preview { display: flex; flex-direction: column; gap: 10px; align-items: center; position: sticky; top: 0; align-self: start; }
+.ceditor-tabs { min-width: 0; max-height: 62vh; overflow-y: auto; } .ceditor-tabs h4 { margin: 12px 0 6px; font-family: var(--label); }
+.echips { display: flex; flex-wrap: wrap; gap: 5px; }
+.echips button { padding: 5px 10px; background: var(--panel2); border: 2px solid #000; color: var(--text); font: inherit; font-family: var(--label); font-size: 13px; cursor: pointer; text-transform: capitalize; }
+.echips button.on { border-color: var(--gold); background: #ffd23f1f; color: var(--gold); }
+.eratings { display: grid; gap: 10px; } .eratings label { display: grid; grid-template-columns: 130px 1fr 40px; align-items: center; gap: 10px; font-family: var(--label); }
+.eratings select { background: #000; color: var(--text); border: 2px solid var(--line); padding: 4px; }
+.coach-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 8px; margin-top: 10px; }
+.coach-tile { display: flex; align-items: center; gap: 12px; padding: 8px 12px; background: var(--panel2); border: 2px solid #000; border-left: 5px solid var(--team); color: var(--text); font: inherit; font-family: var(--label); cursor: pointer; text-align: left; }
+.coach-tile:hover:not(:disabled) { filter: brightness(1.15); } .coach-tile > div { display: flex; flex-direction: column; gap: 3px; } .coach-tile .who-tag { margin: 0; align-self: flex-start; }
+.coach-tile-team { display: flex; align-items: center; gap: 5px; color: var(--dim); font-size: 12px; }
+.numreq { display: flex; flex-direction: column; gap: 4px; flex-basis: 100%; } .numreq-form { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; font-family: var(--label); }
+.numreq-form input { width: 60px; background: #000; color: var(--text); border: 2px solid var(--line); padding: 4px 6px; }
+.mail-btns { display: flex; gap: 6px; }
+@media (max-width: 760px) { .ceditor { grid-template-columns: 1fr; } .ceditor-preview { position: static; } }

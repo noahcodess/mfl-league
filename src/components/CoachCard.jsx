@@ -3,6 +3,7 @@ import CoachSprite from './CoachSprite.jsx';
 import CoachModal from './CoachModal.jsx';
 import StarRating from './StarRating.jsx';
 import { useCoaches, coachStars } from '../data/coaches.js';
+import { useCoachedTeams } from '../data/coached.js';
 
 // "You're the coach" card on the team hub (or "Head coach" on any team page). Tap it for his profile.
 export default function CoachCard({ team, mine }) {
@@ -10,6 +11,7 @@ export default function CoachCard({ team, mine }) {
   const [open, setOpen] = useState(false);
   const coaches = useCoaches(version);
   const coach = coaches?.[team.id];
+  const human = useCoachedTeams().includes(team.id);
   if (!coach) return null;
   return (
     <>
@@ -17,7 +19,7 @@ export default function CoachCard({ team, mine }) {
         <div className="coach-card-stage"><CoachSprite coach={coach} team={team} height={104} bob /></div>
         <div className="coach-card-body">
           <small>{mine ? "You're the coach" : 'Head coach'}</small>
-          <b>Coach {coach.name}</b>
+          <b>Coach {coach.name} <span className={`who-tag ${human ? 'person' : 'bot'}`}>{human ? '👤 Player' : '🤖 Bot'}</span></b>
           <StarRating value={coachStars(coach.ratings)} showNumber />
           <span className="coach-card-cta">{mine ? 'Tap to see your ratings and change your outfit →' : 'Tap for his profile →'}</span>
         </div>

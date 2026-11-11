@@ -3,7 +3,7 @@
 import { seeded } from './seed.js';
 
 export const SKINS = ['#fbe3d3', '#f3cfb3', '#e9b994', '#d8a27a', '#c48a5f', '#a96f49', '#8a5637', '#6c4029', '#4f2e1d'];
-const HAIR = {
+export const HAIR = {
   black: '#17110e', darkBrown: '#36231a', brown: '#5b3a24', lightBrown: '#8a5d36', auburn: '#7a3b1e',
   dirtyBlonde: '#b38a55', blonde: '#d9b871', red: '#a24a22', platinum: '#e6dcc0',
 };

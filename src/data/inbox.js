@@ -35,4 +35,5 @@ export function useInbox(userId) {
   return { mail: state.mail, lastRead: state.lastRead, unread: state.mail.filter((m) => m.id > state.lastRead).length, markAllRead };
 }
 
-export const MAIL_ICON = { trade_offer: '🔁', trade_declined: '✋', trade_vetoed: '⛔', trade_done: '🤝', trade_block: '📣', trade_window: '🚦' };
+export const MAIL_ICON = { trade_offer: '🔁', trade_declined: '✋', trade_vetoed: '⛔', trade_done: '🤝', trade_block: '📣', trade_window: '🚦',
+  coach_edit: '🧢', number_request: '🔢', number_approved: '✅', number_denied: '✋' };

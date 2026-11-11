@@ -1,4 +1,5 @@
-// Coaches: every team's coach (name, look, 5 ratings, potential), plus the coach's own outfit/name changes.
+// Coaches: every team's coach (name, look, 5 ratings, potential, scheme), the coach's own outfit and scheme, the commissioner's
+// full coach editor, and number change requests.
 import { useEffect, useState } from 'react';
 import { db } from './supabase.js';
 import { DEMO } from './demo.js';
@@ -36,9 +37,22 @@ export function useCoaches(version = 0) {
   return map;
 }
 
-export async function saveMyCoach(name, outfit) {
+export async function saveMyCoach(outfit) {
   if (DEMO) return {};
-  const { data, error } = await db.rpc('set_my_coach', { p_name: name || null, p_outfit: outfit });
+  const { data, error } = await db.rpc('set_my_coach', { p_name: null, p_outfit: outfit });
   if (error) throw new Error(clean(error.message));
   return data;
 }
+
+async function call(fn, args) {
+  if (DEMO) return {};
+  const { data, error } = await db.rpc(fn, args);
+  if (error) throw new Error(clean(error.message));
+  return data;
+}
+export const saveMyScheme = (offense, defense, auto) => call('set_my_scheme', { p_offense: offense, p_defense: defense, p_auto: auto });
+// Commissioner: anything about any coach.
+export const saveCoach = (teamId, name, looks, ratings, potential) => call('set_coach', { p_team: teamId, p_name: name, p_looks: looks, p_ratings: ratings, p_potential: potential });
+export const saveCoachScheme = (teamId, scheme) => call('set_coach_scheme', { p_team: teamId, p_scheme: scheme });
+export const requestNumber = (playerId, number) => call('request_number_change', { p_player: playerId, p_number: number });
+export const decideNumber = (requestId, approve) => call('decide_number_change', { p_request: requestId, p_approve: approve });

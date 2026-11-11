@@ -3,14 +3,18 @@ import Modal from './Modal.jsx';
 import Tabs from './Tabs.jsx';
 import CoachSprite from './CoachSprite.jsx';
 import CoachOutfit from './CoachOutfit.jsx';
+import CoachScheme from './CoachScheme.jsx';
+import { useCoachedTeams } from '../data/coached.js';
 import StarRating from './StarRating.jsx';
 import { COACH_RATINGS, coachStars } from '../data/coaches.js';
 import { outOf10 } from '../lib/format.js';
 
-// A coach's profile: his sprite, stars and potential, the 5 coach ratings (out of 10), and (for your own coach) the outfit picker.
+// A coach's profile: his sprite, Player/Bot tag, stars and potential, the 5 coach ratings (out of 10), his scheme,
+// and (for your own coach) the outfit picker.
 export default function CoachModal({ coach, team, mine, onClose, onSaved }) {
   const [preview, setPreview] = useState(null);
   const stars = coachStars(coach.ratings);
+  const human = useCoachedTeams().includes(team.id);
   return (
     <Modal onClose={onClose} className="coach-modal" style={{ '--team': team.color, '--team-accent': team.accent }}>
       <button className="modal-x" onClick={onClose} aria-label="Close">×</button>
@@ -18,7 +22,7 @@ export default function CoachModal({ coach, team, mine, onClose, onSaved }) {
         <div className="coach-stage"><CoachSprite coach={coach} team={team} looks={preview} height={196} bob /></div>
         <div>
           <div className="coach-role">Head coach · {team.name}</div>
-          <h2>Coach {coach.name}</h2>
+          <h2>Coach {coach.name} <span className={`who-tag ${human ? 'person' : 'bot'}`}>{human ? '👤 Player' : '🤖 Bot'}</span></h2>
           <div className="coach-stars"><span>Rating</span><StarRating value={stars} showNumber /></div>
           <div className="coach-stars"><span>Potential</span><StarRating value={Number(coach.potential)} elite={Number(coach.potential) === 5} showNumber /></div>
           {mine && Number(coach.potential) === 5 && <p className="dim">Coaches run by people can grow into 5★ coaches.</p>}
@@ -40,6 +44,7 @@ export default function CoachModal({ coach, team, mine, onClose, onSaved }) {
             })}
           </div>
         ) },
+        { key: 'scheme', label: 'Scheme', render: () => <CoachScheme coach={coach} team={team} mine={mine} onSaved={onSaved} /> },
         ...(mine ? [{ key: 'outfit', label: 'Outfit', render: () => <CoachOutfit coach={coach} team={team} onPreview={setPreview} onSaved={onSaved} /> }] : []),
       ]} />
     </Modal>
