@@ -5,7 +5,7 @@ import { DEMO } from './demo.js';
 
 const DEMO_BRAIN = (teamId) => ({
   mode: teamId === 'snm' ? 'win_now' : 'rebuild', rank: teamId === 'snm' ? 2 : 13, strength: teamId === 'snm' ? 4.45 : 3.55,
-  old_core: 6, young_core: 4, expiring: 11, cap_room: 1899673, firsts: 2, picks: 6, draft_season: 8, needs: ['TE', 'C', 'OT'],
+  old_core: 6, young_core: 4, expiring: 11, cap_room: 1899673, firsts: 2, picks: 6, draft_season: 8, needs: ['TE', 'C', 'OT'], future_needs: ['WR', 'DT'],
   human: teamId === 'snm', reserved: false, style: 'rebuilding',
   brain: { archetype: 'architect', aggression: 2, patience: 5, loyalty: 3, values: { picks: 92, youth: 81, stars: 37, cap: 58 } },
 });

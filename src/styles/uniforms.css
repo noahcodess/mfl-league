@@ -37,3 +37,9 @@
 .game-uniforms small { font-size: 11px; color: #dfe8dc; padding-bottom: 4px; }
 .te-jerseys .jersey-grid { grid-template-columns: repeat(4, 1fr); gap: 8px; }
 .te-jerseys .jersey-stage { padding: 6px 6px 2px; }
+.sp-note { font-size: 13px; margin: 0 0 10px; }
+.sp-pick select { font-size: 12px; padding: 3px 6px; }
+.sp-pick.on select { border-color: var(--gold); color: var(--gold); }
+.sp-tag { font-size: 11px; color: var(--gold); white-space: nowrap; }
+.game-uniforms.special { border-color: var(--gold); }
+.sp-pick select { background: var(--panel2); color: var(--text); border: 2px solid var(--line); }

@@ -42,6 +42,7 @@ export default function CoachBrain({ teamId }) {
       <h4>How he sees his team</h4>
       <ul className="cbrain-list">{situationLines(s).map((l) => <li key={l}>{l}</li>)}</ul>
       {!!s.needs?.length && <div className="cbrain-needs"><span>Biggest needs</span>{s.needs.map((p) => <b key={p}>{p}</b>)}</div>}
+      {!!s.future_needs?.length && <div className="cbrain-needs future"><span>Planning ahead (starters retiring soon, no heir yet)</span>{s.future_needs.map((p) => <b key={p}>{p}</b>)}</div>}
       {!s.human && (
         <div className="cbrain-trade">
           <span>Trading with him</span>

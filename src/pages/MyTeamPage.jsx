@@ -17,7 +17,7 @@ export default function MyTeamPage({ viewer, reload, initialTab }) {
     <div className="myteam">
       <Tabs initial={initialTab} tabs={[
         { key: 'overview', label: '🏠 Overview', render: () => <TeamOverview viewer={viewer} reload={reload} /> },
-        { key: 'schedule', label: '📅 Schedule', render: () => <TeamSchedule teamId={viewer.team_id} /> },
+        { key: 'schedule', label: '📅 Schedule', render: () => <TeamSchedule teamId={viewer.team_id} canPick /> },
         { key: 'roster', label: '📋 Roster', render: () => <TeamPage teamId={viewer.team_id} viewer={viewer} /> },
         { key: 'fa', label: '💰 Free agency', render: () => <FreeAgentsPage viewer={viewer} /> },
         { key: 'trades', label: '🔁 Trades', render: () => <TradesPage viewer={viewer} /> },

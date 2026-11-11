@@ -1,5 +1,5 @@
 // Team jerseys: each team's 4 uniforms (Home, Away, two named alternates), coach change requests, commissioner approvals and edits,
-// and the game-day rule (the home team wears the darker uniform).
+// specialty games (2 home games a season, unlimited in the playoffs) and the game-day rule (the home team wears the darker uniform).
 import { useEffect, useState } from 'react';
 import { db } from './supabase.js';
 import { DEMO } from './demo.js';
@@ -67,8 +67,35 @@ export function usePendingJerseys(teamId, version = 0) {
   return list;
 }
 
+// Specialty picks for a season: Map(gameId -> slot) for the home team's pick. Shared, reloads when someone picks.
+const picks = { season: null, map: new Map(), subs: new Set() };
+async function loadPicks(season) {
+  if (DEMO) return;
+  const { data } = await db.from('game_uniforms').select('game_id, team_id, slot, games!inner(season, home_team)').eq('games.season', season);
+  picks.season = season;
+  picks.map = new Map((data || []).filter((r) => r.team_id === r.games.home_team).map((r) => [r.game_id, r.slot]));
+  picks.subs.forEach((fn) => fn());
+}
+export function useGamePicks(season) {
+  const [, bump] = useState(0);
+  useEffect(() => {
+    const fn = () => bump((n) => n + 1);
+    picks.subs.add(fn);
+    if (picks.season !== season) loadPicks(season);
+    return () => picks.subs.delete(fn);
+  }, [season]);
+  return picks.map;
+}
+export async function pickSpecialty(gameId, slot, season) {
+  await rpc('pick_specialty_game', { p_game: gameId, p_slot: slot });
+  await loadPicks(season);
+}
+
 // Game day: home team in its Home jersey, away team in its Away jersey (the home team is always the darker one).
-export function gameUniforms(homeJerseys, awayJerseys) {
+// A specialty pick puts the home team in that alternate; if it's a light one, the visitors switch to their dark Home jersey.
+export function gameUniforms(homeJerseys, awayJerseys, homePick) {
+  const alt = homePick && homeJerseys.find((j) => j.slot === homePick);
+  if (alt) return isDark(alt.colors) ? { home: alt, away: awayJerseys[1], special: true } : { home: alt, away: awayJerseys[0], special: true, flipped: true };
   const home = homeJerseys[0], away = awayJerseys[1];
   if (home && away && brightness(home.colors.jersey) > brightness(away.colors.jersey)) {
     const lightest = [...awayJerseys].sort((x, y) => brightness(y.colors.jersey) - brightness(x.colors.jersey))[0];
