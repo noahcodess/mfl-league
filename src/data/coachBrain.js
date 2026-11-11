@@ -1,4 +1,4 @@
-// Bot brains: what a coach thinks of his team (coach_brain), the bot tick that lets bots answer trades, and "answer now".
+// Bot brains: what a coach thinks of his team (coach_brain), and "answer now" for a bot's trade.
 import { useEffect, useState } from 'react';
 import { db } from './supabase.js';
 import { DEMO } from './demo.js';
@@ -21,17 +21,6 @@ export function useCoachBrain(teamId) {
     return () => { live = false; };
   }, [teamId]);
   return brain;
-}
-
-// While someone is signed in, nudge the server every 30s so bot coaches answer trades that are due.
-export function useBotTick(on) {
-  useEffect(() => {
-    if (!on || DEMO) return undefined;
-    const tick = () => db.rpc('bot_tick').then(() => {}, () => {});
-    tick();
-    const t = setInterval(tick, 30000);
-    return () => clearInterval(t);
-  }, [on]);
 }
 
 // Commissioner: the bot answers this trade right now.

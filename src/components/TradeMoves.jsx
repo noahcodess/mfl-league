@@ -1,9 +1,8 @@
 import React from 'react';
 import TeamBadge from './TeamBadge.jsx';
 import { getTeam } from '../data/teams.js';
-import { shortDate } from '../lib/format.js';
 
-// A player's trades, newest first: date, from-team → to-team, and what he was traded for.
+// A player's trades, newest first: the season (date under it), from-team → to-team, and what he was traded for.
 export default function TradeMoves({ moves }) {
   if (!moves?.length) return null;
   return (
@@ -15,7 +14,7 @@ export default function TradeMoves({ moves }) {
           const to = getTeam(m.to);
           return (
             <li key={m.id}>
-              <span className="dim">{shortDate(m.at).replace(/,? \d+:\d+.*$/, '')}</span>
+              <span className="career-trade-when"><b>{m.season ? `Season ${m.season}` : 'Season ?'}</b><small>{new Date(m.at).toLocaleDateString(undefined, { month: 'long', day: 'numeric', year: 'numeric' })}</small></span>
               <span className="career-trade-teams">{from && <TeamBadge team={from} size="sm" />}<i>→</i>{to && <TeamBadge team={to} size="sm" />}<b>{to?.name}</b></span>
               {m.note && <small>{m.note}</small>}
             </li>

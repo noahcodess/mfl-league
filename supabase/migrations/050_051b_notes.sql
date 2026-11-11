@@ -1,0 +1,2 @@
+-- 050 (applied live): player touch-ups (ratings, height, weight, age).
+-- 051b (applied live): retirement log shows the age of his last season (age - 1 after the birthday).

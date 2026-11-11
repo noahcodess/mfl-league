@@ -54,3 +54,6 @@
 .career-college { padding: 8px 12px; margin: -4px 0 10px; background: var(--panel2); border: 2px solid #000; border-left: 4px solid var(--ice, #9fd3ff); }
 .dstatus { align-self: center; font-family: var(--label); font-weight: 800; padding: 8px 12px; border: 2px solid currentColor; }
 .dstatus.live { color: #ff6b6b; } .dstatus.done { color: var(--good); }
+.sched-auto { grid-column: 1 / -1; min-width: 300px; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; font-size: 13px; color: var(--dim); cursor: pointer; }
+.sched-auto.on { color: var(--good); font-weight: 700; } .sched-auto.manual { cursor: default; font-style: italic; }
+.sched-auto em { font-style: normal; margin-left: 6px; } .sched-auto em.bad { color: var(--bad); }

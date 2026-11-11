@@ -25,8 +25,8 @@ export function useSchedule(season, version = 0) {
   useEffect(() => {
     let live = true;
     if (DEMO) { setRows(demoRows()); return undefined; }
-    db.from('league_schedule').select('kind, label, starts_at').eq('season', season).order('starts_at')
-      .then(({ data }) => { if (live) setRows((data || []).map((r) => ({ kind: r.kind, label: r.label, at: r.starts_at }))); });
+    db.from('league_schedule').select('kind, label, starts_at, auto, auto_ran_at, auto_error').eq('season', season).order('starts_at')
+      .then(({ data }) => { if (live) setRows((data || []).map((r) => ({ kind: r.kind, label: r.label, at: r.starts_at, auto: r.auto, ranAt: r.auto_ran_at, autoError: r.auto_error }))); });
     return () => { live = false; };
   }, [season, version]);
   return rows;
@@ -38,6 +38,16 @@ export async function setScheduleItem(season, kind, label, atIso) {
   const { data, error } = await db.rpc('set_schedule_for', { p_season: season, p_kind: kind, p_label: label, p_at: atIso });
   if (error) throw new Error(clean(error.message));
   return data;
+}
+
+// Which dates can run themselves when the countdown hits 0 (never the draft or games: the commissioner starts those).
+export const AUTO_KINDS = ['birthday', 'resign', 'fa_open', 'fa_round_1', 'fa_round_2', 'fa_round_3', 'fa_round_4', 'camp'];
+
+// Commissioner: turn auto-run on or off for one date.
+export async function setScheduleAuto(season, kind, auto) {
+  if (DEMO) return;
+  const { error } = await db.rpc('set_schedule_auto', { p_season: season, p_kind: kind, p_auto: auto });
+  if (error) throw new Error(clean(error.message));
 }
 
 // League numbers (draft clocks, how early rooms open). Returns key -> number.
