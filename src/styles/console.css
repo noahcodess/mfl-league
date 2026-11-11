@@ -71,3 +71,22 @@
 .cap-left small { grid-column: 1 / -1; color: var(--dim); font-size: 12px; }
 .cap-left.tight { border-color: var(--gold); } .cap-left.tight b { color: var(--gold); }
 .cap-left.over { border-color: var(--bad); } .cap-left.over b { color: var(--bad); }
+
+/* Accounts: "Coach" + name box, passcodes waiting to join */
+.acct-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 10px; }
+.coach-name-box { display: flex; align-items: stretch; border: 2px solid var(--line); background: #000; }
+.coach-name-box span { display: grid; place-items: center; padding: 0 10px; background: var(--panel2); color: var(--text); font-weight: 700; border-right: 2px solid var(--line); }
+.coach-name-box input { flex: 1; min-width: 0; border: none; background: transparent; color: var(--text); padding: 8px 10px; font: inherit; }
+.coach-name-box:focus-within { border-color: var(--gold); }
+.invites { margin-top: 14px; } .invites h4 { margin: 0 0 6px; font-family: var(--label); }
+.invite-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; padding: 6px 8px; background: var(--panel2); border: 2px solid #000; border-left: 4px solid var(--gold); margin-top: 4px; }
+.invite-row .btn { margin-left: auto; }
+/* Login: first-time join + testing switch */
+.join-welcome { margin: 4px 0 12px; padding: 10px 12px; background: #000; border-left: 4px solid var(--gold); } .join-welcome b { font-size: 18px; font-family: var(--label); }
+.join-welcome.ok { border-left-color: var(--good); animation: tab-in .3s ease-out both; } .join-welcome p { margin: 6px 0 0; font-size: 14px; }
+.commish-test { display: flex; align-items: center; gap: 6px; margin-top: 10px; font-size: 12px; color: var(--dim); cursor: pointer; }
+/* Season tab: game weeks */
+.weeks { display: grid; grid-template-columns: minmax(260px, 1fr) 1.4fr; gap: 12px; } @media (max-width: 760px) { .weeks { grid-template-columns: 1fr; } }
+.week-card { display: flex; flex-direction: column; gap: 6px; align-items: flex-start; } .week-label { color: var(--dim); font-family: var(--label); text-transform: uppercase; letter-spacing: 2px; font-size: 12px; font-weight: 700; }
+.week-num { font-size: 36px; font-family: var(--label); color: var(--gold); } .week-result { color: var(--good); font-weight: 700; margin: 4px 0 0; }
+.week-list { margin: 0; padding-left: 18px; display: grid; gap: 4px; }

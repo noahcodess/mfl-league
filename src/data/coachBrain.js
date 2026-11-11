@@ -42,20 +42,3 @@ export async function botAnswerNow(tradeId) {
   return data;
 }
 
-// Commissioner: run a bot week now (blocks, rare bot trades, rare offers to coaches, in-season signings).
-export async function botRunWeek() {
-  if (DEMO) return { blocks: 12, deals: 1, offers: 0, filled: 0 };
-  const { data, error } = await db.rpc('bot_run_week');
-  if (error) throw new Error(error.message.includes('not allowed') ? 'Only the commissioner can do this.' : error.message.replace(/^.*?ERROR:\s*/, ''));
-  return data;
-}
-
-// When the last bot week ran (ISO string), or null.
-export function useBotWeekLast(version = 0) {
-  const [last, setLast] = useState(null);
-  useEffect(() => {
-    if (DEMO) { setLast(new Date(Date.now() - 2 * 864e5).toISOString()); return; }
-    db.from('league_settings').select('value').eq('key', 'bot_week_last').maybeSingle().then(({ data }) => setLast(data?.value || null));
-  }, [version]);
-  return last;
-}

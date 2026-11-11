@@ -36,6 +36,9 @@ export function currentPhase() {
   return store.league.meta.phase || 'offseason';
 }
 
+// Game week of the regular season (0 before Week 1).
+export const currentWeek = () => store.league.meta.currentWeek ?? 0;
+
 export const PHASE_NAMES = { offseason: 'Offseason', regular_season: 'Regular Season', playoffs: 'Playoffs' };
 
 // Which offseason step is up next (0 = Birthday & Farewell ... 4 = Training camp).

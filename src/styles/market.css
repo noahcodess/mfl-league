@@ -1,4 +1,4 @@
-/* Free agent market: position filters, the player grid, offer panel, offer reads, and the round card in League Control. */
+/* Free agent market: position filters, the player grid, offer panel, offer reads, and the round card in Commissioner's Desk. */
 .fa-filters { display: flex; flex-wrap: wrap; gap: 10px; justify-content: space-between; align-items: center; margin-bottom: 12px; }
 .pos-chips { display: flex; flex-wrap: wrap; gap: 4px; }
 .pos-chips button { font-family: var(--label); font-weight: 700; font-size: 12px; padding: 4px 8px; color: var(--dim); background: var(--panel2); border: 2px solid #000; cursor: pointer; }

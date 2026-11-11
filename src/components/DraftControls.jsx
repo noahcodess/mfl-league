@@ -43,7 +43,7 @@ export default function DraftControls({ season, info, draftAt, prospects, presen
           <div className="desk-start">
             <div>
               <b>{draftAt ? `Draft night: ${whenText(draftAt)}` : 'No draft night set yet'}</b>
-              <small>{why || (inSandbox() ? '🧪 TEST mode: you can start the draft at any step to try it out.' : 'Ready. You can start now, early or on time. Set the time in League Control → Schedule.')}</small>
+              <small>{why || (inSandbox() ? '🧪 TEST mode: you can start the draft at any step to try it out.' : "Ready. You can start now, early or on time. Set the time in Commissioner's Desk → Schedule.")}</small>
             </div>
             <ConfirmButton className="btn start-draft" label="▶ START DRAFT" disabled={!!why} title={`Start the Season ${season} draft now?`} yes="Start the draft"
               text="The first team goes on the clock in 10 seconds and every coach sees it live." onConfirm={act(startDraft)} />

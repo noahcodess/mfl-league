@@ -1,24 +1,21 @@
 import React, { useEffect, useState } from 'react';
-import OffseasonSteps, { OFFSEASON_STEPS } from '../components/OffseasonSteps.jsx';
-import LeagueLog from '../components/LeagueLog.jsx';
-import Modal from '../components/Modal.jsx';
-import DealInbox from '../components/DealInbox.jsx';
-import FaRoundCard from '../components/FaRoundCard.jsx';
+import OffseasonSteps, { OFFSEASON_STEPS } from './OffseasonSteps.jsx';
+import LeagueLog from './LeagueLog.jsx';
+import Modal from './Modal.jsx';
+import DealInbox from './DealInbox.jsx';
+import FaRoundCard from './FaRoundCard.jsx';
 import { useNegotiations } from '../data/negotiations.js';
-import { currentSeason, currentPhase, offseasonStep, leagueEvents, PHASE_NAMES, FA_WINDOW } from '../data/teams.js';
+import { currentPhase, offseasonStep, leagueEvents, PHASE_NAMES, FA_WINDOW } from '../data/teams.js';
 import { inSandbox } from '../data/sandbox.js';
-import SandboxButton from '../components/SandboxButton.jsx';
 import { advanceOffseason, undoLastStep, lastSnapshotLabel } from '../data/leagueEngine.js';
 import { previewStep } from '../lib/stepPreview.js';
-import Tabs from '../components/Tabs.jsx';
-import ScheduleEditor from '../components/ScheduleEditor.jsx';
-import DraftSettings from '../components/DraftSettings.jsx';
-import CommishTrades from '../components/CommishTrades.jsx';
-import CoachList from '../components/CoachList.jsx';
+import Tabs from './Tabs.jsx';
+import DraftSettings from './DraftSettings.jsx';
 import { links } from '../lib/router.js';
 
-// League Control, in tabs: the offseason calendar (preview, run or undo the next step), the schedule (real dates), and draft settings.
-export default function LeagueControlPage({ canControl, reload, viewerKey }) {
+// Commissioner's Desk → Offseason: the next step (preview, run or undo), deals waiting for approval, the league log,
+// the offseason calendar, and the draft settings.
+export default function OffseasonPanel({ canControl, reload, viewerKey }) {
   const [confirm, setConfirm] = useState(null); // 'run' | 'undo'
   const [busy, setBusy] = useState(false);
   const [note, setNote] = useState(null);
@@ -47,19 +44,9 @@ export default function LeagueControlPage({ canControl, reload, viewerKey }) {
 
   return (
     <div>
-      <div className="console-head">
-        <div><h1>League Control</h1><div className="dim">Season {currentSeason()} · {PHASE_NAMES[phase]}. You set the pace; the league does the rest.</div></div>
-        {canControl && (
-          <div className="test-card">
-            <span>{inSandbox() ? '🧪 TEST mode is on. Leaving it resets the league.' : '🧪 Try anything first: TEST mode resets when you leave it.'}</span>
-            <SandboxButton onChanged={reload} />
-          </div>
-        )}
-      </div>
-      {!canControl && <div className="notice">View only. The commissioner runs these steps with his key.</div>}
       {note && <div className={`notice ${note.ok ? 'good' : 'bad'}`}>{note.text}</div>}
       <Tabs tabs={[
-        { key: 'offseason', label: '📆 Offseason', render: () => (
+        { key: 'steps', label: 'Steps', render: () => (
           <div className="two-col wide-left">
             <div>
               {inOffseason && step === FA_WINDOW && <FaRoundCard canControl={canControl} onDone={async () => { setVersion((v) => v + 1); await reload(); }} />}
@@ -83,7 +70,7 @@ export default function LeagueControlPage({ canControl, reload, viewerKey }) {
               ) : (
                 <section className="card next-step">
                   <h3>{PHASE_NAMES[phase]}</h3>
-                  <p className="dim">The schedule and game weeks plug in here next.</p>
+                  <p className="dim">The offseason is over. Game weeks run from the Season tab.</p>
                   {undoLabel && <button className="btn ghost" disabled={!canControl || busy} onClick={() => setConfirm('undo')}>Undo last step</button>}
                 </section>
               )}
@@ -93,10 +80,7 @@ export default function LeagueControlPage({ canControl, reload, viewerKey }) {
             <OffseasonSteps current={inOffseason ? step : OFFSEASON_STEPS.length + 1} title="Offseason calendar" />
           </div>
         ) },
-        { key: 'schedule', label: '📅 Schedule', render: () => <ScheduleEditor canControl={canControl} /> },
-        { key: 'draft', label: '🏈 Draft', render: () => <DraftSettings canControl={canControl} /> },
-        { key: 'trades', label: '🔁 Trades', render: () => <CommishTrades canControl={canControl} /> },
-        { key: 'coaches', label: '🧢 Coaches', render: () => <CoachList canControl={canControl} /> },
+        { key: 'draft', label: 'Draft settings', render: () => <DraftSettings canControl={canControl} /> },
       ]} />
       {confirm && (
         <Modal onClose={() => !busy && setConfirm(null)}>

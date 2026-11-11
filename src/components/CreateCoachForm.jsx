@@ -1,23 +1,22 @@
 import React, { useState } from 'react';
-import Field from './Field.jsx';
 
-// Commissioner form: new coach username, display name and team. Teams that already have a coach are hidden.
+// Commissioner form: "Coach" + a name (required) and a team, which makes a one-time passcode to send them.
+// Teams that already have a coach (or a passcode waiting) are hidden.
 export default function CreateCoachForm({ teams, takenTeams, onCreate }) {
-  const [username, setUsername] = useState('');
-  const [displayName, setDisplayName] = useState('');
+  const [name, setName] = useState('');
   const [teamId, setTeamId] = useState('');
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
   const open = teams.filter((t) => !takenTeams.has(t.id));
+  const clean = name.replace(/^\s*coach\s+/i, '');
 
   const submit = async (e) => {
     e.preventDefault();
     setBusy(true);
     setError('');
     try {
-      await onCreate(username, teamId, displayName);
-      setUsername('');
-      setDisplayName('');
+      await onCreate(clean.trim(), teamId);
+      setName('');
       setTeamId('');
     } catch (err) {
       setError(err.message);
@@ -29,18 +28,25 @@ export default function CreateCoachForm({ teams, takenTeams, onCreate }) {
     <section className="card">
       <h3>Add a coach</h3>
       <form className="stack-form" onSubmit={submit}>
-        <Field id="new-user" label="Username" value={username} onChange={(e) => setUsername(e.target.value.toLowerCase())}
-          hint="3 to 20 characters: lowercase letters, numbers or _" required autoComplete="off" />
-        <Field id="new-name" label="Name (optional)" value={displayName} onChange={(e) => setDisplayName(e.target.value)} placeholder="Discord name" />
+        <div className="field">
+          <label htmlFor="new-name">Name</label>
+          <div className="coach-name-box">
+            <span>Coach</span>
+            <input id="new-name" value={clean} onChange={(e) => setName(e.target.value)} maxLength={20} required autoComplete="off"
+              placeholder="We recommend first name, Discord name or nickname" />
+          </div>
+          <small className="hint">Short and simple: Coach Noah, Coach Fins, Coach Mason.</small>
+        </div>
         <div className="field">
           <label htmlFor="new-team">Team</label>
-          <select id="new-team" value={teamId} onChange={(e) => setTeamId(e.target.value)}>
-            <option value="">No team yet</option>
+          <select id="new-team" value={teamId} onChange={(e) => setTeamId(e.target.value)} required>
+            <option value="">Pick a team</option>
             {open.map((t) => <option key={t.id} value={t.id}>{t.name}</option>)}
           </select>
         </div>
         {error && <div className="form-error">{error}</div>}
-        <button className="btn wide" disabled={busy || !username}>{busy ? 'Creating...' : 'Create account'}</button>
+        <button className="btn wide" disabled={busy || clean.trim().length < 2 || !teamId}>{busy ? 'Making passcode...' : 'Make one-time passcode'}</button>
+        <p className="dim help">You send them the passcode. They enter it once on the login page, then make their own username and password. You never see their password.</p>
       </form>
     </section>
   );

@@ -5,7 +5,7 @@ import { links } from '../lib/router.js';
 import { plural } from '../lib/format.js';
 import { inSandbox } from '../data/sandbox.js';
 
-// League Control during free agency: run the next round (bots bid, every free agent picks), with confirm and a recap.
+// Commissioner's Desk during free agency: run the next round (bots bid, every free agent picks), with confirm and a recap.
 export default function FaRoundCard({ canControl, onDone }) {
   const [confirm, setConfirm] = useState(false);
   const [busy, setBusy] = useState(false);

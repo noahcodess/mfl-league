@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-// Tiny hash router: '' = home, '#league', '#team-<id>' = roster, '#free-agents', '#data-check', '#login', '#console', '#control'.
+// Tiny hash router: '' = home, '#league', '#team-<id>' = roster, '#free-agents', '#data-check', '#login', '#control' (Commissioner's Desk; '#console' redirects to its Accounts tab).
 export function parseHash(hash) {
   const h = (hash || '').replace(/^#/, '');
   if (h.startsWith('team-')) return { page: 'team', id: h.slice(5) };
@@ -8,6 +8,7 @@ export function parseHash(hash) {
   if (h === 'login') return { page: 'login' };
   if (h === 'console') return { page: 'console' };
   if (h === 'control') return { page: 'control' };
+  if (h === 'control-accounts') return { page: 'control', tab: 'accounts' };
   if (h === 'league') return { page: 'league' };
   if (h === 'free-agents') return { page: 'freeAgents' };
   if (h === 'draft') return { page: 'draft' };
@@ -36,6 +37,7 @@ export const links = {
   login: '#login',
   console: '#console',
   control: '#control',
+  accounts: '#control-accounts',
   freeAgents: '#free-agents',
   draft: '#draft',
   trades: '#trades',
@@ -46,6 +48,6 @@ export const links = {
 
 // Where someone lands after logging in.
 export function homeFor(profile) {
-  if (profile?.role === 'commissioner') return links.console;
+  if (profile?.role === 'commissioner') return links.control;
   return links.home;
 }

@@ -8,10 +8,9 @@ import LoginPage from './pages/LoginPage.jsx';
 import ChangePasswordPage from './pages/ChangePasswordPage.jsx';
 import KeySetupPage from './pages/KeySetupPage.jsx';
 import KeyUnlockPage from './pages/KeyUnlockPage.jsx';
-import ConsolePage from './pages/ConsolePage.jsx';
 import HomePage from './pages/HomePage.jsx';
 import DashboardPage from './pages/DashboardPage.jsx';
-import LeagueControlPage from './pages/LeagueControlPage.jsx';
+import CommissionerDeskPage from './pages/CommissionerDeskPage.jsx';
 import FreeAgentsPage from './pages/FreeAgentsPage.jsx';
 import DraftPage from './pages/DraftPage.jsx';
 import DraftDeskPage from './pages/DraftDeskPage.jsx';
@@ -24,7 +23,7 @@ import ScheduleNotice from './components/ScheduleNotice.jsx';
 import { usePresenceHeartbeat } from './data/presence.js';
 import { useBotTick } from './data/coachBrain.js';
 import { inSandbox } from './data/sandbox.js';
-import { useHashRoute, homeFor } from './lib/router.js';
+import { useHashRoute, homeFor, links } from './lib/router.js';
 import { brandColors } from './lib/color.js';
 import { useSession, loginStep } from './data/session.js';
 import { loadLeague } from './data/loadLeague.js';
@@ -37,19 +36,14 @@ function Screen({ route, session, step, reload }) {
   const Forced = FORCED[step];
   if (Forced) return <Forced session={session} />;
   if (route.page === 'login') return step === 'ready' ? <Redirect to={homeFor(session.profile)} /> : step === 'login' ? <LoginPage notice={session.error} /> : null;
-  if (route.page === 'console') {
-    if (step === 'login') return <LoginPage />;
-    if (step !== 'ready') return null;
-    const p = session.profile;
-    if (p.role === 'commissioner' || p.site_owner) return <ConsolePage readOnly={p.role !== 'commissioner' && !session.unlocked} testMode={p.site_owner && session.unlocked} />;
-    return <div className="notice bad">Commissioner only.</div>;
-  }
+  if (route.page === 'console') return <Redirect to={links.accounts} />;
   if (route.page === 'control') {
     if (step === 'login') return <LoginPage />;
     if (step !== 'ready') return null;
     const p = session.profile;
     if (p.role !== 'commissioner' && !p.site_owner) return <div className="notice bad">Commissioner only.</div>;
-    return <LeagueControlPage canControl={p.role === 'commissioner' || session.unlocked} reload={reload} viewerKey={`${p.user_id}-${session.unlocked}`} />;
+    return <CommissionerDeskPage canControl={p.role === 'commissioner' || session.unlocked} reload={reload} viewerKey={`${p.user_id}-${session.unlocked}`}
+      accountsReadOnly={p.role !== 'commissioner' && !session.unlocked} testMode={p.site_owner && session.unlocked} initialTab={route.tab} />;
   }
   if (route.page === 'home') {
     const p = step === 'ready' ? session.profile : null;

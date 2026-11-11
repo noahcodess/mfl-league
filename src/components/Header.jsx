@@ -24,8 +24,7 @@ export default function Header({ page, session, ready, live, onLeagueChange }) {
         <a className={page === 'draft' ? 'on' : ''} href={links.draft}>Draft</a>
         {ready && <a className={page === 'trades' ? 'on' : ''} href={links.trades}>Trades</a>}
         <a className={page === 'dataCheck' ? 'on' : ''} href={links.dataCheck}>Data Check</a>
-        {isCommish && <a className={page === 'control' ? 'on' : ''} href={links.control}>League Control</a>}
-        {isCommish && <a className={page === 'console' ? 'on' : ''} href={links.console}>Accounts</a>}
+        {isCommish && <a className={page === 'control' ? 'on' : ''} href={links.control}>Commissioner's Desk</a>}
       </nav>
       <div className="header-right">
         <span className="season" title={live ? 'Live league data' : 'Offline copy of the league data'}>
