@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import ConfirmButton from './ConfirmButton.jsx';
+import MoraleRules from './MoraleRules.jsx';
 import { useLeagueNumbers, setLeagueNumber } from '../data/schedule.js';
 import { currentSeason } from '../data/teams.js';
 
-// Commissioner's Desk → Offseason → League rules: when regression starts, and the aging rules in plain words.
+// Commissioner's Desk → Offseason → League rules: when regression starts, the aging rules in plain words, and morale.
 export default function LeagueRules({ canControl }) {
   const [version, setVersion] = useState(0);
   const nums = useLeagueNumbers(['regression_from_season'], version);
@@ -28,6 +29,7 @@ export default function LeagueRules({ canControl }) {
         </div>
         <p className="dim">Heads up: the league has a big group of 26 year olds right now, so the first regression birthday hits hard (most current 5★ players slip). Starting a season later spreads it out.</p>
       </section>
+      <MoraleRules canControl={canControl} />
     </div>
   );
 }

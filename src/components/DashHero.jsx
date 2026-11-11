@@ -1,5 +1,6 @@
 import React from 'react';
 import TeamBadge from './TeamBadge.jsx';
+import TeamTrophies from './TeamTrophies.jsx';
 import RatingChip from './RatingChip.jsx';
 import CapBar from './CapBar.jsx';
 import { links } from '../lib/router.js';
@@ -13,6 +14,7 @@ export default function DashHero({ team, capUsed, capLimit, coachName }) {
       <div className="team-title">
         <span className="conf-tag">Welcome back{coachName ? `, ${coachName}` : ''} · Season {currentSeason()} {PHASE_NAMES[currentPhase()]}</span>
         <h1>{team.name}</h1>
+        <TeamTrophies teamId={team.id} />
         <div className="chips">
           <RatingChip label="Overall" rating={team.overall} />
           <RatingChip label="Offense" rating={team.offense} />

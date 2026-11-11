@@ -8,6 +8,7 @@ import PlayerModal from './PlayerModal.jsx';
 import NegotiationModal from './NegotiationModal.jsx';
 import ComingUp from './ComingUp.jsx';
 import CoachCard from './CoachCard.jsx';
+import LockerRoom from './LockerRoom.jsx';
 import { getTeam, getTeams, capLimit, currentSeason, offseasonStep, resignOpen } from '../data/teams.js';
 import { getPlayers, teamCapUsed } from '../data/players.js';
 import { getPicks } from '../data/picks.js';
@@ -16,7 +17,7 @@ import { usePlayerTraits } from '../data/traits.js';
 import { useNegotiations } from '../data/negotiations.js';
 import { currentPhase } from '../data/teams.js';
 
-// My Team → Overview: his team in its colors, countdowns to the next league events, the offseason road map, contracts to deal with,
+// My Team → Overview: his team in its colors, countdowns to the next league events, the offseason road map, the locker room, contracts to deal with,
 // next draft and his conference.
 export default function TeamOverview({ viewer, reload }) {
   const [open, setOpen] = useState(null);
@@ -39,6 +40,7 @@ export default function TeamOverview({ viewer, reload }) {
         <OffseasonSteps current={offseasonStep()} compact />
         <PickList picks={draftPicks} currentSeason={currentSeason()} title={`Season ${currentSeason()} draft`} />
       </div>
+      <LockerRoom team={team} players={players} onOpen={setOpen} />
       <ContractWatch players={players} team={team} potentials={potentials.map} traits={traits} negotiations={negotiations} onOpen={setOpen} onNegotiate={setTalk} />
       <ConferenceTable name={team.conference} teams={getTeams().filter((t) => t.conference === team.conference)} />
       <PlayerModal player={open} team={team} myTeamId={viewer.team_id} canSeePotential traits={open ? traits[open.id] : null} potential={open && potentials.loaded ? (potentials.map[open.id] ?? null) : undefined} onClose={() => setOpen(null)} />

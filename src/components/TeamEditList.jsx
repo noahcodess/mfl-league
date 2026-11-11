@@ -2,9 +2,10 @@ import React, { useState } from 'react';
 import TeamBadge from './TeamBadge.jsx';
 import TeamEditor from './TeamEditor.jsx';
 import RivalryList from './RivalryList.jsx';
+import CraftBowlList from './CraftBowlList.jsx';
 import { getTeams, getConferences } from '../data/teams.js';
 
-// Commissioner's Desk → Teams: every team as a card (logo, name, abbreviation, colors; tap one to edit it), and the rivalries.
+// Commissioner's Desk → Teams: every team as a card (logo, name, abbreviation, colors; tap one to edit it), the rivalries and the Craft Bowl history.
 export default function TeamEditList({ canControl, reload }) {
   const [open, setOpen] = useState(null);
   return (
@@ -25,6 +26,7 @@ export default function TeamEditList({ canControl, reload }) {
         </section>
       ))}
       <RivalryList canControl={canControl} />
+      <CraftBowlList canControl={canControl} />
       {open && <TeamEditor team={open} canControl={canControl} onClose={() => setOpen(null)} onSaved={reload} />}
     </div>
   );

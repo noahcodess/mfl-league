@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import TeamBadge from '../components/TeamBadge.jsx';
+import TeamTrophies from '../components/TeamTrophies.jsx';
 import RatingChip from '../components/RatingChip.jsx';
 import CapBar from '../components/CapBar.jsx';
 import Roster from '../components/Roster.jsx';
@@ -31,6 +32,7 @@ export default function TeamPage({ teamId, viewer }) {
         <div className="team-title">
           <span className="conf-tag">{team.conference} Conference{isMine && ' · Your team'}</span>
           <h1>{team.name}</h1>
+          <TeamTrophies teamId={team.id} />
           <div className="chips">
             <RatingChip label="Overall" rating={team.overall} />
             <RatingChip label="Offense" rating={team.offense} />

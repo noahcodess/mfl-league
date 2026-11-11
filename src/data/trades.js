@@ -39,16 +39,17 @@ export function useTrades(viewerKey, version = 0) {
   return trades;
 }
 
-// { untouchables: Set(playerId), block: Map(playerId -> addedAt), open: bool, mode: 'auto'|'open'|'closed' }
+// { untouchables: Set(playerId), block: Map(playerId -> addedAt), requests: Set(playerId who asked out), open: bool, mode: 'auto'|'open'|'closed' }
 export function useTradeMarks(version = 0) {
-  const [marks, setMarks] = useState({ untouchables: new Set(), block: new Map(), open: false, mode: 'auto' });
+  const [marks, setMarks] = useState({ untouchables: new Set(), block: new Map(), requests: new Set(), open: false, mode: 'auto' });
   useEffect(() => {
     let live = true;
-    if (DEMO) { setMarks({ untouchables: new Set(), block: new Map(), open: true, mode: 'auto' }); return undefined; }
+    if (DEMO) { setMarks({ untouchables: new Set(), block: new Map(), requests: new Set(), open: true, mode: 'auto' }); return undefined; }
     Promise.all([db.from('untouchables').select('player_id'), db.from('trade_block').select('player_id, added_at'), db.rpc('trades_open'),
-      db.from('league_settings').select('value').eq('key', 'trade_window').maybeSingle()])
-      .then(([u, b, o, m]) => {
-        if (live) setMarks({ untouchables: new Set((u.data || []).map((r) => r.player_id)), block: new Map((b.data || []).map((r) => [r.player_id, r.added_at])), open: o.data === true, mode: m.data?.value || 'auto' });
+      db.from('league_settings').select('value').eq('key', 'trade_window').maybeSingle(), db.from('trade_requests').select('player_id').eq('status', 'open')])
+      .then(([u, b, o, m, r]) => {
+        if (live) setMarks({ untouchables: new Set((u.data || []).map((x) => x.player_id)), block: new Map((b.data || []).map((x) => [x.player_id, x.added_at])),
+          requests: new Set((r.data || []).map((x) => x.player_id)), open: o.data === true, mode: m.data?.value || 'auto' });
       });
     return () => { live = false; };
   }, [version]);

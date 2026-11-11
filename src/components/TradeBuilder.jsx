@@ -56,9 +56,9 @@ export default function TradeBuilder({ myTeamId, partnerId, withPlayer, onClose,
       </div>
       {!marks.open && <p className="notice bad">Trading is closed right now. You can still build it; sending will be refused until it opens.</p>}
       <div className="tcols">
-        <TradeColumn title="You send" team={me} assets={teamAssets(myTeamId)} chosen={give} max={MAX} onToggle={toggle(setGive)} untouchables={marks.untouchables} block={marks.block} />
+        <TradeColumn title="You send" team={me} assets={teamAssets(myTeamId)} chosen={give} max={MAX} onToggle={toggle(setGive)} untouchables={marks.untouchables} block={marks.block} requests={marks.requests} />
         <div className="tswap">⇄</div>
-        <TradeColumn title="You get" team={them} assets={teamAssets(partner)} chosen={get} max={MAX} onToggle={toggle(setGet)} untouchables={marks.untouchables} block={marks.block} lockUntouchables />
+        <TradeColumn title="You get" team={them} assets={teamAssets(partner)} chosen={get} max={MAX} onToggle={toggle(setGet)} untouchables={marks.untouchables} block={marks.block} requests={marks.requests} lockUntouchables />
       </div>
       <div className="timpact">
         <span className={myCap > capLimit() ? 'bad' : ''}>Your cap after: <b>{money(myCap)}</b> / {money(capLimit())}</span>

@@ -44,7 +44,8 @@
 .slot.open { color: var(--faint); font-style: italic; }
 .slot.flag .slot-name::after { content: ' !'; color: var(--warn); }
 
-.mood { font-size: 11px; padding: 2px 7px; background: var(--panel2); border: 1px solid var(--line); }
+.mood { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; }
+.mood img { image-rendering: pixelated; display: block; }
 .mood-happy { color: var(--good); } .mood-excited { color: var(--gold); } .mood-angry, .mood-unhappy { color: var(--bad); }
 .mood.none { background: none; border: 0; color: var(--faint); }
 

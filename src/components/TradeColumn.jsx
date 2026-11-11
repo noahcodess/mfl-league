@@ -3,8 +3,8 @@ import TradeAsset from './TradeAsset.jsx';
 import TeamBadge from './TeamBadge.jsx';
 
 // One side of the trade builder: a team's players and picks to tap into the trade (up to the max), with a search.
-// Their untouchables are locked; players on the trade block get a 📣.
-export default function TradeColumn({ title, team, assets, chosen, max, onToggle, untouchables, block, lockUntouchables }) {
+// Their untouchables are locked; players on the trade block get a 📣, players who asked out say so.
+export default function TradeColumn({ title, team, assets, chosen, max, onToggle, untouchables, block, requests, lockUntouchables }) {
   const [q, setQ] = useState('');
   const [tab, setTab] = useState('players');
   const has = (x) => chosen.some((c) => c.id === x.id);
@@ -29,7 +29,7 @@ export default function TradeColumn({ title, team, assets, chosen, max, onToggle
       {tab === 'players' && <input className="search" placeholder="Search" value={q} onChange={(e) => setQ(e.target.value)} />}
       <div className="tcol-list">
         {(tab === 'players' ? players : assets.picks).filter((x) => !has(x)).map((x) => (
-          <TradeAsset key={x.id} item={x} locked={lockUntouchables && untouchables.has(x.id)} tag={block.has(x.id) ? <span title="On the trade block"> 📣</span> : null}
+          <TradeAsset key={x.id} item={x} locked={lockUntouchables && untouchables.has(x.id)} tag={requests?.has(x.id) ? <span className="wants-out" title="He asked for a trade"> 📣 Wants out</span> : block.has(x.id) ? <span title="On the trade block"> 📣</span> : null}
             onClick={full ? undefined : () => onToggle(x)} />
         ))}
       </div>

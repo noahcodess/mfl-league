@@ -5,7 +5,7 @@ import { usePlayerHistory, DEAL_SOURCE, DEAL_STATUS } from '../data/playerHistor
 import { getTeam } from '../data/teams.js';
 import { money } from '../lib/format.js';
 
-const LEFT = { let_go: 'Not re-signed: went to free agency', talks_failed: 'Contract talks fell apart', walked: 'Walked in free agency' };
+const LEFT = { let_go: 'Not re-signed: went to free agency', talks_failed: 'Contract talks fell apart', walked: 'Walked in free agency', released: 'Released' };
 const seasons = (a, b) => (a === b ? `Season ${a}` : `Seasons ${a}–${b}`);
 
 // "Past teams" tab: his draft pick, his college under it, every team he's played for and the deals he signed (newest first), then his trades.

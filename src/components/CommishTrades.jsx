@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import TradeCard from './TradeCard.jsx';
 import ConfirmButton from './ConfirmButton.jsx';
+import CommishRequests from './CommishRequests.jsx';
 import { useTrades, useTradeMarks, setTradeWindow } from '../data/trades.js';
 import { useCoachedTeams } from '../data/coached.js';
 
 const MODES = [['auto', 'Follow the calendar'], ['open', 'Force open'], ['closed', 'Force closed']];
 
-// Commissioner: the trade window switch and every open trade in the league (veto, accept, or let a bot answer now).
+// Commissioner: the trade window switch, trade requests, and every open trade in the league (veto, accept, or let a bot answer now).
 export default function CommishTrades({ canControl, compact }) {
   const [version, setVersion] = useState(0);
   const trades = useTrades('commish', version);
@@ -31,6 +32,7 @@ export default function CommishTrades({ canControl, compact }) {
           <p className="dim">Dates live in the Schedule tab: Trades open, and the Trade deadline (between the last game of Week 8 and the first game of Week 9 once games exist). Max 5 items a side, 2 untouchables per team.</p>
         </div>
       )}
+      {!compact && <CommishRequests canControl={canControl} />}
       <h3>Open trades <span className="count">{pending.length}</span></h3>
       {!pending.length && <p className="dim">No trades waiting.</p>}
       {pending.map((t) => <TradeCard key={t.id} trade={t} commish={canControl} coached={coached} onChange={() => setVersion((v) => v + 1)} />)}
