@@ -64,3 +64,11 @@
 .tside-head { display: flex; align-items: center; gap: 6px; margin-bottom: 4px; } .tside-head small { margin: 0 !important; }
 @media (max-width: 800px) { .tbanner { grid-template-columns: 1fr; text-align: center; } .tbanner-team, .tbanner-team:last-child { flex-direction: column; text-align: center; } }
 .tbanner .logo-lg { width: 72px; height: 72px; } .tbanner .badge-lg { width: 72px; height: 60px; }
+
+/* Bot replies on trade cards */
+.tcard-bot.think { color: var(--text); } .tcard-bot.think i { font-style: normal; animation: think-dot 1.2s infinite; }
+.tcard-bot.think i:nth-child(2) { animation-delay: .2s; } .tcard-bot.think i:nth-child(3) { animation-delay: .4s; }
+@keyframes think-dot { 0%, 60%, 100% { opacity: .2; } 30% { opacity: 1; } }
+.tcard-verdict { margin: 8px 0 0; padding: 8px 12px; background: #000; border-left: 4px solid var(--bad); animation: tab-in .3s ease-out both; }
+.tcard-verdict.yes { border-left-color: var(--good); } .tcard-verdict b { font-family: var(--label); }
+.tcard-verdict ul { margin: 4px 0 0; padding-left: 18px; font-size: 14px; }

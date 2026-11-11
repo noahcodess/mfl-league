@@ -18,7 +18,7 @@ async function call(fn, args) {
 const toItem = (i) => ({ id: i.id, side: i.side, player: i.player ? toPlayer(i.player) : null,
   pick: i.pick ? { id: i.pick.id, season: i.pick.season, round: i.pick.round, originalCode: i.pick.original_code, ownerId: i.pick.owner_id } : null });
 
-// Newest first: { id, season, from, to, status, note, createdAt, decidedBy, give: [items], get: [items] }.
+// Newest first: { id, season, from, to, status, note, createdAt, decidedBy, botAt, botVerdict, give: [items], get: [items] }.
 export function useTrades(viewerKey, version = 0) {
   const [trades, setTrades] = useState(null);
   useEffect(() => {
@@ -30,6 +30,7 @@ export function useTrades(viewerKey, version = 0) {
         setTrades((data || []).map((t) => {
           const items = (t.items || []).map(toItem);
           return { id: t.id, season: t.season, from: t.from_team, to: t.to_team, status: t.status, note: t.note, createdAt: t.created_at, decidedBy: t.decided_by,
+            botAt: t.bot_decide_at, botVerdict: t.bot_verdict,
             give: items.filter((i) => i.side === 'give'), get: items.filter((i) => i.side === 'get') };
         }));
       });

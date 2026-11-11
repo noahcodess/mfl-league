@@ -22,6 +22,7 @@ import SandboxBanner from './components/SandboxBanner.jsx';
 import DraftAlert from './components/DraftAlert.jsx';
 import ScheduleNotice from './components/ScheduleNotice.jsx';
 import { usePresenceHeartbeat } from './data/presence.js';
+import { useBotTick } from './data/coachBrain.js';
 import { inSandbox } from './data/sandbox.js';
 import { useHashRoute, homeFor } from './lib/router.js';
 import { brandColors } from './lib/color.js';
@@ -86,6 +87,7 @@ export default function App() {
   useEffect(() => { loadLeague().then(setLive); }, []);
   const myTeam = step === 'ready' && session.profile?.role === 'coach' ? getTeam(session.profile.team_id) : null;
   usePresenceHeartbeat(step === 'ready');
+  useBotTick(step === 'ready');
   return (
     <div className={`app${inSandbox() ? ' sandbox' : ''}`} style={inSandbox() ? undefined : brandColors(myTeam)}>
       {!route.stage && <Header page={route.page} session={session} ready={step === 'ready'} live={live} onLeagueChange={reload} />}

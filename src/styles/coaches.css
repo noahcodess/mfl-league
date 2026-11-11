@@ -67,3 +67,23 @@
 .outfit .seg { max-width: 380px; } .outfit-styles { margin-top: 12px; } .outfit .ocolors { margin-top: 12px; }
 .oname { display: flex; align-items: center; gap: 10px; font-family: var(--label); width: 100%; } .oname input { flex: 1; min-width: 0; background: #000; color: var(--text); border: 2px solid var(--line); padding: 6px 8px; font: inherit; }
 .modal.coach-modal { width: min(640px, 100%); max-width: 640px; } .modal.coach-editor { width: min(980px, 100%); }
+
+/* Front Office tab: the bot brain (personality, plan, values, read of the roster, trade style) */
+.who-tag.interim { color: var(--gold); }
+.coach-card-plan { font-size: 13px; color: var(--gold); font-weight: 700; }
+.cbrain { display: grid; gap: 12px; } .cbrain h4 { margin: 4px 0 0; font-family: var(--label); }
+.cbrain-note { margin: 0; padding: 8px 12px; background: #35d07f14; border-left: 4px solid var(--good); }
+.cbrain-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 8px; }
+.cbrain-card { padding: 12px; background: var(--panel2); border: 2px solid #000; border-left: 4px solid var(--team, var(--gold)); animation: tab-in .3s ease-out both; }
+.cbrain-card + .cbrain-card { animation-delay: .08s; }
+.cbrain-card span, .cbrain-needs span, .cbrain-trade span { display: block; color: var(--dim); font-family: var(--label); font-weight: 700; text-transform: uppercase; letter-spacing: 2px; font-size: 11px; }
+.cbrain-card b { display: block; margin: 4px 0; font-size: 20px; font-family: var(--label); } .cbrain-card p { margin: 0; font-size: 14px; }
+.cbrain-vals { display: grid; gap: 6px; }
+.cbrain-val { display: grid; grid-template-columns: 120px 1fr; align-items: center; gap: 10px; font-family: var(--label); font-size: 14px; }
+.cbrain-val .cbar i { animation-delay: calc(var(--i) * .08s); }
+.cbrain-list { margin: 0; padding-left: 18px; display: grid; gap: 3px; }
+.cbrain-needs { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; } .cbrain-needs span { margin-right: 4px; }
+.cbrain-needs b { padding: 2px 8px; background: #000; border: 2px solid var(--bad); color: var(--text); font-family: var(--label); font-size: 13px; }
+.cbrain-trade { padding: 10px 12px; background: #000; border: 2px solid var(--line); }
+.cbrain-trade b { font-size: 20px; font-family: var(--label); } .cbrain-trade b.good { color: var(--good); } .cbrain-trade b.bad { color: var(--bad); } .cbrain-trade b.gold { color: var(--gold); }
+.cbrain-trade p { margin: 4px 0 0; font-size: 13px; }

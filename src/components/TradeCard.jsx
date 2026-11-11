@@ -5,6 +5,7 @@ import ConfirmButton from './ConfirmButton.jsx';
 import { getTeam } from '../data/teams.js';
 import { respondTrade, cancelTrade, commishTrade } from '../data/trades.js';
 import { shortDate } from '../lib/format.js';
+import { botAnswerNow } from '../data/coachBrain.js';
 
 const STATUS = { pending: 'Waiting', accepted: 'Done', declined: 'Declined', cancelled: 'Cancelled', vetoed: 'Vetoed', expired: 'Expired' };
 
@@ -15,6 +16,8 @@ export default function TradeCard({ trade, myTeamId, commish, coached = [], onCh
   const items = (list) => list.map((i) => i.player || i.pick).filter(Boolean);
   const pending = trade.status === 'pending';
   const toBot = !coached.includes(trade.to);
+  const interim = toBot && to.reserved;
+  const verdict = trade.botVerdict;
   const done = async (fn) => { await fn(); onChange?.(); };
   return (
     <article className={`tcard tcard-${trade.status}`}>
@@ -28,7 +31,14 @@ export default function TradeCard({ trade, myTeamId, commish, coached = [], onCh
         <div><div className="tside-head"><TeamBadge team={to} size="sm" /><small>{to.name} send</small></div>{items(trade.get).map((x) => <TradeAsset key={x.id} item={x} />)}</div>
       </div>
       {trade.note && <p className="tcard-note">💬 {trade.note}</p>}
-      {pending && toBot && <p className="dim tcard-bot">🤖 Computer-run team: it can't answer until AI coaches are built.{commish ? ' You can accept or veto it.' : ''}</p>}
+      {pending && toBot && !interim && <p className="tcard-bot think">🤖 Their coach is thinking it over<i>.</i><i>.</i><i>.</i> Bots answer in a few minutes.{commish ? ' You can still accept or veto first.' : ''}</p>}
+      {pending && interim && <p className="dim tcard-bot">🪑 Reserved team with an interim coach: the commissioner answers this one.</p>}
+      {!pending && verdict && trade.decidedBy === 'bot' && (
+        <div className={`tcard-verdict ${verdict.accept ? 'yes' : 'no'}`}>
+          <b>🤖 {to.code} coach: {verdict.accept ? 'Deal.' : 'No deal.'}</b>
+          <ul>{(verdict.reasons || []).map((r) => <li key={r}>{r}</li>)}</ul>
+        </div>
+      )}
       {pending && (
         <div className="tcard-btns">
           {trade.to === myTeamId && (
@@ -41,8 +51,10 @@ export default function TradeCard({ trade, myTeamId, commish, coached = [], onCh
           {trade.from === myTeamId && <ConfirmButton className="btn ghost" label="Cancel offer" title="Cancel your trade offer?" yes="Cancel it" onConfirm={() => done(() => cancelTrade(trade.id))} />}
           {commish && (
             <>
+              {toBot && !interim && <ConfirmButton className="btn small" label="⚡ Bot answers now" title="Have their coach answer right now?" yes="Answer now"
+                text="Skips the wait. The bot judges the offer the same way it always would." onConfirm={() => done(() => botAnswerNow(trade.id))} />}
               <ConfirmButton className="btn small" label={`✅ Accept for ${to.code}`} title={`Accept this trade on behalf of the ${to.name}?`} yes="Accept for them"
-                text="Use this for computer-run teams until AI coaches exist, or to settle it yourself." onConfirm={() => done(() => commishTrade(trade.id, true))} />
+                text="Settles it yourself, for a reserved team or to overrule a bot." onConfirm={() => done(() => commishTrade(trade.id, true))} />
               <ConfirmButton className="btn small ghost" label="⛔ Veto" title="Veto this trade?" yes="Veto it" text="Both coaches are told the commissioner vetoed it." onConfirm={() => done(() => commishTrade(trade.id, false))} />
             </>
           )}

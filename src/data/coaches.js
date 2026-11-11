@@ -30,7 +30,7 @@ export function useCoaches(version = 0) {
   const [map, setMap] = useState(null);
   useEffect(() => {
     let live = true;
-    if (DEMO) { setMap(Object.fromEntries(['snm', 'crf', 'lsc', 'dst'].map((t) => [t, DEMO_COACH(t)]))); return undefined; }
+    if (DEMO) { setMap(Object.fromEntries(['snm', 'crf', 'lsc', 'dst', 'ocn', 'ntw'].map((t) => [t, DEMO_COACH(t)]))); return undefined; }
     db.from('coaches').select('*').then(({ data }) => { if (live) setMap(Object.fromEntries((data || []).map((c) => [c.team_id, c]))); });
     return () => { live = false; };
   }, [version]);

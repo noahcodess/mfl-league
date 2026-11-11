@@ -1,0 +1,5 @@
+-- 046c: bot fixes applied live: market floor on outgoing players and picks (046c), reason array fix (046d), gap wording (046e).
+-- bot_player_value: when p_ours, value = greatest(own value, 0.9 x neutral market value), so bots never sell below market.
+-- bot_eval_trade: outgoing picks valued at greatest(own, 0.9 x balanced value); reasons use array_append.
+-- bot_gap_text: "top-5 pick" when the gap is over 75 value points.
+-- (Exact function bodies are in the live database; see pg_get_functiondef.)

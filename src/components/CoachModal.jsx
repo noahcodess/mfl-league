@@ -6,12 +6,14 @@ import CoachOutfit from './CoachOutfit.jsx';
 import CoachScheme from './CoachScheme.jsx';
 import AttributeBars from './AttributeBars.jsx';
 import StarRating from './StarRating.jsx';
+import WhoTag from './WhoTag.jsx';
+import CoachBrain from './CoachBrain.jsx';
 import { useCoachedTeams } from '../data/coached.js';
 import { COACH_RATINGS, coachStars } from '../data/coaches.js';
 import { schemeName, OFFENSES, DEFENSES } from '../lib/schemes.js';
 
 // A coach's profile: sprite, Player/Bot tag, stars and potential, then tabs: his 5 ratings (same bars as players, the outline
-// is how high he can grow), his scheme, and (your own coach) the outfit picker.
+// is how high he can grow), his front office brain, his scheme, and (your own coach) the outfit picker.
 export default function CoachModal({ coach, team, mine, onClose, onSaved }) {
   const [preview, setPreview] = useState(null);
   const human = useCoachedTeams().includes(team.id);
@@ -28,7 +30,7 @@ export default function CoachModal({ coach, team, mine, onClose, onSaved }) {
         <div className="coach-id">
           <div className="coach-role">Head coach · {team.name}</div>
           <h2>Coach {coach.name}</h2>
-          <span className={`who-tag ${human ? 'person' : 'bot'}`}>{human ? '👤 Player' : '🤖 Bot'}</span>
+          <WhoTag human={human} reserved={team.reserved} />
           <div className="coach-stars"><span>Now</span><StarRating value={coachStars(coach.ratings)} showNumber /></div>
           <div className="coach-stars"><span>Potential</span><StarRating value={pot} elite={pot === 5} showNumber /></div>
           <div className="coach-scheme-line">🏈 {schemeName(OFFENSES, s.offense)} · 🛡️ {schemeName(DEFENSES, s.defense)}{s.auto !== false ? ' · Auto' : ''}</div>
@@ -41,6 +43,7 @@ export default function CoachModal({ coach, team, mine, onClose, onSaved }) {
             <ul className="coach-legend">{COACH_RATINGS.map(([k, label, what]) => <li key={k}><b>{label}</b> {what}</li>)}</ul>
           </div>
         ) },
+        { key: 'brain', label: 'Front Office', render: () => <CoachBrain teamId={team.id} /> },
         { key: 'scheme', label: 'Scheme', render: () => <CoachScheme coach={coach} team={team} mine={mine} onSaved={onSaved} /> },
         ...(mine ? [{ key: 'outfit', label: 'Outfit', render: () => <CoachOutfit coach={coach} team={team} onPreview={setPreview} onSaved={onSaved} /> }] : []),
       ]} />

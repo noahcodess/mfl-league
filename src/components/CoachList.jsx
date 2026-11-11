@@ -2,12 +2,13 @@ import React, { useState } from 'react';
 import CoachSprite from './CoachSprite.jsx';
 import CoachEditor from './CoachEditor.jsx';
 import StarRating from './StarRating.jsx';
+import WhoTag from './WhoTag.jsx';
 import TeamBadge from './TeamBadge.jsx';
 import { useCoaches, coachStars } from '../data/coaches.js';
 import { useCoachedTeams } from '../data/coached.js';
 import { getTeams } from '../data/teams.js';
 
-// Commissioner: every coach in the league with a Player/Bot tag. Tap one to open the coach maker.
+// Commissioner: every coach in the league with a Player/Bot/Interim tag. Tap one to open the coach maker.
 export default function CoachList({ canControl }) {
   const [version, setVersion] = useState(0);
   const [edit, setEdit] = useState(null);
@@ -28,7 +29,7 @@ export default function CoachList({ canControl }) {
               <div>
                 <span className="coach-tile-team"><TeamBadge team={t} size="xs" /> {t.code}</span>
                 <b>Coach {c.name}</b>
-                <span className={`who-tag ${human ? 'person' : 'bot'}`}>{human ? '👤 Player' : '🤖 Bot'}</span>
+                <WhoTag human={human} reserved={t.reserved} />
                 <StarRating value={coachStars(c.ratings)} />
               </div>
             </button>
