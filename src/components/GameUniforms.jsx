@@ -12,8 +12,8 @@ export default function GameUniforms({ game }) {
   const u = gameUniforms(hj, aj, picks.get(game.id));
   return (
     <div className={`game-uniforms${u.special ? ' special' : ''}`} title={u.special ? 'Specialty game' : 'Game day uniforms'}>
-      <span><UniformSprite colors={u.away.colors} scale={2} /><small>{away.code} · {u.away.name}</small></span>
-      <span><UniformSprite colors={u.home.colors} scale={2} /><small>{home.code} · {u.home.name}</small></span>
+      <span><UniformSprite colors={u.away.colors} team={away} scale={2} /><small>{away.code} · {u.away.name}</small></span>
+      <span><UniformSprite colors={u.home.colors} team={home} scale={2} /><small>{home.code} · {u.home.name}</small></span>
     </div>
   );
 }

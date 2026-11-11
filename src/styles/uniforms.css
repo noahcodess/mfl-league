@@ -43,3 +43,28 @@
 .sp-tag { font-size: 11px; color: var(--gold); white-space: nowrap; }
 .game-uniforms.special { border-color: var(--gold); }
 .sp-pick select { background: var(--panel2); color: var(--text); border: 2px solid var(--line); }
+
+/* Drip tab: the player on the field, the helmet close-up, kit switcher and the drip editor. */
+.helmet-closeup { image-rendering: pixelated; display: block; }
+.drip-stage { display: flex; gap: 16px; align-items: stretch; flex-wrap: wrap; }
+.drip-field { padding: 14px 26px 6px; background: radial-gradient(ellipse at 50% 94%, rgba(0,0,0,.4) 0 26%, transparent 27%), linear-gradient(#2f6b2a, #24561f); border: 2px solid #183d14; }
+.drip-side { flex: 1; min-width: 200px; display: grid; justify-items: center; align-content: center; gap: 8px; padding: 10px; background: radial-gradient(circle at 50% 40%, #2b3240, #14171d); border: 2px solid var(--line); }
+.drip-kits { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; }
+.drip-kits button, .drip-opts button, .drip-swatches button.none { font-size: 12px; padding: 4px 9px; background: var(--panel2); color: var(--text); border: 2px solid var(--line); cursor: pointer; }
+.drip-kits button.on, .drip-opts button.on { border-color: var(--gold); color: var(--gold); }
+.drip-editor { display: grid; gap: 8px; margin: 14px 0; }
+.drip-helmets { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.drip-helmet { display: grid; justify-items: center; gap: 4px; padding: 8px 4px; background: #14171d; border: 2px solid var(--line); color: var(--text); cursor: pointer; font-size: 11px; }
+.drip-helmet.on { border-color: var(--gold); box-shadow: 0 0 0 1px var(--gold); }
+.drip-row { display: grid; grid-template-columns: 140px 1fr; align-items: center; gap: 10px; font-size: 13px; }
+.drip-row > span { color: var(--dim); }
+.drip-opts, .drip-swatches { display: flex; flex-wrap: wrap; gap: 6px; }
+.drip-swatches button { width: 26px; height: 26px; border: 2px solid var(--line); cursor: pointer; padding: 0; }
+.drip-swatches button.none { width: auto; height: 26px; }
+.drip-swatches button.on { border-color: var(--gold); box-shadow: 0 0 0 1px var(--gold); }
+.drip-actions { display: flex; gap: 8px; justify-content: flex-end; }
+.drip-tab > .btn { margin-top: 12px; }
+.drip-note { font-size: 12px; }
+@media (max-width: 560px) { .drip-helmets { grid-template-columns: repeat(2, 1fr); } .drip-row { grid-template-columns: 1fr; gap: 4px; } }
+.te-helmet { display: flex; align-items: center; gap: 12px; padding: 6px 10px; background: #14171d; border: 2px solid var(--line); }
+.te-helmet .field { flex: 1; }

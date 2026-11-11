@@ -17,7 +17,7 @@ export default function JerseyEditor({ team, jersey, model, onSubmit, onClose, s
   };
   return (
     <div className="jersey-editor">
-      <div className="je-preview"><UniformSprite colors={colors} player={model} scale={5} /><small>{whereWorn({ slot: jersey.slot, colors })}</small></div>
+      <div className="je-preview"><UniformSprite colors={colors} player={model} team={team} scale={5} /><small>{whereWorn({ slot: jersey.slot, colors })}</small></div>
       <div className="je-form">
         <label className="field"><span>Name</span>
           <input value={fixed ? SLOT_NAMES[jersey.slot] : name} disabled={fixed} maxLength={20} onChange={(e) => setName(e.target.value)} />

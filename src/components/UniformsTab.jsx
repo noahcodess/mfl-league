@@ -32,7 +32,7 @@ export default function UniformsTab({ teamId }) {
             onClose={(ok) => { if (ok) { setSent(`📨 Request sent to commissioner. Once he accepts, your ${editing.slot <= 2 ? editing.name : 'new'} jersey goes on.`); setVersion((v) => v + 1); } setEditing(null); }} />
         ) : (
           <div className="jersey-grid">
-            {jerseys.map((j) => <JerseyCard key={j.slot} jersey={j} model={model} pending={pending.find((p) => p.slot === j.slot)} onEdit={() => { setSent(''); setEditing(j); }} />)}
+            {jerseys.map((j) => <JerseyCard key={j.slot} jersey={j} model={model} team={team} pending={pending.find((p) => p.slot === j.slot)} onEdit={() => { setSent(''); setEditing(j); }} />)}
           </div>
         )}
       </section>

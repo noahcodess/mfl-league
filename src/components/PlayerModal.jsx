@@ -10,12 +10,13 @@ import PastTeams from './PastTeams.jsx';
 import TradeActions from './TradeActions.jsx';
 import PlayerFlags from './PlayerFlags.jsx';
 import MoraleBox from './MoraleBox.jsx';
+import DripTab from './DripTab.jsx';
 import { contractOf, yearsLeft, contractLabel } from '../data/contracts.js';
 import { POSITION_NAMES } from '../data/positions.js';
 import { money, heightLabel } from '../lib/format.js';
 import { flagFor } from '../lib/flags.js';
 
-// Full player card: bio up top, then tabs for skills (archetype, bars), morale, contract & money, and past teams. Potential only shows to
+// Full player card: bio up top, then tabs for skills (archetype, bars), morale, drip (uniform and gear), contract & money, and past teams. Potential only shows to
 // the player's own team, the commissioner and scouts.
 export default function PlayerModal({ player, team, canSeePotential, potential, traits, onClose, myTeamId }) {
   if (!player) return null;
@@ -45,7 +46,7 @@ export default function PlayerModal({ player, team, canSeePotential, potential, 
         <PlayerFlags player={player} />
         <Tabs tabs={[
           { key: 'skills', label: 'Skills', render: () => <PlayerSkills player={player} potential={canSeePotential ? potential : null} /> },
-          ...(player.teamId ? [{ key: 'morale', label: 'Morale', render: () => <MoraleBox player={player} /> }] : []),
+          ...(player.teamId ? [{ key: 'morale', label: 'Morale', render: () => <MoraleBox player={player} /> }, { key: 'drip', label: 'Drip', render: () => <DripTab player={player} /> }] : []),
           { key: 'contract', label: 'Contract & money', render: () => (
             <>
         <PlayerFlags player={player} contract />

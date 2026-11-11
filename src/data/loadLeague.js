@@ -11,7 +11,7 @@ const toTeam = (t) => ({
   offense: rating(t.offense_stars, t.offense_rank),
   defense: rating(t.defense_stars, t.defense_rank),
   overall: rating(t.overall_stars, t.overall_rank),
-  capUsedReported: t.cap_used_reported, reserved: t.reserved, logoUrl: t.logo_url, location: t.location, nickname: t.nickname,
+  capUsedReported: t.cap_used_reported, reserved: t.reserved, logoUrl: t.logo_url, location: t.location, nickname: t.nickname, helmetDesign: t.helmet_design,
 });
 
 export const toPlayer = (p) => ({
