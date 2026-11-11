@@ -20,7 +20,7 @@ export default function FeedPlayersCard({ icon, title, sub, players, onOpen, ran
                   <Headshot player={p} team={t} size={40} />
                   <span className="fp-main"><b>{p.name}</b><small>{p.position} · Age {p.age}</small></span>
                   {t && <TeamBadge team={t} size="sm" />}
-                  <StarRating value={p.stars} elite={p.elite} />
+                  <StarRating value={p.stars} elite={p.elite} peak={p.peakStars} />
                 </button>
               </li>
             );

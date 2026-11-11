@@ -56,7 +56,7 @@ export default function BirthdayShow({ retired, season, onClose }) {
             <small>Tribute {i + 1} of {stars.length}</small>
             <h1>{p.name}</h1>
             <div className="bshow-team">{team && <TeamBadge team={team} size="md" />}<span>{team?.name || 'Free agent'}</span></div>
-            <StarRating value={p.stars} elite={p.elite} showNumber />
+            <StarRating value={p.stars} elite={p.elite} peak={p.peakStars} showNumber />
             <p>{POSITION_NAMES[p.position] || p.position} · Retired at {p.retiredAge}{p.college ? ` · ${p.college}` : ''}</p>
           </div>
         </div>

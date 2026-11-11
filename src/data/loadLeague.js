@@ -11,14 +11,14 @@ const toTeam = (t) => ({
   offense: rating(t.offense_stars, t.offense_rank),
   defense: rating(t.defense_stars, t.defense_rank),
   overall: rating(t.overall_stars, t.overall_rank),
-  capUsedReported: t.cap_used_reported, reserved: t.reserved,
+  capUsedReported: t.cap_used_reported, reserved: t.reserved, logoUrl: t.logo_url,
 });
 
 export const toPlayer = (p) => ({
   id: p.id, teamId: p.team_id, name: p.name, position: p.position, depth: p.depth, slot: p.slot,
   stars: p.stars == null ? null : Number(p.stars), elite: p.elite, age: p.age, mood: p.mood,
   nationality: p.nationality, notes: p.notes ?? [], number: p.number, playStyle: p.play_style, looks: p.looks || {},
-  status: p.status, previousTeamId: p.previous_team_id, height: p.height_in, weight: p.weight_lb, rookieSeason: p.rookie_season, college: p.college, collegeStats: p.college_stats, draftSeason: p.draft_season,
+  status: p.status, peakStars: p.peak_stars == null ? null : Number(p.peak_stars), previousTeamId: p.previous_team_id, height: p.height_in, weight: p.weight_lb, rookieSeason: p.rookie_season, college: p.college, collegeStats: p.college_stats, draftSeason: p.draft_season,
   draftRound: p.draft_round, draftPick: p.draft_pick, draftedBy: p.drafted_by, leftHow: p.left_how,
 });
 

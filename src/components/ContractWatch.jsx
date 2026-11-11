@@ -14,7 +14,7 @@ function Row({ p, team, potential, onOpen, right }) {
     <button className="watch-row" onClick={() => onOpen(p)}>
       <Headshot player={p} team={team} size={32} />
       <span className="watch-name"><b>{p.name}</b><small>{p.position} · Age {p.age ?? '-'}</small></span>
-      <span className="watch-stars"><StarRating value={p.stars} elite={p.elite} />{potential != null && potential > p.stars && <small>→ <StarRating value={potential} /></small>}</span>
+      <span className="watch-stars"><StarRating value={p.stars} elite={p.elite} peak={p.peakStars} />{potential != null && potential > p.stars && <small>→ <StarRating value={potential} /></small>}</span>
       <span className="watch-right">{right}</span>
     </button>
   );

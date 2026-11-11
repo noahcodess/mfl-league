@@ -26,6 +26,7 @@ import './styles/draftReveal.css';
 import './styles/live.css';
 import './styles/birthday.css';
 import './styles/feed.css';
+import './styles/desk.css';
 import './styles/motion.css';
 
 createRoot(document.getElementById('root')).render(<App />);

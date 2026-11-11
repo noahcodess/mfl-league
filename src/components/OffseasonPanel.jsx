@@ -11,6 +11,7 @@ import { advanceOffseason, undoLastStep, lastSnapshotLabel } from '../data/leagu
 import { previewStep } from '../lib/stepPreview.js';
 import Tabs from './Tabs.jsx';
 import DraftSettings from './DraftSettings.jsx';
+import LeagueRules from './LeagueRules.jsx';
 import { links } from '../lib/router.js';
 
 // Commissioner's Desk → Offseason: the next step (preview, run or undo), deals waiting for approval, the league log,
@@ -81,6 +82,7 @@ export default function OffseasonPanel({ canControl, reload, viewerKey }) {
           </div>
         ) },
         { key: 'draft', label: 'Draft settings', render: () => <DraftSettings canControl={canControl} /> },
+        { key: 'rules', label: 'League rules', render: () => <LeagueRules canControl={canControl} /> },
       ]} />
       {confirm && (
         <Modal onClose={() => !busy && setConfirm(null)}>

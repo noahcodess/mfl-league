@@ -1,0 +1,2 @@
+-- 053b/053c (applied live): contract edits set per_year, first/last season and total together; changing seasons left starts a fresh 1-3 season term.
+-- 053d (applied live): regression_from_season setting (default 8), editable via set_league_number.

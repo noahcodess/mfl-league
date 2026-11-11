@@ -1,0 +1,46 @@
+/* Commissioner's Desk theme: a league-office look (dark navy + gold seal and trim, folder-style tabs), plus the
+   Teams and Players editors and the League rules card. */
+.desk { --desk-gold: #e8b923; --desk-ink: #0e1626; }
+.desk-head { position: relative; display: flex; align-items: center; gap: 18px; padding: 18px 20px; margin-bottom: 14px; border: 3px solid #000;
+  background: linear-gradient(115deg, #142038 0%, #0e1626 55%, #1c1508 100%); box-shadow: inset 0 -4px 0 var(--desk-gold), 0 6px 0 #0007; }
+.desk-head h1 { margin: 2px 0; } .desk-kicker { color: var(--desk-gold); font-family: var(--label); font-weight: 800; letter-spacing: 3px; text-transform: uppercase; font-size: 12px; }
+.desk-head .test-card { margin-left: auto; }
+.desk-seal { width: 64px; height: 64px; flex: none; display: grid; place-items: center; border-radius: 50%; font-family: var(--pixel, var(--label)); font-size: 15px; color: var(--desk-ink);
+  background: radial-gradient(circle at 35% 30%, #fff2b3, var(--desk-gold) 55%, #9a7410); border: 3px solid #000; box-shadow: 0 0 0 3px var(--desk-gold), 0 0 18px #e8b92366; animation: seal-in .6s cubic-bezier(.2, 1.5, .4, 1) both; }
+@keyframes seal-in { from { transform: rotate(-90deg) scale(.3); opacity: 0; } to { transform: none; opacity: 1; } }
+.desk > .tabs > .tab-bar { gap: 4px; border-bottom: 3px solid var(--desk-gold); flex-wrap: wrap; }
+.desk > .tabs > .tab-bar button { background: var(--desk-ink); border: 2px solid #000; border-bottom: none; border-radius: 8px 8px 0 0; padding: 8px 14px; }
+.desk > .tabs > .tab-bar button.on { background: var(--desk-gold); color: #000; font-weight: 800; box-shadow: 0 -3px 0 #fff3 inset; }
+@media (max-width: 640px) { .desk-head { flex-wrap: wrap; } .desk-seal { width: 48px; height: 48px; font-size: 11px; } .desk > .tabs > .tab-bar { flex-wrap: nowrap; overflow-x: auto; } .desk > .tabs > .tab-bar button { flex: none; } }
+
+/* Teams */
+.te-conf h3 { margin: 14px 0 8px; font-family: var(--label); }
+.te-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 8px; }
+.te-card { display: flex; align-items: center; gap: 10px; padding: 10px; background: var(--panel2); border: 2px solid #000; border-left: 6px solid var(--team);
+  color: inherit; text-align: left; cursor: pointer; font: inherit; animation: tab-in .3s calc(var(--i) * .03s) ease-out both; transition: transform .12s; }
+.te-card:hover { transform: translateY(-2px); } .te-card > span:nth-child(2) { flex: 1; display: grid; } .te-card small { color: var(--dim); }
+.te-swatch { display: flex; gap: 3px; } .te-swatch i { width: 14px; height: 14px; border: 2px solid #000; }
+.modal.team-editor, .modal.player-editor { width: min(640px, 100%); }
+.te-preview { display: flex; align-items: center; gap: 14px; padding: 12px; margin-bottom: 12px; background: var(--team); border: 3px solid #000; color: var(--team-accent); }
+.te-preview h2 { margin: 2px 0 0; color: var(--team-accent); text-shadow: 2px 2px 0 #000; } .te-preview small { font-weight: 800; letter-spacing: 2px; }
+.te-grid, .pe-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 10px; border: none; padding: 0; margin: 0; }
+.te-grid .field, .pe-grid .field { display: grid; gap: 4px; } .te-grid .field > span:first-child, .pe-grid .field > span:first-child { font-size: 12px; color: var(--dim); font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+.pe-grid .field.wide { grid-column: 1 / -1; }
+.te-color { display: flex; align-items: center; gap: 8px; } .te-color input { width: 46px; height: 34px; padding: 0; border: 2px solid #000; background: none; }
+.te-logo { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin: 12px 0; padding: 10px; background: #000; border: 2px dashed var(--desk-gold, var(--gold)); }
+.te-logo > div { flex: 1; min-width: 200px; display: grid; } .te-logo small { color: var(--dim); } .te-new { color: var(--good); font-weight: 700; }
+.btn.disabled { opacity: .5; pointer-events: none; }
+
+/* Players */
+.pe-search { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-bottom: 8px; } .pe-search input { flex: 1; min-width: 220px; }
+.pe-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 3px; }
+.pe-list button { width: 100%; display: flex; align-items: center; gap: 10px; padding: 6px 8px; background: var(--panel2); border: 2px solid #000; color: inherit; text-align: left; cursor: pointer; font: inherit; }
+.pe-list button:hover { border-color: var(--desk-gold, var(--gold)); } .pe-main { flex: 1; min-width: 0; display: grid; } .pe-main small { color: var(--dim); } .pe-edit { opacity: .6; }
+.pe-head { display: flex; align-items: center; gap: 14px; margin-bottom: 12px; padding-bottom: 12px; border-bottom: 3px solid var(--team); }
+.pe-head h2 { margin: 2px 0; } .pe-head small { color: var(--dim); font-weight: 700; }
+.pe-height { display: flex; align-items: center; gap: 4px; } .pe-height input { width: 56px; }
+.btn.danger { color: var(--bad); border-color: var(--bad); margin-right: auto; }
+
+/* League rules */
+.rules-list { margin: 0 0 10px; padding-left: 18px; display: grid; gap: 4px; } .rules-list .bad { color: var(--bad); font-weight: 700; }
+.rules-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; } .rules-row input { width: 64px; margin: 0 4px; }

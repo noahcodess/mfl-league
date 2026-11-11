@@ -63,3 +63,5 @@
 .help { margin: -6px 0 12px; }
 
 @media (max-width: 860px) { .team-head { grid-template-columns: 1fr; } }
+.star-icon.lost, .stars.elite .star-icon.lost { fill: var(--bad); filter: drop-shadow(1px 1px 0 #000); opacity: .9; }
+.stars-lost { color: var(--bad); font-style: normal; font-weight: 700; }

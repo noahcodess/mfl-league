@@ -36,7 +36,7 @@ export default function PlayerTable({ players, jersey, onOpen, sub, tags, potent
               <td className="pos-cell">{p.position}</td>
               <td className="hide-sm">{p.age}</td>
               <td className="hide-sm dim">{heightLabel(p.height)}{p.weight ? `, ${p.weight}` : ''}</td>
-              <td><StarRating value={p.stars} elite={p.elite} /></td>
+              <td><StarRating value={p.stars} elite={p.elite} peak={p.peakStars} /></td>
               {seesPot && <td>{potentials[p.id] != null ? <StarRating value={potentials[p.id]} elite={potentials[p.id] === 5} /> : <span className="dim">?</span>}</td>}
               <td><div className="tags">{tags?.(p)}</div></td>
             </tr>

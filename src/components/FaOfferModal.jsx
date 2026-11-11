@@ -62,7 +62,7 @@ export default function FaOfferModal({ player, myTeam, canOffer, potential, scou
         <Headshot player={player} team={FA_JERSEY} size={64} />
         <div>
           <h2>{player.name}</h2>
-          <div className="nego-sub">{player.position} · Age {player.age} · {heightLabel(player.height)}{player.weight ? `, ${player.weight} lbs` : ''} · <StarRating value={player.stars} elite={player.elite} />
+          <div className="nego-sub">{player.position} · Age {player.age} · {heightLabel(player.height)}{player.weight ? `, ${player.weight} lbs` : ''} · <StarRating value={player.stars} elite={player.elite} peak={player.peakStars} />
             {potential != null && <> · POT <StarRating value={potential} elite={potential === 5} /></>}</div>
           <div className={`tier tier-${tier.key}`} title={tier.note}>{tier.label}{player.nationality && player.nationality !== 'USA' ? ` · ${player.nationality}` : ''}</div>
         </div>

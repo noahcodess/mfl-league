@@ -3,7 +3,7 @@ import styles from './teamStyles.json';
 import { logoFor } from './logos.js';
 
 // Loads teams with their display colors. Reads from the store (live database copy when loaded).
-const withStyle = (t) => ({ ...(styles[t.code] || { color: '#5b6478', accent: '#ffffff' }), ...t, color: t.color || styles[t.code]?.color || '#5b6478', accent: t.accent || styles[t.code]?.accent || '#ffffff', logo: logoFor(t.id) });
+const withStyle = (t) => ({ ...(styles[t.code] || { color: '#5b6478', accent: '#ffffff' }), ...t, color: t.color || styles[t.code]?.color || '#5b6478', accent: t.accent || styles[t.code]?.accent || '#ffffff', logo: t.logoUrl || logoFor(t.id) });
 
 export function getTeams() {
   return store.league.teams.map(withStyle).sort((a, b) => (a.overall?.rank ?? 99) - (b.overall?.rank ?? 99));

@@ -48,7 +48,7 @@ export default function NegotiationModal({ player, team, traits, negotiation, wi
         <Headshot player={player} team={team} size={64} />
         <div>
           <h2>Re-sign {player.name}</h2>
-          <div className="nego-sub">{player.position} · Age {player.age} · <StarRating value={player.stars} elite={player.elite} /></div>
+          <div className="nego-sub">{player.position} · Age {player.age} · <StarRating value={player.stars} elite={player.elite} peak={player.peakStars} /></div>
           <div className={`tier tier-${tier.key}`} title={tier.note}>{tier.label}</div>
         </div>
       </div>

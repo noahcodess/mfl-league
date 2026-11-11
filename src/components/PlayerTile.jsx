@@ -18,7 +18,7 @@ export default function PlayerTile({ player, team, index, onOpen, insider, badge
         </span>
         <span className="ptile-bottom">
           <span className="ptile-pos">{player.status === 'prospect' ? player.college : fa ? 'Free agent' : player.depth === 'backup' ? 'Backup' : 'Starter'}</span>
-          <StarRating value={player.stars} elite={player.elite} />
+          <StarRating value={player.stars} elite={player.elite} peak={player.peakStars} />
           <span className="ptile-age">{player.age ? `Age ${player.age}` : ''}</span>
         </span>
         {(pot != null || badge) && (

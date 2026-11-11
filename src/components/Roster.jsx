@@ -17,7 +17,7 @@ function DepthRow({ p, label, team, onOpen, insider, backup }) {
         <span className="depth-name"><span className="depth-num">#{p.number ?? '-'}</span> {p.name}
         </span>
         <span className="depth-sub">
-          <StarRating value={p.stars} elite={p.elite} />
+          <StarRating value={p.stars} elite={p.elite} peak={p.peakStars} />
           <span className="dim">Age {p.age ?? '-'}</span>
           {pot != null && pot > p.stars && <span className="pot-mini">POT <StarRating value={pot} elite={pot === 5} /></span>}
         </span>
