@@ -8,7 +8,7 @@ import PlayerSkills from './PlayerSkills.jsx';
 import Tabs from './Tabs.jsx';
 import PastTeams from './PastTeams.jsx';
 import TradeActions from './TradeActions.jsx';
-import { isRetiring, maxAge } from '../data/players.js';
+import PlayerFlags from './PlayerFlags.jsx';
 import { contractOf, yearsLeft, contractLabel } from '../data/contracts.js';
 import { POSITION_NAMES } from '../data/positions.js';
 import { money, heightLabel } from '../lib/format.js';
@@ -41,11 +41,12 @@ export default function PlayerModal({ player, team, canSeePotential, potential, 
           <div className="pot"><span>Potential</span><b>{!canSeePotential ? '🔒 Hidden' : potential === undefined ? <span className="dim">Loading...</span> : potential === null ? <span className="dim">Not rated</span>
             : <><StarRating value={potential} elite={potential === 5} />{potential <= player.stars && <small className="dim"> Maxed</small>}</>}</b></div>
         </div>
-        {isRetiring(player) && <div className="notice bad">Retiring this offseason: turns {player.age + 1} at the offseason birthday, past the max age of {maxAge()}.</div>}
+        <PlayerFlags player={player} />
         <Tabs tabs={[
           { key: 'skills', label: 'Skills', render: () => <PlayerSkills player={player} potential={canSeePotential ? potential : null} /> },
           { key: 'contract', label: 'Contract & money', render: () => (
             <>
+        <PlayerFlags player={player} contract />
         {c ? (
           <div className="pcard-grid">
             <div><span>Status</span><b className={yearsLeft(player) === 0 ? 'warn' : ''}>{contractLabel(player)}</b></div>

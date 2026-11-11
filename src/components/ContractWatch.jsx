@@ -46,7 +46,7 @@ export default function ContractWatch({ players, team, potentials, traits = {}, 
         <h3>Aging out <span className="count">{retiring.length}</span></h3>
         <p className="dim help">They turn 28 at Birthday & Farewell and retire. Plan their replacements.</p>
         {retiring.length ? retiring.map((p) => (
-          <Row key={p.id} p={p} team={team} onOpen={onOpen} right={<span className="ret-tag">RET</span>} />
+          <Row key={p.id} p={p} team={team} onOpen={onOpen} right={<span className="dim">Final season</span>} />
         )) : <p className="dim">No retirements this year.</p>}
       </section>
     </div>

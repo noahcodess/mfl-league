@@ -16,12 +16,11 @@ export default function Header({ page, session, ready, live, onLeagueChange }) {
     <header className="header">
       <a className="brand" href={links.home}><img src={leagueLogo.light} alt="" /><span>MFL</span></a>
       <nav className="nav">
-        {myTeam && <a className={page === 'home' ? 'on' : ''} href={links.home}>My Team</a>}
-        {myTeam && <a className={page === 'team' ? 'on' : ''} href={links.team(p.team_id)}>Roster</a>}
+        {myTeam && <a className={['home', 'trades'].includes(page) ? 'on' : ''} href={links.home}>My Team</a>}
         {!myTeam && <a className={page === 'home' ? 'on' : ''} href={links.home}>Home</a>}
         <a className={page === 'league' ? 'on' : ''} href={links.league}>League</a>
         <a className={`nav-live${['live', 'draft', 'freeAgents'].includes(page) ? ' on' : ''}`} href={links.live}><i className="live-pulse" />Live</a>
-        {ready && <a className={page === 'trades' ? 'on' : ''} href={links.trades}>Trades</a>}
+        {ready && !myTeam && <a className={page === 'trades' ? 'on' : ''} href={links.trades}>Trades</a>}
         {isCommish && <a className={page === 'control' ? 'on' : ''} href={links.control}>Commissioner's Desk</a>}
       </nav>
       <div className="header-right">

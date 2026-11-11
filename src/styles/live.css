@@ -45,3 +45,8 @@
 .career-trades li small { grid-column: 2; color: var(--dim); } .career-trade-teams { display: flex; align-items: center; gap: 6px; } .career-trade-teams i { font-style: normal; color: var(--dim); }
 .career-trade-when { display: grid; } .career-trade-when b { font-family: var(--label); font-size: 13px; } .career-trade-when small { color: var(--dim); font-size: 11px; }
 .career-trades li { grid-template-columns: 120px 1fr; }
+/* Player card notes (replaced the old badges) */
+.pflags { display: grid; gap: 4px; margin: 8px 0; }
+.pflag { display: grid; grid-template-columns: 12px auto 1fr; align-items: center; gap: 4px 8px; padding: 6px 10px; background: #000; border: 2px solid var(--line); font-size: 13px; }
+.pflag i { width: 10px; height: 10px; border-radius: 50%; background: var(--dim); } .pflag b { font-family: var(--label); } .pflag span { color: var(--dim); }
+.pflag.red i { background: var(--bad); box-shadow: 0 0 8px var(--bad); } .pflag.amber i { background: var(--gold); } .pflag.green i { background: var(--good); }

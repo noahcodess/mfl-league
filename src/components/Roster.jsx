@@ -2,9 +2,6 @@ import React, { useState } from 'react';
 import Headshot from './Headshot.jsx';
 import StarRating from './StarRating.jsx';
 import { OFFENSE, DEFENSE, POSITION_NAMES } from '../data/positions.js';
-import { contractLabel, yearsLeft } from '../data/contracts.js';
-import { isRetiring } from '../data/players.js';
-import { currentSeason } from '../data/teams.js';
 
 // The roster as a real depth chart: a card per position, players stacked top to bottom with the best starter on top
 // (WR1, WR2...), backups tucked under "+ backups". Insiders also see contract years and potential.
@@ -12,20 +9,16 @@ const best = (a, b) => b.stars - a.stars || (a.slot || 0) - (b.slot || 0) || (a.
 
 function DepthRow({ p, label, team, onOpen, insider, backup }) {
   const pot = insider ? insider[p.id] : null;
-  const left = yearsLeft(p);
   return (
     <button className={`depth-row${backup ? ' backup' : ''}`} onClick={() => onOpen(p)}>
       <span className="depth-slot">{label}</span>
       <Headshot player={p} team={team} size={40} />
       <span className="depth-main">
         <span className="depth-name"><span className="depth-num">#{p.number ?? '-'}</span> {p.name}
-          {p.rookieSeason === currentSeason() && <span className="rookie-tag">ROOKIE</span>}
-          {isRetiring(p) && <span className="ret-tag" title="Ages out this offseason">RET</span>}
         </span>
         <span className="depth-sub">
           <StarRating value={p.stars} elite={p.elite} />
           <span className="dim">Age {p.age ?? '-'}</span>
-          {insider && <span className={`yrs${left === 0 ? ' gone' : left === 1 ? ' last' : ''}`}>{contractLabel(p)}</span>}
           {pot != null && pot > p.stars && <span className="pot-mini">POT <StarRating value={pot} elite={pot === 5} /></span>}
         </span>
       </span>

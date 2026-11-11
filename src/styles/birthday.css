@@ -1,0 +1,44 @@
+/* Birthday & Farewell show (full screen): cake + confetti, "Farewell, legends", tribute cards, end credits.
+   Also the Start button panel on the Live tab. */
+.bday-start { display: grid; justify-items: center; gap: 10px; margin: 6px auto 16px; max-width: 640px; text-align: center; padding: 14px; background: #000; border: 2px dashed #ff7fbf; }
+.bday-start .btn.big { font-size: 18px; padding: 12px 22px; }
+.farewell + .btn, .card h3 .btn { margin-left: 10px; }
+
+.bshow { position: fixed; inset: 0; z-index: 9999; display: grid; place-items: center; overflow: hidden; color: #fff;
+  background: radial-gradient(ellipse at 50% 30%, #3a1630 0%, #12060f 60%, #050205 100%); animation: bshow-in .5s ease-out both; }
+@keyframes bshow-in { from { opacity: 0; } to { opacity: 1; } }
+.bshow-skip { position: absolute; top: 16px; right: 16px; z-index: 2; }
+.bshow h1 { font-size: clamp(28px, 6vw, 64px); margin: 0; text-align: center; text-shadow: 4px 4px 0 #000; }
+
+.bshow-cake { display: grid; justify-items: center; gap: 14px; padding: 20px; }
+.cake.big { transform: scale(1.5); margin: 70px 0 40px; animation: cake-rise .9s cubic-bezier(.2, 1.4, .4, 1) both; }
+@keyframes cake-rise { from { transform: scale(.4) translateY(120px); opacity: 0; } to { transform: scale(1.5); opacity: 1; } }
+.cake.big .candles i::after { animation: flicker .5s calc(var(--i) * .12s) infinite alternate, light-up .4s calc(.9s + var(--i) * .25s) both; }
+@keyframes light-up { from { opacity: 0; transform: translateX(-50%) scale(0); } to { opacity: 1; transform: translateX(-50%) scale(1); } }
+.bshow-pop { animation: pop-in .6s 2.6s cubic-bezier(.2, 1.6, .4, 1) both; color: #ffcf3a; }
+@keyframes pop-in { from { transform: scale(.2); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+.bshow-sub { margin: 0; font-size: 18px; opacity: 0; animation: tab-in .5s 3.2s ease-out forwards; }
+.confetti { position: absolute; inset: 0; pointer-events: none; }
+.confetti i { position: absolute; top: -20px; left: calc(var(--k) * 3.6%); width: 10px; height: 10px; background: hsl(calc(var(--k) * 47), 90%, 60%);
+  animation: confetti-fall calc(2.6s + (var(--k) % 5) * .4s) calc(2.4s + (var(--k) % 7) * .15s) linear forwards; }
+@keyframes confetti-fall { to { transform: translateY(110vh) rotate(calc(var(--k) * 90deg)); } }
+
+.bshow-title { text-align: center; display: grid; gap: 8px; animation: pop-in .7s cubic-bezier(.2, 1.4, .4, 1) both; }
+.bshow-title small, .bshow-info small { color: #ff9fd0; font-family: var(--label); letter-spacing: 3px; text-transform: uppercase; font-weight: 700; }
+.bshow-title p { font-size: 20px; margin: 0; opacity: .85; }
+
+.bshow-tribute { display: flex; align-items: center; gap: 32px; flex-wrap: wrap; justify-content: center; padding: 24px; max-width: 900px;
+  animation: tribute-in 3.2s ease-in-out both; }
+@keyframes tribute-in { 0% { opacity: 0; transform: translateX(80px); } 14% { opacity: 1; transform: none; } 86% { opacity: 1; transform: none; } 100% { opacity: 0; transform: translateX(-80px); } }
+.bshow-portrait { padding: 10px; background: var(--team); border: 4px solid #000; box-shadow: 0 0 60px color-mix(in srgb, var(--team) 70%, transparent), 8px 8px 0 #000; }
+.bshow-portrait .headshot { display: block; image-rendering: pixelated; }
+.bshow-info { display: grid; gap: 8px; } .bshow-info h1 { text-align: left; }
+.bshow-team { display: flex; align-items: center; gap: 8px; font-size: 20px; font-weight: 700; } .bshow-info p { margin: 0; font-size: 16px; opacity: .85; }
+
+.bshow-credits { position: absolute; inset: 0; overflow: hidden; mask-image: linear-gradient(transparent, #000 15%, #000 85%, transparent); }
+.bshow-roll { position: absolute; left: 50%; top: 100%; transform: translateX(-50%); width: min(560px, 92vw); text-align: center; animation: roll linear forwards; }
+@keyframes roll { from { top: 100%; transform: translate(-50%, 0); } to { top: 0; transform: translate(-50%, -100%); } }
+.bshow-roll h2 { font-size: 40px; margin: 0 0 4px; color: #ffcf3a; } .bshow-fin { margin-top: 60px !important; font-size: 64px !important; }
+.bshow-line { display: grid; grid-template-columns: 44px 1fr 56px 70px; gap: 10px; padding: 6px 0; font-size: 18px; text-align: left; border-bottom: 1px solid #ffffff14; }
+.bshow-line span { color: #ff9fd0; font-weight: 700; } .bshow-line em { font-style: normal; opacity: .7; } .bshow-line i { font-style: normal; color: #ffcf3a; }
+@media (max-width: 560px) { .bshow-line { grid-template-columns: 36px 1fr 44px; font-size: 15px; } .bshow-line i { display: none; } .bshow-info h1 { text-align: center; } .bshow-info { justify-items: center; } }

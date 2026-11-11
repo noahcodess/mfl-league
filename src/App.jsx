@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Header from './components/Header.jsx';
+import BirthdayShowGate from './components/BirthdayShowGate.jsx';
 import Redirect from './components/Redirect.jsx';
 import LeaguePage from './pages/LeaguePage.jsx';
 import TeamPage from './pages/TeamPage.jsx';
@@ -9,7 +10,7 @@ import ChangePasswordPage from './pages/ChangePasswordPage.jsx';
 import KeySetupPage from './pages/KeySetupPage.jsx';
 import KeyUnlockPage from './pages/KeyUnlockPage.jsx';
 import HomePage from './pages/HomePage.jsx';
-import DashboardPage from './pages/DashboardPage.jsx';
+import MyTeamPage from './pages/MyTeamPage.jsx';
 import CommissionerDeskPage from './pages/CommissionerDeskPage.jsx';
 import FreeAgentsPage from './pages/FreeAgentsPage.jsx';
 import DraftPage from './pages/DraftPage.jsx';
@@ -47,7 +48,10 @@ function Screen({ route, session, step, reload }) {
   }
   if (route.page === 'home') {
     const p = step === 'ready' ? session.profile : null;
-    return p?.role === 'coach' && p.team_id ? <DashboardPage viewer={p} reload={reload} /> : <HomePage signedIn={!!p} />;
+    return p?.role === 'coach' && p.team_id ? <MyTeamPage viewer={p} reload={reload} initialTab={route.tab} /> : <HomePage signedIn={!!p} />;
+  }
+  if (route.page === 'team' && step === 'ready' && session.profile?.role === 'coach' && route.id === session.profile.team_id) {
+    return <MyTeamPage viewer={session.profile} reload={reload} initialTab="roster" />;
   }
   if (route.page === 'team') return <TeamPage teamId={route.id} viewer={step === 'ready' ? session.profile : null} />;
   if (route.page === 'draft') {
@@ -58,6 +62,7 @@ function Screen({ route, session, step, reload }) {
     if (step === 'login') return <LoginPage />;
     if (step !== 'ready') return null;
     const p = session.profile;
+    if (route.page === 'trades' && p.role === 'coach' && p.team_id) return <MyTeamPage viewer={p} reload={reload} initialTab="trades" />;
     return route.page === 'trades' ? <TradesPage viewer={p} canControl={p.role === 'commissioner' || !!p.site_owner} /> : <InboxPage viewer={p} />;
   }
   if (route.page === 'draftDesk') {
@@ -69,7 +74,7 @@ function Screen({ route, session, step, reload }) {
   if (route.page === 'freeAgents') return <FreeAgentsPage viewer={step === 'ready' ? session.profile : null} />;
   if (route.page === 'live') {
     const p = step === 'ready' ? session.profile : null;
-    return <LivePage viewer={p} canControl={p?.role === 'commissioner' || !!p?.site_owner /* TEMPORARY: owner tests the desk */} />;
+    return <LivePage viewer={p} reload={reload} canControl={p?.role === 'commissioner' || !!p?.site_owner /* TEMPORARY: owner tests the desk */} />;
   }
   return <LeaguePage />;
 }
@@ -79,7 +84,7 @@ export default function App() {
   const session = useSession();
   const step = loginStep(session);
   const [live, setLive] = useState(false);
-  const [, setVersion] = useState(0);
+  const [version, setVersion] = useState(0);
   const reload = async () => { setLive(await loadLeague()); setVersion((v) => v + 1); };
   useEffect(() => { loadLeague().then(setLive); }, []);
   const myTeam = step === 'ready' && session.profile?.role === 'coach' ? getTeam(session.profile.team_id) : null;
@@ -92,7 +97,8 @@ export default function App() {
       {myTeam && !route.stage && <DraftAlert teamId={myTeam.id} page={route.page} />}
       {!route.stage && <ScheduleNotice />}
       <TradeLauncher myTeamId={myTeam?.id} />
-      <main className="main"><div className="page" key={`${route.page}-${route.id || ''}-${step}`}><Screen route={route} session={session} step={step} reload={reload} /></div></main>
+      {step === 'ready' || session.status === 'out' ? <BirthdayShowGate page={route.page} viewer={step === 'ready' ? session.profile : null} version={version} /> : null}
+      <main className="main"><div className="page" key={`${route.page}-${route.id || ''}-${route.tab || ''}-${step}`}><Screen route={route} session={session} step={step} reload={reload} /></div></main>
     </div>
   );
 }

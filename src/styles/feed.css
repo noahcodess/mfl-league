@@ -1,0 +1,42 @@
+/* League feed: phone-first cards in one scrolling column, two columns on tablets, three on wide screens. Plus the My Team tabs. */
+.feed { columns: 1; column-gap: 14px; }
+@media (min-width: 760px) { .feed { columns: 2; } }
+@media (min-width: 1180px) { .feed { columns: 3; } }
+.feed-card { break-inside: avoid; display: block; margin: 0 0 14px; padding: 14px; background: var(--panel); border: 2px solid #000; border-radius: 14px;
+  box-shadow: 0 6px 0 #0006; animation: feed-in .45s ease-out both; }
+.feed-card:nth-child(2) { animation-delay: .06s; } .feed-card:nth-child(3) { animation-delay: .12s; } .feed-card:nth-child(4) { animation-delay: .18s; }
+.feed-card:nth-child(5) { animation-delay: .24s; } .feed-card:nth-child(6) { animation-delay: .3s; }
+@keyframes feed-in { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+.feed-card > header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+.feed-card > header b { display: block; font-family: var(--label); font-size: 17px; } .feed-card > header small { color: var(--dim); font-size: 12px; }
+.feed-icon { width: 38px; height: 38px; display: grid; place-items: center; font-size: 20px; background: #000; border-radius: 50%; border: 2px solid var(--line); flex: none; }
+.feed-empty { margin: 4px 0; } .feed-seg { margin-bottom: 8px; } .feed-head { margin-bottom: 10px; }
+
+.feed-standings { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
+.feed-standings li { display: grid; grid-template-columns: 22px 1fr auto auto; align-items: center; gap: 8px; padding: 6px 4px; border-bottom: 1px solid #ffffff10; }
+.fs-rank { color: var(--dim); font-weight: 700; text-align: center; } .fs-team { display: flex; align-items: center; gap: 8px; color: var(--text); text-decoration: none; min-width: 0; }
+.fs-team b { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 14px; } .fs-rec { font-variant-numeric: tabular-nums; font-size: 13px; color: var(--dim); }
+.fs-rec em { font-style: normal; margin-left: 4px; color: var(--gold); }
+
+.feed-records { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.feed-records li { display: grid; grid-template-columns: 34px 1fr auto; align-items: center; gap: 8px; padding: 8px; background: #000; border-radius: 10px; border-left: 4px solid var(--team, var(--gold)); }
+.fr-icon { font-size: 22px; text-align: center; } .feed-records small { display: block; color: var(--dim); font-size: 11px; text-transform: uppercase; letter-spacing: 1px; }
+.feed-records b { display: flex; align-items: center; gap: 6px; font-size: 14px; } .feed-records em { font-style: normal; color: var(--gold); font-weight: 700; font-size: 13px; }
+
+.feed-players, .feed-trades { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
+.feed-players button, .feed-trades button { width: 100%; display: flex; align-items: center; gap: 10px; padding: 6px; background: transparent; border: none; color: inherit; text-align: left; border-radius: 10px; cursor: pointer; font: inherit; }
+.feed-players button:hover, .feed-trades button:hover { background: #ffffff0d; }
+.fp-rank { width: 30px; color: var(--gold); font-weight: 800; font-family: var(--label); } .fp-main { flex: 1; min-width: 0; display: grid; }
+.fp-main b { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } .fp-main small { color: var(--dim); font-size: 12px; }
+.feed-trades li { border-left: 3px solid var(--team, var(--line)); border-radius: 10px; background: #00000055; }
+.ft-main { flex: 1; min-width: 0; display: grid; gap: 2px; } .ft-main small { color: var(--dim); font-size: 12px; }
+.ft-teams { display: flex; align-items: center; gap: 5px; font-size: 13px; } .ft-teams i { font-style: normal; color: var(--dim); }
+.ft-when { display: grid; text-align: right; font-size: 12px; } .ft-when b { color: var(--gold); } .ft-when small { color: var(--dim); }
+
+/* Phones: edge-to-edge feel, bigger tap targets */
+@media (max-width: 560px) {
+  .feed-card { border-radius: 16px; padding: 12px; margin-bottom: 12px; }
+  .feed-players button, .feed-trades button { padding: 8px 4px; }
+  .myteam > .tabs > .tab-bar { overflow-x: auto; flex-wrap: nowrap; scrollbar-width: none; }
+  .myteam > .tabs > .tab-bar button { flex: none; }
+}

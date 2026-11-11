@@ -11,7 +11,7 @@ import { liveStage } from '../lib/liveStage.js';
 
 // Live: whatever the league is doing right now. Birthday & Farewell, re-signing, free agency (sign players right here),
 // draft night (the full draft room), training camp, or the current game week, always with a countdown to what's next.
-export default function LivePage({ viewer, canControl }) {
+export default function LivePage({ viewer, canControl, reload }) {
   const draft = useDraftStatus(currentSeason());
   const rows = useSchedule(currentSeason()) || [];
   const draftAt = rows.find((r) => r.kind === 'draft')?.at;
@@ -20,7 +20,7 @@ export default function LivePage({ viewer, canControl }) {
   return (
     <div className="live">
       <LiveHeader stage={stage} />
-      {(stage === 'birthday_soon' || stage === 'birthday') && <BirthdayView done={stage === 'birthday'} />}
+      {(stage === 'birthday_soon' || stage === 'birthday') && <BirthdayView done={stage === 'birthday'} canControl={canControl} reload={reload} />}
       {stage === 'fa' && <FaLiveView viewer={viewer} />}
       {(stage === 'resign' || stage === 'camp' || stage === 'season') && <LiveSimpleView stage={stage} />}
     </div>

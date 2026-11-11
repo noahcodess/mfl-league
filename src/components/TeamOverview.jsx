@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
-import DashHero from '../components/DashHero.jsx';
-import OffseasonSteps from '../components/OffseasonSteps.jsx';
-import ContractWatch from '../components/ContractWatch.jsx';
-import PickList from '../components/PickList.jsx';
-import ConferenceTable from '../components/ConferenceTable.jsx';
-import PlayerModal from '../components/PlayerModal.jsx';
-import NegotiationModal from '../components/NegotiationModal.jsx';
-import ComingUp from '../components/ComingUp.jsx';
-import CoachCard from '../components/CoachCard.jsx';
+import DashHero from './DashHero.jsx';
+import OffseasonSteps from './OffseasonSteps.jsx';
+import ContractWatch from './ContractWatch.jsx';
+import PickList from './PickList.jsx';
+import ConferenceTable from './ConferenceTable.jsx';
+import PlayerModal from './PlayerModal.jsx';
+import NegotiationModal from './NegotiationModal.jsx';
+import ComingUp from './ComingUp.jsx';
+import CoachCard from './CoachCard.jsx';
 import { getTeam, getTeams, capLimit, currentSeason, offseasonStep, resignOpen } from '../data/teams.js';
 import { getPlayers, teamCapUsed } from '../data/players.js';
 import { getPicks } from '../data/picks.js';
@@ -16,8 +16,9 @@ import { usePlayerTraits } from '../data/traits.js';
 import { useNegotiations } from '../data/negotiations.js';
 import { currentPhase } from '../data/teams.js';
 
-// A coach's home: his team in its colors, countdowns to the next league events, the offseason road map, contracts to deal with, next draft and his conference.
-export default function DashboardPage({ viewer, reload }) {
+// My Team → Overview: his team in its colors, countdowns to the next league events, the offseason road map, contracts to deal with,
+// next draft and his conference.
+export default function TeamOverview({ viewer, reload }) {
   const [open, setOpen] = useState(null);
   const [talk, setTalk] = useState(null);
   const [version, setVersion] = useState(0);

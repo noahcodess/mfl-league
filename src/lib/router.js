@@ -14,6 +14,7 @@ export function parseHash(hash) {
   if (h === 'free-agents') return { page: 'freeAgents' };
   if (h === 'draft') return { page: 'draft' };
   if (h === 'trades') return { page: 'trades' };
+  if (h.startsWith('my-')) return { page: 'home', tab: h.slice(3) };
   if (h === 'inbox') return { page: 'inbox' };
   if (h === 'draft-stage') return { page: 'draft', stage: true };
   if (h === 'draft-desk') return { page: 'draftDesk', stage: true };
@@ -42,6 +43,7 @@ export const links = {
   freeAgents: '#free-agents',
   draft: '#draft',
   trades: '#trades',
+  myTab: (tab) => `#my-${tab}`,
   inbox: '#inbox',
   draftStage: '#draft-stage',
   draftDesk: '#draft-desk',
