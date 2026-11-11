@@ -1,5 +1,6 @@
 import React from 'react';
 import TeamBadge from './TeamBadge.jsx';
+import TradeMoves from './TradeMoves.jsx';
 import { usePlayerHistory, DEAL_SOURCE, DEAL_STATUS } from '../data/playerHistory.js';
 import { getTeam } from '../data/teams.js';
 import { money } from '../lib/format.js';
@@ -7,11 +8,11 @@ import { money } from '../lib/format.js';
 const LEFT = { let_go: 'Not re-signed: went to free agency', talks_failed: 'Contract talks fell apart', walked: 'Walked in free agency' };
 const seasons = (a, b) => (a === b ? `Season ${a}` : `Seasons ${a}–${b}`);
 
-// "Past teams" tab: his draft pick, his college under it, then every team he's played for and the deals he signed, newest first.
+// "Past teams" tab: his draft pick, his college under it, every team he's played for and the deals he signed (newest first), then his trades.
 export default function PastTeams({ player }) {
   const history = usePlayerHistory(player);
   if (!history) return <p className="dim">Loading his history...</p>;
-  const { stints, drafted } = history;
+  const { stints, drafted, moves } = history;
   const draftTeam = drafted ? getTeam(drafted.teamId) : null;
   const newestFirst = [...stints].reverse();
   const startedWithImport = stints[0]?.deals[0]?.source === 'import';
@@ -52,7 +53,8 @@ export default function PastTeams({ player }) {
           );
         })}
       </ol>
-      {startedWithImport && <p className="dim career-note">The site's records start in Season 7, so teams before that aren't listed.</p>}
+      <TradeMoves moves={moves} />
+      {startedWithImport && <p className="dim career-note">Contract records start in Season 7. Trades go back to Season 1.</p>}
     </div>
   );
 }

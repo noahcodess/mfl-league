@@ -20,10 +20,8 @@ export default function Header({ page, session, ready, live, onLeagueChange }) {
         {myTeam && <a className={page === 'team' ? 'on' : ''} href={links.team(p.team_id)}>Roster</a>}
         {!myTeam && <a className={page === 'home' ? 'on' : ''} href={links.home}>Home</a>}
         <a className={page === 'league' ? 'on' : ''} href={links.league}>League</a>
-        <a className={page === 'freeAgents' ? 'on' : ''} href={links.freeAgents}>Free Agents</a>
-        <a className={page === 'draft' ? 'on' : ''} href={links.draft}>Draft</a>
+        <a className={`nav-live${['live', 'draft', 'freeAgents'].includes(page) ? ' on' : ''}`} href={links.live}><i className="live-pulse" />Live</a>
         {ready && <a className={page === 'trades' ? 'on' : ''} href={links.trades}>Trades</a>}
-        <a className={page === 'dataCheck' ? 'on' : ''} href={links.dataCheck}>Data Check</a>
         {isCommish && <a className={page === 'control' ? 'on' : ''} href={links.control}>Commissioner's Desk</a>}
       </nav>
       <div className="header-right">

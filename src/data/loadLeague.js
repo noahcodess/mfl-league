@@ -1,4 +1,4 @@
-// Loads teams, players, picks, issues and settings from the database into the store, in the same shape as the import.
+// Loads teams, players, picks and settings from the database into the store, in the same shape as the import.
 import { db } from './supabase.js';
 import { store } from './store.js';
 import { selectAll } from './selectAll.js';
@@ -26,16 +26,14 @@ const toContract = (c) => ({ perYear: c.per_year, total: c.total, firstSeason: c
 const toEvent = (e) => ({ id: e.id, season: e.season, phase: e.phase, kind: e.kind, playerId: e.player_id, teamId: e.team_id, summary: e.summary, data: e.data, at: e.created_at });
 
 const toPick = (p) => ({ id: p.id, ownerId: p.owner_id, originalCode: p.original_code, season: p.season, round: p.round });
-const toIssue = (i) => ({ kind: i.kind, teamId: i.team_id, text: i.text, level: i.level });
 
 // Returns true if the live data loaded. If the database can't be reached, the bundled import stays in place.
 export async function loadLeague() {
   try {
-    const [teams, players, picks, issues, settings, contracts, events] = await Promise.all([
+    const [teams, players, picks, settings, contracts, events] = await Promise.all([
       db.from('teams').select('*'),
       selectAll(() => db.from('players').select('*').in('status', ['active', 'free_agent']).order('id')),
       db.from('picks').select('*'),
-      db.from('import_issues').select('*').order('id'),
       db.from('league_settings').select('*'),
       selectAll(() => db.from('contracts').select('*').eq('status', 'active').order('id')),
       db.from('league_events').select('*').order('id', { ascending: false }).limit(80),
@@ -52,7 +50,6 @@ export async function loadLeague() {
       picks: picks.data.map(toPick),
       vacancies: store.league.vacancies, // still from the import until roster editing exists
     };
-    if (!issues.error) store.issues = issues.data.map(toIssue);
     store.events = events.error ? [] : events.data.map(toEvent);
     store.source = 'live';
     applyDemoOverrides();

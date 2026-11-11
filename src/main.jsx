@@ -23,6 +23,7 @@ import './styles/coaches.css';
 import './styles/draft.css';
 import './styles/draftStage.css';
 import './styles/draftReveal.css';
+import './styles/live.css';
 import './styles/motion.css';
 
 createRoot(document.getElementById('root')).render(<App />);

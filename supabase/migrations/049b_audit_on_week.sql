@@ -1,0 +1,2 @@
+-- 049b (applied live): advance_week runs data_audit again (048 re-run had dropped it); removed a duplicate current_week line.
+-- retire_chance_26 set to 0: only players who were 26 (20% chance) or 27 (always) before their birthday retire.

@@ -4,7 +4,8 @@ import { useEffect, useState } from 'react';
 export function parseHash(hash) {
   const h = (hash || '').replace(/^#/, '');
   if (h.startsWith('team-')) return { page: 'team', id: h.slice(5) };
-  if (h === 'data-check') return { page: 'dataCheck' };
+  if (h === 'data-check') return { page: 'console' };
+  if (h === 'live') return { page: 'live' };
   if (h === 'login') return { page: 'login' };
   if (h === 'console') return { page: 'console' };
   if (h === 'control') return { page: 'control' };
@@ -33,7 +34,7 @@ export const links = {
   home: '#home',
   league: '#league',
   team: (id) => `#team-${id}`,
-  dataCheck: '#data-check',
+  live: '#live',
   login: '#login',
   console: '#console',
   control: '#control',

@@ -1,4 +1,5 @@
-// A player's career on the site: every team he's been on and the deals he signed there (oldest first), plus his draft spot.
+// A player's career on the site: every team he's been on and the deals he signed there (oldest first), his draft spot,
+// and his trades (including the ones from before the site, loaded from the commissioner's trade posts).
 import { useEffect, useState } from 'react';
 import { db } from './supabase.js';
 import { DEMO } from './demo.js';
@@ -17,7 +18,10 @@ function toStints(deals) {
   return stints;
 }
 
-// Returns null while loading, then { stints, drafted } where drafted = { season, round, pick, teamId } or null.
+const toMove = (m) => ({ id: m.id, from: m.from_team, to: m.to_team, at: m.happened_at, season: m.season, note: m.note });
+
+// Returns null while loading, then { stints, drafted, moves } where drafted = { season, round, pick, teamId } or null
+// and moves = trades, newest first.
 export function usePlayerHistory(player) {
   const [history, setHistory] = useState(null);
   useEffect(() => {
@@ -25,11 +29,16 @@ export function usePlayerHistory(player) {
     const drafted = player.draftPick ? { season: player.draftSeason, round: player.draftRound, pick: player.draftPick, teamId: player.draftedBy } : null;
     if (DEMO) {
       const c = contractOf(player);
-      setHistory({ stints: c && player.teamId ? toStints([{ ...c, teamId: player.teamId, status: 'active' }]) : [], drafted });
+      setHistory({ stints: c && player.teamId ? toStints([{ ...c, teamId: player.teamId, status: 'active' }]) : [], drafted,
+        moves: player.teamId === 'snm' ? [{ id: 1, from: 'wrf', to: 'snm', at: '2025-11-11T20:07:00Z', note: 'Traded for DT Christopher Diaz and a Season 9 2nd-round pick' }] : [] });
       return undefined;
     }
-    db.from('contracts').select('team_id, source, status, per_year, total, first_season, last_season').eq('player_id', player.id).order('first_season').order('id')
-      .then(({ data }) => { if (live) setHistory({ stints: toStints((data || []).map(toDeal)), drafted }); });
+    Promise.all([
+      db.from('contracts').select('team_id, source, status, per_year, total, first_season, last_season').eq('player_id', player.id).order('first_season').order('id'),
+      db.from('player_moves').select('*').eq('player_id', player.id).order('happened_at', { ascending: false }),
+    ]).then(([deals, moves]) => {
+      if (live) setHistory({ stints: toStints((deals.data || []).map(toDeal)), drafted, moves: (moves.data || []).map(toMove) });
+    });
     return () => { live = false; };
   }, [player.id]);
   return history;

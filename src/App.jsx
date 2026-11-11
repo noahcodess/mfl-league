@@ -3,7 +3,7 @@ import Header from './components/Header.jsx';
 import Redirect from './components/Redirect.jsx';
 import LeaguePage from './pages/LeaguePage.jsx';
 import TeamPage from './pages/TeamPage.jsx';
-import DataCheckPage from './pages/DataCheckPage.jsx';
+import LivePage from './pages/LivePage.jsx';
 import LoginPage from './pages/LoginPage.jsx';
 import ChangePasswordPage from './pages/ChangePasswordPage.jsx';
 import KeySetupPage from './pages/KeySetupPage.jsx';
@@ -67,7 +67,10 @@ function Screen({ route, session, step, reload }) {
     return session.profile.role === 'commissioner' || session.profile.site_owner ? <DraftDeskPage viewer={session.profile} /> : <div className="notice bad">Commissioner only.</div>;
   }
   if (route.page === 'freeAgents') return <FreeAgentsPage viewer={step === 'ready' ? session.profile : null} />;
-  if (route.page === 'dataCheck') return <DataCheckPage />;
+  if (route.page === 'live') {
+    const p = step === 'ready' ? session.profile : null;
+    return <LivePage viewer={p} canControl={p?.role === 'commissioner' || !!p?.site_owner /* TEMPORARY: owner tests the desk */} />;
+  }
   return <LeaguePage />;
 }
 
