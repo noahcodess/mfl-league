@@ -51,7 +51,7 @@ export default function PlayerModal({ player, team, canSeePotential, potential, 
             <div><span>Status</span><b className={yearsLeft(player) === 0 ? 'warn' : ''}>{contractLabel(player)}</b></div>
             <div><span>Runs</span><b>S{c.firstSeason}–S{c.lastSeason}</b></div>
             <div><span>Total</span><b>{money(c.total)}</b></div>
-            <div className="hl"><span>Cap hit / year</span><b>{money(c.perYear)}</b></div>
+            <div className="hl"><span>Salary / year</span><b>{money(c.perYear)}</b></div>
           </div>
         ) : <p className="dim">No contract. {player.teamId ? 'He can be re-signed during the re-signing period.' : 'Free agent.'}</p>}
         <PlayerMoney player={player} potential={canSeePotential ? potential : null} insider={canSeePotential} traits={traits} />

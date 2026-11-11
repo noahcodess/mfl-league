@@ -3,3 +3,4 @@
 -- bot_eval_trade: outgoing picks valued at greatest(own, 0.9 x balanced value); reasons use array_append.
 -- bot_gap_text: "top-5 pick" when the gap is over 75 value points.
 -- (Exact function bodies are in the live database; see pg_get_functiondef.)
+-- 046f (applied live): rebuilding bots value incoming players 26+ at 35% (25 at 70%), so only a steal gets through; new reasons about vets.
