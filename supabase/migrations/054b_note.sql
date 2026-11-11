@@ -1,0 +1,1 @@
+-- 054b (applied live): save_season_schedule drops its temp table first.

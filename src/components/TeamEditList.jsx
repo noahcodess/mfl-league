@@ -8,7 +8,7 @@ export default function TeamEditList({ canControl, reload }) {
   const [open, setOpen] = useState(null);
   return (
     <div>
-      <p className="dim">Rename teams, change abbreviations, colors and conference, or upload a new logo (PNG with a see-through background).</p>
+      <p className="dim">Change a team's location and name separately (Ocean Monument + Guardians), its abbreviation, colors and conference, or upload a new logo (PNG with a see-through background).</p>
       {getConferences().map((c) => (
         <section key={c} className="te-conf">
           <h3>{c}</h3>

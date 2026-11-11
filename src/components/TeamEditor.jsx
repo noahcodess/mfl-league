@@ -7,14 +7,17 @@ import { logoFor } from '../data/logos.js';
 import { updateTeam, uploadTeamLogo, resetTeamLogo } from '../data/commishEdit.js';
 import { prepareLogo } from '../lib/logoCheck.js';
 
-// Commissioner: edit one team. Name, abbreviation, conference, colors, and the logo (PNG with a see-through background).
+// Commissioner: edit one team. Location + team name (the full name is both: Ocean Monument + Guardians), abbreviation,
+// conference, colors, and the logo (PNG with a see-through background).
 export default function TeamEditor({ team, canControl, onClose, onSaved }) {
-  const [f, setF] = useState({ name: team.name, code: team.code, conference: team.conference, color: team.color, accent: team.accent });
+  const split = (team.name || '').match(/^(.*)\s(\S+)$/) || [null, team.name, ''];
+  const [f, setF] = useState({ location: team.location || split[1], nickname: team.nickname || split[2], code: team.code, conference: team.conference, color: team.color, accent: team.accent });
   const [logo, setLogo] = useState(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
   const set = (k) => (e) => setF((x) => ({ ...x, [k]: k === 'code' ? e.target.value.toUpperCase().replace(/[^A-Z]/g, '').slice(0, 4) : e.target.value }));
-  const preview = { ...team, ...f, logo: logo?.preview || team.logo };
+  const name = `${f.location} ${f.nickname}`.trim();
+  const preview = { ...team, ...f, name, logo: logo?.preview || team.logo };
   const custom = !!team.logoUrl;
 
   const pick = async (e) => {
@@ -37,9 +40,10 @@ export default function TeamEditor({ team, canControl, onClose, onSaved }) {
   return (
     <Modal onClose={onClose} className="team-editor" style={{ '--team': f.color, '--team-accent': f.accent }}>
       <button className="modal-x" onClick={onClose} aria-label="Close">×</button>
-      <div className="te-preview"><TeamBadge team={preview} size="lg" /><div><small>{f.code || '???'} · {f.conference}</small><h2>{f.name || 'Team name'}</h2></div></div>
+      <div className="te-preview"><TeamBadge team={preview} size="lg" /><div><small>{f.code || '???'} · {f.conference}</small><h2>{name || 'Team name'}</h2></div></div>
       <div className="te-grid">
-        <label className="field"><span>Team name</span><input value={f.name} onChange={set('name')} maxLength={40} disabled={!canControl} /></label>
+        <label className="field"><span>Location</span><input value={f.location} onChange={set('location')} maxLength={28} placeholder="Ocean Monument" disabled={!canControl} /></label>
+        <label className="field"><span>Team name</span><input value={f.nickname} onChange={set('nickname')} maxLength={20} placeholder="Guardians" disabled={!canControl} /></label>
         <label className="field"><span>Abbreviation</span><input value={f.code} onChange={set('code')} disabled={!canControl} /></label>
         <label className="field"><span>Conference</span>
           <select value={f.conference} onChange={set('conference')} disabled={!canControl}>{getConferences().map((c) => <option key={c}>{c}</option>)}</select></label>

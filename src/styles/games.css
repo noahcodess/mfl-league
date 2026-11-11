@@ -1,0 +1,35 @@
+/* Games: the matchup line (logos, win % bar, rating chip), the commissioner's week manager, and a team's schedule. */
+.godds { display: grid; grid-template-columns: 1fr auto 1fr auto; grid-template-areas: 'away at home rating' 'bar bar bar rating'; align-items: center; gap: 4px 10px; flex: 1; min-width: 0; }
+.godds-team { display: flex; align-items: center; gap: 6px; min-width: 0; } .godds-team b { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.godds-team em { font-style: normal; font-weight: 800; color: var(--gold); font-variant-numeric: tabular-nums; }
+.godds-team.away { grid-area: away; } .godds-team.home { grid-area: home; justify-content: flex-end; } .godds-at { grid-area: at; color: var(--dim); font-weight: 800; }
+.godds-bar { grid-area: bar; height: 6px; background: var(--home); border: 1px solid #000; position: relative; overflow: hidden; }
+.godds-bar i { position: absolute; inset: 0 auto 0 0; width: var(--p); background: var(--away); border-right: 2px solid #000; transition: width .4s; }
+.grating { grid-area: rating; padding: 3px 8px; border: 2px solid #000; font-size: 12px; font-weight: 800; white-space: nowrap; background: #333; }
+.grating.great { background: #b8860b; color: #000; } .grating.good { background: #2e7d4f; } .grating.okay { background: #3d4a5c; }
+.grating.bad { background: #4a3a3a; color: #ccc; } .grating.blowout { background: #7a1f2b; }
+
+.sg-tools, .sg-weekhead { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 8px; } .sg-weekhead h3 { margin: 0 8px 0 0; }
+.sg-weeks { display: flex; gap: 4px; flex-wrap: wrap; margin-bottom: 10px; }
+.sg-weeks button { padding: 6px 10px; background: var(--panel2); border: 2px solid #000; color: var(--text); font-weight: 800; cursor: pointer; }
+.sg-weeks button.on { background: var(--gold); color: #000; }
+.sg-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; counter-reset: slot; }
+.sg-list li { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; padding: 8px 10px; background: var(--panel2); border: 2px solid #000; counter-increment: slot; animation: tab-in .25s ease-out both; }
+.sg-list li::before { content: counter(slot); width: 22px; color: var(--dim); font-weight: 800; text-align: center; }
+.sg-list li:first-child { border-color: var(--gold); box-shadow: 0 0 0 2px #000, 0 0 12px #ffcf3a33; }
+.sg-list li.prime { background: linear-gradient(90deg, #1b1840, var(--panel2)); } .sg-list li.dragging { opacity: .4; }
+.sg-grip { cursor: grab; color: var(--dim); font-size: 18px; user-select: none; }
+.sg-controls { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; } .sg-controls input { max-width: 210px; }
+.sg-empty p { max-width: 640px; } .sg-empty .btn.big { font-size: 18px; padding: 12px 22px; }
+
+.tsched ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
+.tsched li { display: grid; grid-template-columns: 36px 26px 1fr auto auto auto; align-items: center; gap: 8px; padding: 8px; background: var(--panel2); border-left: 4px solid var(--team, var(--line)); }
+.tsched li.prime { background: linear-gradient(90deg, #1b1840, var(--panel2)); }
+.ts-week { font-weight: 800; color: var(--dim); } .ts-where { color: var(--dim); font-weight: 800; }
+.ts-opp { display: flex; align-items: center; gap: 6px; min-width: 0; } .ts-opp b { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } .ts-opp small { color: var(--dim); font-size: 11px; }
+.ts-when { font-size: 12px; color: var(--dim); } .ts-win { font-weight: 800; font-variant-numeric: tabular-nums; } .ts-win.up { color: var(--good); } .ts-win.down { color: var(--bad); }
+@media (max-width: 640px) {
+  .tsched li { grid-template-columns: 30px 22px 1fr auto; } .tsched .ts-when, .tsched .grating { grid-column: 3 / -1; justify-self: start; }
+  .godds { grid-template-columns: 1fr auto 1fr; grid-template-areas: 'away at home' 'bar bar bar' 'rating rating rating'; } .grating { justify-self: start; }
+}
+.tsched .grating { grid-area: auto; }

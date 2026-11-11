@@ -12,7 +12,7 @@ async function rpc(fn, args) {
 }
 
 export const updateTeam = (teamId, t) => rpc('commish_update_team', {
-  p_team: teamId, p_name: t.name, p_code: t.code, p_conference: t.conference, p_color: t.color, p_accent: t.accent,
+  p_team: teamId, p_location: t.location, p_nickname: t.nickname, p_code: t.code, p_conference: t.conference, p_color: t.color, p_accent: t.accent,
 });
 
 // blob = a checked PNG from prepareLogo. A new file name every time so browsers don't show the old logo from cache.

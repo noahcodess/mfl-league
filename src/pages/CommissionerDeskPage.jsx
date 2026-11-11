@@ -2,7 +2,7 @@ import React from 'react';
 import Tabs from '../components/Tabs.jsx';
 import OffseasonPanel from '../components/OffseasonPanel.jsx';
 import WeekControl from '../components/WeekControl.jsx';
-import ScheduleEditor from '../components/ScheduleEditor.jsx';
+import ScheduleTab from '../components/ScheduleTab.jsx';
 import CommishTrades from '../components/CommishTrades.jsx';
 import CoachList from '../components/CoachList.jsx';
 import AccountsPanel from '../components/AccountsPanel.jsx';
@@ -31,7 +31,7 @@ export default function CommissionerDeskPage({ canControl, reload, viewerKey, ac
       <Tabs initial={initialTab} tabs={[
         { key: 'offseason', label: '📆 Offseason', render: () => <OffseasonPanel canControl={canControl} reload={reload} viewerKey={viewerKey} /> },
         { key: 'season', label: '🏟️ Season', render: () => <WeekControl canControl={canControl} reload={reload} /> },
-        { key: 'schedule', label: '📅 Schedule', render: () => <ScheduleEditor canControl={canControl} /> },
+        { key: 'schedule', label: '📅 Schedule', render: () => <ScheduleTab canControl={canControl} /> },
         { key: 'teams', label: '🛡️ Teams', render: () => <TeamEditList canControl={canControl} reload={reload} /> },
         { key: 'players', label: '🏈 Players', render: () => <PlayerEditList canControl={canControl} reload={reload} /> },
         { key: 'trades', label: '🔁 Trades', render: () => <CommishTrades canControl={canControl} /> },
