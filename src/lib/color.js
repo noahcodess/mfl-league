@@ -5,10 +5,10 @@ function luminance(hex) {
   return 0.2126 * r + 0.7152 * g + 0.0722 * b;
 }
 
-// Team primary color, unless it's too dark to see on the background; then its accent.
+// Team primary color, unless it's too dark to see on the background; then its accent. Button text turns dark on a light brand.
 export function brandColors(team) {
   if (!team) return {};
   const dark = luminance(team.color) < 0.18;
   const brand = dark && luminance(team.accent) < 0.9 ? team.accent : team.color;
-  return { '--brand': brand, '--brand-accent': team.accent };
+  return { '--brand': brand, '--brand-accent': team.accent, '--brand-text': luminance(brand) > 0.5 ? '#1a1408' : '#fff' };
 }

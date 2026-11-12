@@ -59,7 +59,7 @@ h3 { font-size: 15px; margin: 0 0 12px; color: var(--gold); font-weight: 500; te
 
 /* Buttons */
 .btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 8px 14px; font-size: 14px; font-weight: 500;
-  color: #fff; background: var(--brand); border: 2px solid #000; box-shadow: inset -2px -3px 0 #0006, inset 2px 2px 0 #ffffff30, 2px 2px 0 #000;
+  color: var(--brand-text, #fff); background: var(--brand); border: 2px solid #000; box-shadow: inset -2px -3px 0 #0006, inset 2px 2px 0 #ffffff30, 2px 2px 0 #000;
   cursor: pointer; text-decoration: none; }
 .btn:hover { filter: brightness(1.12); text-decoration: none; }
 .btn:active { transform: translate(1px, 1px); box-shadow: inset 2px 2px 0 #0006, 1px 1px 0 #000; }

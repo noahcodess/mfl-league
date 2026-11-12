@@ -1,19 +1,19 @@
 // The end zone fonts. Each one turns a word into a small pixel picture (1 cell = 1 pixel) that the end zone scales up and turns
-// sideways. Everyone: Block, Bold, Tall, Italic, Outline, 3D, Scribble (handwriting). Team-only: Golem (Flower Forest Golems:
-// iron blocks with moss), Future (End City Blazes: wide, fast, glowing), Creeper Bold (Snowy Mountain Creepers: big, heavy, slightly rounded).
+// sideways. The shadow is added after (fontShadow.js). Everyone: Block, Bold, Tall, Italic, Outline, 3D, Scribble (handwriting).
+// Exclusive: Golem (Flower Forest Golems: iron blocks with moss) and Future (End City Blazes: wide, fast, glowing).
 import { shade } from './pixels.js';
 import { rng } from './fieldLayout.js';
-import { wordMask, grow, roundCorners, paint, canvasFor, on, put, grid, edgeTop, edgeBottom, edgeLeft, edgeRight, PAD } from './wordMask.js';
+import { wordMask, grow, paint, canvasFor, on, put, grid, edgeTop, edgeBottom, edgeLeft, edgeRight, PAD } from './wordMask.js';
 
 export const FONTS = [
   ['block', 'Block'], ['bold', 'Bold'], ['tall', 'Tall'], ['italic', 'Italic'], ['outline', 'Outline'], ['3d', '3D'], ['scribble', 'Scribble'],
-  ['golem', 'Golem', 'flf'], ['future', 'Future', 'edc'], ['cartoon', 'Creeper Bold', 'snm'],
+  ['golem', 'Golem', 'flf'], ['future', 'Future', 'edc'],
 ];
 export const fontsFor = (teamId) => FONTS.filter(([, , only]) => !only || only === teamId);
 
-function simple(m, c, shadow = 2) {
-  const cv = canvasFor(m), x = cv.getContext('2d');
-  paint(x, m, c.edge, shadow, shadow); paint(x, m, c.ink);
+function simple(m, c) {
+  const cv = canvasFor(m);
+  paint(cv.getContext('2d'), m, c.ink);
   return cv;
 }
 
@@ -34,12 +34,12 @@ function scribble(text, c) {
       if (!linked) { put(pen, ax, ay); put(pen, ax + 1, ay); put(pen, ax, ay + 1); put(pen, ax + 1, ay + 1); }
     });
   });
-  return simple(pen, c, 2);
+  return simple(pen, c);
 }
 
 function golem(text) {
   const body = wordMask(text, { cw: 3, ch: 4, gap: 3 }), out = grow(body, 1), cv = canvasFor(out), x = cv.getContext('2d'), r = rng(41);
-  paint(x, out, '#24261f', 2, 2); paint(x, out, '#2f322a');
+  paint(x, out, '#2f322a');
   const tex = ['#d6d0c4', '#cbc4b6', '#dfd9cd', '#d6d0c4'];
   paint(x, body, (i, j) => (edgeTop(body, i, j) || edgeLeft(body, i, j) ? '#f4f1ea' : edgeBottom(body, i, j) || edgeRight(body, i, j) ? '#958e81' : tex[Math.floor(r() * 4)]));
   for (let k = 0; k < body.w / 7; k++) { let i = Math.floor(r() * body.w), j = Math.floor(r() * body.h); for (let n = 0; n < 4; n++, i++, j++) if (on(body, i, j)) { x.fillStyle = '#7f786c'; x.fillRect(i, j, 1, 1); } } // cracks
@@ -62,18 +62,13 @@ function future(text, c, team) {
   return cv;
 }
 
-function cartoon(text, c) { // Creepers: plain heavy letters with softened corners, nothing else
-  const body = roundCorners(grow(wordMask(text, { cw: 3, ch: 3, gap: 5 }), 1));
-  return simple(body, c, 3);
-}
 
 // c: { ink, edge, base } colors. Returns a canvas with the word drawn left to right.
 export function renderWord(font, text, c, team) {
   if (font === 'scribble') return scribble(text, c);
   if (font === 'golem') return golem(text);
   if (font === 'future') return future(text, c, team);
-  if (font === 'cartoon') return cartoon(text, c);
-  if (font === 'bold') return simple(grow(wordMask(text, { gap: 4 }), 1), c, 3);
+  if (font === 'bold') return simple(grow(wordMask(text, { gap: 4 }), 1), c);
   if (font === 'tall') return simple(wordMask(text, { ch: 3 }), c);
   if (font === 'italic') return simple(wordMask(text, { slant: 0.35 }), c);
   if (font === 'outline') { const m = wordMask(text), o = grow(m, 1), cv = canvasFor(o), x = cv.getContext('2d'); paint(x, o, c.ink); paint(x, m, c.base); return cv; }

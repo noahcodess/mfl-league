@@ -11,7 +11,7 @@ function Banner({ team, word, dir, look }) {
     const c = ref.current, x = c.getContext('2d');
     x.setTransform(1, 0, 0, 1, 0, 0); x.clearRect(0, 0, FH, ZW); x.imageSmoothingEnabled = false;
     x.translate(FH / 2, ZW / 2); x.rotate(dir === 'up' ? Math.PI / 2 : -Math.PI / 2); x.drawImage(off, -ZW / 2, -FH / 2);
-  }, [team.id, team.color, team.accent, word, dir, look.font, look.design]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [team.id, team.color, team.accent, word, dir, look.font, look.design, look.shadow, look.shadowColor]); // eslint-disable-line react-hooks/exhaustive-deps
   return <canvas ref={ref} width={FH} height={ZW} className="ez-banner" />;
 }
 

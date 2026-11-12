@@ -12,20 +12,20 @@ async function rpc(fn, args) {
   return data;
 }
 
-// The team's waiting request, if any: { id, font, design, at } or null.
+// The team's waiting request, if any: { id, font, design, shadow, shadowColor, at } or null.
 export function usePendingEndZone(teamId, version = 0) {
   const [req, setReq] = useState(null);
   useEffect(() => {
     let live = true;
     if (DEMO || !teamId) { setReq(null); return undefined; }
     db.from('endzone_requests').select('*').eq('team_id', teamId).eq('status', 'pending').order('id', { ascending: false }).limit(1)
-      .then(({ data }) => { const r = data?.[0]; if (live) setReq(r ? { id: r.id, font: r.font, design: r.design, at: r.created_at } : null); });
+      .then(({ data }) => { const r = data?.[0]; if (live) setReq(r ? { id: r.id, font: r.font, design: r.design, shadow: r.shadow, shadowColor: r.shadow_color, at: r.created_at } : null); });
     return () => { live = false; };
   }, [teamId, version]);
   return req;
 }
 
-export const requestEndZone = (font, design) => rpc('request_endzone_change', { p_font: font, p_design: design });
+export const requestEndZone = (look) => rpc('request_endzone_change', { p_font: look.font, p_design: look.design, p_shadow: look.shadow, p_shadow_color: look.shadowColor });
 export async function decideEndZone(id, approve) {
   await rpc('decide_endzone_change', { p_request: id, p_approve: approve });
   await reloadStadiums();

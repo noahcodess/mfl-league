@@ -1,0 +1,48 @@
+/* Live tab during the season: week tabs, the week's games, top players and standings */
+.live-season { display: grid; gap: 14px; }
+.ls-sample { margin: 0; padding: 8px 12px; border: 2px dashed var(--line); border-radius: 10px; color: var(--dim); font-size: 13px; }
+.ls-preview-bar { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.ls-weeks { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 4px; }
+.ls-weeks button { flex: 0 0 auto; display: grid; justify-items: center; min-width: 56px; padding: 6px 8px; background: var(--panel2); color: var(--text);
+  border: 2px solid #000; border-radius: 10px; font: 700 18px var(--pixel); cursor: pointer; box-shadow: 2px 2px 0 #000; }
+.ls-weeks button small { font: 600 10px var(--label); color: var(--dim); text-transform: uppercase; letter-spacing: .05em; }
+.ls-weeks button.past { color: var(--dim); }
+.ls-weeks button.now { border-color: var(--gold); }
+.ls-weeks button.on { background: var(--brand); color: #fff; }
+.ls-weeks button.on small { color: #ffe3d4; }
+.ls-weeks .ls-playoffs { font-size: 15px; align-content: center; border-color: var(--gold); }
+.ls-grid { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(280px, 1fr); gap: 16px; align-items: start; }
+@media (max-width: 860px) { .ls-grid { grid-template-columns: 1fr; } }
+.ls-head { display: flex; align-items: center; gap: 10px; margin: 0; }
+.ls-tag { font: 700 11px var(--label); text-transform: uppercase; letter-spacing: .05em; padding: 2px 8px; border-radius: 999px; background: var(--gold); color: #1a1408; }
+.ls-side .feed-card { margin-bottom: 14px; }
+.ls-soon { text-align: center; padding: 30px; }
+.lw-games { list-style: none; margin: 10px 0 0; padding: 0; display: grid; gap: 10px; }
+.lw-game { padding: 10px 12px; background: var(--panel); border: 2px solid #000; border-radius: 12px; box-shadow: var(--shadow); display: grid; gap: 6px; }
+.lw-game.prime { border-color: var(--gold); }
+.lw-game.live { border-color: var(--bad); }
+.lw-top { display: flex; justify-content: space-between; gap: 8px; font: 600 12px var(--label); color: var(--dim); }
+.lw-status { white-space: nowrap; color: var(--text); }
+.lw-game.final .lw-status { color: var(--dim); }
+.lw-game.live .lw-status { color: var(--bad); }
+.lw-side { display: flex; align-items: center; gap: 8px; }
+.lw-side b { font-size: 15px; }
+.lw-side small { color: var(--dim); font: 600 12px var(--label); }
+.lw-side.lost { opacity: .55; }
+.lw-score { margin-left: auto; font: 700 22px var(--pixel); min-width: 34px; text-align: right; }
+.lw-at { font-size: 11px; }
+.ws-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.ws-list li { display: flex; align-items: center; gap: 8px; }
+.ws-list li > div { display: grid; }
+.ws-icon { font-size: 18px; width: 24px; text-align: center; }
+.cs-table { width: 100%; border-collapse: collapse; font: 600 13px var(--label); margin-top: 8px; }
+.cs-table th { text-align: left; color: var(--dim); font-size: 11px; text-transform: uppercase; padding: 4px; }
+.cs-table td { padding: 5px 4px; border-top: 1px solid var(--line2); }
+.cs-table { table-layout: fixed; }
+.cs-table th:nth-child(1), .cs-table td:nth-child(1) { width: 22px; }
+.cs-table th:nth-child(3), .cs-table td:nth-child(3) { width: 44px; }
+.cs-table th:nth-child(4), .cs-table td:nth-child(4) { width: 46px; }
+.cs-table th:nth-child(5), .cs-table td:nth-child(5) { width: 40px; }
+.cs-team { display: flex; align-items: center; gap: 6px; color: var(--text); text-decoration: none; min-width: 0; }
+.cs-team span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cs-up { color: var(--good); } .cs-down { color: var(--bad); }

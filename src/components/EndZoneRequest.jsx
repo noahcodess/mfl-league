@@ -9,7 +9,7 @@ export default function EndZoneRequest({ data }) {
   return (
     <div className="ez-request">
       {data.before && <EndZonePreview team={team} look={data.before} label="Now" />}
-      <EndZonePreview team={team} look={{ font: data.font, design: data.design }} label="Asking for" />
+      <EndZonePreview team={team} look={{ font: data.font, design: data.design, shadow: data.shadow, shadowColor: data.shadowColor }} label="Asking for" />
     </div>
   );
 }

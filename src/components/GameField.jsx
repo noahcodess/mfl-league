@@ -33,7 +33,7 @@ export default function GameField({ team, look = {}, crowd = 'normal' }) {
     beat();
     const id = setInterval(beat, 200);
     return () => clearInterval(id);
-  }, [team.id, team.color, team.accent, teamLogo, mfl, crowd, look.font, look.design, look.style]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [team.id, team.color, team.accent, teamLogo, mfl, crowd, look.font, look.design, look.style, look.shadow, look.shadowColor]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => { // camera
     let raf;

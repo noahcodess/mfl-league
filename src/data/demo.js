@@ -1,4 +1,4 @@
-// Test-only fake logins for screenshots (?demo=coach|commish|change|setup|unlock). Switched off in the real site build.
+// Test-only fake logins for screenshots (?demo=coach|commish|change|setup|unlock, &team=edc picks the coach's team). Switched off in the real site build.
 import { store } from './store.js';
 
 const params = import.meta.env.DEV ? new URLSearchParams(window.location.search) : null;
@@ -12,7 +12,7 @@ export function applyDemoOverrides() {
 }
 applyDemoOverrides();
 
-const coach = { user_id: 'd1', username: 'noah', role: 'coach', team_id: 'snm', display_name: 'Noah', must_change_password: false };
+const coach = { user_id: 'd1', username: 'noah', role: 'coach', team_id: params?.get('team') || 'snm', display_name: 'Noah', must_change_password: false };
 const commish = { user_id: 'd0', username: 'sserg', role: 'commissioner', team_id: null, display_name: 'SSerg', must_change_password: false };
 
 export function demoSession() {

@@ -3,6 +3,7 @@
 import { shade, brightness } from './pixels.js';
 import { YD, FY0, FH, brush } from './fieldLayout.js';
 import { renderWord } from './endZoneFonts.js';
+import { withShadow, shadowColor } from './fontShadow.js';
 
 export { FONTS, fontsFor } from './endZoneFonts.js';
 const ZW = 10 * YD;
@@ -30,10 +31,12 @@ function trim(cv) {
   return x1 < 0 ? { cv, x: 0, y: 0, w: 1, h: 1 } : { cv, x: x0, y: y0, w: x1 - x0 + 1, h: y1 - y0 + 1 };
 }
 
-// The word picture for a team in a font, trimmed. Used by the end zones and the Customize previews.
-export function endZoneWord(team, word, font) {
+// The word picture for a team in a font with its shadow, trimmed. look: { font, shadow, shadowColor }.
+// Used by the end zones and the Customize previews.
+export function endZoneWord(team, word, look = {}) {
   const ink = pick(team.color, team.accent), edge = shade(team.color, 0.45);
-  return trim(renderWord(font || 'block', word.toUpperCase(), { ink, edge, base: team.color }, team));
+  const cv = renderWord(look.font || 'block', word.toUpperCase(), { ink, edge, base: team.color }, team);
+  return trim(withShadow(cv, look.shadow || 'drop', shadowColor(team, look.shadowColor || 'dark', ink)));
 }
 
 // The two words a team paints: its place in the left end zone, its nickname in the right one.
@@ -45,7 +48,7 @@ export function endZoneWords(team) {
 // x0: left edge of the end zone. dir: 'up' for the left end zone, 'down' for the right one (letters face the field).
 export function drawEndZone(ctx, team, x0, word, dir, look = {}) {
   paintDesign(brush(ctx), x0, look.design || 'diagonal', team.color, dir === 'up', team.accent);
-  const w = endZoneWord(team, word, look.font);
+  const w = endZoneWord(team, word, look);
   let s = 1;
   while (w.w * (s + 1) <= FH - 70 && w.h * (s + 1) <= ZW - 24) s++;
   ctx.save();
