@@ -73,3 +73,9 @@
 .drip-too-many { color: var(--warn); font-size: 13px; align-self: center; }
 .drip-ba { display: inline-flex; align-items: center; gap: 10px; margin-top: 8px; padding: 6px 12px; background: linear-gradient(#2f6b2a, #24561f); border: 2px solid #183d14; }
 .drip-ba span { display: grid; justify-items: center; gap: 2px; } .drip-ba small { color: #dfe8dc; font-size: 11px; } .drip-ba b { color: #fff; font-size: 18px; }
+.num-change { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 8px; margin-top: 6px; padding-top: 8px; border-top: 1px solid var(--line); width: 100%; font-size: 13px; }
+.num-change > span:first-child { color: var(--dim); }
+.num-input input { width: 48px; text-align: center; font-weight: 700; font-size: 15px; margin-left: 3px; }
+.num-pending { width: 100%; text-align: center; color: var(--gold); }
+.num-ok { width: 100%; text-align: center; color: var(--good); }
+.num-change .form-error { width: 100%; text-align: center; margin: 0; }

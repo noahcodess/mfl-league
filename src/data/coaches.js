@@ -56,3 +56,15 @@ export const saveCoach = (teamId, name, looks, ratings, potential) => call('set_
 export const saveCoachScheme = (teamId, scheme) => call('set_coach_scheme', { p_team: teamId, p_scheme: scheme });
 export const requestNumber = (playerId, number) => call('request_number_change', { p_player: playerId, p_number: number });
 export const decideNumber = (requestId, approve) => call('decide_number_change', { p_request: requestId, p_approve: approve });
+// A player's number change still waiting on the commissioner (the requested number), or null.
+export function usePendingNumber(playerId, version = 0) {
+  const [n, setN] = useState(null);
+  useEffect(() => {
+    let live = true;
+    if (DEMO || !playerId) return undefined;
+    db.from('number_requests').select('to_number').eq('player_id', playerId).eq('status', 'pending').maybeSingle()
+      .then(({ data }) => { if (live) setN(data?.to_number ?? null); });
+    return () => { live = false; };
+  }, [playerId, version]);
+  return n;
+}
