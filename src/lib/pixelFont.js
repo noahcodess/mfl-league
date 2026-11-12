@@ -1,7 +1,8 @@
 // A 5x7 pixel font (A-Z, 0-9) for painting words on the field: end zone names, yard numbers, wall boards.
 // put(x, y, w, h) paints one block. dir: 'right' (normal), 'flip' (upside-down), 'up' (reads bottom to top, letter tops
 // point left) and 'down' (reads top to bottom, letter tops point right) for the two end zones.
-const G = {
+// opts.slant leans the letters (italic), opts.tall stretches them (2 = twice as tall).
+export const G = {
   A: [14, 17, 17, 31, 17, 17, 17], B: [30, 17, 17, 30, 17, 17, 30], C: [14, 17, 16, 16, 16, 17, 14], D: [30, 17, 17, 17, 17, 17, 30],
   E: [31, 16, 16, 30, 16, 16, 31], F: [31, 16, 16, 30, 16, 16, 16], G: [14, 17, 16, 23, 17, 17, 15], H: [17, 17, 17, 31, 17, 17, 17],
   I: [14, 4, 4, 4, 4, 4, 14], J: [7, 2, 2, 2, 2, 18, 12], K: [17, 18, 20, 24, 20, 18, 17], L: [16, 16, 16, 16, 16, 16, 31],
@@ -15,20 +16,21 @@ const G = {
 };
 
 // How long a word is along its reading direction, in pixels.
-export const textLength = (text, s = 1) => text.length * 6 * s - s;
+export const textLength = (text, s = 1, slant = 0) => text.length * 6 * s - s + Math.round(6 * slant * s);
 
-export function drawPixelText(put, text, x, y, s = 1, dir = 'right') {
-  const str = String(text).toUpperCase(), L = textLength(str, s);
+export function drawPixelText(put, text, x, y, s = 1, dir = 'right', opts = {}) {
+  const slant = opts.slant || 0, tall = opts.tall || 1;
+  const str = String(text).toUpperCase(), L = textLength(str, s, slant);
   [...str].forEach((ch, i) => {
     const rows = G[ch];
     if (!rows) return;
     for (let r = 0; r < 7; r++) for (let c = 0; c < 5; c++) {
       if (!((rows[r] >> (4 - c)) & 1)) continue;
-      const u = i * 6 * s + c * s, v = r * s; // u: along the word, v: down from the letter tops
-      if (dir === 'right') put(x + u, y + v, s, s);
-      else if (dir === 'flip') put(x + L - s - u, y + 6 * s - v, s, s);
-      else if (dir === 'up') put(x + v, y - u - s, s, s);
-      else put(x - v - s, y + u, s, s);
+      const u = i * 6 * s + c * s + Math.round((6 - r) * slant * s), v = r * s * tall, h = s * tall; // u: along the word, v: down from the letter tops
+      if (dir === 'right') put(x + u, y + v, s, h);
+      else if (dir === 'flip') put(x + L - s - u, y + 6 * s * tall - v, s, h);
+      else if (dir === 'up') put(x + v, y - u - s, h, s);
+      else put(x - v - h, y + u, h, s);
     }
   });
 }

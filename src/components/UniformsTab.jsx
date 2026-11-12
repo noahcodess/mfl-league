@@ -7,7 +7,7 @@ import { getTeam } from '../data/teams.js';
 
 const ORDER = ['QB', 'RB', 'WR', 'TE', 'OT', 'OG', 'C', 'DE', 'DL', 'DT', 'LB', 'CB', 'SS', 'FS', 'K', 'P'];
 
-// My Team → Uniforms: the team's four game uniforms (edit one, then it goes to the commissioner as a request).
+// My Team → Customize → Uniforms: the team's four game uniforms (edit one, then it goes to the commissioner as a request).
 export default function UniformsTab({ teamId }) {
   const team = getTeam(teamId);
   const [version, setVersion] = useState(0);

@@ -5,7 +5,7 @@ import { drawSurroundings, makeFans, drawFans } from '../lib/standsDraw.js';
 import { SPOTS, clampCam, glide, blit } from '../lib/gameCamera.js';
 import { leagueLogo } from '../data/logos.js';
 
-const TOUR = ['all', 'midfield', 'left', 'stands', 'right'];
+const TOUR = ['wide', 'midfield', 'left', 'stands', 'right'];
 function useImage(src) {
   const [img, setImg] = useState(null);
   useEffect(() => { if (!src) { setImg(null); return; } const i = new Image(); i.onload = () => setImg(i); i.src = src; }, [src]);
@@ -14,11 +14,11 @@ function useImage(src) {
 
 // The game screen: a team's stadium through the one game camera. Buttons jump to a spot, +/- and the mouse wheel zoom,
 // dragging pans, and "Camera demo" glides around on its own. Fans in the front rows move. The game's players will be drawn here.
-export default function GameField({ team, crowd = 'normal' }) {
+export default function GameField({ team, look = {}, crowd = 'normal' }) {
   const view = useRef(null);
   const world = useRef(null), base = useRef(null);
-  const cam = useRef(SPOTS.all.cam), target = useRef(SPOTS.all.cam);
-  const [spot, setSpot] = useState('all');
+  const cam = useRef(SPOTS.wide.cam), target = useRef(SPOTS.wide.cam);
+  const [spot, setSpot] = useState('wide');
   const [demo, setDemo] = useState(false);
   const teamLogo = useImage(team.logo), mfl = useImage(leagueLogo.light);
 
@@ -26,14 +26,14 @@ export default function GameField({ team, crowd = 'normal' }) {
     const mk = () => { const c = document.createElement('canvas'); c.width = WORLD_W; c.height = WORLD_H; return c; };
     base.current = mk(); world.current = mk();
     const bctx = base.current.getContext('2d');
-    drawSurroundings(bctx, team); drawField(bctx, team, { teamLogo, leagueLogo: mfl });
+    drawSurroundings(bctx, team, look.style); drawField(bctx, team, { teamLogo, leagueLogo: mfl }, look);
     const fans = makeFans(team, crowd), wctx = world.current.getContext('2d');
     let tick = 0;
     const beat = () => { wctx.drawImage(base.current, 0, 0); drawFans(wctx, fans, tick++); };
     beat();
     const id = setInterval(beat, 200);
     return () => clearInterval(id);
-  }, [team.id, team.color, team.accent, teamLogo, mfl, crowd]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [team.id, team.color, team.accent, teamLogo, mfl, crowd, look.font, look.design, look.style]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => { // camera
     let raf;

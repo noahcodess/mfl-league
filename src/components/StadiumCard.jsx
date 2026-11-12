@@ -13,7 +13,7 @@ export default function StadiumCard({ team }) {
         <div><h3>🏟️ {st.name}</h3><small className="dim">Home of the {team.name} · holds {capacityText(st.capacity)}</small></div>
         {team.id === 'crf' && <label className="sc-toggle"><input type="checkbox" checked={blood} onChange={(e) => setBlood(e.target.checked)} /> Bloodbath crowd</label>}
       </header>
-      <GameField team={team} crowd={blood ? 'bloodbath' : 'normal'} />
+      <GameField team={team} look={st} crowd={blood ? 'bloodbath' : 'normal'} />
       <small className="dim">Drag to look around, scroll or use − and + to zoom.</small>
     </section>
   );
