@@ -1,22 +1,20 @@
 import React, { useState } from 'react';
-import StadiumIntro from './StadiumIntro.jsx';
-import { stadiumFor, capacityText } from '../lib/stadiumList.js';
+import GameField from './GameField.jsx';
+import { useStadiums, capacityText } from '../data/stadiums.js';
 
-// Team page → the team's stadium: name, capacity, description, and the TV open (pre-game or back-from-the-break shots).
+// Team page → the team's stadium: its name, how many it holds, and the field through the game camera.
 export default function StadiumCard({ team }) {
-  const st = stadiumFor(team.id);
-  const [seq, setSeq] = useState('pregame');
+  const st = useStadiums()[team.id];
+  const [blood, setBlood] = useState(false);
   if (!st) return null;
   return (
     <section className="card stadium-card">
       <header className="sc-head">
-        <div><h3>🏟️ {st.name}</h3><small className="dim">{capacityText(st.capacity)} seats · {st.blurb}</small></div>
-        <div className="drip-kits">
-          <button className={seq === 'pregame' ? 'on' : ''} onClick={() => setSeq('pregame')}>Pre-game open</button>
-          <button className={seq === 'break' ? 'on' : ''} onClick={() => setSeq('break')}>Back from the break</button>
-        </div>
+        <div><h3>🏟️ {st.name}</h3><small className="dim">Home of the {team.name} · holds {capacityText(st.capacity)}</small></div>
+        {team.id === 'crf' && <label className="sc-toggle"><input type="checkbox" checked={blood} onChange={(e) => setBlood(e.target.checked)} /> Bloodbath crowd</label>}
       </header>
-      <StadiumIntro key={seq} st={st} team={team} sequence={seq} />
+      <GameField team={team} crowd={blood ? 'bloodbath' : 'normal'} />
+      <small className="dim">Drag to look around, scroll or use − and + to zoom.</small>
     </section>
   );
 }
