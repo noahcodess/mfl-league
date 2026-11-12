@@ -31,5 +31,6 @@ import './styles/games.css';
 import './styles/motion.css';
 import './styles/morale.css';
 import './styles/uniforms.css';
+import './styles/stadiums.css';
 
 createRoot(document.getElementById('root')).render(<App />);

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import TeamBadge from '../components/TeamBadge.jsx';
 import TeamTrophies from '../components/TeamTrophies.jsx';
+import StadiumCard from '../components/StadiumCard.jsx';
 import RatingChip from '../components/RatingChip.jsx';
 import CapBar from '../components/CapBar.jsx';
 import Roster from '../components/Roster.jsx';
@@ -42,6 +43,7 @@ export default function TeamPage({ teamId, viewer }) {
         <CapBar used={teamCapUsed(team.id)} limit={capLimit()} />
       </div>
       <CoachCard team={team} mine={isMine && viewer?.role === 'coach'} />
+      <StadiumCard team={team} />
       <Roster players={players} vacancies={getVacancies(team.id)} team={team} onOpen={setOpen} insider={canSeePotential ? potentials.map : null} />
       <PickList picks={getPicks(team.id)} currentSeason={currentSeason()} />
       <PlayerModal player={open} team={team} myTeamId={viewer?.role === 'coach' ? viewer.team_id : null} canSeePotential={canSeePotential} potential={open && potentials.loaded ? (potentials.map[open.id] ?? null) : undefined} traits={open ? traits[open.id] : null} onClose={() => setOpen(null)} />
