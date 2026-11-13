@@ -33,5 +33,6 @@ import './styles/morale.css';
 import './styles/uniforms.css';
 import './styles/stadiums.css';
 import './styles/liveSeason.css';
+import './styles/tradeWire.css';
 
 createRoot(document.getElementById('root')).render(<App />);

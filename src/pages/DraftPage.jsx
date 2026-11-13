@@ -14,6 +14,11 @@ import RevealCountdown from '../components/RevealCountdown.jsx';
 import ProspectModal from '../components/ProspectModal.jsx';
 import Tabs from '../components/Tabs.jsx';
 import DraftNight from '../components/DraftNight.jsx';
+import { DraftBreakingPrivate, DraftBreakingStage } from '../components/DraftBreaking.jsx';
+import JustPicked from '../components/JustPicked.jsx';
+import TradeWire from '../components/TradeWire.jsx';
+import CommishTrades from '../components/CommishTrades.jsx';
+import { useTradeWire } from '../data/tradeWire.js';
 import { useSchedule, useLeagueNumbers } from '../data/schedule.js';
 import { useDraftClass, useDraftOrder } from '../data/draft.js';
 import { useDraftRoom } from '../data/draftRoom.js';
@@ -26,11 +31,12 @@ import { currentSeason } from '../data/teams.js';
 import { useNow, readDraft, revealStyle } from '../lib/draftClock.js';
 
 // The MFL Draft room: the stage (who's on the clock, the clock, reveals), the big board to pick from, results, and the commissioner's desk.
-// Stage mode hides everything but the show, for screen sharing on the Discord call.
+// Stage mode (commissioner only) hides everything but the show, for screen sharing on the Discord call. Coaches get a plain view:
+// no animations or grades, just who was picked. Trade offers pop up privately for the commissioner, who can announce them on stage.
 export default function DraftPage({ viewer, canControl, stageRoute }) {
   const season = currentSeason();
   const myTeam = viewer?.role === 'coach' ? viewer.team_id : null;
-  const [stage, setStage] = useState(!!stageRoute);
+  const [stage, setStage] = useState(!!stageRoute && canControl);
   const [open, setOpen] = useState(null);
   const [drafting, setDrafting] = useState(null);
   const [dismissed, setDismissed] = useState(() => new Set());
@@ -50,6 +56,7 @@ export default function DraftPage({ viewer, canControl, stageRoute }) {
   const schedule = useSchedule(season);
   const opens = useLeagueNumbers(['draft_room_opens_minutes']);
   const draftAt = schedule?.find((r) => r.kind === 'draft')?.at || null;
+  const wire = useTradeWire(season, canControl && (draft.room?.status === 'live' || draft.room?.status === 'paused'));
 
   useEffect(() => { if (stageRoute) document.title = 'Commissioner Window: Draft Stage'; }, [stageRoute]);
   useEffect(() => {
@@ -75,7 +82,7 @@ export default function DraftPage({ viewer, canControl, stageRoute }) {
   return (
     <div className={`draft-room${stage ? ' stage-mode' : ''}`}>
       <div className="draft-lights" aria-hidden="true"><i /><i /><i /><i /></div>
-      <DraftHeader season={season} info={info} draftAt={draftAt} isCoach={!!myTeam} stage={stage} onStage={() => setStage((s) => !s)} />
+      <DraftHeader season={season} info={info} draftAt={draftAt} isCoach={!!myTeam} canStage={canControl} stage={stage} onStage={() => setStage((s) => !s)} />
       {canControl && !stage && <DeskBar season={season} info={info} draftAt={draftAt} prospects={prospects} presence={presence} coached={draft.coached} onChange={draft.refresh} />}
 
       {info.phase === 'pre' && (
@@ -83,7 +90,8 @@ export default function DraftPage({ viewer, canControl, stageRoute }) {
       )}
       {(info.phase === 'live' || info.phase === 'paused') && (
         <>
-          <OnTheClock info={info} myTeamId={myTeam} presence={presence} onPickNow={goPick} />
+          {!canControl && info.revealing ? <JustPicked key={info.revealing.id} pick={info.revealing} mine={info.revealing.team_id === myTeam} />
+            : <OnTheClock info={info} myTeamId={myTeam} presence={presence} onPickNow={goPick} />}
           <DraftUpNext slots={info.upNext} isBot={isBot} presence={presence} myTeamId={myTeam} />
         </>
       )}
@@ -97,13 +105,21 @@ export default function DraftPage({ viewer, canControl, stageRoute }) {
             ...(info.phase !== 'done' ? [{ key: 'board', label: onClock ? '🏈 Make your pick' : 'Big board', render: board }] : []),
             { key: 'results', label: 'Picks', render: () => <DraftResults slots={draft.slots} picks={draft.picks} onPickNo={info.current?.pick_no} /> },
             { key: 'order', label: 'Draft order', render: () => <DraftOrder season={season} order={order} myTeamId={myTeam} /> },
+            ...(canControl && info.phase !== 'done' ? [{ key: 'trades', label: `🔁 Trade wire${wire.length ? ` (${wire.filter((w) => w.kind === 'offer').length})` : ''}`, render: () => (
+              <>
+                <TradeWire wire={wire} isCoach={!!myTeam} />
+                <div className="tw-commish"><h3>Trade offers to review</h3><CommishTrades canControl={canControl} compact /></div>
+              </>
+            ) }] : []),
           ]} />
         </section>
       )}
       <DraftTicker picks={draft.picks} season={season} />
+      {canControl && !stage && <DraftBreakingPrivate wire={wire} />}
+      {stage && <DraftBreakingStage />}
 
-      {info.countdown > 0 && info.last && <RevealCountdown pick={info.last} seconds={info.countdown} showName={canControl} />}
-      {reveal && (
+      {canControl && info.countdown > 0 && info.last && <RevealCountdown pick={info.last} seconds={info.countdown} showName={canControl} />}
+      {canControl && reveal && (
         <PickReveal key={reveal.id} pick={reveal} variant={revealStyle(reveal)} mine={reveal.team_id === myTeam}
           potential={potentials.map[reveal.player?.id]} onDone={() => setDismissed((d) => new Set(d).add(reveal.id))} />
       )}

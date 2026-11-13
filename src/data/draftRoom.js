@@ -11,12 +11,12 @@ export function useDraftRoom(season) {
   const [version, setVersion] = useState(0);
   useEffect(() => {
     if (DEMO) return runDemoRoom(season, setState);
-    let live = true; let timer; let slots = null; let coached = null;
+    let live = true; let timer; let slots = null; let coached = null; let n = 0;
     const load = async () => {
       try {
         const tick = await db.rpc('draft_tick');
         const offset = tick.data?.now ? Date.parse(tick.data.now) - Date.now() : 0;
-        if (!slots?.length) slots = (await db.rpc('draft_slots', { p_season: season })).data || [];
+        if (!slots?.length || n++ % 5 === 0) slots = (await db.rpc('draft_slots', { p_season: season })).data || slots || []; // re-read now and then: trades move picks
         if (!coached) coached = (await db.rpc('coached_teams')).data || [];
         const [{ data: room }, { data: rows }] = await Promise.all([
           db.from('draft_room').select('*').eq('season', season).maybeSingle(),
