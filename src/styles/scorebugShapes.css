@@ -26,8 +26,12 @@
 .tnf-time { display: flex; align-items: center; gap: .45em; color: #fff; font-family: 'Bungee', sans-serif; font-size: .78em; white-space: nowrap; }
 .tnf-time b { font-weight: 400; font-size: 1.3em; font-variant-numeric: tabular-nums; }
 .tnf-time em { font-style: normal; padding: .05em .35em; border-radius: .4em; background: #ffffff30; }
-.tnf-poss { position: absolute; top: 50%; transform: translateY(-50%); font-size: .9em; }
-.tnf-poss.left { left: .35em; } .tnf-poss.right { right: .35em; }
+.tnf-mid > span { position: relative; z-index: 1; text-shadow: 0 .07em 0 #0b2f7a99; }
+.tnf-arrow { position: absolute; top: .3em; bottom: .3em; width: 58%; background: linear-gradient(180deg, #06205a66, #06205a33); transition: background .3s; }
+.tnf-arrow.l { left: .2em; clip-path: polygon(0 50%, 26% 0, 100% 0, 100% 100%, 26% 100%); }
+.tnf-arrow.r { right: .2em; clip-path: polygon(0 0, 74% 0, 100% 50%, 74% 100%, 0 100%); }
+.tnf-mid.poss-away .tnf-arrow.l, .tnf-mid.poss-home .tnf-arrow.r { background: linear-gradient(180deg, #d8f1ff, #7cc4ff 45%, #3d93ff); z-index: 0; }
+.tnf-mid.poss-away .tnf-arrow.r, .tnf-mid.poss-home .tnf-arrow.l { z-index: -1; }
 
 .sb-snf { --sb-font: 'Exo 2', sans-serif; }
 @property --pc { syntax: '<number>'; inherits: true; initial-value: 1; }
@@ -52,7 +56,10 @@
   -webkit-mask: radial-gradient(farthest-side, #0000 calc(100% - .26em), #000 calc(100% - .25em)); mask: radial-gradient(farthest-side, #0000 calc(100% - .26em), #000 calc(100% - .25em)); }
 .snf-circle.low::before { background: conic-gradient(#ff4d4d calc(var(--pc) * 1turn), #ffffff1f 0); }
 .snf-circle small { font-family: 'Exo 2', sans-serif; font-style: italic; font-weight: 800; font-size: .78em; text-transform: uppercase; opacity: .9; }
-.snf-poss { position: absolute; top: 50%; transform: translateY(-50%); font-size: .85em; z-index: 3; } .snf-poss.left { left: -1.75em; } .snf-poss.right { right: -1.75em; }
+.snf-pointer { position: absolute; top: 50%; z-index: 1; width: 1.05em; height: 1.3em; margin-top: -.65em; background: linear-gradient(180deg, #ffffff, #b9c4d1);
+  filter: drop-shadow(0 .08em 0 #0a1022); }
+.snf-pointer.left { left: -1.25em; clip-path: polygon(0 50%, 100% 0, 100% 100%); }
+.snf-pointer.right { right: -1.25em; clip-path: polygon(0 0, 100% 50%, 0 100%); }
 .snf-circle b { font-family: 'Exo 2', sans-serif; font-weight: 800; font-size: 1.45em; line-height: 1; font-variant-numeric: tabular-nums; }
 .snf-circle span { font-size: .78em; padding: 0 .45em; border-radius: .5em; background: #ffffff1c; font-variant-numeric: tabular-nums; }
 .snf-circle.low span { background: #ff4d4d; }

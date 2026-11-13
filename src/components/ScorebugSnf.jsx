@@ -6,7 +6,7 @@ import { recordText } from '../lib/seasonStats.js';
 // SNF's scorebug: a long night-blue bar that tapers at both ends with a circle in the middle (like NBC's real one), silver
 // edges and a peacock stripe. Big logos at the ends, abbreviation and record, score boxes with timeouts under them; the circle
 // holds the quarter, the game clock and the play clock, and its outline IS the play clock: the ring empties as it ticks down
-// (red at 5 seconds). Down and distance hangs under the circle; a football arrow points at who has the ball.
+// (red at 5 seconds). Down and distance hangs under the circle; a silver pointer on the circle points at who has the ball.
 export default function ScorebugSnf({ home, away, st, rec = {}, pop, className = '', left, down, quarter }) {
   const pc = st?.play_clock ?? 40;
   const side = (t, s) => (
@@ -23,8 +23,8 @@ export default function ScorebugSnf({ home, away, st, rec = {}, pop, className =
       <div className="snf">
         {side(away, 'away')}
         <div className={`snf-circle${pc <= 5 ? ' low' : ''}`} style={{ '--pc': pc / 40 }}>
-          {st?.possession === away.id && <span className="sb-poss left snf-poss" title="Has the ball"><i /></span>}
-          {st?.possession === home.id && <span className="sb-poss right snf-poss" title="Has the ball"><i /></span>}
+          {st?.possession === away.id && <i className="snf-pointer left" title="Has the ball" />}
+          {st?.possession === home.id && <i className="snf-pointer right" title="Has the ball" />}
           <small>{quarter}</small>
           <b>{clockText(left)}</b>
           <span>{pc}</span>

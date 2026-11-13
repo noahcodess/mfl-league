@@ -25,7 +25,6 @@
 .sb-cbs .sb-team { background: #fff; border-left: .45em solid var(--tc); }
 .sb-cbs .sb-code { color: #0b3a82; text-shadow: none; font-weight: 800; }
 .sb-cbs .sb-rec { color: #0b3a82b3; }
-.sb-cbs .sb-poss::before { border-right-color: #0b3a82; }
 .sb-cbs .sb-tos i { background: #0b3a8233; } .sb-cbs .sb-tos i.on { background: #0b3a82; }
 .sb-cbs .sb-score, .sb-cbs .sb-clock { font-weight: 800; }
 

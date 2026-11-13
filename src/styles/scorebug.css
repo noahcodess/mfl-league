@@ -20,12 +20,12 @@
 .sb-team .sb-score { height: auto; align-self: stretch; margin-right: -.6em; }
 .sb-line { display: flex; align-items: center; gap: .35em; }
 .sb-rec { font-size: .72em; color: #ffffffd9; font-weight: 700; line-height: 1; }
-.sb-poss { display: inline-flex; align-items: center; gap: .1em; flex: none; }
-.sb-poss::before { content: ''; border: .24em solid transparent; border-left-width: 0; border-right: .34em solid #fff; filter: drop-shadow(0 .05em 0 #0008); }
-.sb-poss.right { flex-direction: row-reverse; }
-.sb-poss.right::before { border-right-width: 0; border-left: .34em solid #fff; border-right-color: transparent; }
-.sb-poss i { position: relative; width: .9em; height: .52em; border-radius: 50%; background: radial-gradient(circle at 40% 35%, #b5652b, #7a3d14); box-shadow: 0 0 0 .07em #fff, 0 .06em 0 .07em #0007; }
-.sb-poss i::after { content: ''; position: absolute; left: 28%; right: 28%; top: 44%; height: .09em; background: #fff; box-shadow: 0 -.08em 0 -.02em #fff0; }
+.sb-arrow { flex: none; display: inline-block; }
+.sb-arrow.fox { width: .95em; height: .7em; background: linear-gradient(180deg, #ffd34a, #f4b800); clip-path: polygon(0 50%, 48% 0, 48% 28%, 100% 28%, 100% 72%, 48% 72%, 48% 100%);
+  filter: drop-shadow(0 .06em 0 #000); }
+.sb-arrow.cbs { width: .42em; height: .42em; margin-left: .1em; border-left: .14em solid #0b3a82; border-bottom: .14em solid #0b3a82; transform: rotate(45deg); }
+.sb-football { flex: none; width: 1.15em; height: .68em; filter: drop-shadow(0 .06em .04em #000a); }
+
 .sb-time { display: flex; align-items: center; gap: .55em; padding: 0 .75em; background: var(--sb-acc); color: var(--sb-acc-fg); font-family: var(--sb-font); }
 .sb-q { font-size: 1.1em; text-transform: uppercase; }
 .sb-clock { font-size: 1.45em; font-variant-numeric: tabular-nums; min-width: 2.6em; text-align: center; }
