@@ -14,10 +14,11 @@ function useImage(src) {
 
 // The game screen: a team's stadium through the one game camera. Buttons jump to a spot, +/- and the mouse wheel zoom,
 // dragging pans, and "Camera demo" glides around on its own. Fans in the front rows move. The game's players will be drawn here.
-export default function GameField({ team, look = {}, crowd = 'normal' }) {
+// shot: { from, to, k } runs a hands-off camera move instead (broadcast intros): no buttons, no dragging.
+export default function GameField({ team, look = {}, crowd = 'normal', shot = null }) {
   const view = useRef(null);
   const world = useRef(null), base = useRef(null);
-  const cam = useRef(SPOTS.wide.cam), target = useRef(SPOTS.wide.cam);
+  const cam = useRef(shot?.from || SPOTS.wide.cam), target = useRef(shot?.to || SPOTS.wide.cam);
   const [spot, setSpot] = useState('wide');
   const [demo, setDemo] = useState(false);
   const teamLogo = useImage(team.logo), mfl = useImage(leagueLogo.light);
@@ -38,7 +39,7 @@ export default function GameField({ team, look = {}, crowd = 'normal' }) {
   useEffect(() => { // camera
     let raf;
     const frame = () => {
-      cam.current = glide(cam.current, target.current);
+      cam.current = glide(cam.current, target.current, shot?.k);
       if (view.current && world.current) blit(view.current.getContext('2d'), world.current, cam.current);
       raf = requestAnimationFrame(frame);
     };
@@ -62,16 +63,16 @@ export default function GameField({ team, look = {}, crowd = 'normal' }) {
     drag.current = { x: e.clientX, y: e.clientY };
   };
   return (
-    <div className="game-field">
-      <canvas ref={view} width={VIEW_W} height={VIEW_H} className="gf-screen"
+    <div className={`game-field${shot ? ' gf-shot' : ''}`}>
+      {shot ? <canvas ref={view} width={VIEW_W} height={VIEW_H} className="gf-screen" /> : <canvas ref={view} width={VIEW_W} height={VIEW_H} className="gf-screen"
         onPointerDown={(e) => { setDemo(false); setSpot(''); drag.current = { x: e.clientX, y: e.clientY }; e.currentTarget.setPointerCapture(e.pointerId); }}
         onPointerMove={move} onPointerUp={() => { drag.current = null; }}
-        onWheel={(e) => zoom(e.deltaY < 0 ? 1.15 : 0.87)} />
-      <div className="gf-controls">
+        onWheel={(e) => zoom(e.deltaY < 0 ? 1.15 : 0.87)} />}
+      {!shot && <div className="gf-controls">
         {Object.entries(SPOTS).map(([k, s]) => <button key={k} className={spot === k ? 'on' : ''} onClick={() => go(k)}>{s.label}</button>)}
         <span className="gf-zoom"><button onClick={() => zoom(0.75)}>−</button><button onClick={() => zoom(1.33)}>+</button></span>
         <button className={demo ? 'on' : ''} onClick={() => setDemo(!demo)}>🎥 Camera demo</button>
-      </div>
+      </div>}
     </div>
   );
 }

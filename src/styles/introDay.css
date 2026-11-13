@@ -1,0 +1,38 @@
+/* Network looks for the intros. FOX: black and gold, heavy slanted type, chevrons. CBS: navy and white, clean boxes, rings.
+   NBC and ESPN looks come with the primetime intros. */
+.net-fox { --n1: #f4b800; --n2: #111111; --n3: #ffffff; }
+.net-fox .intro-scene { font-family: 'Arial Black', Impact, var(--label); }
+.net-fox .sc-open { background: radial-gradient(circle at 50% 45%, #5a4300, #000 70%); }
+.net-fox .open-sub b, .net-fox .half-name b, .net-fox .pl-name b, .net-fox .lower-third b { font-style: italic; }
+.net-fox .match-half.away { clip-path: polygon(0 0, 100% 0, 94% 100%, 0 100%); }
+.net-fox .match-half.home { clip-path: polygon(6% 0, 100% 0, 100% 100%, 0 100%); }
+.net-fox .match-vs { background: #f4b800; color: #111; clip-path: polygon(0 0, 100% 0, 100% 70%, 50% 100%, 0 70%); border-radius: 0; height: 9cqw; font-style: italic; }
+.net-fox .match-bar { background: linear-gradient(180deg, #1c1c1c, #000); border-top: .5cqw solid #f4b800; color: #fff; font-style: italic; }
+.net-fox .match-bar span + span::before { content: '▸ '; color: #f4b800; }
+.net-fox .pl-head span { background: #f4b800; color: #111; padding: .3cqw 1.4cqw; clip-path: polygon(0 0, 100% 0, 96% 100%, 0 100%); font-style: italic; }
+.net-fox .pl-tile { background: linear-gradient(180deg, #ffd34a, #f4b800); color: #111; border-bottom: .5cqw solid #8a6400; clip-path: polygon(0 0, 100% 0, 100% 82%, 50% 100%, 0 82%); padding-bottom: 2cqw; }
+.net-fox .lower-third > div { background: linear-gradient(180deg, #1c1c1c, #000); border-top: .4cqw solid #f4b800; }
+.net-fox .lt-tag { background: #f4b800; color: #111; font-style: italic; }
+.net-fox .wx-card { background: linear-gradient(180deg, #1c1c1c, #000); border-left: .6cqw solid #f4b800; }
+.net-fox .wx-card b { color: #f4b800; }
+
+.net-cbs { --n1: #3d7bff; --n2: #0b3a82; --n3: #ffffff; }
+.net-cbs .intro-scene { font-family: 'Helvetica Neue', Arial, var(--label); }
+.net-cbs .sc-open { background: radial-gradient(circle at 50% 45%, #1f5fc4, #06245a 55%, #020b1c 85%); }
+.net-cbs .open-rays { background: repeating-radial-gradient(circle at 50% 50%, #ffffff12 0 1.2cqw, transparent 1.2cqw 4cqw); animation: none; inset: 0; }
+.net-cbs .open-sub span { color: #fff; }
+.net-cbs .match-half + .match-half { border-left: .8cqw solid #fff; }
+.net-cbs .match-vs { background: #fff; color: #0b3a82; border-radius: 50%; box-shadow: 0 0 0 .8cqw #0b3a82, 0 0 0 1.3cqw #fff; }
+.net-cbs .match-bar { background: #0b3a82; color: #fff; border-top: .35cqw solid #fff; }
+.net-cbs .match-bar span { background: #fff; color: #0b3a82; padding: .4cqw 1.2cqw; }
+.net-cbs .pl-head span { background: #fff; color: #0b3a82; padding: .3cqw 1.4cqw; }
+.net-cbs .pl-head small { background: #0b3a82; padding: .2cqw 1.4cqw; opacity: 1; }
+.net-cbs .pl-tile { background: #fff; color: #0b3a82; border-top: .6cqw solid #0b3a82; }
+.net-cbs .lower-third > div { background: #fff; color: #0b3a82; }
+.net-cbs .lt-tag { background: #0b3a82; color: #fff; }
+.net-cbs .wx-card { background: #fff; color: #0b3a82; box-shadow: inset .6cqw 0 0 #0b3a82; }
+
+.net-nbc, .net-espn { --n1: #ffffff; }
+.net-nbc .match-bar, .net-espn .match-bar, .net-nbc .lower-third > div, .net-espn .lower-third > div, .net-nbc .wx-card, .net-espn .wx-card { background: #0d1117e6; }
+.net-espn .lt-tag, .net-espn .pl-tile, .net-espn .match-vs { background: #d10f0f; color: #fff; }
+.net-nbc .lt-tag, .net-nbc .pl-tile, .net-nbc .match-vs { background: #fff; color: #111; }

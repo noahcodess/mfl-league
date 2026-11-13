@@ -5,6 +5,7 @@ import Redirect from './components/Redirect.jsx';
 import LeaguePage from './pages/LeaguePage.jsx';
 import TeamPage from './pages/TeamPage.jsx';
 import LivePage from './pages/LivePage.jsx';
+import GamePage from './pages/GamePage.jsx';
 import LoginPage from './pages/LoginPage.jsx';
 import ChangePasswordPage from './pages/ChangePasswordPage.jsx';
 import KeySetupPage from './pages/KeySetupPage.jsx';
@@ -72,6 +73,10 @@ function Screen({ route, session, step, reload }) {
     return session.profile.role === 'commissioner' || session.profile.site_owner ? <DraftDeskPage viewer={session.profile} /> : <div className="notice bad">Commissioner only.</div>;
   }
   if (route.page === 'freeAgents') return <FreeAgentsPage viewer={step === 'ready' ? session.profile : null} />;
+  if (route.page === 'game') {
+    const p = step === 'ready' ? session.profile : null;
+    return <GamePage id={route.id} canControl={p?.role === 'commissioner' || !!p?.site_owner /* TEMPORARY: owner tests the desk */} />;
+  }
   if (route.page === 'live') {
     const p = step === 'ready' ? session.profile : null;
     return <LivePage viewer={p} reload={reload} canControl={p?.role === 'commissioner' || !!p?.site_owner /* TEMPORARY: owner tests the desk */} />;

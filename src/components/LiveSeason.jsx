@@ -14,7 +14,7 @@ const PLAYOFFS_FROM = 6;
 // Live during the regular season: the week as the big heading (arrows to move), that week's games two across, then players of
 // the week, top offenses and defenses, top players at each position, and the standings (all counted through the week shown).
 // From Week 6 a Playoffs button appears (the bracket comes later).
-export default function LiveSeason({ preview }) {
+export default function LiveSeason({ preview, canControl }) {
   const season = useLiveSeason(preview);
   const [sel, setSel] = useState(null);
   const view = sel ?? season.current, playoffs = view === 'playoffs';
@@ -39,7 +39,7 @@ export default function LiveSeason({ preview }) {
         <section className="lv-card ls-soon"><h2>🏆 Playoffs</h2><p className="dim">The playoff picture and bracket will show here. Coming soon.</p></section>
       ) : (
         <>
-          <LiveWeekGames week={week} rec={rec} />
+          <LiveWeekGames week={week} rec={rec} clickable={canControl} />
           <div className="ls-cards">
             <WeekStars week={week} />
             <TeamRanks stats={stats} kind="offense" through={n} />

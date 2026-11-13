@@ -34,5 +34,7 @@ import './styles/uniforms.css';
 import './styles/stadiums.css';
 import './styles/liveSeason.css';
 import './styles/tradeWire.css';
+import './styles/intro.css';
+import './styles/introDay.css';
 
 createRoot(document.getElementById('root')).render(<App />);

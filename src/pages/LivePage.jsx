@@ -25,7 +25,7 @@ export default function LivePage({ viewer, canControl, reload }) {
     return (
       <div className="live">
         <div className="ls-preview-bar"><button className="btn small ghost" onClick={() => setPreview(false)}>← Back to now</button><span className="dim">Previewing how Live looks during the season</span></div>
-        <LiveSeason preview />
+        <LiveSeason preview canControl={canControl} />
       </div>
     );
   }
@@ -37,7 +37,7 @@ export default function LivePage({ viewer, canControl, reload }) {
       {stage === 'fa' && <FaLiveView viewer={viewer} />}
       {stage === 'resign' && <LiveSimpleView stage={stage} />}
       {stage === 'camp' && <LiveGames kind="preseason" />}
-      {stage === 'season' && <LiveSeason />}
+      {stage === 'season' && <LiveSeason canControl={canControl} />}
     </div>
   );
 }

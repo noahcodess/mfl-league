@@ -23,6 +23,16 @@ function fromGames(games) {
   return { sample: false, current: Math.min(12, Math.max(1, currentWeek() || 1)), weeks };
 }
 
+// One game by id, from the real schedule or the sample season: { game, season } or null.
+export function useGame(id) {
+  const games = useSeasonGames(currentSeason());
+  return useMemo(() => {
+    const seasons = [games?.some((g) => g.kind === 'regular') ? fromGames(games) : null, getSampleSeason()];
+    for (const s of seasons.filter(Boolean)) for (const w of s.weeks) { const g = w.games.find((x) => String(x.id) === String(id)); if (g) return { game: g, season: s }; }
+    return null;
+  }, [games, id]);
+}
+
 // preview: show the sample season even outside the regular season (owner and commissioner).
 export function useLiveSeason(preview = false) {
   const games = useSeasonGames(currentSeason());
