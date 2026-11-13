@@ -4,15 +4,15 @@ import { getTeams, getTeam, getConferences } from '../data/teams.js';
 import { standings } from '../lib/seasonStats.js';
 import { links } from '../lib/router.js';
 
-// Live: this season's standings by conference (wins, point difference, streak).
-export default function ConfStandings({ rec }) {
-  const confs = getConferences();
+// Live: the standings by conference, or every team in one table (wins, point difference, streak).
+export default function ConfStandings({ rec, through }) {
+  const confs = [...getConferences(), 'All teams'];
   const [conf, setConf] = useState(confs[0]);
-  const table = standings(getTeams(), rec)[conf] || [];
+  const table = conf === 'All teams' ? standings(getTeams().map((t) => ({ ...t, conference: 'all' })), rec).all : standings(getTeams(), rec)[conf] || [];
   return (
-    <article className="feed-card">
-      <header><span className="feed-icon">📊</span><div><b>Standings</b><small>This season</small></div></header>
-      <div className="seg feed-seg">{confs.map((c) => <button key={c} className={c === conf ? 'on' : ''} onClick={() => setConf(c)}>{c}</button>)}</div>
+    <article className="lv-card lv-standings">
+      <header><span>📊</span><div><b>Standings</b><small>{through ? `After Week ${through}` : 'This season'}</small></div></header>
+      <div className="lv-tabs">{confs.map((c) => <button key={c} className={c === conf ? 'on' : ''} onClick={() => setConf(c)}>{c}</button>)}</div>
       <table className="cs-table">
         <thead><tr><th>#</th><th>Team</th><th>W-L</th><th>Diff</th><th>Strk</th></tr></thead>
         <tbody>

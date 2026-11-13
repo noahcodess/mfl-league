@@ -10,10 +10,10 @@ const ICON = { pass: '🎯', rush: '💨', rec: '🙌', def: '🛡️' };
 export default function WeekStars({ week }) {
   const stars = weekStars(week);
   return (
-    <article className="feed-card">
-      <header><span className="feed-icon">⭐</span><div><b>Top players</b><small>Week {week.week}{stars.length ? '' : ' · after the first game ends'}</small></div></header>
+    <article className="lv-card">
+      <header><span>⭐</span><div><b>Players of the week</b><small>Week {week.week}{stars.length ? '' : ' · after the first game ends'}</small></div></header>
       {!stars.length ? <p className="dim">Nobody has played yet this week.</p> : (
-        <ul className="ws-list">
+        <ul className="lv-rank ws-list">
           {stars.map((s) => {
             const p = getPlayers(s.team).find((x) => x.id === s.id);
             return (

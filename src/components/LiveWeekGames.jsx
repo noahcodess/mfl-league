@@ -5,33 +5,36 @@ import { getTeam } from '../data/teams.js';
 import { recordText } from '../lib/seasonStats.js';
 import { useStadiums } from '../data/stadiums.js';
 
-function Side({ id, score, won, rec, done }) {
+function Side({ id, score, won, rec, done, tag }) {
   const t = getTeam(id);
   return (
-    <div className={`lw-side${done && !won ? ' lost' : ''}`}>
-      <TeamBadge team={t} size="sm" /><b>{t?.name || id}</b><small>{recordText(rec[id])}</small>
+    <div className={`lw-side${done && !won ? ' lost' : ''}${done && won ? ' won' : ''}`}>
+      <TeamBadge team={t} size="md" />
+      <div className="lw-name"><b>{t?.name || id}</b><small>{recordText(rec[id])} · {tag}</small></div>
       <span className="lw-score">{score ?? ''}</span>
     </div>
   );
 }
 
-// Live → a week: every game in the order it airs, with its day, kickoff time, network and stadium, and the score once it starts.
+// Live → a week: every game in the order it airs, two across. Each card: day, kickoff time, network, the two teams stacked
+// (away on top), the score once it starts, and the stadium. Colored by both teams.
 export default function LiveWeekGames({ week, rec }) {
   const stadiums = useStadiums();
+  if (!week.games.length) return <p className="dim">No games scheduled for this week yet.</p>;
   return (
     <ol className="lw-games">
       {week.games.map((g) => {
-        const done = g.status === 'final', started = done || g.status === 'live', home = getTeam(g.home);
+        const done = g.status === 'final', started = done || g.status === 'live', home = getTeam(g.home), away = getTeam(g.away);
         const net = networkFor(g.window, home), prime = g.window?.endsWith('night');
         return (
-          <li key={g.id} className={`lw-game ${g.status}${prime ? ' prime' : ''}`}>
+          <li key={g.id} className={`lw-game ${g.status}${prime ? ' prime' : ''}`} style={{ '--away': away?.color, '--home': home?.color }}>
             <div className="lw-top">
-              <span>{g.time}{g.window ? ` · ${windowLabel(g.window)}` : ''}{net ? ` · ${net}` : ''}</span>
-              <span className="lw-status">{done ? 'FINAL' : g.status === 'live' ? <><i className="live-pulse" />LIVE · {g.clock}</> : 'Upcoming'}</span>
+              <span>{g.time}{net ? ` · ${net}` : ''}</span>
+              <span className="lw-status">{done ? 'Final' : g.status === 'live' ? <><i className="live-pulse" />Live · {g.clock}</> : prime ? `⭐ ${windowLabel(g.window)}` : windowLabel(g.window)}</span>
             </div>
-            <Side id={g.away} score={started ? g.awayScore : null} won={g.awayScore > g.homeScore} rec={rec} done={done} />
-            <Side id={g.home} score={started ? g.homeScore : null} won={g.homeScore > g.awayScore} rec={rec} done={done} />
-            <small className="dim lw-at">🏟️ {stadiums[g.home]?.name || home?.name}</small>
+            <Side id={g.away} score={started ? g.awayScore : null} won={g.awayScore > g.homeScore} rec={rec} done={done} tag="Away" />
+            <Side id={g.home} score={started ? g.homeScore : null} won={g.homeScore > g.awayScore} rec={rec} done={done} tag="Home" />
+            <small className="lw-at">🏟️ {stadiums[g.home]?.name || home?.name}</small>
           </li>
         );
       })}
