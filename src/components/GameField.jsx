@@ -15,7 +15,8 @@ function useImage(src) {
 // The game screen: a team's stadium through the one game camera. Buttons jump to a spot, +/- and the mouse wheel zoom,
 // dragging pans, and "Camera demo" glides around on its own. Fans in the front rows move. The game's players will be drawn here.
 // shot: { from, to, k } runs a hands-off camera move instead (broadcast intros): no buttons, no dragging.
-export default function GameField({ team, look = {}, crowd = 'normal', shot = null }) {
+// overlay(ctx, toScreen, zoom, ms): people drawn over the camera view every frame at true size, so their pixel art stays sharp (the coin toss crew).
+export default function GameField({ team, look = {}, crowd = 'normal', shot = null, overlay = null }) {
   const view = useRef(null);
   const world = useRef(null), base = useRef(null);
   const cam = useRef(shot?.from || SPOTS.wide.cam), target = useRef(shot?.to || SPOTS.wide.cam);
@@ -30,17 +31,23 @@ export default function GameField({ team, look = {}, crowd = 'normal', shot = nu
     drawSurroundings(bctx, team, look.style); drawField(bctx, team, { teamLogo, leagueLogo: mfl }, look);
     const fans = makeFans(team, crowd), wctx = world.current.getContext('2d');
     let tick = 0;
-    const beat = () => { wctx.drawImage(base.current, 0, 0); drawFans(wctx, fans, tick++); };
+    const beat = () => { wctx.drawImage(base.current, 0, 0); drawFans(wctx, fans, tick); tick += 1; };
     beat();
     const id = setInterval(beat, 200);
     return () => clearInterval(id);
   }, [team.id, team.color, team.accent, teamLogo, mfl, crowd, look.font, look.design, look.style, look.shadow, look.shadowColor]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  const over = useRef(overlay);
+  over.current = overlay;
   useEffect(() => { // camera
     let raf;
-    const frame = () => {
+    const frame = (ms) => {
       cam.current = glide(cam.current, target.current, shot?.k);
-      if (view.current && world.current) blit(view.current.getContext('2d'), world.current, cam.current);
+      if (view.current && world.current) {
+        const ctx = view.current.getContext('2d'), c = cam.current;
+        blit(ctx, world.current, c);
+        over.current?.(ctx, (x, y) => [(x - c.x) * c.zoom + VIEW_W / 2, (y - c.y) * c.zoom + VIEW_H / 2], c.zoom, ms);
+      }
       raf = requestAnimationFrame(frame);
     };
     raf = requestAnimationFrame(frame);

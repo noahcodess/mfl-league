@@ -1,0 +1,18 @@
+/* Broadcast fonts: each network's headline font, plus one readable condensed font for every smaller line.
+   FOX Anton · CBS Barlow Condensed · TNF Bungee · Saturday and Monday night (ESPN) Russo One · SNF Exo 2 italic. */
+@import '@fontsource/anton/400.css';
+@import '@fontsource/barlow-condensed/600.css';
+@import '@fontsource/barlow-condensed/700.css';
+@import '@fontsource/barlow-condensed/800.css';
+@import '@fontsource/bungee/400.css';
+@import '@fontsource/russo-one/400.css';
+@import '@fontsource/exo-2/800-italic.css';
+
+.intro-screen { --hf: 'Barlow Condensed', sans-serif; --hw: 800; --hs: normal; --bf: 'Barlow Condensed', sans-serif; font-family: var(--bf); font-weight: 700; }
+.net-fox { --hf: 'Anton', Impact, sans-serif; --hw: 400; --hs: italic; }
+.net-cbs { --hf: 'Barlow Condensed', sans-serif; --hw: 800; }
+.show-tnf { --hf: 'Bungee', sans-serif; --hw: 400; --hs: normal; }
+.show-stnf, .show-mnf { --hf: 'Russo One', sans-serif; --hw: 400; --hs: normal; }
+.show-snf { --hf: 'Exo 2', sans-serif; --hw: 800; --hs: italic; }
+.intro-screen .hf, .open-teams, .open-week, .half-name b, .pl-name b, .pl-head span, .tape-title, .tape-teams b, .crowd-name, .crowd-count,
+.lower-third b, .wx-card b, .match-vs, .crowd-stamp, .sc-end h2, .pl-tile b, .tape-v { font-family: var(--hf); font-weight: var(--hw); font-style: var(--hs); }

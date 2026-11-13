@@ -80,3 +80,24 @@ export function makeFall(w, h, kind, seed = 5) {
     ctx.globalAlpha = 1;
   };
 }
+
+// A sold-out crowd: rows of pixel fans in the home colors, bobbing, with a wave rolling across.
+export function makeCrowd(w, h, palette, seed = 13) {
+  const r = rand(seed), rows = [];
+  for (let y = h * 0.5, row = 0; y < h + 6; y += 9, row += 1) {
+    const fans = [];
+    for (let x = (row % 2) * 3; x < w; x += 6) fans.push({ x, c: any(r, palette), skin: any(r, ['#f1c27d', '#c68642', '#8d5524', '#e0ac69']), ph: r() * 6.3, sign: r() < 0.06 });
+    rows.push({ y, fans });
+  }
+  return (ctx, t) => {
+    ctx.clearRect(0, 0, w, h);
+    const wave = ((t / 9) % (w + 120)) - 60;
+    rows.forEach(({ y, fans }) => fans.forEach((f) => {
+      const up = Math.max(0, Math.round(4 - Math.abs(f.x - wave) / 6)), bob = Math.sin(t / 160 + f.ph) > 0.6 ? 1 : 0, yy = Math.round(y - up - bob);
+      ctx.fillStyle = f.c; ctx.fillRect(f.x, yy + 3, 4, 6);
+      ctx.fillStyle = f.skin; ctx.fillRect(f.x + 1, yy, 2, 3);
+      if (up > 2) { ctx.fillRect(f.x - 1, yy - 2, 1, 3); ctx.fillRect(f.x + 4, yy - 2, 1, 3); }
+      if (f.sign) { ctx.fillStyle = '#ffffff'; ctx.fillRect(f.x - 2, yy - 5, 8, 4); }
+    }));
+  };
+}

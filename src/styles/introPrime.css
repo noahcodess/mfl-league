@@ -1,0 +1,43 @@
+/* Primetime looks, matched to each show's logo.
+   TNF (NBC): bright blue, chunky white letters with a 3D edge. Saturday Night (ESPN): slate shields with red trim.
+   MNF (ESPN): black with glowing red. SNF (NBC): night blue with silver letters and a peacock-color stripe. */
+.prime .open-sub { padding: 1.4cqw 3.4cqw; }
+
+.show-tnf { --n1: #2f86ff; --accent: #ffffff; --on-accent: #0a3d91; --panel-bg: linear-gradient(180deg, #2a7cf0, #0a3d91); --panel-bg-solid: #0a3d91; --panel-fg: #fff; }
+.show-tnf .sc-open, .show-tnf .sc-tape { background: radial-gradient(circle at 50% 40%, #3d93ff, #0b46a8 55%, #041d4d 90%); }
+.show-tnf .open-rays { background: repeating-linear-gradient(45deg, #ffffff10 0 2cqw, transparent 2cqw 6cqw); animation: none; inset: 0; }
+.show-tnf .open-teams, .show-tnf .half-name b, .show-tnf .pl-name b, .show-tnf .tape-title, .show-tnf .crowd-name { text-shadow: .2cqw .2cqw 0 #0a3d91, .4cqw .4cqw 0 #041d4d; }
+.show-tnf .open-sub, .show-tnf .half-name, .show-tnf .pl-name, .show-tnf .crowd-card, .show-tnf .lower-third > div, .show-tnf .wx-card { border: .35cqw solid #fff; border-radius: 1.2cqw; }
+.show-tnf .match-vs { background: #fff; color: #0a3d91; border-radius: 1.4cqw; transform: translate(-50%, -50%) rotate(-6deg); box-shadow: .4cqw .4cqw 0 #041d4d; }
+.show-tnf .match-bar { background: linear-gradient(180deg, #2a7cf0, #0a3d91); border-top: .4cqw solid #fff; }
+.show-tnf .pl-tile { background: #fff; color: #0a3d91; border-radius: 1cqw; border-top-color: #2f86ff; }
+.show-tnf .tape-v.edge, .show-tnf .crowd-count, .show-tnf .wx-card b { color: #fff; text-shadow: .2cqw .2cqw 0 #0a3d91; }
+
+.show-stnf, .show-mnf { --accent: #e3261b; --on-accent: #fff; --panel-bg: linear-gradient(180deg, #37414b, #22292f); --panel-bg-solid: #22292f; --panel-fg: #fff; --n1: #e3261b; }
+.show-stnf .sc-open, .show-stnf .sc-tape { background: radial-gradient(circle at 50% 40%, #47515c, #1d2328 60%, #0c0f12 90%); }
+.show-stnf .open-sub, .show-stnf .half-name, .show-stnf .pl-name, .show-stnf .crowd-card, .show-stnf .lower-third > div, .show-stnf .wx-card,
+.show-mnf .open-sub, .show-mnf .half-name, .show-mnf .pl-name, .show-mnf .crowd-card, .show-mnf .lower-third > div, .show-mnf .wx-card { border: .35cqw solid #e3261b; box-shadow: inset 0 0 0 .3cqw #12161a; }
+.show-stnf .match-vs, .show-mnf .match-vs { background: #22292f; color: #ff3b30; border: .4cqw solid #e3261b; clip-path: polygon(50% 0, 100% 12%, 100% 60%, 50% 100%, 0 60%, 0 12%); border-radius: 0; height: 9.5cqw; }
+.show-stnf .match-bar, .show-mnf .match-bar { background: linear-gradient(180deg, #37414b, #1d2328); border-top: .45cqw solid #e3261b; }
+.show-stnf .tape-title, .show-mnf .tape-title, .show-stnf .pl-head span, .show-mnf .pl-head span { clip-path: polygon(3% 0, 97% 0, 100% 50%, 97% 100%, 3% 100%, 0 50%); padding-inline: 2.4cqw; }
+.show-stnf .pl-tile, .show-mnf .pl-tile { background: #22292f; color: #fff; border: .3cqw solid #e3261b; }
+.show-stnf .tape-v.edge, .show-mnf .tape-v.edge, .show-stnf .crowd-count, .show-mnf .crowd-count { color: #ff3b30; }
+
+.show-mnf { --panel-bg: linear-gradient(180deg, #141416, #050506); --panel-bg-solid: #050506; }
+.show-mnf .sc-open, .show-mnf .sc-tape { background: radial-gradient(circle at 50% 40%, #4a0a0a, #0b0b0d 60%, #000 90%); }
+.show-mnf .open-rays { background: repeating-linear-gradient(0deg, #ff3b3010 0 .3cqw, transparent .3cqw 1cqw); animation: none; inset: 0; }
+.show-mnf .open-teams, .show-mnf .tape-title, .show-mnf .crowd-count, .show-mnf .half-name b { text-shadow: 0 0 1.2cqw #ff2a2acc, 0 0 .3cqw #ff2a2a; }
+.show-mnf .pl-tile { background: #0b0b0d; }
+
+.show-snf { --accent: #dfe6ee; --on-accent: #0a1022; --panel-bg: linear-gradient(180deg, #121a33, #070b18); --panel-bg-solid: #070b18; --panel-fg: #fff; --n1: #8fa4c8; }
+.show-snf .sc-open, .show-snf .sc-tape { background: radial-gradient(circle at 50% 35%, #26355e, #0a1022 60%, #03050c 90%); }
+.show-snf .open-rays { background: conic-gradient(from 200deg at 50% 120%, transparent 0 40deg, #ffffff12 40deg 50deg, transparent 50deg 70deg, #ffffff12 70deg 80deg, transparent 80deg 100deg, #ffffff12 100deg 110deg, transparent 110deg); animation: none; inset: 0; }
+.show-snf .open-teams, .show-snf .half-name b, .show-snf .pl-name b, .show-snf .tape-title, .show-snf .crowd-name, .show-snf .crowd-count {
+  background: linear-gradient(180deg, #ffffff 30%, #a9b6c6 70%, #e9eef4); -webkit-background-clip: text; background-clip: text; color: transparent; filter: drop-shadow(.2cqw .2cqw 0 #000); }
+.show-snf .tape-title { background: #dfe6ee; -webkit-background-clip: border-box; background-clip: border-box; color: #0a1022; filter: none; }
+.show-snf .open-sub, .show-snf .half-name, .show-snf .pl-name, .show-snf .crowd-card, .show-snf .lower-third > div, .show-snf .wx-card {
+  border-bottom: .45cqw solid; border-image: linear-gradient(90deg, #fcb711, #f37021, #cc004c, #6460aa, #0089d0, #0db14b) 1; }
+.show-snf .match-vs { background: linear-gradient(180deg, #fff, #9aa6b2); color: #0a1022; clip-path: polygon(0 20%, 50% 0, 100% 20%, 100% 80%, 50% 100%, 0 80%); }
+.show-snf .match-bar { background: linear-gradient(180deg, #121a33, #070b18); border-top: .4cqw solid; border-image: linear-gradient(90deg, #fcb711, #f37021, #cc004c, #6460aa, #0089d0, #0db14b) 1; }
+.show-snf .pl-tile { background: linear-gradient(180deg, #ffffff, #c9d2dc); color: #0a1022; border-top-color: #6460aa; }
+.show-snf .tape-v.edge, .show-snf .wx-card b { color: #fff; }

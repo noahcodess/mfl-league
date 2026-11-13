@@ -35,6 +35,9 @@ import './styles/stadiums.css';
 import './styles/liveSeason.css';
 import './styles/tradeWire.css';
 import './styles/intro.css';
+import './styles/introScenes.css';
+import './styles/introFonts.css';
 import './styles/introDay.css';
+import './styles/introPrime.css';
 
 createRoot(document.getElementById('root')).render(<App />);
