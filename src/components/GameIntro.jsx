@@ -57,7 +57,7 @@ export default function GameIntro({ game, season, kick, st, onClose, onReplay })
           {scene === 'player' && spot && <IntroPlayer bc={bc} spot={spot} team={spotTeam} kit={spotTeam.id === home.id ? kits?.home : kits?.away} />}
           {scene === 'tape' && <IntroTape home={home} away={away} rec={rec} stats={stats} />}
           {scene === 'crowd' && <IntroCrowd bc={bc} home={home} stadium={stadium} />}
-          {scene === 'field' && <IntroLongShot bc={bc} home={home} away={away} stadium={stadium} weather={weather} kick={kick} st={st} />}
+          {scene === 'field' && <IntroLongShot bc={bc} home={home} away={away} stadium={stadium} weather={weather} kick={kick} st={st} rec={rec} />}
           {scene === 'end' && (
             <div className="intro-scene sc-end">
               <img src={bc.logo} alt="" /><h2>Kickoff is next</h2><p>The game itself comes with the game engine.</p>

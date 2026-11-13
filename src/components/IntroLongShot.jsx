@@ -10,7 +10,7 @@ const SHOT = { from: { x: yardX(38), y: MID_Y, zoom: MIN_ZOOM }, to: { x: yardX(
 
 // Last intro shot, after the program's transition: a long shot of the field drifting across, the weather popping up (and
 // falling as pixels), who receives the opening kick and which way they go, then the scorebug slides in. Kickoff comes later.
-export default function IntroLongShot({ bc, home, away, stadium, weather, kick, st }) {
+export default function IntroLongShot({ bc, home, away, stadium, weather, kick, st, rec }) {
   const fall = weatherKind(weather.sky), recv = kick?.receiving === home.id ? home : away;
   const recvDir = kick ? ((recv.id === home.id) === (kick.home_dir === 'right') ? 'right' : 'left') : null;
   return (
@@ -28,7 +28,7 @@ export default function IntroLongShot({ bc, home, away, stadium, weather, kick, 
         <span className="wx-icon">{weather.icon}</span>
         <div><b>{weather.temp}°</b><span>{weather.sky}</span><small>Wind {weather.wind} mph</small></div>
       </div>
-      <div className="intro-bug"><Scorebug bc={bc} home={home} away={away} st={st} /></div>
+      <div className="intro-bug"><Scorebug bc={bc} home={home} away={away} st={st} rec={rec} /></div>
     </div>
   );
 }

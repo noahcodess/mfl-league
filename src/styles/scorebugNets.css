@@ -8,11 +8,14 @@
 .sb-fox .sb-net { background: #000; box-shadow: inset 0 0 0 .14em #f4b800; }
 .sb-fox .sb-team { position: relative; }
 .sb-fox .sb-team + .sb-team::before { content: ''; position: absolute; left: -.2em; top: -.1em; bottom: -.1em; width: .32em; background: #f4b800; transform: skewX(-18deg); z-index: 1; }
-.sb-fox .sb-code, .sb-fox .sb-clock, .sb-fox .sb-q { font-style: italic; }
+.sb-fox .sb-code { font-style: italic; }
+.sb-fox .sb-score, .sb-fox .sb-clock, .sb-fox .sb-q, .sb-fox .sb-play { font-style: normal; font-variant-numeric: tabular-nums; text-align: center; }
+.sb-fox .sb-logo, .sb-cbs .sb-logo { width: 2.7em; height: 2.7em; margin: -.75em 0 0 -.1em; align-self: flex-start; }
+.sb.sb-cbs .sb-bar { overflow: visible; }
 .sb-fox .sb-time { align-self: flex-start; height: 4.1em; flex-direction: column; justify-content: center; gap: 0; padding: 0 1em .7em; margin-bottom: -1.1em;
   clip-path: polygon(0 0, 100% 0, 100% 70%, 50% 100%, 0 70%); }
 .sb-fox .sb-time .sb-q { font-size: .8em; line-height: 1.1; }
-.sb-fox .sb-time .sb-clock { font-size: 1.55em; line-height: 1; }
+.sb-fox .sb-time .sb-clock { font-size: 1.55em; line-height: 1; min-width: 2.7em; }
 .sb-fox .sb-time .sb-play { font-size: .68em; padding: 0 .35em; line-height: 1.3; }
 .sb-fox .sb-down { font-size: 1em; }
 
@@ -21,6 +24,8 @@
 .sb.sb-cbs .sb-bar { box-shadow: 0 0 0 .14em #0b3a82, 0 .3em .9em #0008; }
 .sb-cbs .sb-team { background: #fff; border-left: .45em solid var(--tc); }
 .sb-cbs .sb-code { color: #0b3a82; text-shadow: none; font-weight: 800; }
+.sb-cbs .sb-rec { color: #0b3a82b3; }
+.sb-cbs .sb-poss::before { border-right-color: #0b3a82; }
 .sb-cbs .sb-tos i { background: #0b3a8233; } .sb-cbs .sb-tos i.on { background: #0b3a82; }
 .sb-cbs .sb-score, .sb-cbs .sb-clock { font-weight: 800; }
 

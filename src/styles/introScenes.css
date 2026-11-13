@@ -76,5 +76,6 @@
 .sc-end > div { display: flex; gap: 1cqw; }
 .intro-bug { position: absolute; left: 50%; bottom: 2.6cqw; transform: translateX(-50%); animation: bug-in .6s 2.6s cubic-bezier(.2, 1.2, .4, 1) both; }
 .intro-bug .sb { font-size: 1.35cqw; }
+.intro-bug .sb.sb-tnf { font-size: 1.75cqw; }
 @keyframes bug-in { from { transform: translate(-50%, 160%); opacity: 0; } }
 .sc-field .lt-kick { bottom: auto; top: 4cqw; animation-delay: 1.2s; }

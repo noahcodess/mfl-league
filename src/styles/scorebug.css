@@ -18,7 +18,14 @@
 .sb-score { margin-left: auto; min-width: 1.7em; padding: 0 .3em; height: 100%; display: grid; place-items: center; background: var(--sb-box); color: var(--sb-box-fg);
   font-family: var(--sb-num); font-size: 1.6em; font-variant-numeric: tabular-nums; }
 .sb-team .sb-score { height: auto; align-self: stretch; margin-right: -.6em; }
-.sb-ball { position: absolute; left: 50%; bottom: .14em; width: .9em; height: .4em; transform: translateX(-50%); background: #8a4b1f; border-radius: 50%; box-shadow: 0 0 0 .08em #fff; }
+.sb-line { display: flex; align-items: center; gap: .35em; }
+.sb-rec { font-size: .72em; color: #ffffffd9; font-weight: 700; line-height: 1; }
+.sb-poss { display: inline-flex; align-items: center; gap: .1em; flex: none; }
+.sb-poss::before { content: ''; border: .24em solid transparent; border-left-width: 0; border-right: .34em solid #fff; filter: drop-shadow(0 .05em 0 #0008); }
+.sb-poss.right { flex-direction: row-reverse; }
+.sb-poss.right::before { border-right-width: 0; border-left: .34em solid #fff; border-right-color: transparent; }
+.sb-poss i { position: relative; width: .9em; height: .52em; border-radius: 50%; background: radial-gradient(circle at 40% 35%, #b5652b, #7a3d14); box-shadow: 0 0 0 .07em #fff, 0 .06em 0 .07em #0007; }
+.sb-poss i::after { content: ''; position: absolute; left: 28%; right: 28%; top: 44%; height: .09em; background: #fff; box-shadow: 0 -.08em 0 -.02em #fff0; }
 .sb-time { display: flex; align-items: center; gap: .55em; padding: 0 .75em; background: var(--sb-acc); color: var(--sb-acc-fg); font-family: var(--sb-font); }
 .sb-q { font-size: 1.1em; text-transform: uppercase; }
 .sb-clock { font-size: 1.45em; font-variant-numeric: tabular-nums; min-width: 2.6em; text-align: center; }

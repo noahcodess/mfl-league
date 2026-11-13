@@ -1,10 +1,10 @@
-/* TNF: a compact rounded box like its logo. Each side is that team's own color gradient; logos have no box and break out over
+/* TNF: a rounded box like its logo (no show logo on top; the middle is all clock). Each side is that team's own color gradient; logos have no box and break out over
    the top edge. Blue TNF center with down and distance, quarter, clock and play clock; the TNF logo sits on top.
    SNF: a night-blue bar that tapers at both ends, a big circle in the middle (peacock, clock, quarter, play clock), silver
    edges and a peacock stripe; down and distance hangs under the circle. */
-.tnf { position: relative; display: flex; align-items: stretch; height: 3.6em; margin-top: 1.5em; border-radius: 1.15em; background: #0b46a8;
+.sb.sb-tnf { font-size: 21px; }
+.tnf { position: relative; display: flex; align-items: stretch; height: 3.6em; margin-top: .9em; border-radius: 1.15em; background: #0b46a8;
   box-shadow: 0 0 0 .18em #fff, 0 0 0 .32em #0b46a855, 0 .4em 1em #0009; }
-.tnf-show { position: absolute; left: 50%; top: -1.5em; height: 2.1em; transform: translateX(-50%); z-index: 3; filter: drop-shadow(0 .12em .2em #000a); }
 .tnf-side { position: relative; display: flex; align-items: center; gap: .45em; min-width: 10em; padding: 0 .55em 0 4.05em;
   background: linear-gradient(135deg, color-mix(in srgb, var(--tc) 70%, #fff) 0%, var(--tc) 42%, color-mix(in srgb, var(--tc) 45%, #000) 100%); }
 .tnf-side::before { content: ''; position: absolute; inset: 0 0 52% 0; background: linear-gradient(180deg, #ffffff45, #ffffff00); border-radius: inherit; pointer-events: none; }
@@ -15,25 +15,30 @@
 .tnf-side.home .tnf-logo { left: auto; right: -.35em; }
 .tnf-id { position: relative; display: grid; gap: .2em; justify-items: center; }
 .tnf-id > span { font-family: 'Bungee', sans-serif; font-size: .8em; color: #fff; line-height: 1; text-shadow: 0 .1em 0 #0007; }
+.tnf-id small { font-size: .62em; color: #ffffffd9; line-height: 1; }
 .tnf-id .sb-tos i { width: .55em; }
 .tnf-score { position: relative; margin-left: auto; min-width: 1.5em; text-align: center; font-family: 'Bungee', sans-serif; font-size: 1.95em; font-weight: 400; color: #fff;
   text-shadow: 0 .07em 0 color-mix(in srgb, var(--tc) 40%, #000), 0 .14em .2em #0006; }
 .tnf-side.home .tnf-score { margin: 0 auto 0 0; }
-.tnf-side.ball .tnf-id > span::after { content: ' ●'; color: #fff; font-size: .7em; }
-.tnf-mid { position: relative; display: grid; align-content: center; justify-items: center; gap: .22em; padding: 0 .75em; z-index: 1;
+.tnf-mid { position: relative; display: grid; align-content: center; justify-items: center; gap: .22em; padding: 0 1.75em; min-width: 9.5em; z-index: 1;
   background: linear-gradient(180deg, #4a9cff 0%, #1a63d6 55%, #0b46a8 100%); box-shadow: inset .14em 0 0 #fff, inset -.14em 0 0 #fff, inset 0 .25em 0 #ffffff40; }
 .tnf-down { padding: .14em .85em; border-radius: .7em; background: #fff; color: #0b46a8; font-family: 'Bungee', sans-serif; font-size: .74em; white-space: nowrap; }
 .tnf-time { display: flex; align-items: center; gap: .45em; color: #fff; font-family: 'Bungee', sans-serif; font-size: .78em; white-space: nowrap; }
 .tnf-time b { font-weight: 400; font-size: 1.3em; font-variant-numeric: tabular-nums; }
 .tnf-time em { font-style: normal; padding: .05em .35em; border-radius: .4em; background: #ffffff30; }
+.tnf-poss { position: absolute; top: 50%; transform: translateY(-50%); font-size: .9em; }
+.tnf-poss.left { left: .35em; } .tnf-poss.right { right: .35em; }
 
 .sb-snf { --sb-font: 'Exo 2', sans-serif; }
-.snf { position: relative; display: flex; align-items: center; height: 5.8em; margin-bottom: .9em; filter: drop-shadow(0 .3em .5em #000b); }
-.snf-side { display: flex; align-items: center; gap: .6em; height: 3em; background: linear-gradient(180deg, #2a3a6a 0%, #121c3c 55%, #0a1022 100%);
-  box-shadow: inset 0 .16em 0 #d6dee8, inset 0 -.22em 0 #6460aa; }
-.snf-side.away { clip-path: polygon(1.6em 0, 100% 0, 100% 100%, 0 100%); padding: 0 3.3em 0 1.8em; margin-right: -2.8em; }
-.snf-side.home { clip-path: polygon(0 0, calc(100% - 1.6em) 0, 100% 100%, 0 100%); padding: 0 1.8em 0 3.3em; margin-left: -2.8em; flex-direction: row-reverse; }
-.snf-logo { width: 2.5em; height: 2.5em; object-fit: contain; image-rendering: pixelated; filter: drop-shadow(0 .1em .1em #000a); }
+@property --pc { syntax: '<number>'; inherits: true; initial-value: 1; }
+.snf { position: relative; display: flex; align-items: center; height: 5.8em; margin-bottom: 1.6em; filter: drop-shadow(0 .3em .5em #000b); }
+.snf-side { position: relative; isolation: isolate; display: flex; align-items: center; gap: .6em; height: 3em; }
+.snf-plate { position: absolute; inset: 0; z-index: -1; background: linear-gradient(180deg, #2a3a6a 0%, #121c3c 55%, #0a1022 100%); box-shadow: inset 0 .16em 0 #d6dee8, inset 0 -.22em 0 #6460aa; }
+.snf-side.away { padding: 0 4.2em 0 1.8em; margin-right: -2.8em; }
+.snf-side.away .snf-plate { clip-path: polygon(1.6em 0, 100% 0, 100% 100%, 0 100%); }
+.snf-side.home { padding: 0 1.8em 0 4.2em; margin-left: -2.8em; flex-direction: row-reverse; }
+.snf-side.home .snf-plate { clip-path: polygon(0 0, calc(100% - 1.6em) 0, 100% 100%, 0 100%); }
+.snf-logo { width: 3.1em; height: 3.1em; margin-top: -.55em; object-fit: contain; image-rendering: pixelated; filter: drop-shadow(0 .14em .12em #000b); }
 .snf-id { display: grid; justify-items: center; line-height: 1; color: #fff; }
 .snf-id b { font-family: 'Exo 2', sans-serif; font-style: italic; font-weight: 800; font-size: 1.35em; }
 .snf-id small { font-size: .72em; opacity: .85; margin-top: .15em; }
@@ -41,12 +46,15 @@
   background: linear-gradient(180deg, #0d1530, #050914); box-shadow: inset .1em 0 0 #ffffff1a, inset -.1em 0 0 #ffffff1a; }
 .snf-score b { font-family: 'Exo 2', sans-serif; font-style: italic; font-weight: 800; font-size: 1.7em; line-height: 1; color: #fff; }
 .snf-score .sb-tos i { width: .5em; }
-.snf-side.ball .snf-id b::after { content: ' ●'; font-size: .55em; vertical-align: middle; }
-.snf-circle { position: relative; z-index: 2; width: 5.8em; height: 5.8em; flex: none; display: grid; justify-items: center; align-content: center; gap: .1em; border-radius: 50%;
-  background: radial-gradient(circle at 50% 35%, #2a3a6a, #0a1022 70%); box-shadow: 0 0 0 .2em #dfe6ee, 0 0 0 .34em #0a1022, inset 0 .3em .4em #ffffff25; color: #fff; }
-.snf-circle img { height: 1.25em; }
+.snf-circle { position: relative; z-index: 2; width: 5.8em; height: 5.8em; flex: none; display: grid; justify-items: center; align-content: center; gap: .05em; border-radius: 50%;
+  background: radial-gradient(circle at 50% 35%, #2a3a6a, #0a1022 70%); box-shadow: 0 0 0 .38em #0a1022, inset 0 .3em .4em #ffffff25; color: #fff; transition: --pc .95s linear; }
+.snf-circle::before { content: ''; position: absolute; inset: -.3em; border-radius: 50%; background: conic-gradient(#dfe6ee calc(var(--pc) * 1turn), #ffffff1f 0);
+  -webkit-mask: radial-gradient(farthest-side, #0000 calc(100% - .26em), #000 calc(100% - .25em)); mask: radial-gradient(farthest-side, #0000 calc(100% - .26em), #000 calc(100% - .25em)); }
+.snf-circle.low::before { background: conic-gradient(#ff4d4d calc(var(--pc) * 1turn), #ffffff1f 0); }
+.snf-circle small { font-family: 'Exo 2', sans-serif; font-style: italic; font-weight: 800; font-size: .78em; text-transform: uppercase; opacity: .9; }
+.snf-poss { position: absolute; top: 50%; transform: translateY(-50%); font-size: .85em; z-index: 3; } .snf-poss.left { left: -1.75em; } .snf-poss.right { right: -1.75em; }
 .snf-circle b { font-family: 'Exo 2', sans-serif; font-weight: 800; font-size: 1.45em; line-height: 1; font-variant-numeric: tabular-nums; }
-.snf-circle span { display: flex; gap: .5em; font-size: .78em; }
-.snf-circle span i { font-style: normal; } .snf-circle span i + i { padding-left: .5em; border-left: .1em solid #ffffff55; }
-.snf-down { position: absolute; left: 50%; bottom: -.75em; transform: translateX(-50%); z-index: 3; padding: .12em .9em; border-radius: .6em; white-space: nowrap;
+.snf-circle span { font-size: .78em; padding: 0 .45em; border-radius: .5em; background: #ffffff1c; font-variant-numeric: tabular-nums; }
+.snf-circle.low span { background: #ff4d4d; }
+.snf-down { position: absolute; left: 50%; bottom: -1.55em; transform: translateX(-50%); z-index: 3; padding: .12em .9em; border-radius: .6em; white-space: nowrap;
   background: linear-gradient(180deg, #fff, #b9c4d1); color: #0a1022; font-family: 'Exo 2', sans-serif; font-style: italic; font-weight: 800; font-size: .78em; }

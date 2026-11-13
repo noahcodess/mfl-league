@@ -31,20 +31,26 @@
 .cr-pips { display: flex; gap: 5px; }
 .cr-pips i { width: 22px; height: 8px; border-radius: 3px; background: #ffffff22; border: 1px solid #000; }
 .cr-pips i.on { background: var(--gold); }
-.ct-btn { position: relative; width: 176px; height: 176px; border-radius: 50%; border: 9px solid #c8180f; padding: 0; cursor: pointer; background: #f4f4f0;
-  box-shadow: 0 0 0 3px #000, 5px 6px 0 3px #000, inset 0 -8px 0 #0002; transition: transform .12s; }
-.ct-btn:hover:not(:disabled) { transform: scale(1.04) rotate(-2deg); }
-.ct-btn:active:not(:disabled) { transform: scale(.97); }
-.ct-btn:disabled { filter: grayscale(.85); opacity: .55; cursor: not-allowed; }
-.ct-face { position: absolute; inset: 0; border-radius: 50%; display: block;
-  background: repeating-conic-gradient(from -1.5deg, #222 0 3deg, transparent 3deg 30deg) center/100% 100% no-repeat; }
-.ct-face::before { content: ''; position: absolute; inset: 14px; border-radius: 50%; background: #f4f4f0; }
-.ct-hand { position: absolute; left: 50%; bottom: 50%; transform-origin: 50% 100%; background: #111; border-radius: 3px; z-index: 1; }
-.ct-hand.h { width: 6px; height: 40px; margin-left: -3px; transform: rotate(-60deg); }
-.ct-hand.m { width: 4px; height: 56px; margin-left: -2px; background: #c8180f; }
-.ct-face.run .ct-hand.m { animation: ct-sweep 6s linear infinite; }
+.sw { position: relative; width: 168px; height: 186px; padding: 26px 0 0; border: 0; background: none; cursor: pointer; }
+.sw-crown { position: absolute; left: 50%; top: 4px; width: 34px; height: 22px; margin-left: -17px; border: 3px solid #000; border-radius: 6px 6px 3px 3px; background: linear-gradient(180deg, #e8453b, #a8150d); }
+.sw-crown::after { content: ''; position: absolute; left: 50%; bottom: -10px; width: 10px; height: 8px; margin-left: -5px; background: #000; }
+.sw-face { position: relative; display: grid; place-items: center; width: 156px; height: 156px; margin: 0 auto; border-radius: 50%; background: #f4f4f0; color: #c8180f;
+  border: 6px solid #111; box-shadow: 0 0 0 4px #c8180f, 5px 6px 0 4px #000, inset 0 -6px 0 #0002; transition: transform .15s; }
+.sw-hand { position: absolute; left: 50%; bottom: 50%; width: 4px; height: 52px; margin-left: -2px; transform-origin: 50% 100%; background: #c8180f; border-radius: 2px; transition: opacity .15s; }
+.sw-face::after { content: ''; position: absolute; width: 12px; height: 12px; border-radius: 50%; background: #111; }
+.sw.run .sw-hand { animation: ct-sweep 6s linear infinite; }
 @keyframes ct-sweep { to { transform: rotate(360deg); } }
-.ct-dot { position: absolute; left: 50%; top: 50%; width: 14px; height: 14px; margin: -7px; border-radius: 50%; background: #111; z-index: 2; }
-.ct-face b { position: absolute; left: 0; right: 0; bottom: 34px; z-index: 2; font: 700 15px var(--pixel); color: #c8180f; letter-spacing: .04em; text-transform: uppercase; }
+.sw-t, .sw-word { position: absolute; font-family: var(--pixel); color: #c8180f; opacity: 0; transition: opacity .15s, transform .15s; text-transform: uppercase; }
+.sw-t { font-size: 70px; transform: scale(.6); }
+.sw-word { font-size: 22px; }
+.sw:hover:not(:disabled) .sw-face { transform: scale(1.04); }
+.sw:hover:not(:disabled):not(.called) .sw-t { opacity: 1; transform: scale(1); }
+.sw:hover:not(:disabled):not(.called) .sw-hand, .sw:hover:not(:disabled):not(.called) .sw-face::after, .sw.called .sw-hand, .sw.called .sw-face::after { opacity: 0; }
+.sw.called .sw-face { animation: sw-shake .5s; background: #c8180f; }
+.sw.called .sw-word { opacity: 1; color: #fff; }
+@keyframes sw-shake { 0%, 100% { transform: rotate(0); } 15% { transform: rotate(-12deg); } 35% { transform: rotate(10deg); } 55% { transform: rotate(-7deg); } 75% { transform: rotate(4deg); } }
+.sw:disabled { filter: grayscale(.9); opacity: .5; cursor: not-allowed; }
+.sw-dont { display: flex; align-items: center; gap: 8px; margin: 4px 0 10px; font-weight: 600; cursor: pointer; }
+.link-btn { background: none; border: 0; color: var(--link); font: 600 12px var(--label); cursor: pointer; text-decoration: underline; }
 .ct-left { margin: 0; font: 700 14px var(--label); }
 .cr-to-flash { margin: 0; padding: 8px 10px; border-radius: 10px; background: #7a1010; color: #ffe0e0; font-weight: 700; text-align: center; animation: in-pop .35s both; }

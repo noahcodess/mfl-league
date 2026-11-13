@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import PlayArt from './PlayArt.jsx';
-import { keyPlayOptions, momentText } from '../lib/keyPlays.js';
+import { keyPlayOptions, momentText, KEY_PLAY_SLOTS } from '../lib/keyPlays.js';
 
 const KEY = ['..####..........', '.######.........', '###..############', '###..############', '.######.....##.##', '..####......##.##'];
-const PICK_SECONDS = 20;
+const PICK_SECONDS = 25;
+const ORD = ['1st', '2nd', '3rd', '4th'];
 
 export function PixelKey({ className = 'kp-key' }) {
   return (
@@ -15,11 +16,13 @@ export function PixelKey({ className = 'kp-key' }) {
   );
 }
 
-// A key play: a pixel key flies in with KEY PLAY (under 3 seconds) and flies out, then the coach picks one of the four most
-// sensible plays, each with its play art, before the timer runs out. moment: { down, togo, ballOn, quarter, clock }.
+// A key play: a pixel key flies in with KEY PLAY (under 3 seconds) and out, then the coach has 25 seconds to pick from up to
+// eight plays (best first), each with play art. The pick shows for about 2 seconds, then it all goes away.
+// moment: { down, togo, ballOn, quarter, clock }.
 export default function KeyPlayOverlay({ moment, team, onPick, onClose }) {
   const [phase, setPhase] = useState('intro'), [left, setLeft] = useState(PICK_SECONDS), [called, setCalled] = useState(null);
-  const options = keyPlayOptions(moment);
+  const close = useRef(onClose); close.current = onClose; // the room re-renders every second; keep the timers steady
+  const options = keyPlayOptions(moment), blanks = Math.max(0, KEY_PLAY_SLOTS - options.length);
   useEffect(() => { const t = setTimeout(() => setPhase('pick'), 2700); return () => clearTimeout(t); }, []);
   useEffect(() => {
     if (phase !== 'pick') return undefined;
@@ -27,22 +30,28 @@ export default function KeyPlayOverlay({ moment, team, onPick, onClose }) {
     const t = setTimeout(() => setLeft((n) => n - 1), 1000);
     return () => clearTimeout(t);
   }, [phase, left]);
-  useEffect(() => { if (phase !== 'called') return undefined; const t = setTimeout(onClose, 1800); return () => clearTimeout(t); }, [phase, onClose]);
+  useEffect(() => { if (phase !== 'called') return undefined; const t = setTimeout(() => close.current(), 2000); return () => clearTimeout(t); }, [phase]);
   const pick = (p) => { setCalled(p); setPhase('called'); onPick?.(p); };
+  const toGoal = 100 - moment.ballOn;
   return createPortal(
     <div className={`kp-overlay kp-phase-${phase}`} style={{ '--tc': team.color }}>
       {phase === 'intro' && <div className="kp-intro"><PixelKey /><b className="kp-word">Key play</b></div>}
       {phase === 'pick' && (
         <div className="kp-pick">
-          <header><b>🔑 Key play</b><span>{momentText(moment)}</span></header>
-          <div className="kp-timer"><i style={{ width: `${(left / PICK_SECONDS) * 100}%` }} /><span>{left}s to pick</span></div>
+          <header className="kp-head">
+            <div className="kp-title"><PixelKey className="kp-mini-key" /><b>Key play</b></div>
+            <div className="kp-moment"><b>{ORD[moment.down - 1]} &amp; {toGoal <= moment.togo ? 'Goal' : moment.togo}</b><span>{momentText(moment).split(' · ').slice(1).join(' · ')}</span></div>
+            <div className={`kp-ring${left <= 5 ? ' low' : ''}`} style={{ '--k': left / PICK_SECONDS }}><b>{left}</b><small>sec</small></div>
+          </header>
           <div className="kp-options">
             {options.map((p, i) => (
-              <button key={p.key} className="kp-card" style={{ '--i': i }} onClick={() => pick(p)}>
+              <button key={p.key} className={`kp-card g-${p.group.toLowerCase()}`} style={{ '--i': i }} onClick={() => pick(p)}>
+                <span className="kp-chip">{p.group}</span>
                 <PlayArt play={p} color={team.color} id={p.key} />
                 <b>{p.name}</b><small>{p.tag}</small>
               </button>
             ))}
+            {Array.from({ length: blanks }, (_, i) => <div key={`b${i}`} className="kp-card kp-blank" style={{ '--i': options.length + i }}><span>More plays coming</span></div>)}
           </div>
         </div>
       )}
