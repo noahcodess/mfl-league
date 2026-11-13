@@ -97,7 +97,7 @@ export default function App() {
   useLeagueTick(reload);
   return (
     <div className={`app${inSandbox() ? ' sandbox' : ''}`} style={inSandbox() ? undefined : brandColors(myTeam)}>
-      {!route.stage && <Header page={route.page} session={session} ready={step === 'ready'} live={live} onLeagueChange={reload} />}
+      {!route.stage && <Header page={route.page} session={session} ready={step === 'ready'} live={live} />}
       {!route.stage && <SandboxBanner />}
       {myTeam && !route.stage && <DraftAlert teamId={myTeam.id} page={route.page} />}
       {!route.stage && <ScheduleNotice />}

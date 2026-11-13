@@ -3,11 +3,10 @@ import { links } from '../lib/router.js';
 import { currentSeason, currentPhase, PHASE_NAMES } from '../data/teams.js';
 import { leagueLogo } from '../data/logos.js';
 import { signOut } from '../data/session.js';
-import SandboxButton from './SandboxButton.jsx';
 import { useInbox } from '../data/inbox.js';
 
 // Top bar: MFL logo, main navigation, live-data light, the inbox bell, the commissioner's TEST switch, and who's logged in.
-export default function Header({ page, session, ready, live, onLeagueChange }) {
+export default function Header({ page, session, ready, live }) {
   const p = session.profile;
   const isCommish = ready && (p?.role === 'commissioner' || p?.site_owner);
   const myTeam = ready && p?.role === 'coach' && p.team_id;
@@ -28,7 +27,6 @@ export default function Header({ page, session, ready, live, onLeagueChange }) {
           <span className={`live-dot${live ? ' on' : ''}`} /> Season {currentSeason()} · {PHASE_NAMES[currentPhase()]}
         </span>
         {ready && <a className={`bell${page === 'inbox' ? ' on' : ''}`} href={links.inbox} title="Inbox">🔔{unread > 0 && <span className="bell-n">{unread > 9 ? '9+' : unread}</span>}</a>}
-        {ready && session.unlocked && <SandboxButton onChanged={onLeagueChange} />}
         {session.status === 'in' ? (
           <span className="who">{p.site_owner && <span className="owner-tag" title={p.test_commish ? 'Testing: seeing the site as the commissioner' : session.unlocked ? 'Test mode: full commissioner powers' : 'Site owner: you can see everything, change nothing'}>{p.test_commish ? 'COMMISH · TEST' : session.unlocked ? 'OWNER · TEST' : 'OWNER'}</span>}<b>{p.username}</b><button className="btn small ghost" onClick={() => signOut(p.role === 'commissioner' && !p.test_commish)}>Log out</button></span>
         ) : session.status === 'out' && <a className="btn small" href={links.login}>Log in</a>}

@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import Modal from './Modal.jsx';
 import { inSandbox, enterSandbox, exitSandbox } from '../data/sandbox.js';
 
-// The commissioner's TEST switch in the header, with a warning before turning it on or off.
-export default function SandboxButton({ onChanged }) {
+// The TEST mode switch (only in Commissioner's Desk → Test), with a warning before turning it on or off.
+export default function SandboxButton({ onChanged, label }) {
   const [confirm, setConfirm] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
@@ -16,7 +16,7 @@ export default function SandboxButton({ onChanged }) {
   return (
     <>
       <button className={`btn small test-btn${on ? ' on' : ''}`} onClick={() => setConfirm(true)} title={on ? 'Leave TEST mode and reset the league' : 'Try things without touching the real league'}>
-        {on ? 'EXIT TEST' : 'TEST'}
+        {label || (on ? 'EXIT TEST' : 'TEST')}
       </button>
       {confirm && (
         <Modal onClose={() => !busy && setConfirm(false)}>

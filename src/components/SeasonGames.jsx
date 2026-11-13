@@ -1,11 +1,9 @@
 import React, { useState } from 'react';
 import ConfirmButton from './ConfirmButton.jsx';
 import GameOdds from './GameOdds.jsx';
-import { useSeasonGames, lastWinPct, rivalPairs, saveSchedule, setWeekOrder, setGameTime, setGameWindow, setWeekWindows, swapWeeks, WINDOWS, PRIME_PLAN } from '../data/games.js';
-import { getTeams, currentSeason } from '../data/teams.js';
-import { makeSchedule, checkSchedule } from '../lib/scheduleGen.js';
-
-const RANK = { great: 0, good: 1, okay: 2, blowout: 3, bad: 4 };
+import { useSeasonGames, setWeekOrder, setGameTime, setGameWindow, swapWeeks, WINDOWS } from '../data/games.js';
+import { currentSeason } from '../data/teams.js';
+import { generateSeasonSchedule, bestGamesToPrimetime } from '../data/scheduleMaker.js';
 const toInput = (iso) => { if (!iso) return ''; const d = new Date(iso); d.setMinutes(d.getMinutes() - d.getTimezoneOffset()); return d.toISOString().slice(0, 16); };
 
 // Commissioner's Desk → Schedule → Regular season games. Generate the 96 games (12 each: 7 conference, 5 other, 6 home),
@@ -23,21 +21,9 @@ export default function SeasonGames({ canControl }) {
   const act = async (fn) => { setError(''); try { await fn(); refresh(); } catch (e) { setError(e.message); } };
   const played = (games || []).some((g) => g.status !== 'scheduled');
 
-  const generate = async () => {
-    const teams = getTeams();
-    const g = makeSchedule(teams, await lastWinPct(), Math.random, await rivalPairs());
-    const problems = checkSchedule(g, teams);
-    if (problems.length) throw new Error(problems[0]);
-    await saveSchedule(season, g);
-  };
+  const generate = () => generateSeasonSchedule(season);
   // Best game of each week → Sunday night, next → Monday night, then Thursday and Saturday night; rivalries count as better.
-  const bestFirst = () => act(async () => {
-    for (let w = 1; w <= 12; w += 1) {
-      const wk = games.filter((g) => g.week === w).sort((a, b) => (RANK[a.odds?.rating] - (a.rivalry ? 1.5 : 0)) - (RANK[b.odds?.rating] - (b.rivalry ? 1.5 : 0))
-        || Math.abs(a.odds.home_win - 0.5) - Math.abs(b.odds.home_win - 0.5));
-      await setWeekWindows(season, w, wk.map((g) => g.id), wk.map((_, i) => PRIME_PLAN[i] || 'sun_day'));
-    }
-  });
+  const bestFirst = () => act(() => bestGamesToPrimetime(season, games));
 
   if (!games) return <p className="dim">Loading the schedule...</p>;
   if (!games.length) {
