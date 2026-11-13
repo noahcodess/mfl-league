@@ -1,0 +1,27 @@
+/* Key plays: the pixel key flying in with KEY PLAY, the four play cards with Madden-style play art, and the "play called" note. */
+.kp-overlay { position: fixed; inset: 0; z-index: 350; display: grid; place-items: center; overflow: hidden; background: radial-gradient(circle, #0b0d12e6, #000f 75%); }
+.kp-intro { display: grid; justify-items: center; gap: 10px; }
+.kp-key { width: min(46vw, 520px); filter: drop-shadow(0 0 30px #ffd23f88); animation: kp-fly 2.6s cubic-bezier(.3, .9, .4, 1) both; }
+@keyframes kp-fly { 0% { transform: translateX(-80vw) rotate(-35deg) scale(.6); } 28% { transform: translateX(0) rotate(4deg) scale(1.12); } 36% { transform: rotate(0) scale(1); }
+  74% { transform: translateX(0) scale(1); opacity: 1; } 100% { transform: translateX(85vw) rotate(25deg) scale(.7); opacity: .4; } }
+.kp-word { font: 700 clamp(40px, 8vw, 96px) var(--pixel); color: #ffd23f; text-transform: uppercase; letter-spacing: .06em; text-shadow: 5px 5px 0 #6b4a00, 9px 9px 0 #000;
+  animation: kp-word 2.6s both; }
+@keyframes kp-word { 0%, 24% { opacity: 0; transform: scale(2.4); } 32% { opacity: 1; transform: scale(1); } 74% { opacity: 1; transform: translateY(0); } 100% { opacity: 0; transform: translateY(30px); } }
+.kp-pick { width: min(1100px, calc(100vw - 24px)); max-height: calc(100vh - 24px); overflow: auto; display: grid; gap: 12px; padding: 18px; border: 3px solid #000; border-radius: 18px;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--tc) 30%, #12151c), #0d1016 160px); box-shadow: 6px 6px 0 #000, 0 0 40px #ffd23f33; animation: in-pop .4s both; }
+.kp-pick header { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+.kp-pick header b { font: 700 24px var(--pixel); color: #ffd23f; text-shadow: 2px 2px 0 #000; }
+.kp-pick header span { font: 700 18px var(--pixel); }
+.kp-timer { position: relative; height: 18px; border: 2px solid #000; border-radius: 9px; background: #0006; overflow: hidden; }
+.kp-timer i { position: absolute; inset: 0 auto 0 0; background: linear-gradient(90deg, #ffd23f, #ff8a3d); transition: width 1s linear; }
+.kp-timer span { position: relative; display: block; text-align: center; font: 700 11px/14px var(--label); color: #000; }
+.kp-options { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+@media (max-width: 760px) { .kp-options { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.kp-card { display: grid; gap: 6px; padding: 10px; border: 3px solid #000; border-radius: 14px; background: var(--panel2); color: var(--text); cursor: pointer; text-align: left;
+  box-shadow: 4px 4px 0 #000; transition: transform .12s, box-shadow .12s; animation: in-up .4s calc(var(--i) * .08s) both; }
+.kp-card:hover { transform: translateY(-4px); box-shadow: 4px 8px 0 #000, 0 0 0 3px var(--tc); }
+.kp-card b { font: 700 16px var(--pixel); }
+.kp-card small { color: var(--dim); font: 700 12px var(--label); text-transform: uppercase; letter-spacing: .05em; }
+.play-art { width: 100%; aspect-ratio: 100 / 64; border-radius: 8px; border: 2px solid #000; display: block; }
+.kp-called { padding: 18px 28px; border: 3px solid #000; border-radius: 16px; background: #12151c; font: 700 22px var(--pixel); box-shadow: 6px 6px 0 #000; animation: in-pop .35s both; }
+.kp-called b { color: #ffd23f; }

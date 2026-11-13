@@ -1,6 +1,6 @@
 // Season schedule generator. 16 teams in 2 conferences of 8, 12 weeks, every team plays once a week:
 // - 7 conference games (everyone in your conference once) and 5 against the other conference
-// - exactly 6 home and 6 away
+// - exactly 6 home and 6 away, and never more than 3 home or 3 away games in a row
 // - teams with a better win % last season lean toward playing each other across conferences (a slight lean, not a lock)
 // - rivalries are never forced: the schedule ignores them (they only make better primetime games and get a badge).
 //   makeSchedule can still take a rivals list, but the league passes none.
@@ -86,8 +86,21 @@ export function makeSchedule(teams, winPct = {}, rng = Math.random, rivals = [])
     const wk = kind === 'C' ? confWeeks[ci++] : xWeeks[xi++];
     wk.forEach(([a, b]) => edges.push({ week: w + 1, a, b, conference: kind === 'C' }));
   });
-  orient(edges, [...A, ...B], rng);
+  // Home/away: re-roll the balanced walk until no team has more than 3 home or 3 away games in a row.
+  for (let tries = 0; tries < 4000; tries += 1) { orient(edges, [...A, ...B], rng); if (maxRun(edges, [...A, ...B]) <= 3) break; }
   return edges.map((e) => ({ week: e.week, home: e.home, away: e.away, conference: e.conference })).sort((x, y) => x.week - y.week);
+}
+
+// The longest run of straight home or straight away games any team has.
+function maxRun(games, ids) {
+  let worst = 0;
+  ids.forEach((id) => {
+    let run = 0; let last = null;
+    games.filter((g) => g.home === id || g.away === id).sort((x, y) => x.week - y.week).forEach((g) => {
+      const h = g.home === id; run = h === last ? run + 1 : 1; last = h; worst = Math.max(worst, run);
+    });
+  });
+  return worst;
 }
 
 // Everything wrong with a schedule (empty list = it follows every rule).
@@ -103,6 +116,7 @@ export function checkSchedule(games, teams) {
     if (home !== 6) out.push(`${t.id} has ${home} home games`);
     if (inConf !== 7) out.push(`${t.id} has ${inConf} conference games`);
     for (let w = 1; w <= 12; w += 1) if (mine.filter((g) => g.week === w).length !== 1) out.push(`${t.id} doesn't play exactly once in week ${w}`);
+    if (maxRun(mine, [t.id]) > 3) out.push(`${t.id} has more than 3 home or away games in a row`);
   });
   games.forEach((g) => { const k = [g.home, g.away].sort().join('-'); if (pairs.has(k)) out.push(`${k} play twice`); pairs.add(k); });
   return out;

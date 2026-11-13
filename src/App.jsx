@@ -76,7 +76,7 @@ function Screen({ route, session, step, reload }) {
   if (route.page === 'freeAgents') return <FreeAgentsPage viewer={step === 'ready' ? session.profile : null} />;
   if (route.page === 'game') {
     const p = step === 'ready' ? session.profile : null;
-    return <GamePage id={route.id} canControl={p?.role === 'commissioner' || !!p?.site_owner /* TEMPORARY: owner tests the desk */} />;
+    return <GamePage id={route.id} teamId={p?.team_id} canControl={p?.role === 'commissioner' || !!p?.site_owner /* TEMPORARY: owner tests the desk */} />;
   }
   if (route.page === 'coaching') {
     const p = step === 'ready' ? session.profile : null;

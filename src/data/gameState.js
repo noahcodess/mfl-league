@@ -56,3 +56,40 @@ export function useTicker(on) {
   const [, setN] = useState(0);
   useEffect(() => { if (!on) return undefined; const id = setInterval(() => setN((n) => n + 1), 250); return () => clearInterval(id); }, [on]);
 }
+
+export const testScore = (id, side, points) => rpc('game_test_score', { p_game: Number(id), p_side: side, p_points: points });
+
+const ORD = ['1st', '2nd', '3rd', '4th'];
+// "3rd & 7", "4th & Goal", or what's happening when there's no down yet.
+export function downText(st) {
+  if (!st || st.status === 'pregame') return 'Pregame';
+  if (st.status === 'final') return 'Final';
+  if (!st.down) return 'Kickoff';
+  const goal = st.ball_on != null && 100 - st.ball_on <= st.togo;
+  return `${ORD[st.down - 1]} & ${goal ? 'Goal' : st.togo}`;
+}
+// Where the ball is, from the offense's view: "OWN 25", "50", "OPP 34". teamCode labels it like a broadcast ("NE 34").
+export function ballText(st, own, opp) {
+  if (st?.ball_on == null) return '';
+  const b = st.ball_on;
+  return b === 50 ? 'Ball on the 50' : b < 50 ? `Ball on ${own || 'OWN'} ${b}` : `Ball on ${opp || 'OPP'} ${100 - b}`;
+}
+
+// The live states of several games at once (the Live tab's week), read every 3 seconds: { gameId: state }.
+export function useGameStates(ids) {
+  const key = ids.filter(isRealGame).join(',');
+  const [map, setMap] = useState({});
+  useEffect(() => {
+    if (!key) { setMap({}); return undefined; }
+    let live = true; let timer;
+    const load = async () => {
+      const { data } = await db.from('game_state').select('*').in('game_id', key.split(',').map(Number));
+      if (!live) return;
+      setMap(Object.fromEntries((data || []).map((r) => [String(r.game_id), r])));
+      timer = setTimeout(load, 3000);
+    };
+    load();
+    return () => { live = false; clearTimeout(timer); };
+  }, [key]);
+  return map;
+}

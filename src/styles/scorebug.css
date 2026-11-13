@@ -1,4 +1,4 @@
-/* Scorebugs: shared layout for the full broadcast bug and the coaching room's mini bug. Each program sets its colors and font
+/* Scorebugs: shared layout for the broadcast bugs (the coaching room has its own built-in board, coachBoard.css). Each program sets its colors and font
    with the --sb variables (scorebugNets.css). Everything is sized in em, so set font-size to scale a bug. Crisp, not pixelated;
    only team logos keep their pixel art. */
 .sb { --sb-bg: #111; --sb-fg: #fff; --sb-box: #000; --sb-box-fg: #fff; --sb-acc: #f4b800; --sb-acc-fg: #111; --sb-font: 'Barlow Condensed', sans-serif;
@@ -25,17 +25,5 @@
 .sb-play { font-size: .9em; padding: .1em .35em; border-radius: .2em; background: #0003; font-variant-numeric: tabular-nums; }
 .sb-down { display: grid; place-items: center; padding: 0 .85em; min-width: 6em; font-family: var(--sb-font); font-size: 1.05em; text-transform: uppercase; background: var(--sb-down-bg, transparent); color: var(--sb-down-fg, var(--sb-fg)); }
 
-.msb { --sb-bg: #111; --sb-fg: #fff; --sb-box: #000; --sb-box-fg: #fff; --sb-acc: #f4b800; --sb-acc-fg: #111; --sb-font: 'Barlow Condensed', sans-serif;
-  --sb-num: var(--sb-font); --sb-radius: .4em; display: inline-flex; align-items: stretch; font-size: 18px; color: var(--sb-fg); background: var(--sb-bg);
-  border-radius: var(--sb-radius); overflow: hidden; box-shadow: 0 .3em 1em #0008; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; }
-.msb-team { display: flex; align-items: center; gap: .6em; padding: .4em .8em; background: linear-gradient(180deg, color-mix(in srgb, var(--tc) 92%, #fff), color-mix(in srgb, var(--tc) 65%, #000)); }
-.msb-team.home { flex-direction: row-reverse; }
-.msb-team img { width: 2.4em; height: 2.4em; object-fit: contain; image-rendering: pixelated; }
-.msb-team b { font-family: var(--sb-num); font-size: 2em; min-width: 1.4em; text-align: center; color: #fff; text-shadow: 0 .06em 0 #0008; font-variant-numeric: tabular-nums; }
-.msb-team.ball b::after { content: ''; display: inline-block; width: .3em; height: .3em; margin-left: .15em; border-radius: 50%; background: #fff; vertical-align: super; }
-.msb-team.home.ball b::after { margin: 0 .15em 0 0; }
-.msb-mid { display: grid; justify-items: center; align-content: center; padding: .3em 1.1em; background: var(--sb-acc); color: var(--sb-acc-fg); font-family: var(--sb-font); }
-.msb-mid span { font-size: .9em; text-transform: uppercase; }
-.msb-mid b { font-size: 1.7em; line-height: 1; font-variant-numeric: tabular-nums; }
-.msb-mid i { font-style: normal; font-size: .65em; opacity: .8; text-transform: uppercase; }
-.msb-mid .msb-run { color: inherit; opacity: 1; }
+.sb-num.bump { animation: sb-bump .8s cubic-bezier(.2, 1.4, .4, 1); }
+@keyframes sb-bump { 0% { transform: scale(1.9); filter: brightness(2) drop-shadow(0 0 .3em #fff); } 60% { transform: scale(.92); } 100% { transform: scale(1); filter: none; } }

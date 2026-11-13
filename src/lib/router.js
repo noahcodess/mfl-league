@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-// Tiny hash router: '' = home, '#league', '#team-<id>' = roster, '#game-<id>' = a game (commissioner), '#coaching' = your coaching room, '#free-agents', '#data-check', '#login', '#control' (Commissioner's Desk; '#console' redirects to its Accounts tab).
+// Tiny hash router: '' = home, '#league', '#team-<id>' = roster, '#game-<id>' = a game, '#coaching' = your coaching room, '#free-agents', '#data-check', '#login', '#control' (Commissioner's Desk; '#console' redirects to its Accounts tab).
 export function parseHash(hash) {
   const h = (hash || '').replace(/^#/, '');
   if (h.startsWith('team-')) return { page: 'team', id: h.slice(5) };

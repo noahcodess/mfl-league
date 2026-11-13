@@ -1,4 +1,4 @@
-/* Broadcast intro shots after the matchup: player to watch, tale of the tape, the crowd, the coin toss field, the end card. */
+/* Broadcast intro shots after the matchup: player to watch, tale of the tape, the crowd, the long shot of the field, the end card. */
 .sc-player { display: grid; grid-template-columns: 1fr 1.25fr; align-items: center; background: radial-gradient(circle at 28% 55%, color-mix(in srgb, var(--tc) 70%, #000), #000 72%); }
 .pl-head { position: absolute; top: 3cqw; left: 4.5cqw; z-index: 1; display: grid; gap: .3cqw; animation: in-left .5s both; }
 .pl-head span { font-size: 2.6cqw; text-transform: uppercase; padding: .3cqw 1.4cqw; background: var(--accent); color: var(--on-accent, #111); }
@@ -74,21 +74,7 @@
 .sc-end h2 { margin: 0; font-size: 3.4cqw; text-transform: uppercase; }
 .sc-end p { margin: 0; opacity: .7; font-size: 1.5cqw; }
 .sc-end > div { display: flex; gap: 1cqw; }
-.game-page { display: grid; gap: 12px; max-width: 640px; margin: 0 auto; }
-.gp-card { display: grid; justify-items: center; gap: 10px; text-align: center; padding: 28px; }
-.gp-net { max-height: 90px; max-width: 200px; }
-.gp-teams { display: flex; align-items: center; gap: 18px; }
-.gp-card h2 { margin: 0; }
-.gp-start { font-size: 18px; padding: 12px 28px; }
-.lw-game.click { cursor: pointer; }
-.lw-game.click:hover { filter: brightness(1.12); }
 .intro-bug { position: absolute; left: 50%; bottom: 2.6cqw; transform: translateX(-50%); animation: bug-in .6s 2.6s cubic-bezier(.2, 1.2, .4, 1) both; }
 .intro-bug .sb { font-size: 1.35cqw; }
 @keyframes bug-in { from { transform: translate(-50%, 160%); opacity: 0; } }
 .sc-field .lt-kick { bottom: auto; top: 4cqw; animation-delay: 1.2s; }
-.gp-bug { margin: 6px 0; max-width: 100%; overflow-x: auto; }
-.gp-test { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; justify-content: center; }
-.sbp { display: grid; gap: 12px; }
-.sbp-row { display: grid; gap: 8px; justify-items: start; padding: 10px 6px; border-top: 1px solid var(--line2); overflow-x: auto; }
-.sbp-row small { font: 700 12px var(--label); color: var(--dim); text-transform: uppercase; letter-spacing: .06em; }
-.game-page { max-width: 900px; }

@@ -41,6 +41,10 @@ import './styles/introDay.css';
 import './styles/introPrime.css';
 import './styles/scorebug.css';
 import './styles/scorebugNets.css';
+import './styles/scorebugShapes.css';
 import './styles/coachRoom.css';
+import './styles/coachBoard.css';
+import './styles/keyPlay.css';
+import './styles/gamePage.css';
 
 createRoot(document.getElementById('root')).render(<App />);

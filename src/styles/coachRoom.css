@@ -1,28 +1,50 @@
-/* The coaching room: countdown before it opens, then the mini scorebug, coach, play calls and timeouts. */
+/* The coaching room: countdown before it opens, then the built-in scoreboard (coachBoard.css), the Discord reminder, the coach,
+   key plays and the clock-shaped timeout button. */
 .cr-wait { display: grid; justify-items: center; gap: 10px; text-align: center; padding: 30px; max-width: 640px; margin: 0 auto; }
 .cr-wait h2 { margin: 0; }
 .cr-count { margin: 6px 0 0; font: 700 44px var(--pixel); color: var(--gold); text-shadow: 3px 3px 0 #000; }
 .coach-room { display: grid; gap: 16px; }
-.cr-top { display: grid; justify-items: center; gap: 8px; padding: 18px 12px; border: 2px solid #000; border-radius: 16px; box-shadow: var(--shadow);
-  background: radial-gradient(120% 140% at 50% 0%, color-mix(in srgb, var(--tc) 35%, var(--panel)) 0%, var(--panel) 65%); }
-.cr-top p { margin: 0; text-align: center; }
-.cr-grid { display: grid; grid-template-columns: minmax(220px, 1fr) minmax(0, 2fr) minmax(220px, 1fr); gap: 14px; align-items: start; }
+.cr-discord { margin: 0; display: flex; align-items: center; justify-content: center; gap: 10px; flex-wrap: wrap; padding: 10px 16px; border: 2px solid #000; border-radius: 14px;
+  background: linear-gradient(90deg, #3b46c9, #5865f2 50%, #3b46c9); color: #fff; box-shadow: 3px 3px 0 #000; font: 600 14px var(--label); text-align: center; }
+.cr-discord b { font: 700 15px var(--pixel); }
+.cr-discord span { opacity: .85; }
+.cr-grid { display: grid; grid-template-columns: minmax(220px, 1fr) minmax(0, 1.7fr) minmax(220px, 1fr); gap: 14px; align-items: stretch; }
 @media (max-width: 900px) { .cr-grid { grid-template-columns: 1fr; } }
-.cr-card { display: grid; gap: 10px; padding: 14px; border: 2px solid #000; border-radius: 14px; box-shadow: var(--shadow);
-  background: linear-gradient(180deg, color-mix(in srgb, var(--tc) 16%, var(--panel)) 0%, var(--panel) 110px); }
+.cr-card { display: grid; gap: 10px; align-content: start; padding: 14px; border: 3px solid #000; border-radius: 16px; box-shadow: var(--shadow);
+  background: linear-gradient(180deg, color-mix(in srgb, var(--tc) 22%, var(--panel)) 0%, var(--panel) 120px); }
 .cr-card > header { display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
 .cr-card > header b { font: 700 16px var(--pixel); }
 .cr-coach { justify-items: center; text-align: center; }
+.cr-stage { width: 100%; display: grid; place-items: end center; height: 210px; border-radius: 12px; border: 2px solid #000;
+  background: radial-gradient(ellipse at 50% 92%, #0006 0 18%, transparent 19%), linear-gradient(180deg, color-mix(in srgb, var(--tc) 50%, #000) 0%, #0b0d12 100%); }
 .cr-coach b { font: 700 20px var(--pixel); }
-.cr-coach .coach-sprite { image-rendering: pixelated; }
-.cr-soon { margin: 0; padding: 8px 10px; border: 2px dashed var(--line); border-radius: 10px; color: var(--dim); font-size: 13px; }
-.cr-play-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 8px; }
-.cr-play { display: grid; justify-items: center; gap: 4px; padding: 12px 6px; border: 2px solid #000; border-radius: 10px; background: var(--panel2); color: var(--text);
-  font: 700 13px var(--label); opacity: .55; cursor: not-allowed; }
-.cr-play span { font-size: 22px; }
+.cr-coach > span { font: 700 14px var(--label); }
+.cr-headset { padding: 3px 10px; border-radius: 999px; background: #1f9d55; color: #fff; font: 700 11px var(--label); text-transform: uppercase; letter-spacing: .06em; }
+.cr-keyplay { align-content: stretch; }
+.kpp-wait { display: grid; justify-items: center; align-content: center; gap: 12px; padding: 18px; border: 2px dashed var(--line); border-radius: 12px; text-align: center; min-height: 190px; }
+.kpp-wait p { margin: 0; color: var(--dim); max-width: 380px; }
+.kpp-wait p b { color: var(--text); }
+.kpp-key { width: 110px; opacity: .6; animation: kpp-float 2.4s ease-in-out infinite; filter: drop-shadow(0 0 10px #ffd23f55); }
+@keyframes kpp-float { 50% { transform: translateY(-6px) rotate(-4deg); opacity: .8; } }
+.kpp-last { margin: 0; font-size: 14px; }
+.cr-timeout { justify-items: center; text-align: center; }
 .cr-pips { display: flex; gap: 5px; }
 .cr-pips i { width: 22px; height: 8px; border-radius: 3px; background: #ffffff22; border: 1px solid #000; }
 .cr-pips i.on { background: var(--gold); }
-.cr-to-btn { width: 100%; padding: 16px; font-size: 18px; background: linear-gradient(180deg, #e8453b, #a8150d) !important; color: #fff !important; }
-.cr-to-btn:disabled { opacity: .45; filter: grayscale(.6); }
+.ct-btn { position: relative; width: 176px; height: 176px; border-radius: 50%; border: 9px solid #c8180f; padding: 0; cursor: pointer; background: #f4f4f0;
+  box-shadow: 0 0 0 3px #000, 5px 6px 0 3px #000, inset 0 -8px 0 #0002; transition: transform .12s; }
+.ct-btn:hover:not(:disabled) { transform: scale(1.04) rotate(-2deg); }
+.ct-btn:active:not(:disabled) { transform: scale(.97); }
+.ct-btn:disabled { filter: grayscale(.85); opacity: .55; cursor: not-allowed; }
+.ct-face { position: absolute; inset: 0; border-radius: 50%; display: block;
+  background: repeating-conic-gradient(from -1.5deg, #222 0 3deg, transparent 3deg 30deg) center/100% 100% no-repeat; }
+.ct-face::before { content: ''; position: absolute; inset: 14px; border-radius: 50%; background: #f4f4f0; }
+.ct-hand { position: absolute; left: 50%; bottom: 50%; transform-origin: 50% 100%; background: #111; border-radius: 3px; z-index: 1; }
+.ct-hand.h { width: 6px; height: 40px; margin-left: -3px; transform: rotate(-60deg); }
+.ct-hand.m { width: 4px; height: 56px; margin-left: -2px; background: #c8180f; }
+.ct-face.run .ct-hand.m { animation: ct-sweep 6s linear infinite; }
+@keyframes ct-sweep { to { transform: rotate(360deg); } }
+.ct-dot { position: absolute; left: 50%; top: 50%; width: 14px; height: 14px; margin: -7px; border-radius: 50%; background: #111; z-index: 2; }
+.ct-face b { position: absolute; left: 0; right: 0; bottom: 34px; z-index: 2; font: 700 15px var(--pixel); color: #c8180f; letter-spacing: .04em; text-transform: uppercase; }
+.ct-left { margin: 0; font: 700 14px var(--label); }
 .cr-to-flash { margin: 0; padding: 8px 10px; border-radius: 10px; background: #7a1010; color: #ffe0e0; font-weight: 700; text-align: center; animation: in-pop .35s both; }

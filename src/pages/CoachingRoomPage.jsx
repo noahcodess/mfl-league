@@ -9,6 +9,7 @@ import { broadcastFor } from '../data/broadcast.js';
 import { records } from '../lib/seasonStats.js';
 
 const OPENS_BEFORE = 5 * 60e3;
+const SAMPLE_LIVE = (g) => ({ ...PREGAME, status: 'live', possession: g.away, down: 1, togo: 10, ball_on: 25 });
 const until = (ms) => { const s = Math.max(0, Math.floor(ms / 1000)), d = Math.floor(s / 86400), h = Math.floor(s / 3600) % 24, m = Math.floor(s / 60) % 60;
   return `${d ? `${d}d ` : ''}${d || h ? `${h}h ` : ''}${m}m ${String(s % 60).padStart(2, '0')}s`; };
 
@@ -23,7 +24,7 @@ function useMyGame(id, teamId) {
 }
 
 // The coaching room for a coach's game. Before it opens: a countdown (it opens 5 minutes before kickoff, once the commissioner
-// has set a time). Then: the live mini scorebug, the coach, play calls and the timeout button. No game video, ever.
+// has set a time). Then: the built-in scoreboard, the coach, key plays and the timeout button. No game video, ever.
 export default function CoachingRoomPage({ id, teamId, canControl }) {
   const found = useMyGame(id, teamId), coaches = useCoaches();
   const [now, setNow] = useState(Date.now()), [version, setVersion] = useState(0), [local, setLocal] = useState(null);
@@ -53,13 +54,13 @@ export default function CoachingRoomPage({ id, teamId, canControl }) {
   const onTimeout = async () => {
     if (real) { await callTimeout(game.id); setVersion((v) => v + 1); return; }
     const side = me === home.id ? 'home' : 'away';
-    setLocal((s) => { const c = s || { ...PREGAME, status: 'live' }; return { ...c, clock_running: false, [`${side}_timeouts`]: c[`${side}_timeouts`] - 1, last_timeout: me, last_timeout_at: new Date().toISOString() }; });
+    setLocal((s) => { const c = s || SAMPLE_LIVE(game); return { ...c, clock_running: false, [`${side}_timeouts`]: c[`${side}_timeouts`] - 1, last_timeout: me, last_timeout_at: new Date().toISOString() }; });
   };
   return (
     <>
       {!real && <p className="ls-sample">🧪 Sample game preview: the timeout works here, but the live clock only runs on real games.</p>}
       <CoachRoom bc={bc} game={game} home={home} away={away} me={me} coach={coaches?.[me] || { team_id: me, name: 'Head coach' }}
-        st={!real && !local ? { ...PREGAME, status: 'live' } : st} rec={rec} onTimeout={onTimeout} />
+        st={!real && !local ? SAMPLE_LIVE(game) : st} rec={rec} onTimeout={onTimeout} canTest={canControl || !real} />
     </>
   );
 }

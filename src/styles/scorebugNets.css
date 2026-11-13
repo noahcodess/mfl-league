@@ -1,10 +1,20 @@
-/* The five scorebug designs, each its own shape. FOX: black bar, gold clock. CBS: white with navy boxes. TNF: a compact rounded
-   blue box like its logo, logos outside and down & distance over the clock in the middle.
-   SNF: night navy with a silver edge and a peacock stripe. ESPN (Saturday and Monday night): slate with red, angled ends. */
+/* Bar-shaped scorebugs. FOX: black bar with team-colored segments, gold slashes, and a gold chevron clock hanging below like
+   the bottom of the FOX MFL logo. CBS: square white bar with navy boxes (unchanged). ESPN (Saturday and Monday night): angled
+   slate bar with red glow and a gray drop shadow, like the ESPN logo's 3D letters. TNF and SNF are in scorebugShapes.css. */
 .sb-fox { --sb-bg: linear-gradient(180deg, #2a2a2a, #070707); --sb-box: #0b0b0b; --sb-acc: linear-gradient(180deg, #ffd34a, #f4b800); --sb-acc-fg: #111;
-  --sb-font: 'Anton', Impact, sans-serif; --sb-num: 'Anton', Impact, sans-serif; --sb-net-bg: linear-gradient(180deg, #ffd34a, #f4b800); --sb-down-fg: #f4b800; --sb-radius: .15em; }
-.sb.sb-fox .sb-bar { border-bottom: .2em solid #f4b800; }
-.sb-fox .sb-code, .sb-fox .sb-clock { font-style: italic; }
+  --sb-font: 'Anton', Impact, sans-serif; --sb-num: 'Anton', Impact, sans-serif; --sb-down-fg: #f4b800; --sb-radius: .15em; }
+.sb.sb-fox { filter: drop-shadow(0 .3em .45em #000a); }
+.sb.sb-fox .sb-bar { overflow: visible; box-shadow: none; border-bottom: .2em solid #f4b800; }
+.sb-fox .sb-net { background: #000; box-shadow: inset 0 0 0 .14em #f4b800; }
+.sb-fox .sb-team { position: relative; }
+.sb-fox .sb-team + .sb-team::before { content: ''; position: absolute; left: -.2em; top: -.1em; bottom: -.1em; width: .32em; background: #f4b800; transform: skewX(-18deg); z-index: 1; }
+.sb-fox .sb-code, .sb-fox .sb-clock, .sb-fox .sb-q { font-style: italic; }
+.sb-fox .sb-time { align-self: flex-start; height: 4.1em; flex-direction: column; justify-content: center; gap: 0; padding: 0 1em .7em; margin-bottom: -1.1em;
+  clip-path: polygon(0 0, 100% 0, 100% 70%, 50% 100%, 0 70%); }
+.sb-fox .sb-time .sb-q { font-size: .8em; line-height: 1.1; }
+.sb-fox .sb-time .sb-clock { font-size: 1.55em; line-height: 1; }
+.sb-fox .sb-time .sb-play { font-size: .68em; padding: 0 .35em; line-height: 1.3; }
+.sb-fox .sb-down { font-size: 1em; }
 
 .sb-cbs { --sb-bg: #ffffff; --sb-fg: #0b3a82; --sb-box: #0b3a82; --sb-box-fg: #fff; --sb-acc: #0b3a82; --sb-acc-fg: #fff; --sb-font: 'Barlow Condensed', sans-serif;
   --sb-num: 'Barlow Condensed', sans-serif; --sb-net-bg: #0b3a82; --sb-down-fg: #0b3a82; --sb-radius: 0; }
@@ -12,39 +22,13 @@
 .sb-cbs .sb-team { background: #fff; border-left: .45em solid var(--tc); }
 .sb-cbs .sb-code { color: #0b3a82; text-shadow: none; font-weight: 800; }
 .sb-cbs .sb-tos i { background: #0b3a8233; } .sb-cbs .sb-tos i.on { background: #0b3a82; }
-.sb-cbs .sb-score, .sb-cbs .msb-team b, .sb-cbs .sb-clock { font-weight: 800; }
-.msb.sb-cbs .msb-team { background: #fff; border-bottom: .3em solid var(--tc); }
-.msb.sb-cbs .msb-team b { color: #0b3a82; text-shadow: none; }
+.sb-cbs .sb-score, .sb-cbs .sb-clock { font-weight: 800; }
 
-.sb-tnf { --sb-bg: linear-gradient(180deg, #3d93ff 0%, #1a63d6 50%, #0b46a8 100%); --sb-box: #ffffff; --sb-box-fg: #0b46a8; --sb-acc: #ffffff; --sb-acc-fg: #0b46a8;
-  --sb-font: 'Bungee', sans-serif; --sb-num: 'Bungee', sans-serif; --sb-radius: 1.6em; --sb-down-fg: #fff; }
-.sb-compact .sbc { position: relative; display: flex; align-items: stretch; height: 3.6em; margin-top: 1.1em; border-radius: 1.1em; overflow: visible;
-  background: linear-gradient(180deg, #3d93ff 0%, #1a63d6 50%, #0b46a8 100%); box-shadow: inset 0 .25em 0 #ffffff55, 0 0 0 .18em #fff, 0 .35em 1em #0009; }
-.sbc-logo { position: absolute; left: 50%; top: -1.25em; height: 1.9em; transform: translateX(-50%); filter: drop-shadow(0 .1em .15em #0008); }
-.sbc-team { display: grid; justify-items: center; align-content: center; gap: .1em; width: 4.6em; border-radius: 1em; margin: .25em;
-  background: linear-gradient(180deg, color-mix(in srgb, var(--tc) 92%, #fff), color-mix(in srgb, var(--tc) 65%, #000)); box-shadow: inset 0 0 0 .1em #ffffff55; }
-.sbc-team img { width: 1.9em; height: 1.9em; object-fit: contain; image-rendering: pixelated; }
-.sbc-team > span { font-family: 'Bungee', sans-serif; font-size: .62em; color: #fff; line-height: 1; }
-.sbc-team .sb-tos i { width: .55em; }
-.sbc-team.ball { box-shadow: inset 0 0 0 .14em #fff, 0 0 .5em #fff9; }
-.sbc-score { display: grid; place-items: center; min-width: 1.9em; font-family: 'Bungee', sans-serif; font-size: 1.7em; font-weight: 400; color: #fff; text-shadow: 0 .08em 0 #0a3d91; }
-.sbc-mid { display: grid; align-content: center; justify-items: center; gap: .2em; padding: 0 .6em; }
-.sbc-down { padding: .12em .8em; border-radius: .6em; background: #fff; color: #0b46a8; font-family: 'Bungee', sans-serif; font-size: .78em; white-space: nowrap; }
-.sbc-time { display: flex; align-items: center; gap: .45em; color: #fff; font-family: 'Bungee', sans-serif; font-size: .8em; white-space: nowrap; }
-.sbc-time b { font-weight: 400; font-size: 1.25em; font-variant-numeric: tabular-nums; }
-.sbc-time .sb-play { background: #ffffff33; }
-.msb.sb-tnf .msb-mid { border-radius: 1em; margin: .3em; }
-
-.sb-snf { --sb-bg: linear-gradient(180deg, #1a2547, #070b18); --sb-box: linear-gradient(180deg, #ffffff, #b9c4d1); --sb-box-fg: #0a1022; --sb-acc: linear-gradient(180deg, #ffffff, #b9c4d1);
-  --sb-acc-fg: #0a1022; --sb-font: 'Exo 2', sans-serif; --sb-num: 'Exo 2', sans-serif; --sb-down-fg: #dfe6ee; --sb-radius: .3em; }
-.sb-snf .sb-bar, .msb.sb-snf { border-bottom: .22em solid; border-image: linear-gradient(90deg, #fcb711, #f37021, #cc004c, #6460aa, #0089d0, #0db14b) 1; box-shadow: 0 0 0 .12em #c9d2dc, 0 .3em .9em #0008; }
-.sb-snf .sb-code, .sb-snf .sb-score, .sb-snf .sb-clock, .sb-snf .sb-q, .sb-snf .sb-down, .msb.sb-snf b { font-style: italic; font-weight: 800; }
-.sb-snf .sb-team { background: linear-gradient(180deg, #121a33, #070b18); box-shadow: inset 0 .22em 0 var(--tc); }
-.msb.sb-snf .msb-team { background: linear-gradient(180deg, #121a33, #070b18); box-shadow: inset 0 .25em 0 var(--tc); }
-
-.sb-espn { --sb-bg: linear-gradient(180deg, #46505b, #262d34); --sb-box: #1b2026; --sb-acc: linear-gradient(180deg, #ef3a2f, #b8150d); --sb-acc-fg: #fff;
+.sb-espn { --sb-bg: linear-gradient(180deg, #4b5560 0%, #333b43 55%, #262d34 100%); --sb-box: #1b2026; --sb-acc: linear-gradient(180deg, #ff4a3d, #c8180f 60%, #a3120b); --sb-acc-fg: #fff;
   --sb-font: 'Russo One', sans-serif; --sb-num: 'Russo One', sans-serif; --sb-down-fg: #fff; --sb-down-bg: #1b2026; --sb-radius: 0; }
-.sb.sb-espn .sb-bar { clip-path: polygon(.9em 0, 100% 0, calc(100% - .9em) 100%, 0 100%); padding: 0 .9em; border-top: .2em solid #e3261b; }
-.sb-espn .sb-team { clip-path: polygon(.5em 0, 100% 0, calc(100% - .5em) 100%, 0 100%); margin: 0 -.2em; padding-left: .9em; }
-.sb-espn .sb-time { clip-path: polygon(.5em 0, 100% 0, calc(100% - .5em) 100%, 0 100%); padding: 0 1em; }
-.msb.sb-espn { clip-path: polygon(.8em 0, 100% 0, calc(100% - .8em) 100%, 0 100%); padding: 0 .8em; border-top: .2em solid #e3261b; }
+.sb.sb-espn { filter: drop-shadow(0 .3em 0 #22272c) drop-shadow(0 .45em .4em #000a) drop-shadow(0 0 .8em #e3261b55); }
+.sb.sb-espn .sb-bar { clip-path: polygon(.9em 0, 100% 0, calc(100% - .9em) 100%, 0 100%); padding: 0 .9em; border-top: .2em solid #e3261b; box-shadow: inset 0 -.22em 0 #1b2026; }
+.sb-espn .sb-team { clip-path: polygon(.5em 0, 100% 0, calc(100% - .5em) 100%, 0 100%); margin: 0 -.2em; padding-left: .9em; box-shadow: inset 0 .2em 0 #ffffff30; }
+.sb-espn .sb-time { clip-path: polygon(.5em 0, 100% 0, calc(100% - .5em) 100%, 0 100%); padding: 0 1em; box-shadow: inset 0 .25em 0 #ffffff40, inset 0 -.25em 0 #6e0a06; }
+.sb-espn .sb-code, .sb-espn .sb-score, .sb-espn .sb-clock, .sb-espn .sb-q, .sb-espn .sb-down { text-shadow: .05em .08em 0 #3d0704, 0 0 .5em #ff3b3080; }
+.sb-espn .sb-score { color: #fff; }

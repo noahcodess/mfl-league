@@ -43,7 +43,7 @@ export default function LiveSeason({ preview, canControl, teamId }) {
         <section className="lv-card ls-soon"><h2>🏆 Playoffs</h2><p className="dim">The playoff picture and bracket will show here. Coming soon.</p></section>
       ) : (
         <>
-          <LiveWeekGames week={week} rec={rec} clickable={canControl} />
+          <LiveWeekGames week={week} rec={rec} teamId={teamId} />
           <div className="ls-cards">
             <WeekStars week={week} />
             <TeamRanks stats={stats} kind="offense" through={n} />
