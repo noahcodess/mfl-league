@@ -18,7 +18,7 @@ export default function Header({ page, session, ready, live }) {
         {myTeam && <a className={['home', 'trades'].includes(page) ? 'on' : ''} href={links.home}>My Team</a>}
         {!myTeam && <a className={page === 'home' ? 'on' : ''} href={links.home}>Home</a>}
         <a className={page === 'league' ? 'on' : ''} href={links.league}>League</a>
-        <a className={`nav-live${['live', 'draft', 'freeAgents', 'game'].includes(page) ? ' on' : ''}`} href={links.live}><i className="live-pulse" />Live</a>
+        <a className={`nav-live${['live', 'draft', 'freeAgents', 'game', 'coaching'].includes(page) ? ' on' : ''}`} href={links.live}><i className="live-pulse" />Live</a>
         {ready && !myTeam && <a className={page === 'trades' ? 'on' : ''} href={links.trades}>Trades</a>}
         {isCommish && <a className={page === 'control' ? 'on' : ''} href={links.control}>Commissioner's Desk</a>}
       </nav>

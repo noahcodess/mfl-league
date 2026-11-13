@@ -1,7 +1,7 @@
-// Making a season's schedule: the 96 regular season games (scheduleGen.js rules), then the best matchup of each week to Sunday
-// night, the next to Monday, Thursday and Saturday night, the rest to day games. Used by the Schedule tab and the test sim.
+// Making a season's schedule: the 96 regular season games (scheduleGen.js rules; rivalries not forced), then the best matchup
+// of each week (rivalries count as better) to Sunday night, the next to Monday, Thursday and Saturday night, the rest to day games. Used by the Schedule tab and the test sim.
 import { db } from './supabase.js';
-import { lastWinPct, rivalPairs, saveSchedule, setWeekWindows, PRIME_PLAN } from './games.js';
+import { lastWinPct, saveSchedule, setWeekWindows, PRIME_PLAN } from './games.js';
 import { getTeams } from './teams.js';
 import { makeSchedule, checkSchedule } from '../lib/scheduleGen.js';
 
@@ -9,7 +9,7 @@ const RANK = { great: 0, good: 1, okay: 2, blowout: 3, bad: 4 };
 
 export async function generateSeasonSchedule(season) {
   const teams = getTeams();
-  const g = makeSchedule(teams, await lastWinPct(), Math.random, await rivalPairs());
+  const g = makeSchedule(teams, await lastWinPct(), Math.random, []); // rivalries are never forced into the schedule
   const problems = checkSchedule(g, teams);
   if (problems.length) throw new Error(problems[0]);
   await saveSchedule(season, g);

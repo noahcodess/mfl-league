@@ -2,7 +2,8 @@
 // - 7 conference games (everyone in your conference once) and 5 against the other conference
 // - exactly 6 home and 6 away
 // - teams with a better win % last season lean toward playing each other across conferences (a slight lean, not a lock)
-// - rivals always meet (conference rivals do anyway; cross-conference rivals are built in whenever possible).
+// - rivalries are never forced: the schedule ignores them (they only make better primetime games and get a badge).
+//   makeSchedule can still take a rivals list, but the league passes none.
 // Returns [{ week, home, away, conference }]. checkSchedule() lists anything that breaks the rules (empty = good).
 
 const shuffle = (arr, rng) => { const a = [...arr]; for (let i = a.length - 1; i > 0; i -= 1) { const j = Math.floor(rng() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };

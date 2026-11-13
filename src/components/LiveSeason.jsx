@@ -8,13 +8,14 @@ import ConfStandings from './ConfStandings.jsx';
 import { useLiveSeason } from '../data/liveSeason.js';
 import { records, seasonTotals } from '../lib/seasonStats.js';
 import { teamStats } from '../lib/teamRanks.js';
+import { links } from '../lib/router.js';
 
 const PLAYOFFS_FROM = 6;
 
 // Live during the regular season: the week as the big heading (arrows to move), that week's games two across, then players of
 // the week, top offenses and defenses, top players at each position, and the standings (all counted through the week shown).
 // From Week 6 a Playoffs button appears (the bracket comes later).
-export default function LiveSeason({ preview, canControl }) {
+export default function LiveSeason({ preview, canControl, teamId }) {
   const season = useLiveSeason(preview);
   const [sel, setSel] = useState(null);
   const view = sel ?? season.current, playoffs = view === 'playoffs';
@@ -32,6 +33,9 @@ export default function LiveSeason({ preview, canControl }) {
         <div className="ls-sub">
           {n === season.current ? <span className="ls-tag">This week</span> : <button className="ls-back" onClick={() => setSel(season.current)}>↩ Back to Week {season.current}</button>}
           {week.games.length > 0 && <span>{count('final')} final · {count('live')} live · {count('upcoming')} upcoming</span>}
+          {teamId && n === season.current && week.games.some((g) => g.home === teamId || g.away === teamId) && (
+            <a className="ls-coach" href={season.sample ? links.coaching(week.games.find((g) => g.home === teamId || g.away === teamId).id) : links.coaching()}>🎧 Coaching room</a>
+          )}
           {season.current >= PLAYOFFS_FROM && <button className={`ls-playoffs${playoffs ? ' on' : ''}`} onClick={() => setSel(playoffs ? season.current : 'playoffs')}>🏆 Playoffs</button>}
         </div>
       </header>

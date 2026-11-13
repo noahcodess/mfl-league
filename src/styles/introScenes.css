@@ -82,3 +82,13 @@
 .gp-start { font-size: 18px; padding: 12px 28px; }
 .lw-game.click { cursor: pointer; }
 .lw-game.click:hover { filter: brightness(1.12); }
+.intro-bug { position: absolute; left: 50%; bottom: 2.6cqw; transform: translateX(-50%); animation: bug-in .6s 2.6s cubic-bezier(.2, 1.2, .4, 1) both; }
+.intro-bug .sb { font-size: 1.35cqw; }
+@keyframes bug-in { from { transform: translate(-50%, 160%); opacity: 0; } }
+.sc-field .lt-kick { bottom: auto; top: 4cqw; animation-delay: 1.2s; }
+.gp-bug { margin: 6px 0; max-width: 100%; overflow-x: auto; }
+.gp-test { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; justify-content: center; }
+.sbp { display: grid; gap: 12px; }
+.sbp-row { display: grid; gap: 8px; justify-items: start; padding: 10px 6px; border-top: 1px solid var(--line2); overflow-x: auto; }
+.sbp-row small { font: 700 12px var(--label); color: var(--dim); text-transform: uppercase; letter-spacing: .06em; }
+.game-page { max-width: 900px; }

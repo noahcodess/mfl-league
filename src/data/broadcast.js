@@ -19,8 +19,11 @@ const SHOWS = {
   mon_night: { key: 'mnf', name: 'Monday Night Football', logo: img('mnf') },
 };
 
-// { net, show (null for day games), prime, logo (show logo, else the network's MFL logo), title }
+// Scorebug designs: FOX, CBS, TNF and SNF each have their own; ESPN's is shared by Saturday Night and Monday Night.
+const BUG = { tnf: 'tnf', snf: 'snf', stnf: 'espn', mnf: 'espn' };
+
+// { net, show (null for day games), prime, logo (show logo, else the network's MFL logo), title, bug (scorebug design) }
 export function broadcastFor(game, homeTeam) {
   const net = NETS[networkFor(game.window, homeTeam)] || NETS.FOX, show = SHOWS[game.window] || null;
-  return { net, show, prime: !!show, logo: show?.logo || net.logo, title: show?.name || `The MFL on ${net.name}` };
+  return { net, show, prime: !!show, logo: show?.logo || net.logo, title: show?.name || `The MFL on ${net.name}`, bug: BUG[show?.key] || net.key };
 }

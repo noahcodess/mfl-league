@@ -4,8 +4,8 @@ import ConfirmButton from './ConfirmButton.jsx';
 import { useRivalries, addRivalry, removeRivalry } from '../data/games.js';
 import { getTeams, getTeam } from '../data/teams.js';
 
-// Commissioner's Desk → Teams → Rivalries: who the big rivals are. Rivals always meet in the schedule (when the rules allow),
-// and rivalry games get a ⚔️ tag and count as better matchups for prime time.
+// Commissioner's Desk → Teams → Rivalries: who the big rivals are. Rivalries are never forced into the schedule;
+// when rivals do meet, the game gets a ⚔️ tag and count as better matchups for prime time.
 export default function RivalryList({ canControl }) {
   const [version, setVersion] = useState(0);
   const [a, setA] = useState('');
@@ -17,7 +17,7 @@ export default function RivalryList({ canControl }) {
   return (
     <section className="card rivals">
       <h3>⚔️ Rivalries <span className="count">{rows?.length ?? ''}</span></h3>
-      <p className="dim">Rivals always play each other in the schedule (conference rivals do anyway), and their games count as better matchups for prime time.</p>
+      <p className="dim">Rivalries don't change the schedule. When rivals do play, the game gets a ⚔️ Rivalry badge and counts as a better matchup for prime time.</p>
       <ul className="rival-list">
         {(rows || []).map((r) => {
           const x = getTeam(r.team_a); const y = getTeam(r.team_b);

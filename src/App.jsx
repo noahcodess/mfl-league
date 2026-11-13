@@ -6,6 +6,7 @@ import LeaguePage from './pages/LeaguePage.jsx';
 import TeamPage from './pages/TeamPage.jsx';
 import LivePage from './pages/LivePage.jsx';
 import GamePage from './pages/GamePage.jsx';
+import CoachingRoomPage from './pages/CoachingRoomPage.jsx';
 import LoginPage from './pages/LoginPage.jsx';
 import ChangePasswordPage from './pages/ChangePasswordPage.jsx';
 import KeySetupPage from './pages/KeySetupPage.jsx';
@@ -76,6 +77,10 @@ function Screen({ route, session, step, reload }) {
   if (route.page === 'game') {
     const p = step === 'ready' ? session.profile : null;
     return <GamePage id={route.id} canControl={p?.role === 'commissioner' || !!p?.site_owner /* TEMPORARY: owner tests the desk */} />;
+  }
+  if (route.page === 'coaching') {
+    const p = step === 'ready' ? session.profile : null;
+    return <CoachingRoomPage id={route.id} teamId={p?.team_id} canControl={p?.role === 'commissioner' || !!p?.site_owner /* TEMPORARY: owner tests the desk */} />;
   }
   if (route.page === 'live') {
     const p = step === 'ready' ? session.profile : null;

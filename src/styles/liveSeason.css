@@ -88,3 +88,5 @@
   .wk-item.d0 { font-size: 30px; }
   .ls-top { padding: 14px 8px 12px; }
 }
+.rival-badge { margin-left: 8px; padding: 1px 7px; border-radius: 999px; background: #7a1010; color: #ffd9d9; font: 800 10px var(--label); text-transform: uppercase; letter-spacing: .05em; }
+.ls-coach { padding: 5px 12px; border-radius: 999px; border: 2px solid #000; background: var(--brand); color: var(--brand-text, #fff); font: 700 13px var(--label); text-decoration: none; }

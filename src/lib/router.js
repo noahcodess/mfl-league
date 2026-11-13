@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react';
 
-// Tiny hash router: '' = home, '#league', '#team-<id>' = roster, '#game-<id>' = a game (commissioner), '#free-agents', '#data-check', '#login', '#control' (Commissioner's Desk; '#console' redirects to its Accounts tab).
+// Tiny hash router: '' = home, '#league', '#team-<id>' = roster, '#game-<id>' = a game (commissioner), '#coaching' = your coaching room, '#free-agents', '#data-check', '#login', '#control' (Commissioner's Desk; '#console' redirects to its Accounts tab).
 export function parseHash(hash) {
   const h = (hash || '').replace(/^#/, '');
   if (h.startsWith('team-')) return { page: 'team', id: h.slice(5) };
   if (h.startsWith('game-')) return { page: 'game', id: h.slice(5) };
+  if (h === 'coaching') return { page: 'coaching' };
+  if (h.startsWith('coaching-')) return { page: 'coaching', id: h.slice(9) };
   if (h === 'data-check') return { page: 'console' };
   if (h === 'live') return { page: 'live' };
   if (h === 'login') return { page: 'login' };
@@ -37,6 +39,7 @@ export const links = {
   league: '#league',
   team: (id) => `#team-${id}`,
   game: (id) => `#game-${id}`,
+  coaching: (id) => (id ? `#coaching-${id}` : '#coaching'),
   live: '#live',
   login: '#login',
   console: '#console',

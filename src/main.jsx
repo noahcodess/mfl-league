@@ -39,5 +39,8 @@ import './styles/introScenes.css';
 import './styles/introFonts.css';
 import './styles/introDay.css';
 import './styles/introPrime.css';
+import './styles/scorebug.css';
+import './styles/scorebugNets.css';
+import './styles/coachRoom.css';
 
 createRoot(document.getElementById('root')).render(<App />);

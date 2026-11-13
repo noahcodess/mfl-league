@@ -5,6 +5,7 @@ import { getTeam } from '../data/teams.js';
 import { recordText } from '../lib/seasonStats.js';
 import { useStadiums } from '../data/stadiums.js';
 import { links } from '../lib/router.js';
+import { useRivals, isRivalry } from '../data/liveSeason.js';
 
 function Side({ id, score, won, rec, done, tag }) {
   const t = getTeam(id);
@@ -20,7 +21,7 @@ function Side({ id, score, won, rec, done, tag }) {
 // Live → a week: every game in the order it airs, two across. Each card: day, kickoff time, network, the two teams stacked
 // (away on top), the score once it starts, and the stadium. Colored by both teams. The commissioner can click one to open it.
 export default function LiveWeekGames({ week, rec, clickable }) {
-  const stadiums = useStadiums();
+  const stadiums = useStadiums(), rivals = useRivals();
   if (!week.games.length) return <p className="dim">No games scheduled for this week yet.</p>;
   return (
     <ol className="lw-games">
@@ -36,7 +37,7 @@ export default function LiveWeekGames({ week, rec, clickable }) {
             </div>
             <Side id={g.away} score={started ? g.awayScore : null} won={g.awayScore > g.homeScore} rec={rec} done={done} tag="Away" />
             <Side id={g.home} score={started ? g.homeScore : null} won={g.homeScore > g.awayScore} rec={rec} done={done} tag="Home" />
-            <small className="lw-at">🏟️ {stadiums[g.home]?.name || home?.name}</small>
+            <small className="lw-at">🏟️ {stadiums[g.home]?.name || home?.name}{isRivalry(g, rivals) && <span className="rival-badge">⚔️ Rivalry</span>}</small>
           </li>
         );
       })}
