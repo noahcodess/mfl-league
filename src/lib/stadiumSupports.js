@@ -1,14 +1,29 @@
 // Paints what holds each kind of stadium up: the roof over the upper deck (with its lights), the poles that stand in front of
-// the upper-deck fans, and the supports that slide past close to the camera. Five builds: modern, steel, arch, cable, spruce.
+// the upper-deck fans, and the supports that slide past close to the camera. The shared builds are here (modern, steel, cable,
+// spruce) plus the stone arcade the castle is built on; the one-of-a-kind builds are in stadiumSpecials.js.
 import { shade } from './pixels.js';
 import { brush } from './fieldLayout.js';
-import { W, TRAVEL, U, layer } from './stadiumLayout.js';
+import { W, TRAVEL, layer } from './stadiumLayout.js';
+import { SPECIAL_ROOF, SPECIAL_FRONT } from './stadiumSpecials.js';
 
-const line = (r, x0, y0, x1, y1, c, t = 1) => { const n = Math.max(Math.abs(x1 - x0), Math.abs(y1 - y0)); for (let i = 0; i <= n; i++) r(x0 + ((x1 - x0) * i) / n, y0 + ((y1 - y0) * i) / n, t, t, c); };
-function lamps(r, look, x, y, n) {
+export const line = (r, x0, y0, x1, y1, c, t = 1) => { const n = Math.max(Math.abs(x1 - x0), Math.abs(y1 - y0)); for (let i = 0; i <= n; i++) r(x0 + ((x1 - x0) * i) / n, y0 + ((y1 - y0) * i) / n, t, t, c); };
+export function lamps(r, look, x, y, n) {
   r(x - 1, y - 1, n * 4 + 1, 4, look.steelLo);
   for (let i = 0; i < n; i++) r(x + i * 4, y, 3, 2, look.lamp);
   r(x - 3, y + 3, n * 4 + 5, 2, 'rgba(255,250,220,0.16)');
+}
+
+// A stone arcade you can see out through, flags along the top (the castle adds to this).
+export function arcade(r, k, ctx) {
+  r(0, 46, W, 42, k.steel);
+  for (let y = 50; y < 88; y += 7) { r(0, y, W, 1, k.steelLo); for (let x = ((y / 7) % 2) * 10; x < W; x += 20) r(x, y - 6, 1, 6, k.steelLo); }
+  for (let x = 7; x < W; x += 40) {
+    [[6, 14], [3, 20], [1, 24], [0, 26]].forEach(([inset, w], i) => ctx.clearRect(x + inset, 54 + i * 2, w, 2));
+    ctx.clearRect(x, 62, 26, 22); r(x + 11, 50, 4, 5, k.paint); r(x + 12, 58, 2, 4, k.steelLo); r(x + 11, 62, 4, 4, k.lamp);
+    r(x - 1, 84, 28, 2, k.steelHi);
+  }
+  r(0, 40, W, 6, k.steelHi); r(0, 45, W, 1, k.steelLo); for (let x = 2; x < W; x += 6) r(x, 46, 3, 2, k.steelHi);
+  for (let x = 20; x < W; x += 80) { r(x, 20, 1, 20, '#d9dde2'); r(x + 1, 21, 11, 7, k.paint); r(x + 1, 24, 11, 1, k.trim); r(x + 9, 27, 3, 1, k.paintLo); }
 }
 
 const ROOF = {
@@ -25,17 +40,6 @@ const ROOF = {
     for (let x = 30; x < W; x += 120) { r(x + 13, 15, 2, 13, k.steel); r(x - 1, 4, 30, 11, k.steelLo); for (let i = 0; i < 2; i++) for (let j = 0; j < 7; j++) r(x + 1 + j * 4, 6 + i * 4, 3, 2, k.lamp); r(x - 4, 15, 36, 3, 'rgba(255,250,220,0.14)'); }
     for (let x = 84; x < W; x += 96) lamps(r, k, x, 56, 5);
   },
-  arch(r, k, ctx) { // a stone arcade you can see the sky through, flags along the top
-    r(0, 46, W, 42, k.steel);
-    for (let y = 50; y < 88; y += 7) { r(0, y, W, 1, k.steelLo); for (let x = ((y / 7) % 2) * 10; x < W; x += 20) r(x, y - 6, 1, 6, k.steelLo); }
-    for (let x = 7; x < W; x += 40) {
-      [[6, 14], [3, 20], [1, 24], [0, 26]].forEach(([inset, w], i) => ctx.clearRect(x + inset, 54 + i * 2, w, 2));
-      ctx.clearRect(x, 62, 26, 22); r(x + 11, 50, 4, 5, k.paint); r(x + 12, 58, 2, 4, k.steelLo); r(x + 11, 62, 4, 4, k.lamp);
-      r(x - 1, 84, 28, 2, k.steelHi);
-    }
-    r(0, 40, W, 6, k.steelHi); r(0, 45, W, 1, k.steelLo); for (let x = 2; x < W; x += 6) r(x, 46, 3, 2, k.steelHi);
-    for (let x = 20; x < W; x += 80) { r(x, 20, 1, 20, '#d9dde2'); r(x + 1, 21, 11, 7, k.paint); r(x + 1, 24, 11, 1, k.trim); r(x + 9, 27, 3, 1, k.paintLo); }
-  },
   cable(r, k) { // tall masts holding a white tent roof up with cables
     for (let x = 0; x < W; x += 2) { const d = Math.abs((((x + 80) % 160) + 160) % 160 - 80) / 80, top = 34 + Math.round((1 - d) * 11); r(x, top, 2, 54 - top, '#eef2f6'); r(x, top, 2, 1, '#ffffff'); r(x, 52, 2, 2, '#b9c4d1'); }
     for (let x = 80; x < W; x += 160) {
@@ -50,7 +54,7 @@ const ROOF = {
   },
 };
 
-export function paintRoof(ctx, look) { ROOF[look.kind](brush(ctx), look, ctx); }
+export function paintRoof(ctx, look) { (ROOF[look.kind] || SPECIAL_ROOF[look.kind])(brush(ctx), look, ctx); }
 
 // Poles in front of the upper deck (only the builds that have them). Returns null when the view is clear.
 export function paintPoles(look) {
@@ -74,10 +78,12 @@ export function paintFront(look) {
     [18, W - 34].forEach((x) => { r(x, 0, 3, h, mid); r(x + 13, 0, 3, h, mid); r(x, 0, 1, h, hi); for (let y = 0; y < h; y += 24) { line(r, x + 2, y, x + 13, y + 24, lo, 2); line(r, x + 13, y, x + 2, y + 24, lo, 2); r(x, y, 16, 2, mid); } });
     r(0, beam, W, 3, mid); r(0, beam, W, 1, hi); r(0, beam + 3, W, 6, lo); r(0, beam + 9, W, 3, mid); for (let x = 6; x < W; x += 14) r(x, beam + 5, 2, 2, hi);
     r(0, beam + 3, W, 2, look.paintLo);
-  } else if (look.kind === 'arch') {
+  } else if (SPECIAL_FRONT[look.kind]) {
+    SPECIAL_FRONT[look.kind](r, look, h, beam);
+  } else if (look.kind === 'castle') {
     [0, W - 28].forEach((x) => { r(x, 0, 28, h, mid); r(x ? x : 27, 0, 1, h, hi); for (let y = 0; y < h; y += 12) { r(x, y, 28, 1, lo); r(x + ((y / 12) % 2 ? 9 : 18), y, 1, 12, lo); } });
     for (let x = 28; x < W - 28; x++) { const y = beam - 30 + Math.round(64 * ((x - W / 2) / (W / 2 - 28)) ** 2); r(x, y, 1, 13, mid); r(x, y + 12, 1, 1, hi); r(x, y, 1, 2, lo); }
-    r(W / 2 - 7, beam - 32, 14, 16, look.paintLo); r(W / 2 - 7, beam - 18, 14, 1, hi);
+    r(W / 2 - 7, beam - 32, 14, 16, look.paintLo); r(W / 2 - 7, beam - 18, 14, 1, hi); SPECIAL_FRONT.castleExtras(r, h);
   } else if (look.kind === 'cable') {
     [12, W - 19].forEach((x, i) => {
       for (let y = -60; y < h; y += 150) { line(r, x + 3, y, x + 3 + (i ? -70 : 70), y + 210, lo); line(r, x + 3, y, x + 3 + (i ? -34 : 34), y + 210, lo); }

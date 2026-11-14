@@ -29,8 +29,8 @@ export const attendance = (capacity) => ({ count: capacity, full: true });
 const CLIMATE = { // [low °F, high °F, day sky, night sky]
   snm: [14, 30, 'Light snow', 'Snow showers'], tga: [28, 44, 'Overcast', 'Flurries'], crf: [86, 99, 'Ember haze', 'Hot and hazy'],
   ntw: [98, 112, 'Falling ash', 'Falling ash'], wrf: [68, 79, 'Drifting spores', 'Glowing spores'], dst: [92, 106, 'Sunny', 'Clear and warm'],
-  ocn: [62, 74, 'Breezy', 'Sea breeze'], ocm: [58, 70, 'Light rain', 'Drizzle'], lsc: [72, 72, 'Under the dome', 'Under the dome'],
-  ddc: [44, 52, 'Dark skies', 'Pitch black'], edc: [50, 60, 'Clear', 'Starry'], void: [40, 55, 'Clear', 'Starry'], pln: [66, 80, 'Sunny', 'Clear'],
+  ocn: [62, 74, 'Breezy', 'Sea breeze'], ocm: [70, 70, 'Under the dome', 'Under the dome'], lsc: [70, 76, 'Humid', 'Humid'],
+  ddc: [68, 68, 'Under the dome', 'Under the dome'], edc: [50, 60, 'Clear', 'Starry'], void: [40, 55, 'Clear', 'Starry'], pln: [66, 80, 'Sunny', 'Clear'],
   flf: [64, 76, 'Sunny', 'Clear'], drf: [46, 58, 'Foggy', 'Thick fog'], wsl: [76, 90, 'Dusty', 'Dust in the air']
 };
 const ICON = (sky) => (/snow|flurr/i.test(sky) ? '❄️' : /rain|drizzle/i.test(sky) ? '🌧️' : /fog|dark|black/i.test(sky) ? '🌫️' : /ash|ember|haze|dust|spore/i.test(sky) ? '🔥' : /dome/i.test(sky) ? '🏟️' : /star|clear/i.test(sky) ? '🌙' : '☀️');

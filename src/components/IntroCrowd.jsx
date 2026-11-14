@@ -17,14 +17,13 @@ const seedOf = (id) => [...String(id)].reduce((s, ch) => s * 31 + ch.charCodeAt(
 // act: force one crowd animation (the test tab uses this); otherwise the game picks one.
 export default function IntroCrowd({ bc, home, stadium, weather, gameId = 0, dress = null, theme = '', act = null }) {
   const logo = useImage(home.logo), fall = weatherKind(weather?.sky);
-  const sky = /dome/i.test(weather?.sky || '') ? 'dome' : bc.prime ? 'night' : 'day';
-  const doing = act || pickAct(home, seedOf(gameId), sky !== 'day', dress);
+  const look = stadiumLook(home, stadium, bc.prime), doing = act || pickAct(home, seedOf(gameId), look.night, dress);
   const scale = useMemo(() => Math.max(2, Math.min(5, Math.ceil(shotPixels() / W))), []);
-  const make = () => makeCrowdShot({ team: home, look: stadiumLook(home, stadium, sky), act: doing, dress, theme, logo, stadiumName: stadium?.name });
+  const make = () => makeCrowdShot({ team: home, look, act: doing, dress, theme, logo, stadiumName: stadium?.name });
   return (
     <div className="intro-scene sc-crowd">
-      <PixelCanvas className="crowd-px" w={W * scale} h={H * scale} make={make} deps={[home.id, logo, doing, dress, sky, stadium?.style]} />
-      {fall && sky !== 'dome' && <PixelCanvas className="field-fall" make={(w, h) => makeFall(w, h, fall)} deps={[fall]} />}
+      <PixelCanvas className="crowd-px" w={W * scale} h={H * scale} make={make} deps={[home.id, logo, doing, dress, look.sky]} />
+      {fall && look.open && <PixelCanvas className="field-fall" make={(w, h) => makeFall(w, h, fall)} deps={[fall]} />}
       <AttendanceCard bc={bc} home={home} stadium={stadium} />
       <img className="field-bug" src={bc.net.logo} alt="" />
     </div>

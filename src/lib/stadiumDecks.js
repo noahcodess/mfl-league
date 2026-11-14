@@ -62,7 +62,7 @@ export function paintLower(look, team, logo) {
 export function paintUpper(look, team, logo) {
   const c = layer(TRAVEL.upper), ctx = c.getContext('2d'), r = brush(ctx), nick = (team.nickname || team.name.split(' ').pop()).toUpperCase();
   rows(r, U, 'upper', look, c.height);
-  if (look.kind !== 'arch') { // back wall: panels, the team's name, banners (the stone stadiums get an arcade instead)
+  if (look.kind !== 'castle') { // back wall: panels, the team's name, banners (the castle gets an arcade instead)
     r(0, U.wall, W, U.wallH, look.concreteLo); r(0, U.wall + U.wallH - 3, W, 3, look.paint); r(0, U.wall + U.wallH - 3, W, 1, look.paintHi);
     for (let x = 0; x < W; x += 30) r(x, U.wall, 1, U.wallH - 3, '#00000055');
     const len = textLength(nick, 2);

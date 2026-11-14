@@ -6,9 +6,9 @@ import { DEMO } from './demo.js';
 
 const DEFAULTS = {
   crf: ['The Crimson Crown', 97000, '3d', 'chevron'], snm: ['Death Valley', 89000, 'bold', 'diagonal'], void: ['The Event Horizon', 80000, 'outline', 'checker'],
-  ntw: ['The Bone Yard', 76000, 'italic', 'stripes'], ddc: ['Bounce House', 72500, 'tall', 'border'], ocn: ['Riptide Stadium', 71000, 'italic', 'fade'],
+  ntw: ['The Bone Yard', 71000, 'italic', 'stripes'], ddc: ['Bounce House', 82000, 'tall', 'border'], ocn: ['Riptide Stadium', 71000, 'italic', 'fade'],
   edc: ['Purpur Park', 70000, 'future', 'fade'], lsc: ['The Grotto', 68000, 'outline', 'stripes'], tga: ['The Timberyard', 66500, 'block', 'solid', 'spruce'],
-  ocm: ['Prismarine Stadium', 65000, 'tall', 'stripes'], wrf: ['Warped Field', 63500, 'outline', 'diagonal'], pln: ['The Pigpen', 60500, 'bold', 'checker'],
+  ocm: ['Prismarine Stadium', 75000, 'tall', 'stripes'], wrf: ['Warped Field', 63500, 'outline', 'diagonal'], pln: ['The Pigpen', 60500, 'bold', 'checker'],
   wsl: ['Phantom Field', 60000, '3d', 'border'], drf: ['The Crypt', 59000, 'italic', 'border'], flf: ['Iron Garden', 58500, 'golem', 'solid'],
   dst: ['The Web', 57000, 'bold', 'chevron'],
 };
