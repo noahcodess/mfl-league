@@ -81,3 +81,10 @@
 @keyframes pg-pop { from { transform: translateX(-50%) scale(.4); opacity: 0; } }
 .pg-text { min-height: 2.6em; margin: 0; font-size: .95rem; }
 .btn.ghost.on { outline: 2px solid currentColor; }
+.pg-full { position: absolute; inset: 0; margin: 0; gap: 0; }
+.pg-full .pg { position: absolute; inset: 0; aspect-ratio: auto; border-radius: 0; }
+.pg-full .pg-text { position: absolute; left: 50%; top: 4cqw; transform: translateX(-50%); max-width: 70%; min-height: 0; padding: .3em .8em; background: rgba(0, 0, 0, .55); color: #fff; border-radius: 6px; text-align: center; font-size: 1.1cqw; }
+.pg-full .pg-text:empty, .pg-full .pg-text:blank { display: none; }
+.pg-full .ct-row { position: absolute; top: .8cqw; right: .8cqw; gap: .4cqw; padding: .3cqw; background: rgba(0, 0, 0, .5); border-radius: 8px; opacity: .35; transition: opacity .2s; }
+.pg-full .ct-row:hover { opacity: 1; }
+.pg-full .ct-row .btn, .pg-full .ct-row .dim { font-size: .9cqw; padding: .25cqw .6cqw; color: #fff; }

@@ -1,10 +1,14 @@
 // Turns one play report into a scene the broadcast can act out: where all 20 players line up, where each one runs and when,
 // what the ball does, and who ends up on the ground. It only acts out what the report says happened; it never decides
 // anything. Runs, passes, sacks and scrambles are here; kicking plays are in sceneKicks.js.
-const OFF = { OT1: [-1, -3.2], OG1: [-0.8, -1.6], C: [-0.6, 0], OG2: [-0.8, 1.6], OT2: [-1, 3.2], TE: [-1, 4.9], QB: [-4.5, 0], RB: [-4.5, 1.8], WR1: [-0.8, -14], WR2: [-0.8, 14] };
-const DEF = { DE1: [1, -4.2], DT1: [1, -1.7], DL: [1, 0], DT2: [1, 1.7], DE2: [1, 4.2], LB1: [4.5, -2.6], LB2: [4.5, 2.6], CB1: [5.5, -14], CB2: [5.5, 14], SS: [11, 0.5] };
+const OFF = { OT1: [-1, -4], OG1: [-0.8, -2], C: [-0.6, 0], OG2: [-0.8, 2], OT2: [-1, 4], TE: [-1.2, 6.2], QB: [-4.5, 0], RB: [-4.5, 1.8], WR1: [-0.8, -14], WR2: [-0.8, 14] };
+const DEF = { DE1: [1, -5], DT1: [1, -2.1], DL: [1, 0], DT2: [1, 2.1], DE2: [1, 5], LB1: [4.5, -3.2], LB2: [4.5, 3.2], CB1: [5.5, -14], CB2: [5.5, 14], SS: [11, 0.5] };
 const MATCH = { OT1: 'DE1', OG1: 'DT1', C: 'DL', OG2: 'DT2', OT2: 'DE2' }, COVER = { WR1: 'CB1', WR2: 'CB2', TE: 'SS', RB: 'LB1' };
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v)), ev = (play, type) => play.events.filter((e) => e.type === type);
+const rating = (p, k) => p?.r?.[k] ?? 60;
+// Top speed in yards per second from his Speed rating (a 99 runs about 10.5, a 50 lineman about 7). get: seconds to get going.
+export const yps = (p) => 3.4 + 0.072 * clamp(rating(p, 'speed'), 30, 99);
+export const getGoing = (p) => 0.34 - 0.003 * clamp(rating(p, 'acceleration'), 30, 99);
 
 // Scene helpers. Positions are [yards from the offense's goal line going its way (along), yards from the middle of the field (lat)].
 export function newScene(play, lineups) {
@@ -52,18 +56,18 @@ function trenches(S, back, tEnd) {
 export function carryOut(S, c, from, t0, gain, opts = {}) {
   const tackles = ev(S.play, 'tackle').filter((e) => e.carrier === c.id);
   let [along, lat] = from, t = t0; const drift = lat >= 0 ? 1 : -1, td = S.play.result.td && !opts.noTd;
-  const run = (to, bend) => { const d = Math.hypot(to - along, bend); t += Math.max(0.15, d / 7.6); along = to; lat = clamp(lat + bend, -24, 24); go(c, t, along, lat, S); };
+  const v = yps(c.p) * (opts.slow || 1), run = (to, bend) => { const d = Math.hypot(to - along, bend); t += Math.max(0.12, d / v); along = to; lat = clamp(lat + bend, -24, 24); go(c, t, along, lat, S); };
   tackles.forEach((e, i) => {
     const made = e.result === 'made', meet = made ? gain : clamp(e.at ?? gain, Math.min(along, gain), Math.max(along, gain)), tk = S.who(e.def, S.play.def);
     run(meet, (i % 2 ? -1 : 1) * drift * (Math.abs(meet - along) > 4 ? 1.6 : 0.5));
-    if (tk && tk !== c) { stay(tk, Math.max(S.T0, t - 1.1)); go(tk, t, along + 0.5, lat + 0.4, S); tk.down = t + 0.05; if (!made) tk.upAt = t + 1.4; }
+    if (tk && tk !== c) { stay(tk, Math.max(S.T0, t - 0.8)); go(tk, t, along + 0.4, lat + 0.3, S); tk.down = t + 0.05; if (!made) tk.upAt = t + 1.4; }
     if (made) c.down = t + 0.05;
   });
   if (td) { run(Math.max(gain, 100 - S.play.before.ballOn) + 3.5, drift * 0.5); pose(c, t, t + 9, 'cheer'); }
   else if (!c.down) { run(gain, drift * 0.8); if (!S.play.result.oob) c.down = t + 0.05; else go(c, t + 0.4, gain + 0.5, lat + drift * 30, S); }
   S.actors.filter((a) => a.side !== c.side && !a.down && a.keys[a.keys.length - 1].t < t - 0.3).forEach((a) => { // everyone else chases
-    const [x, y] = spotOf(a, S), far = Math.hypot(along - x, lat - y), k = Math.min(1, ((t - S.T0 - 0.6) * 5.5) / Math.max(1, far)) * 0.9;
-    stay(a, S.T0 + 0.6); go(a, t, x + (along - x) * k, y + (lat - y) * k, S);
+    const [x, y] = spotOf(a, S), far = Math.hypot(along - x, lat - y), k = Math.min(1, ((t - S.T0 - 0.4) * yps(a.p) * 0.8) / Math.max(1, far)) * 0.92;
+    stay(a, S.T0 + 0.25 + getGoing(a.p)); go(a, t, x + (along - x) * k, y + (lat - y) * k, S);
   });
   return t;
 }
@@ -71,24 +75,26 @@ export function carryOut(S, c, from, t0, gain, opts = {}) {
 export function buildRun(S, gain) {
   const play = S.play, hand = ev(play, 'handoff')[0], qb = S.A.QB, c = play.scramble ? qb : S.who(hand?.to, play.off) || S.A.RB;
   const [type, sideName] = (hand?.gap || 'inside right').split(' '), sg = sideName === 'left' ? -1 : 1, gap = sg * (type === 'outside' ? 7.5 : 1.3);
-  hold(S, S.T0, qb); let t = S.T0 + 0.55;
+  hold(S, S.T0, qb); let t = S.T0 + 0.45;
   if (play.scramble) { go(qb, S.T0 + 0.9, -7, 0, S); go(qb, S.T0 + 1.7, -5, gap * 3, S); t = S.T0 + 1.7; trenches(S, 1.2, t + 1); return carryOut(S, qb, [-5, gap * 3], t, gain); }
   if (c !== qb) { stay(c, S.T0 + 0.05); go(c, t, -3.6, gap * 0.25, S); go(qb, t, -3.9, gap * 0.25 - sg * 0.8, S); hold(S, t, c); go(qb, t + 0.8, -5.5, -sg * 3, S); }
   trenches(S, -0.7, t + 1.2);
   [['WR1', 'CB1'], ['WR2', 'CB2']].forEach(([w, cb]) => { if (S.A[w] && S.D[cb]) { stay(S.A[w], S.T0); go(S.A[w], S.T0 + 1, 4.5, OFF[w][1], S); pose(S.A[w], S.T0 + 1, 9, 'block'); } });
-  go(c, t + 0.45, Math.min(0.3, gain), gap, S);
-  return carryOut(S, c, [Math.min(0.3, gain), gap], t + 0.45, gain);
+  const hit = t + Math.hypot(3.9, gap) / yps(c.p);
+  go(c, hit, Math.min(0.3, gain), gap, S);
+  return carryOut(S, c, [Math.min(0.3, gain), gap], hit, gain);
 }
 
 export function buildPass(S, gain) {
   const play = S.play, qb = S.A.QB, thr = ev(play, 'throw')[0], cat = ev(play, 'catch')[0], sackEv = ev(play, 'pressure').find((e) => e.kind === 'sack');
-  hold(S, S.T0, qb); go(qb, S.T0 + 0.8, -7, 0, S);
+  hold(S, S.T0, qb); go(qb, S.T0 + 0.65, -7, 0, S);
   const tThrow = S.T0 + clamp(thr?.t ?? 2.4, 1.1, 3.4), tgt = thr && S.who(thr.target, play.off), d = thr?.air ?? 5, tCatch = tThrow + 0.35 + d / 24;
   Object.entries(COVER).forEach(([rk, ck]) => { // routes, with the coverage running along
     const r = S.A[rk], cv = S.D[ck]; if (!r) return;
-    const [a0, l0] = OFF[rk], mine = r === tgt, depth = mine ? d : rk === 'RB' ? 2 : 11, lat = mine ? l0 * 0.62 : l0 * 0.9 + (rk === 'RB' ? 5 : 0), tArr = mine ? tCatch : S.T0 + 0.4 + depth / 7;
-    stay(r, S.T0 + 0.1); go(r, S.T0 + (tArr - S.T0) * 0.55, a0 + (depth - a0) * 0.6, l0, S); go(r, tArr, depth, lat, S);
-    if (cv) { stay(cv, S.T0 + 0.2); go(cv, tArr, depth + (mine && cat ? clamp(cat.sep ?? 1.5, 0.4, 4) : 1.6), lat + 0.7, S); }
+    const [a0, l0] = OFF[rk], mine = r === tgt, depth = mine ? d : rk === 'RB' ? 2 : 13, lat = mine ? l0 * 0.62 : l0 * 0.9 + (rk === 'RB' ? 5 : 0);
+    const go0 = S.T0 + getGoing(r.p), fast = go0 + Math.hypot(depth - a0, lat - l0) / yps(r.p), tArr = mine ? Math.max(tCatch, fast) : fast;
+    stay(r, go0); go(r, Math.min(fast, tArr) - (fast - go0) * 0.35, a0 + (depth - a0) * 0.65, l0, S); go(r, tArr, depth, lat, S);
+    if (cv) { stay(cv, S.T0 + 0.1 + getGoing(cv.p)); go(cv, tArr, depth + (mine && cat ? clamp(cat.sep ?? 1.5, 0.4, 4) : 1.6), lat + 0.7, S); }
   });
   const end = sackEv ? tThrow : tCatch;
   trenches(S, 1.4, end + 0.4);

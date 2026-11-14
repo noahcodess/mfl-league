@@ -1,68 +1,105 @@
-// The on-field player sprite: a small side-view pixel player in the same chunky style as the field, drawn once per look and
-// pose and then reused (so a whole game of them costs nothing). His build comes from his real height and weight: a
-// 330-pound tackle is wide, a 190-pound receiver is slim, tall players have longer legs.
-import { shade } from './pixels.js';
+// The on-field player: his real drip sprite (the same one coaches see in the Drip tab, with his face, number, helmet and gear),
+// cut into body, two arms and two legs so each pose can move them. Big men are drawn wider and tall men get longer legs.
+// Every pose is drawn once per player and reused, so a full game costs almost nothing.
+import { uniformPixels, W, H, INK } from './uniformDraw.js';
 
-export const SW = 24, SH = 32, FOOT_X = 12, FOOT_Y = 30;
-const OUT = '#141018', MASK = '#c9ced6', CLEAT = '#1b1b20', GLOVE = '#f2f2f2';
+const PAD_X = 10, PAD_TOP = 26, PAD_BOTTOM = 2;
 
-// 0 slim, 1 average, 2 heavy; and 0 to 2 extra pixels of leg for tall players.
+// wide: extra pixels on each side of his body (0 slim, 1 average, 2 big, 3 huge). tall: extra pixels of leg (0 to 2).
 export function buildOf(p) {
   const h = p.height || 73, w = p.weight || 215, bmi = (w / (h * h)) * 703;
-  return { wide: bmi < 27.5 ? 0 : bmi < 32.5 ? 1 : 2, tall: h >= 77 ? 2 : h >= 73 ? 1 : 0 };
+  return { wide: bmi < 26.5 ? 0 : bmi < 30 ? 1 : bmi < 34 ? 2 : 3, tall: h >= 77 ? 2 : h >= 74 ? 1 : 0 };
 }
 
-// Where the feet and hands are in each pose: [forward, down] from the hip (feet) or shoulder (hands). L = leg length.
-const POSES = {
-  stand: [() => ({ f: [[1, 0], [-2, 0]], h: [[2, 7], [-2, 7]] })],
-  set: [() => ({ crouch: 3, lean: 2, f: [[3, 0], [-4, 0]], h: [[5, 9], [1, 6]] })],
-  run: [
-    () => ({ lean: 1, f: [[5, -2], [-5, -1]], h: [[-3, 4], [4, 3]] }), () => ({ lean: 1, bob: 1, f: [[1, 0], [-1, -3]], h: [[0, 6], [1, 6]] }),
-    () => ({ lean: 1, f: [[-5, -1], [5, -2]], h: [[4, 3], [-3, 4]] }), () => ({ lean: 1, bob: 1, f: [[-1, -3], [1, 0]], h: [[1, 6], [0, 6]] }),
-  ],
-  block: [() => ({ crouch: 1, lean: 1, f: [[3, 0], [-4, 0]], h: [[6, 1], [5, 2]] }), () => ({ crouch: 1, lean: 2, f: [[4, 0], [-3, 0]], h: [[7, 0], [6, 2]] })],
-  throw: [() => ({ f: [[3, 0], [-3, 0]], h: [[-4, -4], [4, 2]] }), () => ({ lean: 1, f: [[4, 0], [-3, 0]], h: [[6, -3], [-2, 5]] })],
-  catch: [() => ({ bob: 1, f: [[2, 0], [-3, -1]], h: [[5, -5], [4, -4]] })],
-  cheer: [() => ({ f: [[2, 0], [-2, 0]], h: [[3, -8], [-3, -8]] }), () => ({ bob: 2, f: [[2, 0], [-2, 0]], h: [[4, -7], [-4, -7]] })],
-  kick: [() => ({ lean: -1, f: [[7, -5], [-1, 0]], h: [[-3, 3], [3, 3]] })],
-};
-
-function limb(px, x0, y0, x1, y1, colorAt) { // a 2-pixel-thick line; colorAt(0..1) picks the color along it
-  const n = Math.max(Math.abs(x1 - x0), Math.abs(y1 - y0), 1);
-  for (let i = 0; i <= n; i++) { const x = Math.round(x0 + ((x1 - x0) * i) / n), y = Math.round(y0 + ((y1 - y0) * i) / n), c = colorAt(i / n); px(x, y, c); px(x + 1, y, c); }
-}
-
-function paint(look, pose, frame) {
-  const c = document.createElement('canvas'); c.width = SW; c.height = SH;
-  const ctx = c.getContext('2d'), px = (x, y, col) => { ctx.fillStyle = col; ctx.fillRect(x, y, 1, 1); }, box = (x, y, w, h, col) => { ctx.fillStyle = col; ctx.fillRect(x, y, w, h); };
-  const { wide, tall } = look, L = 8 + tall, hw = 3 + wide, sock = look.trim, jLo = shade(look.jersey, 0.72);
-  if (pose === 'down') { // flat on the turf
-    box(4, FOOT_Y - 5, 9 + wide, 5, look.jersey); box(13 + wide, FOOT_Y - 4, 6, 4, look.pants); box(19 + wide, FOOT_Y - 3, 2, 3, sock); box(0, FOOT_Y - 6, 5, 6, look.helmet); box(0, FOOT_Y - 3, 2, 2, MASK);
-  } else {
-    const P = (POSES[pose] || POSES.stand), s = P[frame % P.length](), crouch = s.crouch || 0, lean = s.lean || 0, bob = s.bob || 0;
-    const hipY = FOOT_Y - L + crouch - bob, shY = hipY - 8 + Math.min(crouch, 2), cx = FOOT_X, tx = cx + lean, legC = (t) => (t < 0.55 ? look.pants : t < 0.85 ? sock : CLEAT), armC = (t) => (t < 0.4 ? look.jersey : t < 0.85 ? look.skin : GLOVE);
-    const foot = ([dx, dy]) => [cx + dx, Math.min(FOOT_Y, hipY + L - crouch + dy + bob)], hand = ([dx, dy]) => [tx + dx, shY + 1 + dy];
-    limb(px, tx - 1, shY + 1, ...hand(s.h[1]), (t) => shade(armC(t), 0.75)); limb(px, cx - 1, hipY, ...foot(s.f[1]), (t) => shade(legC(t), 0.75));   // far side first
-    box(tx - hw, shY, hw * 2, hipY - shY, look.jersey); box(tx - hw, shY, 1, hipY - shY, jLo); box(tx - hw, shY, hw * 2, 1, shade(look.jersey, 1.2));   // torso
-    box(tx - hw + 1, hipY - 1, hw * 2 - 2, 2, look.pants); if (hw > 3) box(tx - 1, shY + 2, 3, 3, look.numbers);                                        // belt, number patch
-    const hx = tx - 3 + Math.min(lean, 1), hy = shY - 6;
-    box(hx, hy, 7, 6, look.helmet); box(hx, hy + 5, 7, 1, shade(look.helmet, 0.7)); box(hx + 2, hy, 3, 1, look.trim); box(hx + 5, hy + 2, 2, 2, look.skin); box(hx + 6, hy + 3, 2, 3, MASK); px(hx + 1, hy + 1, shade(look.helmet, 1.4));
-    limb(px, cx, hipY, ...foot(s.f[0]), legC); limb(px, tx, shY + 1, ...hand(s.h[0]), armC);
+// Stretches the drip sprite for his build and cuts it into parts: { body, armR, armL, legR, legL } as [x, y, color] lists.
+function partsOf(look) {
+  const src = uniformPixels(look.colors, look.face, look.number, { drip: look.drip, design: look.design });
+  const w = look.wide, t = look.tall, parts = { body: [], armR: [], armL: [], legR: [], legL: [] };
+  const put = (x, y, c) => {
+    const part = y >= 41 ? (x <= 15 + w ? 'legR' : 'legL') : y >= 31 && y <= 39 && x <= 6 ? 'armR' : y >= 31 && y <= 39 && x >= 25 + 2 * w ? 'armL' : 'body';
+    parts[part].push([x, y, c]);
+  };
+  for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
+    const c = src.get(x, y); if (!c) continue;
+    const ys = y < 46 ? [y] : [y + t], extra = y === 45 ? Array.from({ length: t }, (_, i) => 46 + i) : [];
+    [...ys, ...extra].forEach((yy) => {
+      if (y < 23) { put(x + w, yy, c); return; }                       // helmet and face stay centered
+      if (x < 8) put(x, yy, c); else if (x === 8) for (let i = 0; i <= w; i++) put(8 + i, yy, c);
+      else if (x < 23) put(x + w, yy, c); else if (x === 23) for (let i = 0; i <= w; i++) put(23 + w + i, yy, c); else put(x + 2 * w, yy, c);
+    });
   }
-  const img = ctx.getImageData(0, 0, SW, SH), d = img.data, solid = (x, y) => x >= 0 && y >= 0 && x < SW && y < SH && d[(y * SW + x) * 4 + 3] > 0, edge = [];
-  for (let y = 0; y < SH; y++) for (let x = 0; x < SW; x++) if (!solid(x, y) && (solid(x - 1, y) || solid(x + 1, y) || solid(x, y - 1) || solid(x, y + 1))) edge.push([x, y]);
-  edge.forEach(([x, y]) => px(x, y, OUT));
+  return { parts, gw: W + 2 * w, gh: H + t };
+}
+
+// How each part moves in each pose: [dx, dy, flipped]. A flipped arm points up (hand above the shoulder). f: 1 facing right, -1 left.
+const UP_R = (dx, dy) => [dx, dy, true], UP_L = UP_R;
+const POSES = {
+  stand: [() => ({})],
+  set: [() => ({ body: [0, 4], legR: [-2, 0], legL: [2, 0], armR: [2, 9], armL: [0, 5] })],
+  run: [
+    (f) => ({ body: [f, 0], legR: [-1, -3], legL: [1, 0], armR: [0, 2], armL: [0, -2] }),
+    (f) => ({ body: [f, 1], legR: [0, -1], legL: [0, 0], armR: [0, 0], armL: [0, 0] }),
+    (f) => ({ body: [f, 0], legR: [-1, 0], legL: [1, -3], armR: [0, -2], armL: [0, 2] }),
+    (f) => ({ body: [f, 1], legR: [0, 0], legL: [0, -1], armR: [0, 0], armL: [0, 0] }),
+  ],
+  block: [
+    (f) => ({ body: [f, 2], legR: [-2, 0], legL: [2, 0], armR: [5, -2], armL: [-5, -2] }),
+    (f) => ({ body: [2 * f, 2], legR: [-3, 0], legL: [2, -1], armR: [6, -3], armL: [-6, -3] }),
+  ],
+  throw: [
+    (f) => ({ body: [-f, 0], legR: [-2, 0], legL: [2, 0], armR: UP_R(0, -17), armL: [3, -3] }),
+    (f) => ({ body: [f, 1], legR: [-2, 0], legL: [2, -1], armR: [5, -9], armL: [-1, 1] }),
+  ],
+  catch: [() => ({ body: [0, -2], legR: [0, -2], legL: [0, -3], armR: UP_R(3, -24), armL: UP_L(-3, -24) })],
+  cheer: [
+    () => ({ armR: UP_R(0, -21), armL: UP_L(0, -21) }),
+    () => ({ body: [0, -2], legR: [0, -2], legL: [0, -2], armR: UP_R(-1, -24), armL: UP_L(1, -24) }),
+  ],
+  kick: [(f) => ({ body: [-f, 0], legR: [3, -8], armR: [-2, -5], armL: [2, -5] })],
+};
+const ORDER = ['legR', 'legL', 'body', 'armR', 'armL'];
+
+function compose(look, poseName, frame, face) {
+  const { parts, gw, gh } = look.cut || (look.cut = partsOf(look));
+  const cw = gw + PAD_X * 2, ch = gh + PAD_TOP + PAD_BOTTOM, px = new Array(cw * ch).fill(null);
+  const list = POSES[poseName] || POSES.stand, moves = list[frame % list.length](face);
+  ORDER.forEach((name) => {
+    const [dx = 0, dy = 0, flip] = moves[name] || [];
+    parts[name].forEach(([x, y, c]) => {
+      const yy = (flip ? 31 + 39 - y : y) + dy + PAD_TOP, xx = x + dx + PAD_X;
+      if (xx >= 0 && yy >= 0 && xx < cw && yy < ch) px[yy * cw + xx] = c;
+    });
+  });
+  const c = document.createElement('canvas'); c.width = cw; c.height = ch;
+  const ctx = c.getContext('2d');
+  for (let y = 0; y < ch; y++) for (let x = 0; x < cw; x++) {   // the dark outline, like the Drip tab art
+    const k = px[y * cw + x];
+    if (k) { ctx.fillStyle = k; ctx.fillRect(x, y, 1, 1); continue; }
+    if ((x > 0 && px[y * cw + x - 1]) || (x < cw - 1 && px[y * cw + x + 1]) || (y > 0 && px[(y - 1) * cw + x]) || (y < ch - 1 && px[(y + 1) * cw + x])) { ctx.fillStyle = INK; ctx.fillRect(x, y, 1, 1); }
+  }
+  c.footX = cw / 2; c.footY = ch - PAD_BOTTOM;
+  return c;
+}
+
+function turned(img, deg) { // lying on the turf (90) or diving (about 60)
+  const r = (deg * Math.PI) / 180, w = Math.ceil(Math.abs(img.width * Math.cos(r)) + Math.abs(img.height * Math.sin(r))), h = Math.ceil(Math.abs(img.width * Math.sin(r)) + Math.abs(img.height * Math.cos(r)));
+  const c = document.createElement('canvas'); c.width = w; c.height = h;
+  const ctx = c.getContext('2d'); ctx.imageSmoothingEnabled = false;
+  ctx.translate(w / 2, h / 2); ctx.rotate(r); ctx.drawImage(img, -img.width / 2, -img.height / 2);
+  c.footX = w / 2; c.footY = Math.abs(deg) >= 80 ? h * 0.62 : h * 0.85;
   return c;
 }
 
 const cache = new Map();
-// look: { key, jersey, pants, numbers, trim, helmet, skin, wide, tall }. face: 1 right, -1 left.
+// look: { key, colors (the game uniform), face (portrait looks), number, drip, design, wide, tall }.
+// pose: stand, set, run, block, throw, catch, cheer, kick, down, dive. face: 1 right, -1 left. Returns a canvas with footX/footY.
 export function sprite(look, pose, frame, face) {
   const k = `${look.key}|${pose}|${frame}|${face}`;
   let c = cache.get(k);
   if (!c) {
-    c = paint(look, pose, frame);
-    if (face < 0) { const f = document.createElement('canvas'); f.width = SW; f.height = SH; const x = f.getContext('2d'); x.translate(SW, 0); x.scale(-1, 1); x.drawImage(c, 0, 0); c = f; }
+    if (pose === 'down') c = turned(compose(look, 'stand', 0, face), 90 * face);
+    else if (pose === 'dive') c = turned(compose(look, 'run', 0, face), 62 * face);
+    else c = compose(look, pose, frame, face);
     cache.set(k, c);
   }
   return c;

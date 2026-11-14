@@ -61,3 +61,5 @@
 .match-bar { position: absolute; left: 0; right: 0; bottom: 0; height: 5.6cqw; display: flex; align-items: center; gap: 2.4cqw; padding: 0 2.4cqw;
   font-size: 1.7cqw; text-transform: uppercase; letter-spacing: .06em; animation: in-up .45s .9s both; }
 .match-bar img { height: 4cqw; }
+.intro-skip { position: absolute; top: 1.2cqw; right: 1.2cqw; z-index: 20; padding: .4cqw 1cqw; border: 0; border-radius: 999px; background: rgba(0, 0, 0, .55); color: #fff; font: 700 1.1cqw/1.2 system-ui, sans-serif; cursor: pointer; opacity: .7; }
+.intro-skip:hover { opacity: 1; }

@@ -1,31 +1,34 @@
 // Draws one moment of a play scene onto the broadcast canvas: the line of scrimmage and first-down line, every player in
 // the right pose (running, blocking, throwing, down on the turf), shadows, the ball in the air or in someone's hands.
 import { FY0, FY1, YD, MID_Y, yardX } from './fieldLayout.js';
-import { sprite, SW, SH, FOOT_X, FOOT_Y } from './fieldSprite.js';
+import { sprite } from './fieldSprite.js';
+
+export const SPRITE_PX = 0.5; // world pixels per sprite pixel: a player stands about 2 yards tall, like the Drip tab art shrunk down
 
 const lerp = (a, b, k) => a + (b - a) * k;
 // Where an actor is at time t (yards) and whether he's moving.
 export function posAt(a, t) {
   const k = a.keys; let i = k.length - 1;
-  if (t <= k[0].t) return { x: k[0].x, y: k[0].y, dx: 0, moving: false };
+  if (t <= k[0].t) return { x: k[0].x, y: k[0].y, dx: 0, moving: false, speed: 0 };
   while (i > 0 && k[i].t > t) i--;
   const A = k[i], B = k[i + 1];
-  if (!B) return { x: A.x, y: A.y, dx: 0, moving: false };
+  if (!B) return { x: A.x, y: A.y, dx: 0, moving: false, speed: 0 };
   const u = (t - A.t) / Math.max(0.001, B.t - A.t);
-  return { x: lerp(A.x, B.x, u), y: lerp(A.y, B.y, u), dx: B.x - A.x, moving: Math.hypot(B.x - A.x, B.y - A.y) > 0.15 };
+  const dist = Math.hypot(B.x - A.x, B.y - A.y);
+  return { x: lerp(A.x, B.x, u), y: lerp(A.y, B.y, u), dx: B.x - A.x, moving: dist > 0.15, speed: dist / Math.max(0.001, B.t - A.t) };
 }
 // Where the ball is at time t: { x, y (yards), h (height in yards), held }.
 export function ballAt(S, t) {
   let st = null; for (const b of S.ball) if (b.t <= t) st = b;
   if (!st) return null;
-  if (st.kind === 'held') { const a = S.by[st.id], p = a && posAt(a, t); return p ? { x: p.x, y: p.y, h: 0.9, held: true } : null; }
+  if (st.kind === 'held') { const a = S.by[st.id], p = a && posAt(a, t); return p ? { x: p.x, y: p.y, h: 0.65, held: true } : null; }
   if (st.kind === 'fly') { const u = Math.min(1, (t - st.t) / Math.max(0.01, st.t1 - st.t)); return { x: lerp(st.x0, st.x1, u), y: lerp(st.y0, st.y1, u), h: 0.8 + st.h * 4 * u * (1 - u), spin: u < 1 }; }
   return { x: st.x, y: st.y, h: 0.1 };
 }
 
 // ctx: the screen canvas. cam: { x, y, zoom } in world pixels. looks: { playerId: sprite look }. t: seconds into the scene.
 export function drawScene(ctx, S, t, cam, looks) {
-  const px = (cam.zoom * ctx.canvas.width) / 640, cw = ctx.canvas.width, ch = ctx.canvas.height;
+  const px = (cam.zoom * ctx.canvas.width) / 640, sp = px * SPRITE_PX, cw = ctx.canvas.width, ch = ctx.canvas.height;
   const sx = (yd) => Math.round((yardX(yd) - cam.x) * px + cw / 2), sy = (lat) => Math.round((MID_Y + lat * YD - cam.y) * px + ch / 2);
   const top = Math.round((FY0 - cam.y) * px + ch / 2), bottom = Math.round((FY1 - cam.y) * px + ch / 2);
   ctx.imageSmoothingEnabled = false;
@@ -36,14 +39,16 @@ export function drawScene(ctx, S, t, cam, looks) {
   }
   const list = S.actors.map((a) => ({ a, p: posAt(a, t) })).sort((m, n) => m.p.y - n.p.y);
   ctx.fillStyle = 'rgba(0,0,0,0.28)';
-  list.forEach(({ a, p }) => { const down = a.down != null && t >= a.down && !(a.upAt && t >= a.upAt); ctx.fillRect(sx(p.x) - (down ? 9 : 5) * px, sy(p.y) - px, (down ? 18 : 10) * px, 3 * px); });
+  list.forEach(({ a, p }) => { const down = a.down != null && t >= a.down && !(a.upAt && t >= a.upAt); ctx.fillRect(sx(p.x) - (down ? 13 : 7) * px, sy(p.y) - 1.5 * px, (down ? 26 : 14) * px, 3 * px); });
   list.forEach(({ a, p }) => {
     const look = looks[a.id] || looks[a.side]; if (!look) return;
     const down = a.down != null && t >= a.down && !(a.upAt && t >= a.upAt), set = a.poses.find((q) => t >= q.t0 && t < q.t1);
     const face = Math.abs(p.dx) > 0.05 ? (p.dx > 0 ? 1 : -1) : a.face;
-    let name = down ? 'down' : set ? set.pose : p.moving ? 'run' : t < S.T0 ? a.idle : 'stand', frame = 0;
-    if (name === 'run') frame = Math.floor(t * 10 + a.keys[0].y) & 3; else if (name === 'cheer' || name === 'block') frame = Math.floor(t * 4 + a.keys[0].y) & 1; else if (name === 'throw') frame = set && t > set.t0 + 0.12 ? 1 : 0;
-    ctx.drawImage(sprite(look, name, frame, face), sx(p.x) - FOOT_X * px, sy(p.y) - FOOT_Y * px, SW * px, SH * px);
+    const diving = !down && a.down != null && t >= a.down - 0.22;
+    let name = down ? 'down' : diving ? 'dive' : set ? set.pose : p.moving ? 'run' : t < S.T0 ? a.idle : 'stand', frame = 0;
+    if (name === 'run') frame = Math.floor(t * (6 + p.speed * 1.1) + a.keys[0].y * 3) & 3; else if (name === 'cheer' || name === 'block') frame = Math.floor(t * 4 + a.keys[0].y) & 1; else if (name === 'throw') frame = set && t > set.t0 + 0.12 ? 1 : 0;
+    const img = sprite(look, name, frame, face);
+    ctx.drawImage(img, Math.round(sx(p.x) - img.footX * sp), Math.round(sy(p.y) - img.footY * sp), Math.round(img.width * sp), Math.round(img.height * sp));
   });
   const b = ballAt(S, t);
   if (b) {

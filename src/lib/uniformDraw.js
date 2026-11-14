@@ -6,7 +6,7 @@ import { HEADS, drawFace, drawMouthAndBeard } from './portraitFace.js';
 import { drawHelmetFront, drawMaskFront } from './helmetFront.js';
 import { drawArms, drawLegs, dripColor, DEFAULT_DRIP } from './uniformGear.js';
 
-const W = 32, H = 56, INK = '#140d0a';
+export const W = 32, H = 56, INK = '#140d0a';
 
 function grid() {
   const px = new Array(W * H).fill(null);
@@ -43,12 +43,9 @@ const cache = new Map();
 
 // colors: the uniform { helmet, mask, stripe, jersey, numbers, trim, pants, socks }; looks: his face; number: jersey number;
 // opts: { drip, design } where design is the team's helmet design (stripe, double, plain, logo, logo_stripe).
-export function uniformUrl(colors, looks, number, opts = {}) {
-  const d = { ...DEFAULT_DRIP, ...(opts.drip || {}) };
-  const design = opts.design || 'stripe';
-  const key = JSON.stringify([colors, looks, number, d, design]);
-  if (cache.has(key)) return cache.get(key);
-  const fg = grid(), out = grid();
+// The bare pixels (no outline yet), so the field can cut him into parts and animate him. Returns a 32x56 grid.
+export function uniformPixels(colors, looks, number, opts = {}) {
+  const d = { ...DEFAULT_DRIP, ...(opts.drip || {}) }, design = opts.design || 'stripe', fg = grid();
   const skin = looks.skin || '#c48a5f';
   drawJersey(fg, colors, skin, number);
   if (d.undershirt !== 'none') { const u = dripColor(d.undershirtColor, colors, '#1c1d21'); fg.row(23, 13, 18, u); fg.row(24, 14, 17, shade(u, 0.85)); }
@@ -60,6 +57,13 @@ export function uniformUrl(colors, looks, number, opts = {}) {
   fg.row(22, 13, 18, skin);
   drawHelmetFront(fg, colors, d.helmet, design);
   drawMaskFront(fg, colors, d.helmet);
+  return fg;
+}
+
+export function uniformUrl(colors, looks, number, opts = {}) {
+  const key = JSON.stringify([colors, looks, number, opts.drip || {}, opts.design || 'stripe']);
+  if (cache.has(key)) return cache.get(key);
+  const fg = uniformPixels(colors, looks, number, opts), out = grid();
   for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
     if (fg.get(x, y)) continue;
     if ([[1, 0], [-1, 0], [0, 1], [0, -1]].some(([dx, dy]) => x + dx >= 0 && x + dx < W && fg.get(x + dx, y + dy))) out.set(x, y, INK);

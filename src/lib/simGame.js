@@ -48,9 +48,9 @@ export function stepGame(G) {
 }
 
 // home, away: lineups from loadLineups. seed: any whole number.
-// opts: { quarterSeconds, rivalry, coachCall(G, side) -> a call for a key play, or nothing to let the AI pick }.
+// opts: { quarterSeconds, rivalry, receiver ('home' | 'away', from the real coin flip), coachCall(G, side) -> a call for a key play, or nothing to let the AI pick }.
 export function createGame(home, away, seed, opts = {}) {
-  const R = dice(seed), receiver = R.chance(0.5) ? 'home' : 'away', qlen = opts.quarterSeconds || QUARTER_SECONDS;
+  const R = dice(seed), flip = R.chance(0.5) ? 'home' : 'away', receiver = opts.receiver || flip, qlen = opts.quarterSeconds || QUARTER_SECONDS;
   const G = { R, opts, seed, mom: 0, form: { home: R.gauss(0, 2.2), away: R.gauss(0, 2.2) },   // some days a team has it, some days it doesn't
     teams: { home: team(home, 'home', R), away: team(away, 'away', R) }, plays: [], scoring: [], timeouts: [], injuries: [], openingReceiver: receiver };
   G.s = { quarter: 1, clock: qlen, qlen, poss: receiver, down: 1, toGo: 10, ballOn: 25, score: { home: 0, away: 0 }, to: { home: 3, away: 3 }, phase: 'kickoff', kicker: other(receiver), running: false, ot: 0, over: false };

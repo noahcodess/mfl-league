@@ -1,13 +1,13 @@
 // Scenes for the plays that aren't a normal snap: kickoffs, punts, field goals and extra points, kneel-downs and flags
 // before the snap. Plus buildScene, which picks the right scene for any play report.
-import { newScene, add, go, stay, pose, hold, fly, lineUp, buildRun, buildPass, carryOut } from './sceneBuild.js';
+import { newScene, add, go, stay, pose, hold, fly, lineUp, buildRun, buildPass, carryOut, yps } from './sceneBuild.js';
 
 const ev = (play, type) => play.events.find((e) => e.type === type);
 const row = (S, players, side, along, idle) => players.filter(Boolean).map((p, i, list) => add(S, p, side, along, -18 + (36 * i) / Math.max(1, list.length - 1), idle));
 
 // A returner fielding a kick and bringing it back, with the coverage closing on him.
 function bringBack(S, play, ret, land, yards, cover, tLand) {
-  const td = play.result.td, end = td ? land - yards - 4 : land - yards, t = tLand + Math.max(0.5, Math.abs(yards) / 7.5);
+  const td = play.result.td, end = td ? land - yards - 4 : land - yards, t = tLand + Math.max(0.5, Math.abs(yards) / (yps(ret.p) * 0.92));
   hold(S, tLand, ret); go(ret, t, end, ret.keys[0].y * 0.3, S);
   cover.forEach((c, i) => { stay(c, S.T0 + 0.3); go(c, t, end - 1 - (i % 3) * 2, (i - cover.length / 2) * 2.2, S); });
   if (td) pose(ret, t, t + 9, 'cheer'); else { ret.down = t; if (cover[0]) cover[0].down = t + 0.05; }

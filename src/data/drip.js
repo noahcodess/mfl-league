@@ -31,6 +31,20 @@ export function usePlayerDrip(playerId, version = 0) {
   return drip;
 }
 
+// Everyone's drip at once (for the field broadcast). Returns { playerId: drip } once loaded, else null.
+export function useDrips(ids) {
+  const [map, setMap] = useState(null), key = ids.join(',');
+  useEffect(() => {
+    let live = true;
+    if (!ids.length) return undefined;
+    if (DEMO) { setMap(Object.fromEntries(ids.map((id) => [id, { ...DEFAULT_DRIP, ...DEMO_DRIP }]))); return undefined; }
+    db.from('player_drip').select('player_id, drip').in('player_id', ids)
+      .then(({ data }) => { if (live) setMap(Object.fromEntries((data || []).map((r) => [r.player_id, { ...DEFAULT_DRIP, ...r.drip }]))); });
+    return () => { live = false; };
+  }, [key]); // eslint-disable-line react-hooks/exhaustive-deps
+  return map;
+}
+
 const clean = (msg = '') => (msg.includes('not allowed') ? 'Only the commissioner can do this.' : msg.replace(/^.*?ERROR:\s*/, ''));
 async function rpc(fn, args) {
   if (DEMO) return {};
