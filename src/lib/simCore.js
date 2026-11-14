@@ -14,10 +14,11 @@ export function dice(seed) {
 
 // Unhappy players don't play as hard; angry ones a bit less. Nobody gets a bonus for being happy.
 const MOOD = { unhappy: 1.5, angry: 3 };
-// A rating as it plays on this snap. Momentum is worth up to 2 points to the team that has it.
+// A rating as it plays on this snap. Momentum is worth up to 2 points to the team that has it. Every team and every player
+// also has a little form on the day (good days and bad days), set once when the game starts.
 export function val(G, p, key, floor = 35) {
   if (!p) return floor;
-  return (p.r[key] ?? floor) - (MOOD[p.mood] || 0) + G.mom * (p.side === 'home' ? 2 : -2);
+  return (p.r[key] ?? floor) - (MOOD[p.mood] || 0) + G.mom * (p.side === 'home' ? 2 : -2) + (G.form?.[p.side] || 0) + (p.form || 0);
 }
 // A weighted blend of ratings: mix(G, p, { pass_block: 0.5, strength: 0.5 }).
 export const mix = (G, p, weights, floor = 35) => Object.entries(weights).reduce((s, [k, w]) => s + val(G, p, k, floor) * w, 0);

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import GameIntro from '../components/GameIntro.jsx';
 import KickoffClock, { useNow } from '../components/KickoffClock.jsx';
 import StartGameButton from '../components/StartGameButton.jsx';
+import QuickSimButton from '../components/QuickSimButton.jsx';
 import GameTestControls from '../components/GameTestControls.jsx';
 import { useGame, useRivals, isRivalry } from '../data/liveSeason.js';
 import { useGameState, isRealGame, startGame, flipKickoff, PREGAME } from '../data/gameState.js';
@@ -50,6 +51,7 @@ export default function GamePage({ id, canControl, teamId }) {
         <KickoffClock startsAt={game.startsAt} status={st?.status} />
         <div className="gp-actions">
           {canControl && <StartGameButton startsAt={game.startsAt} now={now} onStart={start} />}
+          {canControl && <QuickSimButton game={game} home={home} away={away} />}
           {mine && (roomOpen ? <a className="btn gp-room" href={links.coaching(game.id)}>🎧 Enter coaching room</a>
             : <button className="btn gp-room" disabled>🎧 Coaching room {at ? `opens in ${mmss(at - ROOM_OPENS - now)}` : 'opens 5 min before kickoff'}</button>)}
           {!canControl && !mine && <span className="gp-discord">🎧 Watch the game on Discord</span>}

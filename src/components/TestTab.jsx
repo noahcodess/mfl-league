@@ -3,6 +3,7 @@ import SandboxButton from './SandboxButton.jsx';
 import TestSimLoading from './TestSimLoading.jsx';
 import CrowdShotTest from './CrowdShotTest.jsx';
 import LineupCheck from './LineupCheck.jsx';
+import SimLab from './SimLab.jsx';
 import { inSandbox } from '../data/sandbox.js';
 import { simToSeason } from '../data/testSim.js';
 import { currentPhase, offseasonStep, PHASE_NAMES } from '../data/teams.js';
@@ -44,6 +45,7 @@ export default function TestTab({ canControl, reload }) {
           {!offseason && <p className="dim">The league is already in the {PHASE_NAMES[currentPhase()].toLowerCase()}.</p>}
         </section>
       </div>
+      <SimLab />
       <CrowdShotTest />
       <LineupCheck />
       {log !== null && <TestSimLoading log={log} error={error} onClose={() => { setLog(null); setError(''); }} />}

@@ -6,12 +6,14 @@ import { runPlay } from './simRun.js';
 import { passPlay } from './simPass.js';
 import { kickoff, punt, fieldGoal, extraPoint } from './simKicks.js';
 import { offenseCall, defenseCall, goForTwo } from './simCalls.js';
+import { preSnapFlag, postPlayFlag } from './simFlags.js';
 
 export function sides(G) { const s = G.s; G.defSide = other(s.poss); G.O = G.teams[s.poss].O; G.D = G.teams[G.defSide].D; }
 const start = (G) => { const p = newPlay({ ...G.s, hash: 'middle' }, G.plays.length + 1); p.stats = []; return p; };
 function log(G, play, secs) {
-  const s = G.s; play.clock.seconds = s.ot ? 0 : Math.min(Math.round(secs), s.clock);
+  const s = G.s, was = s.clock; play.clock.seconds = s.ot ? 0 : Math.min(Math.round(secs), s.clock);
   if (!s.ot) s.clock -= play.clock.seconds;
+  if (!s.ot && (s.quarter === 2 || s.quarter === 4) && was > 120 && s.clock <= 120) { s.running = false; play.twoMinute = true; }   // two-minute warning
   play.after = { score: { ...s.score }, poss: s.poss, ballOn: s.ballOn, down: s.down, toGo: s.toGo, quarter: s.quarter, clock: s.clock, mom: Math.round(G.mom * 100) / 100 };
   G.mom *= 0.97; G.plays.push(play); return play;
 }
@@ -19,10 +21,21 @@ export function score(G, play, side, pts, how) {
   G.s.score[side] += pts; play.result.points = { side, pts, how }; G.scoring.push({ n: G.plays.length + 1, side, pts, how, quarter: G.s.quarter, clock: G.s.clock });
   swing(G, side, pts >= 6 ? 0.25 : 0.08);
 }
+// A key play: a fourth down that isn't an obvious punt, or a big down late in a close game.
+export function isKeyPlay(G) {
+  const s = G.s, close = Math.abs(s.score.home - s.score.away) <= 8, late = s.ot > 0 || (s.quarter === 4 && s.clock < 180);
+  return (s.down === 4 && (s.toGo <= 3 || s.ballOn >= 55)) || (close && late && s.down >= 3) || (close && s.ballOn >= 95 && s.down >= 3);
+}
 const give = (G, side, ballOn) => { const s = G.s; s.poss = side; s.ballOn = clamp(Math.round(ballOn), 1, 99); s.down = 1; s.toGo = Math.min(10, 100 - s.ballOn); s.running = false; s.phase = 'play'; };
 
 export function doKickoff(G) {
   const s = G.s, play = start(G), rcv = other(s.kicker); play.off = s.kicker; play.def = rcv;
+  const behind = s.score[rcv] - s.score[s.kicker];   // onside kicks: only when losing, and only tried late when it's the last hope
+  if (!s.freeKick && behind > 0 && behind <= 16 && s.quarter === 4 && s.clock < 150) {
+    const got = G.R.chance(0.12); play.kind = 'kickoff'; play.onside = true; play.headline = got ? 'ONSIDE RECOVERED' : null;
+    play.text = got ? `ONSIDE KICK... recovered by the kicking team!` : 'Onside kick... recovered by the receiving team.';
+    if (got) swing(G, s.kicker, 0.3); give(G, got ? s.kicker : rcv, got ? 46 : 54); return log(G, play, 3);
+  }
   const out = kickoff(G, play, s.kicker, s.freeKick ? 20 : 35); s.freeKick = false;
   if (out.td) { score(G, play, rcv, 6, 'kick return'); play.result.td = true; s.poss = rcv; s.phase = 'pat'; s.patSide = rcv; } else give(G, rcv, out.ballOn);
   return log(G, play, out.time);
@@ -48,7 +61,15 @@ export function doPat(G) {
 // Runs the next scrimmage play. Returns the report; play.ended says how the possession ended (or null if it goes on).
 export function scrimmage(G) {
   sides(G);
-  const s = G.s, o = s.poss, d = G.defSide, play = start(G), call = offenseCall(G), def = defenseCall(G), R = G.R;
+  const s = G.s, o = s.poss, d = G.defSide, play = start(G), R = G.R;
+  play.keyPlay = isKeyPlay(G);
+  const pre = preSnapFlag(G, play);
+  if (pre) { // five yards and replay the down
+    if (pre.off) { s.ballOn -= pre.yards; s.toGo += pre.yards; } else { s.ballOn += pre.yards; s.toGo -= pre.yards; if (s.toGo <= 0) { s.down = 1; s.toGo = Math.min(10, 100 - s.ballOn); play.result.firstDown = true; } }
+    s.running = false; play.result.endOn = s.ballOn; return log(G, play, 0);
+  }
+  // a coach in the coaching room can make the call on a key play; otherwise the AI coach does
+  const call = (play.keyPlay && G.opts.coachCall?.(G, o)) || offenseCall(G), def = defenseCall(G);
   play.call = call; play.defCall = def; play.clock.playClockAtSnap = s.snapClock ?? 40;
   let res, ended = null, secs = 5, moving = false;
   const touchdown = (side, how) => { score(G, play, side, 6, how); play.result.td = true; play.headline = play.headline || 'TOUCHDOWN'; s.poss = side; s.phase = 'pat'; s.patSide = side; ended = side === o ? 'td' : 'defTd'; };
@@ -65,8 +86,11 @@ export function scrimmage(G) {
   } else {
     res = call.type === 'run' ? runPlay(G, play, call.sub) : passPlay(G, play, call.sub, def);
     secs = res.time; play.result.gain = res.gain; play.result.oob = !!res.oob;
-    const spot = s.ballOn + res.gain;
-    if (res.turnover === 'int') {
+    const flag = postPlayFlag(G, play, res, call), spot = s.ballOn + res.gain;
+    if (flag) { // the play doesn't count
+      if (flag.off) { s.ballOn -= flag.yards; s.toGo += flag.yards; play.result.gain = -flag.yards; }
+      else { s.ballOn += flag.yards; s.down = 1; s.toGo = Math.min(10, 100 - s.ballOn); play.result.gain = flag.yards; play.result.firstDown = true; }
+    } else if (res.turnover === 'int') {
       play.result.turnover = 'int'; ended = 'int';
       if (spot >= 100) give(G, d, 20);
       else { const ret = Math.max(0, Math.round(R.gauss(9, 9))) + (R.chance(0.05) ? R.int(20, 70) : 0), at = 100 - spot + ret; stat(play, res.by, 'intyds', Math.min(ret, spot)); if (at >= 100) { touchdown(d, 'interception return'); play.headline = 'PICK SIX'; stat(play, res.by, 'dtd'); } else give(G, d, at); }

@@ -3,6 +3,7 @@
 // defender can run him down. Ball security against hit power decides fumbles.
 import { addEvent, mph } from './simReport.js';
 import { clamp, odds, val, top, stat, swing, tired } from './simCore.js';
+import { maybeInjury } from './simFlags.js';
 
 const MOVES = [['elusiveness', 'juke'], ['break_tackle', 'truck'], ['run_after_catch', 'stiff arm'], ['agility', 'spin'], ['break_sack', 'shake']];
 const moveOf = (G, c) => MOVES.map(([k, m]) => [c.r[k] ?? 0, m]).sort((a, b) => b[0] - a[0])[G.R.chance(0.7) ? 0 : 1][1];
@@ -23,7 +24,7 @@ export function carry(G, play, c, start, tacklers, toGoal, chasers = [], t0 = 0)
       tackler = tk.p;
       move(Math.min(toGoal - 0.5, y + (R.chance(0.35) ? 1 : 0)));
       addEvent(play, 'tackle', t, { def: tk.p.id, carrier: c.id, result: 'made', at: Math.round(y) });
-      stat(play, tk.p, 'tkl');
+      stat(play, tk.p, 'tkl'); maybeInjury(G, play, c, tk.p, t);
       const pFum = 0.011 * (1 + (val(G, tk.p, 'hit_power', 55) - 60) / 70) * (1 - (val(G, c, 'carrying', 62) - 60) / 80);
       if (R.chance(clamp(pFum, 0.002, 0.04))) {
         const lost = R.chance(0.48), rec = lost ? R.pick(tacklers.filter((x) => x.p).map((x) => x.p)) : c;
