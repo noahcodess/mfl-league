@@ -68,3 +68,16 @@
 .qs-side img { width: 64px; height: 64px; object-fit: contain; image-rendering: pixelated; }
 .qs-side b { font-size: 56px; line-height: 1; animation: qs-score .6s .3s cubic-bezier(.2, 1.6, .4, 1) both; } @keyframes qs-score { from { opacity: 0; transform: scale(2.2); } }
 .qs-card .gc-top { display: none; }
+
+/* The pixel broadcast */
+.pg-wrap { display: grid; gap: 8px; margin-top: 10px; }
+.pg { position: relative; aspect-ratio: 16 / 9; container-type: inline-size; overflow: hidden; border-radius: 10px; background: #0b0c0f; }
+.pg .game-field, .pg .gf-screen { position: absolute; inset: 0; width: 100%; height: 100%; image-rendering: pixelated; }
+.pg-bug { position: absolute; left: 50%; bottom: 2.4cqw; transform: translateX(-50%); }
+.pg-bug .sb { font-size: 1.35cqw; }
+.pg-bug .sb.sb-tnf { font-size: 1.75cqw; }
+.pg-headline { position: absolute; left: 50%; top: 8cqw; transform: translateX(-50%); padding: .5cqw 2.4cqw; background: #111; color: #ffd83a; font: 900 3.4cqw/1.1 var(--font-display, system-ui); letter-spacing: .08em; border: .3cqw solid #ffd83a; animation: pg-pop .35s cubic-bezier(.2, 1.4, .4, 1) both; white-space: nowrap; }
+.pg-headline.final { color: #fff; border-color: #fff; }
+@keyframes pg-pop { from { transform: translateX(-50%) scale(.4); opacity: 0; } }
+.pg-text { min-height: 2.6em; margin: 0; font-size: .95rem; }
+.btn.ghost.on { outline: 2px solid currentColor; }

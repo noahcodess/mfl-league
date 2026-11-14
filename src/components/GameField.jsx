@@ -13,7 +13,9 @@ const TOUR = ['wide', 'midfield', 'left', 'stands', 'right'];
 // shot: { from, to, k } runs a hands-off camera move instead (broadcast intros): no buttons, no dragging, and a screen 3x
 // (or 6x) the usual size so at the widest zoom every field pixel is exactly 2x2 (or 4x4) screen pixels and nothing shimmers.
 // crowd: 'normal', 'bloodbath', or a color every fan wears.
-export default function GameField({ team, look = {}, crowd = 'normal', shot = null }) {
+// live: { target() -> camera spot, draw(ctx, cam) } lets a broadcast steer the camera and paint players over the field every frame.
+export default function GameField({ team, look = {}, crowd = 'normal', shot = null, live = null }) {
+  const liveRef = useRef(live); liveRef.current = live;
   const view = useRef(null);
   const world = useRef(null), base = useRef(null);
   const cam = useRef(shot?.from || SPOTS.wide.cam), target = useRef(shot?.to || SPOTS.wide.cam);
@@ -38,9 +40,12 @@ export default function GameField({ team, look = {}, crowd = 'normal', shot = nu
   useEffect(() => { // camera
     let raf;
     const frame = () => {
-      cam.current = glide(cam.current, target.current, shot?.k);
+      if (liveRef.current) target.current = clampCam(liveRef.current.target());
+      cam.current = glide(cam.current, target.current, liveRef.current ? 0.1 : shot?.k);
       if (view.current && world.current) {
-        blit(view.current.getContext('2d'), world.current, cam.current);
+        const ctx = view.current.getContext('2d');
+        blit(ctx, world.current, cam.current);
+        liveRef.current?.draw(ctx, cam.current);
       }
       raf = requestAnimationFrame(frame);
     };
@@ -64,12 +69,12 @@ export default function GameField({ team, look = {}, crowd = 'normal', shot = nu
     drag.current = { x: e.clientX, y: e.clientY };
   };
   return (
-    <div className={`game-field${shot ? ' gf-shot' : ''}`}>
-      {shot ? <canvas ref={view} width={VIEW_W * big} height={VIEW_H * big} className="gf-screen" /> : <canvas ref={view} width={VIEW_W} height={VIEW_H} className="gf-screen"
+    <div className={`game-field${shot || live ? ' gf-shot' : ''}`}>
+      {shot || live ? <canvas ref={view} width={VIEW_W * big} height={VIEW_H * big} className="gf-screen" /> : <canvas ref={view} width={VIEW_W} height={VIEW_H} className="gf-screen"
         onPointerDown={(e) => { setDemo(false); setSpot(''); drag.current = { x: e.clientX, y: e.clientY }; e.currentTarget.setPointerCapture(e.pointerId); }}
         onPointerMove={move} onPointerUp={() => { drag.current = null; }}
         onWheel={(e) => zoom(e.deltaY < 0 ? 1.15 : 0.87)} />}
-      {!shot && <div className="gf-controls">
+      {!shot && !live && <div className="gf-controls">
         {Object.entries(SPOTS).map(([k, s]) => <button key={k} className={spot === k ? 'on' : ''} onClick={() => go(k)}>{s.label}</button>)}
         <span className="gf-zoom"><button onClick={() => zoom(0.75)}>−</button><button onClick={() => zoom(1.33)}>+</button></span>
         <button className={demo ? 'on' : ''} onClick={() => setDemo(!demo)}>🎥 Camera demo</button>
