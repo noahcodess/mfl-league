@@ -24,15 +24,19 @@ export const SPOTS = {
 };
 export const at = (yard, zoom = 1.1) => ({ x: yardX(yard), y: MID_Y, zoom });
 
-// Move the camera a fraction k of the way to its target (call every frame).
+// Move the camera a fraction k of the way to its target (call every frame). Once it's as good as there it stops dead, so a
+// still camera never keeps creeping by tiny fractions (that made the grass and logos crawl).
 export function glide(cam, target, k = 0.08) {
   const t = clampCam(target);
+  if (Math.abs(t.x - cam.x) < 0.2 && Math.abs(t.y - cam.y) < 0.2 && Math.abs(t.zoom - cam.zoom) < 0.002) return t;
   return { x: cam.x + (t.x - cam.x) * k, y: cam.y + (t.y - cam.y) * k, zoom: cam.zoom + (t.zoom - cam.zoom) * k };
 }
 
+// The screen canvas can be bigger than the camera's 640x360 view (broadcast shots are). The view is lined up on whole screen
+// pixels, so world pixels never land half way between two of them and flicker.
 export function blit(ctx, world, cam) {
-  const w = VIEW_W / cam.zoom, h = VIEW_H / cam.zoom;
+  const cw = ctx.canvas.width, ch = ctx.canvas.height, px = (cam.zoom * cw) / VIEW_W, w = cw / px, h = ch / px;
   ctx.imageSmoothingEnabled = false;
-  ctx.fillStyle = '#0b0c0f'; ctx.fillRect(0, 0, VIEW_W, VIEW_H);
-  ctx.drawImage(world, cam.x - w / 2, cam.y - h / 2, w, h, 0, 0, VIEW_W, VIEW_H);
+  ctx.fillStyle = '#0b0c0f'; ctx.fillRect(0, 0, cw, ch);
+  ctx.drawImage(world, Math.round((cam.x - w / 2) * px) / px, Math.round((cam.y - h / 2) * px) / px, w, h, 0, 0, cw, ch);
 }

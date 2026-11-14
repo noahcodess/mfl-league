@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import SandboxButton from './SandboxButton.jsx';
 import TestSimLoading from './TestSimLoading.jsx';
+import CrowdShotTest from './CrowdShotTest.jsx';
 import { inSandbox } from '../data/sandbox.js';
 import { simToSeason } from '../data/testSim.js';
 import { currentPhase, offseasonStep, PHASE_NAMES } from '../data/teams.js';
 
 // Commissioner's Desk → Test: the only place to start or leave TEST mode. Test from right here, or sim straight to Week 1
-// (TEST turns on by itself). Everything done in TEST resets when you leave it.
+// (TEST turns on by itself). Everything done in TEST resets when you leave it. Also previews the intro's stadium shot.
 export default function TestTab({ canControl, reload }) {
   const [log, setLog] = useState(null);
   const [error, setError] = useState('');
@@ -42,6 +43,7 @@ export default function TestTab({ canControl, reload }) {
           {!offseason && <p className="dim">The league is already in the {PHASE_NAMES[currentPhase()].toLowerCase()}.</p>}
         </section>
       </div>
+      <CrowdShotTest />
       {log !== null && <TestSimLoading log={log} error={error} onClose={() => { setLog(null); setError(''); }} />}
     </div>
   );

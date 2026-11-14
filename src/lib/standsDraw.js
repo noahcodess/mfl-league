@@ -52,8 +52,10 @@ export function drawSurroundings(ctx, team, style = 'standard') {
   bench(r, FY0 - BORDER - 36, team, wood); bench(r, FY1 + BORDER + 16, team, wood);
 }
 
-// Fan shirts: mostly the home colors. 'bloodbath' (Dragons) puts the whole place in red.
+// Fan shirts: mostly the home colors. 'bloodbath' (Dragons) puts the whole place in red; a color (like '#ffffff') puts every
+// fan in that color.
 function shirts(team, mode) {
+  if (mode?.[0] === '#') return [mode, mode, mode, shade(mode, 0.9), shade(mode, brightness(mode) > 0.8 ? 0.94 : 1.14)];
   if (mode === 'bloodbath') return ['#b00b0a', '#d01414', '#8a0909', '#b00b0a', '#e02424', '#c41010'];
   const c = team.color;
   return [c, c, c, shade(c, 0.8), shade(c, 1.2), team.accent, '#e9ecef', '#2b2f38', c];

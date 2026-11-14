@@ -1,4 +1,4 @@
-/* Broadcast intro shots after the matchup: player to watch, tale of the tape, the crowd, the long shot of the field, the end card. */
+/* Broadcast intro shots after the matchup: player to watch, tale of the tape, the stadium shot (its attendance graphics are in attendance.css), the long shot of the field, the end card. */
 .sc-player { display: grid; grid-template-columns: 1fr 1.25fr; align-items: center; background: radial-gradient(circle at 28% 55%, color-mix(in srgb, var(--tc) 70%, #000), #000 72%); }
 .pl-head { position: absolute; top: 3cqw; left: 4.5cqw; z-index: 1; display: grid; gap: .3cqw; animation: in-left .5s both; }
 .pl-head span { font-size: 2.6cqw; text-transform: uppercase; padding: .3cqw 1.4cqw; background: var(--accent); color: var(--on-accent, #111); }
@@ -36,24 +36,12 @@
 .tape-bar .hb { flex: 1; background: var(--hc); animation: bar-in 1s calc(.7s + var(--i) * .25s) both; transform-origin: right; }
 @keyframes bar-in { from { transform: scaleX(0); } }
 
-.sc-crowd { background: radial-gradient(circle at 50% 0%, color-mix(in srgb, var(--tc) 50%, #000), #050608 65%); }
-.crowd-lights { position: absolute; inset: 0; display: flex; justify-content: space-around; }
-.crowd-lights i { width: 10cqw; background: linear-gradient(180deg, #fff9 0%, #fff0 60%); clip-path: polygon(40% 0, 60% 0, 100% 100%, 0 100%); opacity: .25; animation: lights 2.4s ease-in-out infinite alternate; }
-.crowd-lights i:nth-child(2n) { animation-delay: -1.2s; }
-@keyframes lights { to { opacity: .5; } }
-.crowd-px { position: absolute; left: 0; right: 0; bottom: 0; width: 100%; height: 100%; }
-.crowd-card { position: absolute; left: 50%; top: 9cqw; transform: translateX(-50%); display: flex; align-items: center; gap: 2cqw; padding: 1.6cqw 3cqw;
-  background: var(--panel-bg); color: var(--panel-fg); border-bottom: .6cqw solid var(--accent); animation: in-pop .55s .2s both; }
-.crowd-card img { width: 8cqw; height: 8cqw; object-fit: contain; }
-.crowd-card > div { display: grid; }
-.crowd-card small { font-size: 1.3cqw; text-transform: uppercase; letter-spacing: .15em; opacity: .85; }
-.crowd-name { font-size: 3.4cqw; text-transform: uppercase; line-height: 1.05; }
-.crowd-count { font-size: 5cqw; line-height: 1; color: var(--accent); font-variant-numeric: tabular-nums; }
-.crowd-stamp { position: absolute; right: -3cqw; top: -2.4cqw; padding: .4cqw 1.4cqw; background: #e11d1d; color: #fff; font-size: 2cqw; text-transform: uppercase;
-  transform: rotate(8deg); border: .3cqw solid #fff; animation: in-pop .35s both; }
+.sc-crowd { background: #05060a; }
+.pixel-canvas.crowd-px { position: absolute; inset: 0; width: 100%; height: 100%; image-rendering: auto; }
+.sc-crowd::after { content: ''; position: absolute; inset: 0; pointer-events: none; background: radial-gradient(ellipse at 50% 45%, transparent 55%, #00000073 100%); }
 
 .sc-field .game-field { position: absolute; inset: 0; }
-.sc-field .gf-screen { width: 100%; height: 100%; display: block; image-rendering: pixelated; }
+.sc-field .gf-screen { width: 100%; height: 100%; display: block; image-rendering: auto; border: 0; }
 .field-fall { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
 .field-bug { position: absolute; right: 2.4cqw; bottom: 2.4cqw; max-height: 5.5cqw; max-width: 9cqw; opacity: .92; filter: drop-shadow(.2cqw .2cqw 0 #000); }
 .lower-third { position: absolute; left: 4cqw; bottom: 4cqw; display: flex; align-items: stretch; animation: in-left .5s .6s both; }

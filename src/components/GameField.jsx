@@ -1,27 +1,25 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { WORLD_W, WORLD_H, VIEW_W, VIEW_H } from '../lib/fieldLayout.js';
 import { drawField } from '../lib/fieldDraw.js';
 import { drawSurroundings, makeFans, drawFans } from '../lib/standsDraw.js';
 import { SPOTS, clampCam, glide, blit } from '../lib/gameCamera.js';
 import { leagueLogo } from '../data/logos.js';
+import { useImage } from '../lib/useImage.js';
+import { shotPixels } from '../lib/screenPixels.js';
 
 const TOUR = ['wide', 'midfield', 'left', 'stands', 'right'];
-function useImage(src) {
-  const [img, setImg] = useState(null);
-  useEffect(() => { if (!src) { setImg(null); return; } const i = new Image(); i.onload = () => setImg(i); i.src = src; }, [src]);
-  return img;
-}
-
 // The game screen: a team's stadium through the one game camera. Buttons jump to a spot, +/- and the mouse wheel zoom,
 // dragging pans, and "Camera demo" glides around on its own. Fans in the front rows move. The game's players will be drawn here.
-// shot: { from, to, k } runs a hands-off camera move instead (broadcast intros): no buttons, no dragging.
-// overlay(ctx, toScreen, zoom, ms): people drawn over the camera view every frame at true size, so their pixel art stays sharp (the coin toss crew).
-export default function GameField({ team, look = {}, crowd = 'normal', shot = null, overlay = null }) {
+// shot: { from, to, k } runs a hands-off camera move instead (broadcast intros): no buttons, no dragging, and a screen 3x
+// (or 6x) the usual size so at the widest zoom every field pixel is exactly 2x2 (or 4x4) screen pixels and nothing shimmers.
+// crowd: 'normal', 'bloodbath', or a color every fan wears.
+export default function GameField({ team, look = {}, crowd = 'normal', shot = null }) {
   const view = useRef(null);
   const world = useRef(null), base = useRef(null);
   const cam = useRef(shot?.from || SPOTS.wide.cam), target = useRef(shot?.to || SPOTS.wide.cam);
   const [spot, setSpot] = useState('wide');
   const [demo, setDemo] = useState(false);
+  const big = useMemo(() => (shotPixels() > 2880 ? 6 : 3), []);
   const teamLogo = useImage(team.logo), mfl = useImage(leagueLogo.light);
 
   useEffect(() => { // paint the stadium once, then keep the fans moving
@@ -37,16 +35,12 @@ export default function GameField({ team, look = {}, crowd = 'normal', shot = nu
     return () => clearInterval(id);
   }, [team.id, team.color, team.accent, teamLogo, mfl, crowd, look.font, look.design, look.style, look.shadow, look.shadowColor]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const over = useRef(overlay);
-  over.current = overlay;
   useEffect(() => { // camera
     let raf;
-    const frame = (ms) => {
+    const frame = () => {
       cam.current = glide(cam.current, target.current, shot?.k);
       if (view.current && world.current) {
-        const ctx = view.current.getContext('2d'), c = cam.current;
-        blit(ctx, world.current, c);
-        over.current?.(ctx, (x, y) => [(x - c.x) * c.zoom + VIEW_W / 2, (y - c.y) * c.zoom + VIEW_H / 2], c.zoom, ms);
+        blit(view.current.getContext('2d'), world.current, cam.current);
       }
       raf = requestAnimationFrame(frame);
     };
@@ -71,7 +65,7 @@ export default function GameField({ team, look = {}, crowd = 'normal', shot = nu
   };
   return (
     <div className={`game-field${shot ? ' gf-shot' : ''}`}>
-      {shot ? <canvas ref={view} width={VIEW_W} height={VIEW_H} className="gf-screen" /> : <canvas ref={view} width={VIEW_W} height={VIEW_H} className="gf-screen"
+      {shot ? <canvas ref={view} width={VIEW_W * big} height={VIEW_H * big} className="gf-screen" /> : <canvas ref={view} width={VIEW_W} height={VIEW_H} className="gf-screen"
         onPointerDown={(e) => { setDemo(false); setSpot(''); drag.current = { x: e.clientX, y: e.clientY }; e.currentTarget.setPointerCapture(e.pointerId); }}
         onPointerMove={move} onPointerUp={() => { drag.current = null; }}
         onWheel={(e) => zoom(e.deltaY < 0 ? 1.15 : 0.87)} />}

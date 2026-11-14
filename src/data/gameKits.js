@@ -1,11 +1,15 @@
-// What both teams wear in a game (the home team in the darker uniform) and the players a broadcast shows off.
-import { useJerseys, gameUniforms } from './jerseys.js';
+// What both teams wear in a game (the home team in the darker uniform, or its specialty pick), what color the fans wear if
+// the home team dressed them to match, and the players a broadcast shows off.
+import { useJerseys, useGamePicks, gameUniforms, fansDressed } from './jerseys.js';
 import { getPlayers } from './players.js';
+import { currentSeason } from './teams.js';
 
-export function useGameKits(home, away) {
-  const hj = useJerseys(home), aj = useJerseys(away);
+// Returns { home, away, special, fans }. fans: the color every fan wears (the alternate's jersey color), or null.
+export function useGameKits(home, away, game) {
+  const hj = useJerseys(home), aj = useJerseys(away), picks = useGamePicks(game?.season ?? currentSeason());
   if (!hj?.length || !aj?.length) return null;
-  return gameUniforms(hj, aj, null);
+  const kits = gameUniforms(hj, aj, game ? picks.get(game.id) : null);
+  return { ...kits, fans: kits.special && fansDressed(game.id) ? kits.home.colors.jersey : null };
 }
 
 // A team's three headliners for graphics: its QB, its best playmaker and its best defender.

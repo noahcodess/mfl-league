@@ -28,7 +28,7 @@ const FADE = 450;
 // kick: { receiving, home_dir } from the kickoff coin flip. st: the live game state (for the scorebug).
 export default function GameIntro({ game, season, kick, st, onClose, onReplay }) {
   const home = getTeam(game.home), away = getTeam(game.away), bc = broadcastFor(game, home);
-  const kits = useGameKits(home, away), stadium = useStadiums()[home.id];
+  const kits = useGameKits(home, away, game), stadium = useStadiums()[home.id];
   const before = useMemo(() => season.weeks.slice(0, game.week - 1), [season, game.week]);
   const rec = useMemo(() => records(before), [before]);
   const stats = useMemo(() => teamStats(before), [before]);
@@ -56,8 +56,8 @@ export default function GameIntro({ game, season, kick, st, onClose, onReplay })
           {scene === 'matchup' && <IntroMatchup bc={bc} game={game} home={home} away={away} kits={kits} rec={rec} stadium={stadium} />}
           {scene === 'player' && spot && <IntroPlayer bc={bc} spot={spot} team={spotTeam} kit={spotTeam.id === home.id ? kits?.home : kits?.away} />}
           {scene === 'tape' && <IntroTape home={home} away={away} rec={rec} stats={stats} />}
-          {scene === 'crowd' && <IntroCrowd bc={bc} home={home} stadium={stadium} />}
-          {scene === 'field' && <IntroLongShot bc={bc} home={home} away={away} stadium={stadium} weather={weather} kick={kick} st={st} rec={rec} />}
+          {scene === 'crowd' && <IntroCrowd bc={bc} home={home} stadium={stadium} weather={weather} gameId={game.id} dress={kits?.fans} theme={kits?.fans ? kits.home.name : ''} />}
+          {scene === 'field' && <IntroLongShot bc={bc} home={home} away={away} stadium={stadium} weather={weather} kick={kick} st={st} rec={rec} crowd={kits?.fans || 'normal'} />}
           {scene === 'end' && (
             <div className="intro-scene sc-end">
               <img src={bc.logo} alt="" /><h2>Kickoff is next</h2><p>The game itself comes with the game engine.</p>

@@ -1,32 +1,31 @@
-import React, { useEffect, useState } from 'react';
+import React, { useMemo } from 'react';
 import PixelCanvas from './PixelCanvas.jsx';
-import { makeCrowd } from '../lib/pixelSwarm.js';
+import AttendanceCard from './AttendanceCard.jsx';
+import { useImage } from '../lib/useImage.js';
+import { W, H } from '../lib/stadiumLayout.js';
+import { stadiumLook } from '../lib/stadiumLooks.js';
+import { pickAct } from '../lib/crowdActs.js';
+import { makeCrowdShot } from '../lib/crowdShot.js';
+import { makeFall, weatherKind } from '../lib/pixelSwarm.js';
+import { shotPixels } from '../lib/screenPixels.js';
 
-// Intro shot: the crowd gets its own screen. A pixel crowd in the home colors doing the wave, the stadium name, and the
-// attendance counting up to a sellout (bad teams will draw less later).
-export default function IntroCrowd({ bc, home, stadium }) {
-  const cap = stadium?.capacity || 60000;
-  const [n, setN] = useState(0);
-  useEffect(() => {
-    let raf; const t0 = performance.now() + 500;
-    const step = (now) => { const k = Math.max(0, Math.min(1, (now - t0) / 1600)); setN(Math.round(cap * (1 - (1 - k) ** 3))); if (k < 1) raf = requestAnimationFrame(step); };
-    raf = requestAnimationFrame(step);
-    return () => cancelAnimationFrame(raf);
-  }, [cap]);
+const seedOf = (id) => [...String(id)].reduce((s, ch) => s * 31 + ch.charCodeAt(0), 7) >>> 0;
+
+// Intro shot: the stadium. A sky cam rises from the top of the lower bowl to the upper deck of the home team's stadium while
+// the crowd does one of its six things, with the network's attendance graphic on top.
+// dress: the color every fan wears (the home team's alternate, when they turned that on). theme: that alternate's name.
+// act: force one crowd animation (the test tab uses this); otherwise the game picks one.
+export default function IntroCrowd({ bc, home, stadium, weather, gameId = 0, dress = null, theme = '', act = null }) {
+  const logo = useImage(home.logo), fall = weatherKind(weather?.sky);
+  const sky = /dome/i.test(weather?.sky || '') ? 'dome' : bc.prime ? 'night' : 'day';
+  const doing = act || pickAct(home, seedOf(gameId), sky !== 'day', dress);
+  const scale = useMemo(() => Math.max(2, Math.min(5, Math.ceil(shotPixels() / W))), []);
+  const make = () => makeCrowdShot({ team: home, look: stadiumLook(home, stadium, sky), act: doing, dress, theme, logo, stadiumName: stadium?.name });
   return (
-    <div className="intro-scene sc-crowd" style={{ '--tc': home.color, '--ta': home.accent }}>
-      <div className="crowd-lights" aria-hidden="true"><i /><i /><i /><i /></div>
-      <PixelCanvas className="crowd-px" w={320} h={180} make={(w, h) => makeCrowd(w, h, [home.color, home.accent, '#ffffff', home.color])} deps={[home.id]} />
-      <div className="crowd-card">
-        <img src={home.logo} alt="" />
-        <div>
-          <small>Today at</small>
-          <b className="crowd-name">{stadium?.name || home.name}</b>
-          <span className="crowd-count">{n.toLocaleString()}</span>
-          <small>in attendance</small>
-        </div>
-        {n >= cap && <span className="crowd-stamp">Sold out</span>}
-      </div>
+    <div className="intro-scene sc-crowd">
+      <PixelCanvas className="crowd-px" w={W * scale} h={H * scale} make={make} deps={[home.id, logo, doing, dress, sky, stadium?.style]} />
+      {fall && sky !== 'dome' && <PixelCanvas className="field-fall" make={(w, h) => makeFall(w, h, fall)} deps={[fall]} />}
+      <AttendanceCard bc={bc} home={home} stadium={stadium} />
       <img className="field-bug" src={bc.net.logo} alt="" />
     </div>
   );

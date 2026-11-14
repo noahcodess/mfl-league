@@ -67,13 +67,16 @@ export function usePendingJerseys(teamId, version = 0) {
   return list;
 }
 
-// Specialty picks for a season: Map(gameId -> slot) for the home team's pick. Shared, reloads when someone picks.
-const picks = { season: null, map: new Map(), subs: new Set() };
+// Specialty picks for a season: Map(gameId -> slot) for the home team's pick, plus the games where the home team dressed its
+// fans in that jersey's color. Shared, reloads when someone picks.
+const picks = { season: null, map: new Map(), fans: new Set(), subs: new Set() };
 async function loadPicks(season) {
   if (DEMO) return;
-  const { data } = await db.from('game_uniforms').select('game_id, team_id, slot, games!inner(season, home_team)').eq('games.season', season);
+  const { data } = await db.from('game_uniforms').select('game_id, team_id, slot, fans_match, games!inner(season, home_team)').eq('games.season', season);
   picks.season = season;
-  picks.map = new Map((data || []).filter((r) => r.team_id === r.games.home_team).map((r) => [r.game_id, r.slot]));
+  const mine = (data || []).filter((r) => r.team_id === r.games.home_team);
+  picks.map = new Map(mine.map((r) => [r.game_id, r.slot]));
+  picks.fans = new Set(mine.filter((r) => r.fans_match).map((r) => r.game_id));
   picks.subs.forEach((fn) => fn());
 }
 export function useGamePicks(season) {
@@ -86,8 +89,10 @@ export function useGamePicks(season) {
   }, [season]);
   return picks.map;
 }
-export async function pickSpecialty(gameId, slot, season) {
-  await rpc('pick_specialty_game', { p_game: gameId, p_slot: slot });
+// True when the home team has every fan wearing its alternate's color for this game (call after useGamePicks).
+export const fansDressed = (gameId) => picks.fans.has(gameId);
+export async function pickSpecialty(gameId, slot, season, fans = false) {
+  await rpc('pick_specialty_game', { p_game: gameId, p_slot: slot, p_fans: !!slot && fans });
   await loadPicks(season);
 }
 

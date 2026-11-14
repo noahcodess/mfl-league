@@ -1,0 +1,70 @@
+/* The attendance graphic over the stadium shot. One design per program, each in its own spot, matching its scorebug:
+   FOX black and gold slab (bottom left) · CBS clean navy and white bar (bottom) · TNF rounded blue card (top right) ·
+   SNF silver wings around a circle whose ring fills up (bottom middle) · ESPN slanted slate panel with red glow (top left). */
+.att { position: absolute; z-index: 3; display: flex; align-items: center; color: #fff; font-family: var(--bf); text-transform: uppercase; line-height: 1; }
+.att-logo { display: grid; place-items: center; flex: none; }
+.att-logo img { width: 100%; height: 100%; object-fit: contain; image-rendering: pixelated; filter: drop-shadow(.15cqw .2cqw 0 #0008); }
+.att-body { display: grid; gap: .35cqw; }
+.att-label { font-size: 1.15cqw; letter-spacing: .18em; }
+.att-where { font-size: 2.2cqw; white-space: nowrap; }
+.att-num { font-family: var(--hf); font-weight: var(--hw); font-style: var(--hs); font-size: 4.4cqw; font-variant-numeric: tabular-nums; min-width: 4.4ch; text-align: right; }
+.att-meter { display: none; }
+.att-full { font-size: 1.5cqw; letter-spacing: .08em; white-space: nowrap; animation: att-stamp .4s cubic-bezier(.2, 1.6, .4, 1) both; }
+@keyframes att-stamp { from { opacity: 0; transform: scale(1.8); } }
+@keyframes att-left { from { opacity: 0; transform: translateX(-8cqw); } }
+@keyframes att-up { from { opacity: 0; transform: translateY(6cqw); } }
+@keyframes att-pop { from { opacity: 0; transform: scale(.6) rotate(4deg); } }
+
+/* FOX */
+.att-fox { left: 3.5cqw; bottom: 4.5cqw; gap: 1.6cqw; padding: 0 3.2cqw 0 0; height: 7.4cqw; background: linear-gradient(180deg, #232323, #000); border-bottom: .45cqw solid #f4b800;
+  clip-path: polygon(0 0, 100% 0, calc(100% - 2cqw) 100%, 0 100%); animation: att-left .5s .35s cubic-bezier(.2, .9, .3, 1) both; }
+.att-fox .att-logo { width: 8cqw; height: 100%; padding: .7cqw; background: linear-gradient(180deg, #ffd23d, #f4b800); clip-path: polygon(0 0, 100% 0, calc(100% - 1.3cqw) 100%, 0 100%); }
+.att-fox .att-label { color: #f4b800; font-style: italic; }
+.att-fox .att-where { font-style: italic; }
+.att-fox .att-num { color: #fff; padding-left: .8cqw; }
+.att-fox .att-full { background: #f4b800; color: #111; padding: .5cqw 1.1cqw; font-style: italic; transform: skewX(-12deg); }
+
+/* CBS */
+.att-cbs { left: 0; right: 0; margin-inline: auto; width: fit-content; bottom: 4.5cqw; height: 5.4cqw; gap: 0; background: #fff; color: #0b3a82; box-shadow: 0 0 0 .3cqw #0b3a82, 0 .9cqw 0 #00000055;
+  animation: att-up .5s .35s cubic-bezier(.2, .9, .3, 1) both; }
+.att-cbs .att-logo { width: 6.2cqw; height: 100%; padding: .5cqw; background: var(--tc); }
+.att-cbs .att-body { padding: 0 1.8cqw; }
+.att-cbs .att-label { color: #1f5fc4; }
+.att-cbs .att-where { font-size: 1.9cqw; }
+.att-cbs .att-num { align-self: stretch; display: grid; place-items: center end; padding: 0 1.6cqw; background: #0b3a82; color: #fff; font-size: 3.4cqw; }
+.att-cbs .att-full { align-self: stretch; display: grid; place-items: center; padding: 0 1.4cqw; background: #fff; color: #0b3a82; border-left: .3cqw solid #0b3a82; font-weight: 800; }
+
+/* TNF */
+.att-tnf { right: 3.5cqw; top: 4cqw; flex-direction: column; align-items: flex-end; gap: .5cqw; padding: 1.4cqw 2.2cqw 1.5cqw 6.4cqw; background: linear-gradient(180deg, #3d93ff, #1b5fd6 55%, #0a3d91);
+  border: .4cqw solid #fff; border-radius: 1.8cqw; box-shadow: .5cqw .5cqw 0 #041d4d; animation: att-pop .5s .35s cubic-bezier(.2, 1.4, .4, 1) both; }
+.att-tnf .att-logo { position: absolute; left: -2.6cqw; top: -2.2cqw; width: 8.6cqw; height: 8.6cqw; }
+.att-tnf .att-body { justify-items: end; }
+.att-tnf .att-label { order: 2; color: #cfe4ff; }
+.att-tnf .att-where { font-family: var(--hf); font-size: 1.9cqw; text-shadow: .15cqw .15cqw 0 #0a3d91; }
+.att-tnf .att-num { font-size: 4.6cqw; text-shadow: .25cqw .25cqw 0 #0a3d91, .5cqw .5cqw 0 #041d4d; }
+.att-tnf .att-full { background: #fff; color: #0a3d91; padding: .4cqw 1.2cqw; border-radius: 99cqw; font-family: var(--hf); font-size: 1.3cqw; }
+
+/* SNF */
+@property --fill { syntax: '<number>'; inherits: true; initial-value: 0; }
+.att-snf { left: 0; right: 0; margin-inline: auto; width: fit-content; bottom: 6.5cqw; display: grid; grid-template-columns: 1fr auto 1fr; grid-template-rows: 5.2cqw; gap: 0;
+  filter: drop-shadow(0 .6cqw 0 #00000066); animation: att-up .5s .35s cubic-bezier(.2, .9, .3, 1) both; }
+.att-snf .att-body, .att-snf .att-num { grid-row: 1; display: grid; align-content: center; min-width: 20cqw; background: linear-gradient(180deg, #1a2547, #070b18); border-top: .25cqw solid #c9d2dc; border-bottom: .3cqw solid #6460aa; }
+.att-snf .att-body { grid-column: 1; justify-items: end; padding: 0 5.8cqw 0 3.6cqw; clip-path: polygon(2.4cqw 0, 100% 0, 100% 100%, 0 100%); }
+.att-snf .att-num { grid-column: 3; text-align: left; padding: 0 3.6cqw 0 5.8cqw; clip-path: polygon(0 0, calc(100% - 2.4cqw) 0, 100% 100%, 0 100%); font-size: 3.6cqw; color: #eef2f6; text-shadow: .18cqw .18cqw 0 #000; }
+.att-snf .att-label { color: #a9b6c6; }
+.att-snf .att-where { font-size: 1.7cqw; }
+.att-snf .att-logo { grid-column: 2; grid-row: 1; align-self: center; position: relative; z-index: 2; width: 9.4cqw; height: 9.4cqw; margin: -2.1cqw -4.7cqw; padding: 1.5cqw; border-radius: 50%; box-sizing: border-box;
+  background: radial-gradient(circle, #1a2547 0 62%, transparent 63%), conic-gradient(#dfe6ee calc(var(--fill) * 360deg), #2a3350 0); box-shadow: 0 0 0 .3cqw #070b18; }
+.att-snf .att-full { position: absolute; left: 50%; top: calc(100% + 2.5cqw); margin-left: -4.5cqw; z-index: 3; width: 9cqw; text-align: center; padding: .35cqw 0; border-radius: .6cqw;
+  background: linear-gradient(180deg, #fff, #c9d2dc); color: #0a1022; font-family: var(--hf); font-style: italic; font-size: 1.25cqw; }
+
+/* ESPN (Saturday and Monday night) */
+.att-espn { left: 3.5cqw; top: 6cqw; gap: 1.4cqw; padding: 1cqw 2.6cqw 1.5cqw 1.4cqw; background: linear-gradient(180deg, #37414b, #171c21); border-top: .4cqw solid #e3261b;
+  clip-path: polygon(0 0, 100% 0, calc(100% - 2cqw) 100%, 0 100%); filter: drop-shadow(0 0 1cqw #e3261b88) drop-shadow(.4cqw .5cqw 0 #5a6068);
+  animation: att-left .5s .35s cubic-bezier(.2, .9, .3, 1) both; }
+.att-espn .att-logo { width: 5.6cqw; height: 5.6cqw; }
+.att-espn .att-label { color: #ff3b30; }
+.att-espn .att-where { font-size: 1.8cqw; color: #dfe4ea; }
+.att-espn .att-num { font-size: 4cqw; text-shadow: 0 0 1cqw #ff2a2a99; }
+.att-espn .att-meter { display: block; position: absolute; left: 1.4cqw; right: 3.4cqw; bottom: .55cqw; height: .4cqw; background: linear-gradient(90deg, #e3261b calc(var(--fill) * 100%), #ffffff22 0); }
+.att-espn .att-full { background: #e3261b; color: #fff; padding: .45cqw 1cqw; font-family: var(--hf); font-size: 1.25cqw; }

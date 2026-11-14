@@ -14,5 +14,5 @@
 .show-tnf { --hf: 'Bungee', sans-serif; --hw: 400; --hs: normal; }
 .show-stnf, .show-mnf { --hf: 'Russo One', sans-serif; --hw: 400; --hs: normal; }
 .show-snf { --hf: 'Exo 2', sans-serif; --hw: 800; --hs: italic; }
-.intro-screen .hf, .open-teams, .open-week, .half-name b, .pl-name b, .pl-head span, .tape-title, .tape-teams b, .crowd-name, .crowd-count,
-.lower-third b, .wx-card b, .match-vs, .crowd-stamp, .sc-end h2, .pl-tile b, .tape-v { font-family: var(--hf); font-weight: var(--hw); font-style: var(--hs); }
+.intro-screen .hf, .open-teams, .open-week, .half-name b, .pl-name b, .pl-head span, .tape-title, .tape-teams b, .att-where, .att-num, .att-full,
+.lower-third b, .wx-card b, .match-vs, .sc-end h2, .pl-tile b, .tape-v { font-family: var(--hf); font-weight: var(--hw); font-style: var(--hs); }

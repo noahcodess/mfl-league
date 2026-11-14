@@ -16,6 +16,12 @@ body:has(.app.sandbox) { background-image: radial-gradient(#ffffff08 1px, transp
 .test-status.on { border-color: #2fbf71; }
 .test-options { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; }
 .test-options .card { display: grid; gap: 8px; align-content: start; }
+.crowd-test { display: grid; gap: 10px; justify-items: start; }
+.ct-row { display: flex; flex-wrap: wrap; gap: 10px; }
+.ct-row label { display: grid; gap: 4px; font-size: 12px; color: var(--dim); font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+.ct-row select { background: #0c0705; color: var(--text); border: 2px solid var(--line); padding: 6px 8px; font: inherit; font-size: 14px; text-transform: none; letter-spacing: 0; }
+.ct-again { position: absolute; left: 50%; top: 1.2cqw; transform: translateX(-50%); z-index: 20; opacity: .5; }
+.ct-again:hover { opacity: 1; }
 .tsim-overlay { position: fixed; inset: 0; z-index: 400; display: grid; place-items: center; background: #050a07e6; backdrop-filter: blur(3px); }
 .tsim-card { width: min(460px, calc(100vw - 32px)); display: grid; justify-items: center; gap: 10px; padding: 28px 24px; text-align: center;
   background: linear-gradient(180deg, #10241a, #0d1a12); border: 2px solid #2fbf71; border-radius: 16px; box-shadow: 6px 6px 0 #000, 0 0 40px #2fbf7133; }

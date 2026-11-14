@@ -6,16 +6,18 @@ import { makeFall, weatherKind } from '../lib/pixelSwarm.js';
 import { MIN_ZOOM } from '../lib/gameCamera.js';
 import { yardX, MID_Y } from '../lib/fieldLayout.js';
 
-const SHOT = { from: { x: yardX(38), y: MID_Y, zoom: MIN_ZOOM }, to: { x: yardX(62), y: MID_Y, zoom: MIN_ZOOM * 1.05 }, k: 0.006 };
+// The camera only slides sideways here. It used to creep in closer too, and a slow zoom is what made the grass and the logo flicker.
+const SHOT = { from: { x: yardX(38), y: MID_Y, zoom: MIN_ZOOM }, to: { x: yardX(62), y: MID_Y, zoom: MIN_ZOOM }, k: 0.006 };
 
 // Last intro shot, after the program's transition: a long shot of the field drifting across, the weather popping up (and
 // falling as pixels), who receives the opening kick and which way they go, then the scorebug slides in. Kickoff comes later.
-export default function IntroLongShot({ bc, home, away, stadium, weather, kick, st, rec }) {
+// crowd: 'normal', or the color every fan wears today.
+export default function IntroLongShot({ bc, home, away, stadium, weather, kick, st, rec, crowd = 'normal' }) {
   const fall = weatherKind(weather.sky), recv = kick?.receiving === home.id ? home : away;
   const recvDir = kick ? ((recv.id === home.id) === (kick.home_dir === 'right') ? 'right' : 'left') : null;
   return (
     <div className="intro-scene sc-field">
-      <GameField team={home} look={stadium || {}} shot={SHOT} />
+      <GameField team={home} look={stadium || {}} shot={SHOT} crowd={crowd} />
       {fall && <PixelCanvas className="field-fall" make={(w, h) => makeFall(w, h, fall)} deps={[fall]} />}
       <img className="field-bug" src={bc.net.logo} alt="" />
       {kick && (
