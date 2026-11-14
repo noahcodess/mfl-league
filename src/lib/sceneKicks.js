@@ -16,11 +16,13 @@ function bringBack(S, play, ret, land, yards, cover, tLand) {
 
 function kickoffScene(S, play, L) {
   const k = L[play.off].kickTeams.kickoff, r = L[play.def].kickTeams.kickReturn, a = play.after;
-  S.los = play.off === 'away' ? 35 : 65; S.first = null; S.T0 = 1;
+  S.los = play.off === 'away' ? 35 : 65; S.first = null; S.T0 = 3.2; S.tee = { x: S.los, y: 0, t1: S.T0 };
   const endAbs = a.poss === 'away' ? a.ballOn : 100 - a.ballOn, endAlong = (endAbs - S.los) * S.dir, re = ev(play, 'ret');
-  const kicker = add(S, k.players[0], play.off, -4, -1), cover = row(S, k.players.slice(1), play.off, -1), ret = add(S, r.returner, play.def, 60, 0);
+  const kicker = add(S, k.players[0], play.off, -9, -1.5), cover = row(S, k.players.slice(1), play.off, -6), ret = add(S, r.returner, play.def, 60, 0);
+  cover.forEach((c) => { stay(c, S.T0 - 1.4); go(c, S.T0, -0.6, c.keys[0].y, S); });   // they run up with the kicker and hit the line as he kicks
   row(S, r.players.slice(1, 7), play.def, 34).forEach((b) => { stay(b, S.T0 + 2); go(b, S.T0 + 4, 40, b.keys[0].y * 0.6, S); pose(b, S.T0 + 3, 9, 'block'); });
-  go(kicker, S.T0, -0.5, 0, S); pose(kicker, S.T0, S.T0 + 0.4, 'kick'); S.ball.push({ t: 0, kind: 'ground', x: S.los, y: 0 });
+  stay(kicker, S.T0 - 1.6); go(kicker, S.T0, -0.4, -0.2, S); pose(kicker, S.T0 - 0.12, S.T0 + 0.4, 'kick'); S.ball.push({ t: 0, kind: 'ground', x: S.los, y: 0 });
+  go(kicker, S.T0 + 2.4, 20, -3, S);
   if (play.onside) { fly(S, S.T0, S.T0 + 1.2, [S.los, 0], S.at(11, 3), 1); cover.forEach((c) => { stay(c, S.T0); go(c, S.T0 + 1.6, 10, c.keys[0].y * 0.2, S); }); return S.T0 + 2.4; }
   const land = re ? endAlong + re.yards : 68, tLand = S.T0 + 3.2;
   if (ret) { ret.keys[0].x = S.at(land, 0)[0]; ret.keys[0].y = (play.n % 3 - 1) * 6; }
@@ -34,7 +36,7 @@ function puntScene(S, play, L) {
   const punter = add(S, k.players[0], play.off, -13, 0), cover = row(S, k.players.slice(1), play.off, -1, 'set'); row(S, r.players.slice(1, 7), play.def, 1.2, 'set');
   const land = Math.min(kick?.dist ?? 42, 100 - play.before.ballOn + 6), ret = add(S, r.returner, play.def, land, 2), tKick = S.T0 + 1.3, tLand = tKick + 3.4;
   S.ball.push({ t: 0, kind: 'ground', x: S.los, y: 0 }); fly(S, S.T0, S.T0 + 0.6, [S.los, 0], S.at(-12.5, 0), 1.5); hold(S, S.T0 + 0.6, punter);
-  pose(punter, tKick, tKick + 0.4, 'kick'); fly(S, tKick, tLand, S.at(-12.5, 0), S.at(land, 2), 15);
+  pose(punter, tKick - 0.15, tKick + 0.4, 'kick'); fly(S, tKick, tLand, S.at(-12.5, 0), S.at(land, 2), 15);
   if (re && !re.fair && ret) return bringBack(S, play, ret, land, re.yards, cover, tLand);
   cover.forEach((c) => { stay(c, tKick); go(c, tLand, land - 3, c.keys[0].y * 0.4, S); });
   if (ret && re?.fair) { pose(ret, tLand - 0.6, tLand + 1, 'catch'); hold(S, tLand, ret); } else S.ball.push({ t: tLand, kind: 'ground', x: S.at(land + 4, 2)[0], y: 2 });
@@ -50,7 +52,7 @@ function kickScene(S, play, L) { // field goals and extra points
   row(S, L[play.def].kickTeams.fieldGoalBlock.players.slice(0, 8), play.def, 1, 'set').forEach((a, i, l) => { a.keys[0].y = -6 + (12 * i) / Math.max(1, l.length - 1); pose(a, S.T0, 9, 'block'); });
   const tKick = S.T0 + 1.1, toPosts = (goalAbs - S.los) * S.dir + 10, tEnd = tKick + 1 + toPosts / 30;
   S.ball.push({ t: 0, kind: 'ground', x: S.los, y: 0 }); fly(S, S.T0, S.T0 + 0.4, [S.los, 0], S.at(-6.8, 0), 0.6); if (holder) hold(S, S.T0 + 0.4, holder);
-  if (kicker) { stay(kicker, S.T0 + 0.4); go(kicker, tKick, -7.6, -0.4, S); pose(kicker, tKick, tKick + 0.4, 'kick'); }
+  if (kicker) { stay(kicker, S.T0 + 0.4); go(kicker, tKick, -7.6, -0.4, S); pose(kicker, tKick - 0.12, tKick + 0.4, 'kick'); }
   fly(S, tKick, tEnd, S.at(-6.8, 0), S.at(toPosts + 2, kick?.good ? 0.5 : 6.5), 9);
   return tEnd + 0.3;
 }
@@ -66,12 +68,14 @@ export function buildScene(play, lineups) {
     const made = play.events.find((e) => e.type === 'tackle' && e.result === 'made');
     const gain = play.kind === 'two' ? (play.headline === '2-PT GOOD' ? 3.5 : 1) : play.flagged ? (made?.at ?? 0) : play.result.gain;
     if (play.kind === 'penalty') { const who = S.by[ev(play, 'flag')?.on]; if (who) { stay(who, 0.6); go(who, 0.9, (who.side === play.off ? 0.6 : -0.6) + (who.keys[0].x - S.los) * S.dir, who.keys[0].y, S); who.idle = 'stand'; } S.flag = { t: 1 }; tEnd = 1.6; }
-    else if (play.kind === 'kneel') { hold(S, S.T0, S.A.QB); S.A.QB.down = S.T0 + 0.5; tEnd = S.T0 + 1; }
+    else if (play.kind === 'kneel') { hold(S, S.T0 + 0.12, S.A.QB); pose(S.A.QB, S.T0 + 0.3, S.T0 + 3, 'kneel'); tEnd = S.T0 + 1.2; }
     else if (play.events.some((e) => e.type === 'throw' || (e.type === 'pressure' && e.kind === 'sack'))) tEnd = buildPass(S, gain);
     else tEnd = buildRun(S, gain);
     if (play.flagged) S.flag = { t: tEnd };
   }
-  S.tEnd = tEnd; S.dur = tEnd + (play.result.td ? 2.4 : play.headline ? 1.6 : 1);
+  S.actors.forEach((a) => { if (a.down != null && !a.upAt) a.upAt = Math.max(a.down + 1.4, tEnd + 1); });   // everybody gets back up
+  if (play.result.td) { const scorer = S.actors.find((a) => a.poses.some((q) => q.pose === 'cheer')); if (scorer) S.actors.filter((a) => a.side === scorer.side && a !== scorer).slice(0, 4).forEach((a, i) => { const k = scorer.keys[scorer.keys.length - 1]; stay(a, tEnd + 0.2); go(a, tEnd + 1.6, (k.x - S.los) * S.dir - 1 - i * 0.7, k.y + (i % 2 ? 1.2 : -1.2) * (1 + i * 0.3), S); pose(a, tEnd + 1.6, 99, 'cheer'); }); }
+  S.tEnd = tEnd; S.dur = tEnd + (play.result.td ? 3.6 : play.headline ? 2.8 : 2.4);
   return S;
 }
 export { carryOut };

@@ -6,6 +6,7 @@ import { runPlay } from './simRun.js';
 import { passPlay } from './simPass.js';
 import { kickoff, punt, fieldGoal, extraPoint } from './simKicks.js';
 import { offenseCall, defenseCall, goForTwo } from './simCalls.js';
+import { remember } from './simPlaybook.js';
 import { preSnapFlag, postPlayFlag } from './simFlags.js';
 
 export function sides(G) { const s = G.s; G.defSide = other(s.poss); G.O = G.teams[s.poss].O; G.D = G.teams[G.defSide].D; }
@@ -84,7 +85,8 @@ export function scrimmage(G) {
     play.result.gain = -1; s.ballOn = Math.max(1, s.ballOn - 1); s.down += 1; s.toGo += 1; secs = 2; moving = true;
     if (s.down > 4) { give(G, d, 100 - s.ballOn); ended = 'downs'; moving = false; }
   } else {
-    res = call.type === 'run' ? runPlay(G, play, call.sub) : passPlay(G, play, call.sub, def);
+    res = call.type === 'run' ? runPlay(G, play, call.sub, call) : passPlay(G, play, call.sub, def, call);
+    remember(G, o, call, play, res);
     secs = res.time; play.result.gain = res.gain; play.result.oob = !!res.oob;
     const flag = postPlayFlag(G, play, res, call), spot = s.ballOn + res.gain;
     if (flag) { // the play doesn't count

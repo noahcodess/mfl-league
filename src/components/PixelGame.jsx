@@ -13,7 +13,7 @@ import { buildScene } from '../lib/sceneKicks.js';
 import { drawScene, ballAt } from '../lib/sceneDraw.js';
 import { yardX, MID_Y, YD } from '../lib/fieldLayout.js';
 
-const SPEEDS = [1, 2, 4];
+const SPEEDS = [1, 2, 4], PACE = 0.88;   // 1x plays a touch slower than real time so the action is easy to follow
 const everyone = (lineups, side) => [...lineups[side].all, ...Object.values(lineups[side].kickTeams).flatMap((u) => u.players)].filter(Boolean);
 // One look per player: his Drip tab sprite in this game's uniform, with his face, number, helmet, gear and body size.
 function makeLooks(lineups, kits, teams, drips) {
@@ -46,11 +46,12 @@ export default function PixelGame({ game, teams, lineups, onClose, match = null,
     target() {
       const { S: s } = ctl.current; if (!s) return { x: yardX(50), y: MID_Y, zoom: 0.7 };
       const b = ballAt(s, clock.current.t) || { x: s.los, y: 0, h: 0 };
-      return { x: yardX(b.x), y: MID_Y + b.y * YD * 0.55, zoom: b.h > 3 ? 1.15 : 1.5 };
+      const z = b.h > 3 ? 1.0 : 1.3, k = ctl.current.i === 0 ? Math.min(1, clock.current.t / 3.8) : 1;   // the opening kickoff starts wide and slowly pushes in
+      return { x: yardX(b.x), y: MID_Y + b.y * YD * 0.55 * k, zoom: 0.62 + (z - 0.62) * k * k * (3 - 2 * k) };
     },
     draw(ctx, cam) {
       const c = clock.current, now = performance.now(), { S: s, speed: sp, paused: p } = ctl.current;
-      if (!p && c.last) c.t += Math.min(0.1, (now - c.last) / 1000) * sp;
+      if (!p && c.last) c.t += Math.min(0.1, (now - c.last) / 1000) * sp * PACE;
       c.last = now; if (!s) return;
       drawScene(ctx, s, c.t, cam, looks);
       if (c.t > s.dur && !p) { c.t = 0; setI((n) => (n === ctl.current.i ? n + 1 : n)); }
@@ -69,7 +70,7 @@ export default function PixelGame({ game, teams, lineups, onClose, match = null,
         {done && <div className="pg-headline final">FINAL</div>}
         <div className="pg-bug"><Scorebug bc={bc} home={teams.home} away={teams.away} st={st} /></div>
       </div>
-      {(!full || beat.post || done) && <p className="pg-text">{done ? 'That’s the game.' : beat.post ? play.text : ' '}</p>}
+      {(!full || beat.post || done || play?.call?.name) && <p className="pg-text">{done ? 'That’s the game.' : beat.post ? play.text : play?.call?.name ? `${teams[play.off].code} · ${play.call.name}` : ' '}</p>}
       <div className="ct-row">
         <button className="btn ghost" onClick={() => setPaused(!paused)}>{paused ? '▶ Play' : '⏸ Pause'}</button>
         {SPEEDS.map((s) => <button key={s} className={`btn ghost${speed === s ? ' on' : ''}`} onClick={() => setSpeed(s)}>{s}x</button>)}

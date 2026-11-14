@@ -13,7 +13,7 @@ export const getGoing = (p) => 0.34 - 0.003 * clamp(rating(p, 'acceleration'), 3
 // Scene helpers. Positions are [yards from the offense's goal line going its way (along), yards from the middle of the field (lat)].
 export function newScene(play, lineups) {
   const dir = play.off === 'away' ? 1 : -1, los = play.off === 'away' ? play.before.ballOn : 100 - play.before.ballOn;
-  const S = { play, dir, los, T0: 1.2, dur: 4, actors: [], A: {}, D: {}, by: {}, ball: [], first: play.before.toGo < 100 - play.before.ballOn ? los + dir * play.before.toGo : null, lineups };
+  const S = { play, dir, los, T0: 2.6, dur: 4, actors: [], A: {}, D: {}, by: {}, ball: [], first: play.before.toGo < 100 - play.before.ballOn ? los + dir * play.before.toGo : null, lineups };
   S.at = (along, lat) => [S.los + S.dir * along, clamp(lat, -25.5, 25.5)];
   return S;
 }
@@ -39,7 +39,13 @@ export function lineUp(S) {
   Object.entries(DEF).forEach(([k, [a, l]]) => { S.D[k] = add(S, Dd[k], S.play.def, a, l, k.startsWith('D') ? 'set' : 'stand'); });
   const any = (id, side) => S.by[id] || S.actors.find((a) => a.side === side);   // a sub who isn't drawn borrows a teammate
   S.who = (id, side) => any(id, side);
+  S.actors.forEach((a) => { // break the huddle and jog to the line
+    const k = a.keys[0], [al, lat] = [(k.x - S.los) * S.dir, k.y], off = a.side === S.play.off;
+    const from = off ? S.at(-7 - Math.abs(lat) * 0.05, lat * 0.25) : S.at(al + 4, lat * 0.6), arrive = S.T0 - 0.9 + Math.abs(lat) * 0.02;
+    a.keys = [{ t: 0, x: from[0], y: from[1] }, { t: 0.5, x: from[0], y: from[1] }, { t: Math.min(S.T0 - 0.35, arrive), x: k.x, y: k.y }];
+  });
   if (S.A.C) S.ball.push({ t: 0, kind: 'ground', x: S.at(0, 0)[0], y: 0 });
+  if (S.A.C && S.A.QB) { const q = S.A.QB.keys[S.A.QB.keys.length - 1]; fly(S, S.T0, S.T0 + 0.12, S.at(0, 0), [q.x, q.y], 0.1); }   // the snap
 }
 
 // The line: blockers and rushers lock up. back: how far the pocket gives ground (pass) or pushes ahead (run, negative).
@@ -47,8 +53,13 @@ function trenches(S, back, tEnd) {
   Object.entries(MATCH).forEach(([ok, dk]) => {
     const ol = S.A[ok], dl = S.D[dk]; if (!ol || !dl) return;
     const [a, l] = OFF[ok]; stay(ol, S.T0); stay(dl, S.T0);
-    go(ol, S.T0 + 0.7, a - back, l, S); go(dl, S.T0 + 0.7, a - back + 0.9, l, S); stay(ol, tEnd); stay(dl, tEnd);
-    pose(ol, S.T0, tEnd, 'block'); pose(dl, S.T0, tEnd, 'block');
+    go(ol, S.T0 + 0.55, a - back, l, S); go(dl, S.T0 + 0.55, a - back + 0.9, l, S);
+    for (let t = S.T0 + 0.85, n = 0; t < tEnd; t += 0.3, n++) {   // hand fighting: they shove back and forth, locked together
+      const push = (n % 2 ? 0.3 : -0.25) + (back < 0 ? -n * 0.12 : n * 0.05), side = (n % 3 - 1) * 0.25;
+      go(ol, t, a - back - push, l + side, S); go(dl, t, a - back + 0.9 - push, l + side, S);
+    }
+    stay(ol, tEnd); stay(dl, tEnd);
+    pose(ol, S.T0 + 0.1, tEnd, 'block'); pose(dl, S.T0, tEnd, 'block');
   });
 }
 
@@ -60,7 +71,14 @@ export function carryOut(S, c, from, t0, gain, opts = {}) {
   tackles.forEach((e, i) => {
     const made = e.result === 'made', meet = made ? gain : clamp(e.at ?? gain, Math.min(along, gain), Math.max(along, gain)), tk = S.who(e.def, S.play.def);
     run(meet, (i % 2 ? -1 : 1) * drift * (Math.abs(meet - along) > 4 ? 1.6 : 0.5));
-    if (tk && tk !== c) { stay(tk, Math.max(S.T0, t - 0.8)); go(tk, t, along + 0.4, lat + 0.3, S); tk.down = t + 0.05; if (!made) tk.upAt = t + 1.4; }
+    if (tk && tk !== c) {
+      stay(tk, Math.max(S.T0, t - 0.8)); go(tk, t, along + 0.4, lat + 0.3, S); tk.down = t + 0.05;
+      if (!made) { // he whiffs and hits the turf while the carrier makes his move
+        tk.upAt = t + 1.6; go(tk, t + 0.2, along + 1.2, lat + (e.move === 'juke' ? -0.9 : 0.6), S);
+        const mv = { juke: 'juke', shake: 'juke', spin: 'spin', 'stiff arm': 'stiff', truck: 'block' }[e.move] || 'juke';
+        pose(c, t - 0.28, t + 0.12, mv); if (mv === 'juke') { t += 0.1; go(c, t, along + 0.3, lat - drift * 1.4, S); lat -= drift * 1.4; }
+      }
+    }
     if (made) c.down = t + 0.05;
   });
   if (td) { run(Math.max(gain, 100 - S.play.before.ballOn) + 3.5, drift * 0.5); pose(c, t, t + 9, 'cheer'); }
@@ -75,7 +93,7 @@ export function carryOut(S, c, from, t0, gain, opts = {}) {
 export function buildRun(S, gain) {
   const play = S.play, hand = ev(play, 'handoff')[0], qb = S.A.QB, c = play.scramble ? qb : S.who(hand?.to, play.off) || S.A.RB;
   const [type, sideName] = (hand?.gap || 'inside right').split(' '), sg = sideName === 'left' ? -1 : 1, gap = sg * (type === 'outside' ? 7.5 : 1.3);
-  hold(S, S.T0, qb); let t = S.T0 + 0.45;
+  hold(S, S.T0 + 0.12, qb); let t = S.T0 + 0.5;
   if (play.scramble) { go(qb, S.T0 + 0.9, -7, 0, S); go(qb, S.T0 + 1.7, -5, gap * 3, S); t = S.T0 + 1.7; trenches(S, 1.2, t + 1); return carryOut(S, qb, [-5, gap * 3], t, gain); }
   if (c !== qb) { stay(c, S.T0 + 0.05); go(c, t, -3.6, gap * 0.25, S); go(qb, t, -3.9, gap * 0.25 - sg * 0.8, S); hold(S, t, c); go(qb, t + 0.8, -5.5, -sg * 3, S); }
   trenches(S, -0.7, t + 1.2);
@@ -87,22 +105,34 @@ export function buildRun(S, gain) {
 
 export function buildPass(S, gain) {
   const play = S.play, qb = S.A.QB, thr = ev(play, 'throw')[0], cat = ev(play, 'catch')[0], sackEv = ev(play, 'pressure').find((e) => e.kind === 'sack');
-  hold(S, S.T0, qb); go(qb, S.T0 + 0.65, -7, 0, S);
+  hold(S, S.T0 + 0.12, qb); go(qb, S.T0 + 0.8, -7, 0, S); qb.back = [[S.T0, S.T0 + 0.8]];
   const tThrow = S.T0 + clamp(thr?.t ?? 2.4, 1.1, 3.4), tgt = thr && S.who(thr.target, play.off), d = thr?.air ?? 5, tCatch = tThrow + 0.35 + d / 24;
   Object.entries(COVER).forEach(([rk, ck]) => { // routes, with the coverage running along
     const r = S.A[rk], cv = S.D[ck]; if (!r) return;
     const [a0, l0] = OFF[rk], mine = r === tgt, depth = mine ? d : rk === 'RB' ? 2 : 13, lat = mine ? l0 * 0.62 : l0 * 0.9 + (rk === 'RB' ? 5 : 0);
     const go0 = S.T0 + getGoing(r.p), fast = go0 + Math.hypot(depth - a0, lat - l0) / yps(r.p), tArr = mine ? Math.max(tCatch, fast) : fast;
     stay(r, go0); go(r, Math.min(fast, tArr) - (fast - go0) * 0.35, a0 + (depth - a0) * 0.65, l0, S); go(r, tArr, depth, lat, S);
-    if (cv) { stay(cv, S.T0 + 0.1 + getGoing(cv.p)); go(cv, tArr, depth + (mine && cat ? clamp(cat.sep ?? 1.5, 0.4, 4) : 1.6), lat + 0.7, S); }
+    if (cv) { stay(cv, S.T0 + 0.1 + getGoing(cv.p)); if (rk !== 'RB') cv.back = [[S.T0, S.T0 + 0.7]]; go(cv, tArr, depth + (mine && cat ? clamp(cat.sep ?? 1.5, 0.4, 4) : 1.6), lat + 0.7, S); }
   });
   const end = sackEv ? tThrow : tCatch;
   trenches(S, 1.4, end + 0.4);
   if (sackEv) { // the rusher gets home
     const by = S.who(sackEv.by, play.def); stay(by, tThrow - 0.9); go(by, tThrow, -7 + 0.5, 0.3, S); by.poses = []; go(qb, tThrow, gain, 0, S); qb.down = tThrow; by.down = tThrow + 0.05; return tThrow + 0.2;
   }
+  if (thr?.away) { // throws it out of bounds: over everyone's head, lands past the sideline
+    pose(qb, tThrow - 0.32, tThrow + 0.25, 'throw'); const q = qb.keys[qb.keys.length - 1], sd = q.y >= 0 ? 1 : -1;
+    fly(S, tThrow, tThrow + 1.1, [q.x, q.y], [q.x + S.dir * 9, sd * 28.5], 3.2); S.ball.push({ t: tThrow + 1.1, kind: 'ground', x: q.x + S.dir * 9.5, y: sd * 28.8 });
+    return tThrow + 1.2;
+  }
   if (!thr || !tgt) return tThrow;
-  pose(qb, tThrow - 0.25, tThrow, 'throw'); qb.poseFrame = 1; pose(qb, tThrow, tThrow + 0.3, 'throw');
+  const pk = ev(play, 'pocket')[0], hurry = ev(play, 'pressure').find((e) => e.kind === 'hurry');
+  if (pk?.move === 'step up') { stay(qb, Math.max(S.T0 + 0.85, tThrow - 0.75)); go(qb, tThrow - 0.3, -5.3, 0.4, S); }        // climbs the pocket
+  else if (pk?.move === 'slide') { const sd = (play.n % 2 ? 1 : -1) * 2.6; stay(qb, Math.max(S.T0 + 0.85, tThrow - 0.8)); go(qb, tThrow - 0.25, -7.4, sd, S); }
+  if (hurry && thr.pressured) { // the rusher gets there as he lets it go and puts him on the ground
+    const by = S.who(hurry.by, play.def), q = qb.keys[qb.keys.length - 1];
+    if (by && by !== qb) { by.poses = []; stay(by, tThrow - 0.6); go(by, tThrow + 0.1, (q.x - S.los) * S.dir + 0.6, q.y + 0.3, S); by.down = tThrow + 0.12; by.upAt = tThrow + 1.7; qb.down = tThrow + 0.18; qb.upAt = tThrow + 1.9; }
+  }
+  pose(qb, tThrow - 0.32, tThrow + 0.25, 'throw');
   const from = qb.keys[qb.keys.length - 1], spot = S.at(d, OFF[Object.keys(S.A).find((k) => S.A[k] === tgt)]?.[1] * 0.62 || 0);
   const res = cat?.result;
   fly(S, tThrow, tCatch, [from.x, from.y], res === 'miss' ? [spot[0] + S.dir * 3, spot[1] + 2] : spot, 2 + d * 0.16);

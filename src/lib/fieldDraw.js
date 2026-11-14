@@ -24,11 +24,14 @@ function yardNumbers(r) {
   }
 }
 
+// The goal post, drawn flat like everything else on the field: a padded base behind the end line, the neck out to the
+// crossbar, and the crossbar with its two uprights at the ends. No fake shadows or top-down tricks.
 function goalPost(r, x, side) {
-  r(x + 4, MID_Y - 37 + 3, 4, 74, 'rgba(0,0,0,0.28)');                  // shadow on the grass
-  r(x - (side < 0 ? 10 : -4), MID_Y - 3, 10, 6, shade(POST, 0.75));      // base post behind the end line
-  r(x, MID_Y - 37, 4, 74, POST); r(x, MID_Y - 37, 1, 74, '#fff3a0');     // crossbar
-  r(x - 2, MID_Y - 40, 8, 6, '#fff3a0'); r(x - 2, MID_Y + 34, 8, 6, '#fff3a0'); // the two uprights, seen from above
+  const back = side < 0 ? x - 12 : x + 4;
+  r(back, MID_Y - 4, 8, 8, '#2b2f36'); r(back + 1, MID_Y - 3, 6, 6, '#3d434c');                 // padded base
+  r(side < 0 ? x - 4 : x + 2, MID_Y - 1, 4, 2, shade(POST, 0.8));                                 // the neck
+  r(x, MID_Y - 37, 3, 74, POST); r(x + 2, MID_Y - 37, 1, 74, shade(POST, 0.78));                 // crossbar
+  r(x - 1, MID_Y - 38, 5, 3, POST); r(x - 1, MID_Y + 35, 5, 3, POST);                            // the uprights' ends
 }
 
 // team: { color, accent, name, location?, nickname? }. art: { teamLogo, leagueLogo } as loaded Images (either can be null).

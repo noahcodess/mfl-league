@@ -14,11 +14,18 @@ export function dice(seed) {
 
 // Unhappy players don't play as hard; angry ones a bit less. Nobody gets a bonus for being happy.
 const MOOD = { unhappy: 1.5, angry: 3 };
-// A rating as it plays on this snap. Momentum is worth up to 2 points to the team that has it. Every team and every player
-// also has a little form on the day (good days and bad days), set once when the game starts.
+// A rating as it plays on this snap. Momentum is worth up to 2.5 points to the team that has it. Every team and every player
+// also has form on the day, set once when the game starts: most players land within a few points of their rating, but
+// about 1 in 12 has a big day or a bad one (5 to 9 points), so a 4-star can play like a 4.5 and a star can disappear.
+// Garbage time: a team up big in the second half lets off the gas and the team down big keeps fighting.
+function ease(G, side) {
+  const s = G.s; if (!s || s.quarter < 3) return 0;
+  const d = s.score[side] - s.score[side === 'home' ? 'away' : 'home'];
+  return d >= 21 ? -4 : d >= 14 ? -2 : d <= -21 ? 2 : d <= -14 ? 1 : 0;
+}
 export function val(G, p, key, floor = 35) {
   if (!p) return floor;
-  return (p.r[key] ?? floor) - (MOOD[p.mood] || 0) + G.mom * (p.side === 'home' ? 2 : -2) + (G.form?.[p.side] || 0) + (p.form || 0);
+  return (p.r[key] ?? floor) + ease(G, p.side) - (MOOD[p.mood] || 0) + G.mom * (p.side === 'home' ? 2.5 : -2.5) + (G.form?.[p.side] || 0) + (p.form || 0);
 }
 // A weighted blend of ratings: mix(G, p, { pass_block: 0.5, strength: 0.5 }).
 export const mix = (G, p, weights, floor = 35) => Object.entries(weights).reduce((s, [k, w]) => s + val(G, p, k, floor) * w, 0);

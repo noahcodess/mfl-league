@@ -15,7 +15,7 @@ const rushMove = (p) => [['speed_rush', 'speed rush'], ['power_moves', 'bull rus
 function rush(G, play, def) {
   const { R, O, D } = G; let first = { t: 9, by: null };
   LINE.forEach(([o, d]) => {
-    const t = Math.max(1.3, 4.55 + (mix(G, O[o], PROTECT) - rushOf(G, D[d])) / 15 + R.gauss(0, 0.9));
+    const t = Math.max(1.3, 4.75 + (mix(G, O[o], PROTECT) - rushOf(G, D[d])) / 17 + R.gauss(0, 0.9));
     if (t < first.t) first = { t, by: D[d], blocker: O[o] };
   });
   if (def.blitz) { // the extra man: the back picks him up or he comes free
@@ -26,15 +26,18 @@ function rush(G, play, def) {
 }
 
 // How open each receiver gets: separation in yards at the top of his route.
-function routes(G, call, def) {
+function routes(G, call, def, plan) {
   const { R, O, D } = G, cover = { WR1: D.CB1, WR2: D.CB2, TE: D.SS, RB: D.LB1 }, zone = def.cov === 'zone';
   return Object.entries(DEPTH[call]).map(([slot, base]) => {
-    const p = O[slot], c = cover[slot], depth = Math.max(1, Math.round(base * (0.8 + R.r() * 0.4))), deep = depth >= 18;
+    const fixed = plan.depths?.[slot], p = O[slot], c = cover[slot], depth = fixed === 0 ? 0 : Math.max(1, Math.round((fixed ?? base) * (0.8 + R.r() * 0.4))), deep = depth >= 18;
     const get = mix(G, p, deep ? { route_running: 0.3, speed: 0.45, release: 0.25 } : { route_running: 0.45, speed: 0.2, release: 0.2, agility: 0.15 }, 50);
     const stick = zone ? mix(G, c, { zone_cover: 0.5, play_rec: 0.3, speed: 0.2 }, 45) : mix(G, c, deep ? { man_cover: 0.4, speed: 0.45, press: 0.15 } : { man_cover: 0.5, speed: 0.2, press: 0.15, agility: 0.15 }, 45);
-    let sep = 2.0 + (get - stick) / 12 + R.gauss(0, 1.3) + (zone ? (deep ? -0.5 : 0.5) : 0);
+    let sep = 2.0 + (get - stick) / 12 + R.gauss(0, 1.5) + (zone ? (deep ? -0.5 : 0.5) : 0);
+    if (depth === 0) sep += 1.6;                                                  // screens: blockers out in front
+    if (plan.pa && depth >= 9) sep += 0.6;                                        // the linebackers bit on the fake
+    if (def.prevent) sep += depth >= 15 ? -1.3 : 0.9;
     if (def.blitz) sep += 0.6; else if (slot === G.O.star) sep -= 0.7;          // the free linebacker shades the best receiver
-    return { slot, p, c, depth, sep, at: 1.25 + depth / 13 };
+    return { slot, p, c, depth, sep, at: (depth === 0 ? 0.9 : 1.25 + depth / 13) + (plan.pa ? 0.35 : 0) };
   });
 }
 
@@ -49,11 +52,28 @@ function sack(G, play, qb, by, t) {
 }
 
 // call: 'quick' | 'short' | 'medium' | 'deep'. def: { cov: 'man' | 'zone', blitz }. Fills the report, returns the result.
-export function passPlay(G, play, call, def) {
-  const { R, O, D } = G, qb = O.QB, toGoal = 100 - G.s.ballOn, heat = rush(G, play, def), open = routes(G, call, def);
+function throwAway(G, play, qb, t, hit) {
+  play.kind = 'pass'; stat(play, qb, 'att');
+  addEvent(play, 'throw', t, { qb: qb.id, target: null, air: 12, accuracy: 0, pressured: hit, away: true });
+  addEvent(play, 'catch', t + 0.9, { target: null, result: 'away' });
+  play.text = `${qb.last} ${hit ? 'gets rid of it as he\'s hit' : 'can\'t find anybody and throws it away'}. Incomplete.`;
+  return { gain: 0, incomplete: true, time: t + 2 };
+}
+
+// plan: the playbook call ({ name, read: the order he reads it, depths, pa, screen }).
+export function passPlay(G, play, call, def, plan = {}) {
+  const { R, O, D } = G, qb = O.QB, toGoal = 100 - G.s.ballOn, heat = rush(G, play, def), open = routes(G, call, def, plan);
   const see = (1 - val(G, qb, 'vision', 55) / 100) * 2.2, bold = qb.style === 'gunslinger' ? 1.6 : 1;
-  const ranked = open.map((o) => ({ ...o, seen: o.sep + R.gauss(0, see), want: 0 })).map((o) => ({ ...o, want: o.seen + Math.min(o.depth, toGoal) * 0.07 * bold - (o.slot === 'RB' ? 1.6 : o.slot === 'TE' ? 0.3 : 0) }))   // the back is the checkdown, not the first look.sort((a, b) => b.want - a.want);
-  let tgt = ranked[0]; if (tgt.seen < 0.7 && tgt.slot !== 'RB') tgt = ranked.find((o) => o.slot === 'RB' && o.seen > 0.5) || tgt;
+  // the read: first look, then the next, then the next; he takes the first one open enough (that bar drops as time runs out)
+  const order = [...(plan.read || ['WR1', 'WR2', 'TE']), 'WR1', 'WR2', 'TE', 'RB'].filter((v, k, a) => a.indexOf(v) === k);
+  const ranked = order.map((sl) => open.find((o) => o.slot === sl)).filter(Boolean).map((o, k) => ({ ...o, seen: o.sep + R.gauss(0, see), at: o.at + k * 0.38 }));
+  let tgt = ranked.find((o, k) => o.seen >= 1.35 - k * 0.3 + (bold > 1 ? -0.4 : 0) && o.at < heat.t + 0.35) || null;
+  if (!tgt) { // nobody's open: the smart ones throw it away, the rest force it to whoever looks best
+    const best = ranked.slice().sort((a, b) => b.seen - a.seen)[0];
+    if (R.chance(0.1 + val(G, qb, 'awareness', 55) / 260 - (bold > 1 ? 0.15 : 0))) return throwAway(G, play, qb, Math.min(heat.t, best.at) + 0.2, heat.t < best.at);
+    tgt = best;
+  }
+  play.targetSlot = tgt.slot;
   addEvent(play, 'read', tgt.at, { qb: qb.id, target: tgt.p.id, open: open.map((o) => ({ id: o.p.id, sep: Math.round(o.sep * 10) / 10 })) });
   let tThrow = tgt.at + (1 - val(G, qb, 'vision', 55) / 100) * 0.5, pressured = false, onRun = false;
   if (heat.by) addEvent(play, 'block', Math.min(heat.t, tThrow), { off: heat.blocker.id, def: heat.by.id, win: heat.t < tThrow ? 'def' : 'off', move: heat.t < tThrow ? rushMove(heat.by) : 'anchor', margin: Math.round((heat.t - tThrow) * 10) });

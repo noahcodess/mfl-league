@@ -1,9 +1,10 @@
-// The on-field player: his real drip sprite (the same one coaches see in the Drip tab, with his face, number, helmet and gear),
-// cut into body, two arms and two legs so each pose can move them. Big men are drawn wider and tall men get longer legs.
-// Every pose is drawn once per player and reused, so a full game costs almost nothing.
-import { uniformPixels, W, H, INK } from './uniformDraw.js';
+// The on-field player: his real drip sprite in three views (front, back, side; see fieldViews.js), cut into body, arms and
+// legs so each pose can move them. Big men are drawn wider and tall men get longer legs. Every pose is drawn once per
+// player and reused, so a full game costs almost nothing.
+import { W, H, INK } from './uniformDraw.js';
+import { viewParts } from './fieldViews.js';
 
-const PAD_X = 10, PAD_TOP = 26, PAD_BOTTOM = 2;
+const PAD_X = 12, PAD_TOP = 26, PAD_BOTTOM = 2;
 
 // wide: extra pixels on each side of his body (0 slim, 1 average, 2 big, 3 huge). tall: extra pixels of leg (0 to 2).
 export function buildOf(p) {
@@ -11,59 +12,65 @@ export function buildOf(p) {
   return { wide: bmi < 26.5 ? 0 : bmi < 30 ? 1 : bmi < 34 ? 2 : 3, tall: h >= 77 ? 2 : h >= 74 ? 1 : 0 };
 }
 
-// Stretches the drip sprite for his build and cuts it into parts: { body, armR, armL, legR, legL } as [x, y, color] lists.
-function partsOf(look) {
-  const src = uniformPixels(look.colors, look.face, look.number, { drip: look.drip, design: look.design });
-  const w = look.wide, t = look.tall, parts = { body: [], armR: [], armL: [], legR: [], legL: [] };
-  const put = (x, y, c) => {
-    const part = y >= 41 ? (x <= 15 + w ? 'legR' : 'legL') : y >= 31 && y <= 39 && x <= 6 ? 'armR' : y >= 31 && y <= 39 && x >= 25 + 2 * w ? 'armL' : 'body';
-    parts[part].push([x, y, c]);
-  };
-  for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
-    const c = src.get(x, y); if (!c) continue;
-    const ys = y < 46 ? [y] : [y + t], extra = y === 45 ? Array.from({ length: t }, (_, i) => 46 + i) : [];
-    [...ys, ...extra].forEach((yy) => {
-      if (y < 23) { put(x + w, yy, c); return; }                       // helmet and face stay centered
-      if (x < 8) put(x, yy, c); else if (x === 8) for (let i = 0; i <= w; i++) put(8 + i, yy, c);
-      else if (x < 23) put(x + w, yy, c); else if (x === 23) for (let i = 0; i <= w; i++) put(23 + w + i, yy, c); else put(x + 2 * w, yy, c);
-    });
-  }
-  return { parts, gw: W + 2 * w, gh: H + t };
+// Stretches one view for his build: columns cA and cB repeat to widen him, a shin row repeats to make him taller.
+function stretched(look, view) {
+  const raw = viewParts(look, view), w = look.wide, t = look.tall, [cA, cB] = view === 'side' ? [11, 19] : [8, 23], out = {};
+  Object.entries(raw).forEach(([name, g]) => {
+    const list = []; out[name] = list;
+    for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
+      const c = g.get(x, y); if (!c) continue;
+      const ys = y < 46 ? [y] : [y + t], all = y === 45 ? [...ys, ...Array.from({ length: t }, (_, i) => 46 + i)] : ys;
+      all.forEach((yy) => {
+        if (y < 23) list.push([x + w, yy, c]);
+        else if (x < cA) list.push([x, yy, c]);
+        else if (x === cA) for (let i = 0; i <= w; i++) list.push([cA + i, yy, c]);
+        else if (x < cB) list.push([x + w, yy, c]);
+        else if (x === cB) for (let i = 0; i <= w; i++) list.push([cB + w + i, yy, c]);
+        else list.push([x + 2 * w, yy, c]);
+      });
+    }
+  });
+  return { parts: out, gw: W + 2 * w, gh: H + t };
 }
 
-// How each part moves in each pose: [dx, dy, flipped]. A flipped arm points up (hand above the shoulder). f: 1 facing right, -1 left.
-const UP_R = (dx, dy) => [dx, dy, true], UP_L = UP_R;
-const POSES = {
+// How each part moves: [dx, dy, flipped]. A flipped arm points up (hand above the shoulder). Side poses face right.
+const UP = (dx, dy) => [dx, dy, true];
+const FRONT = {
   stand: [() => ({})],
   set: [() => ({ body: [0, 4], legR: [-2, 0], legL: [2, 0], armR: [2, 9], armL: [0, 5] })],
-  run: [
-    (f) => ({ body: [f, 0], legR: [-1, -3], legL: [1, 0], armR: [0, 2], armL: [0, -2] }),
-    (f) => ({ body: [f, 1], legR: [0, -1], legL: [0, 0], armR: [0, 0], armL: [0, 0] }),
-    (f) => ({ body: [f, 0], legR: [-1, 0], legL: [1, -3], armR: [0, -2], armL: [0, 2] }),
-    (f) => ({ body: [f, 1], legR: [0, 0], legL: [0, -1], armR: [0, 0], armL: [0, 0] }),
-  ],
-  block: [
-    (f) => ({ body: [f, 2], legR: [-2, 0], legL: [2, 0], armR: [5, -2], armL: [-5, -2] }),
-    (f) => ({ body: [2 * f, 2], legR: [-3, 0], legL: [2, -1], armR: [6, -3], armL: [-6, -3] }),
-  ],
-  throw: [
-    (f) => ({ body: [-f, 0], legR: [-2, 0], legL: [2, 0], armR: UP_R(0, -17), armL: [3, -3] }),
-    (f) => ({ body: [f, 1], legR: [-2, 0], legL: [2, -1], armR: [5, -9], armL: [-1, 1] }),
-  ],
-  catch: [() => ({ body: [0, -2], legR: [0, -2], legL: [0, -3], armR: UP_R(3, -24), armL: UP_L(-3, -24) })],
-  cheer: [
-    () => ({ armR: UP_R(0, -21), armL: UP_L(0, -21) }),
-    () => ({ body: [0, -2], legR: [0, -2], legL: [0, -2], armR: UP_R(-1, -24), armL: UP_L(1, -24) }),
-  ],
+  run: [(f) => ({ body: [f, 0], legR: [-1, -3], legL: [1, 0], armR: [0, 2], armL: [0, -2] }), (f) => ({ body: [f, 1], legR: [0, -1] }),
+    (f) => ({ body: [f, 0], legR: [-1, 0], legL: [1, -3], armR: [0, -2], armL: [0, 2] }), (f) => ({ body: [f, 1], legL: [0, -1] })],
+  block: [(f) => ({ body: [f, 2], legR: [-2, 0], legL: [2, 0], armR: [5, -2], armL: [-5, -2] }), (f) => ({ body: [2 * f, 2], legR: [-3, 0], legL: [2, -1], armR: [6, -3], armL: [-6, -3] })],
+  throw: [(f) => ({ body: [-f, 0], legR: [-2, 0], legL: [2, 0], armR: UP(0, -17), armL: [3, -3] }), (f) => ({ body: [f, 1], legR: [-2, 0], legL: [2, -1], armR: [5, -9], armL: [-1, 1] })],
+  catch: [() => ({ body: [0, -2], legR: [0, -2], legL: [0, -3], armR: UP(3, -24), armL: UP(-3, -24) })],
+  cheer: [() => ({ armR: UP(0, -21), armL: UP(0, -21) }), () => ({ body: [0, -3], legR: [0, -3], legL: [0, -3], armR: UP(-1, -24), armL: UP(1, -24) })],
   kick: [(f) => ({ body: [-f, 0], legR: [3, -8], armR: [-2, -5], armL: [2, -5] })],
+  juke: [(f) => ({ body: [-2 * f, 1], legR: [-4, 0], legL: [4, 0], armR: [-2, -3], armL: [2, -3] })],
+  stiff: [(f) => ({ body: [f, 0], legR: [-1, -2], armR: [7, -6] })],
+  kneel: [() => ({ body: [0, 6], legR: [-2, 0], legL: [2, 5], armR: [1, 4], armL: [0, 3] })],
 };
-const ORDER = ['legR', 'legL', 'body', 'armR', 'armL'];
+const SIDE = {
+  stand: [() => ({})],
+  set: [() => ({ body: [2, 5], legR: [3, 0], legL: [-3, 0], armR: [4, 9], armL: [1, 6] })],
+  run: [() => ({ body: [1, 0], legR: [4, -2], legL: [-4, 0], armR: [-3, 0], armL: [3, -2] }), () => ({ body: [1, 1], legR: [1, 0], legL: [-1, -2] }),
+    () => ({ body: [1, 0], legR: [-4, 0], legL: [4, -2], armR: [3, -2], armL: [-3, 0] }), () => ({ body: [1, 1], legR: [-1, -2], legL: [1, 0] })],
+  block: [() => ({ body: [2, 2], legR: [3, 0], legL: [-4, 0], armR: [6, -4], armL: [5, -5] }), () => ({ body: [3, 2], legR: [4, 0], legL: [-3, 0], armR: [7, -5], armL: [6, -4] })],
+  throw: [() => ({ body: [-1, 0], legR: [3, 0], legL: [-4, 0], armR: UP(-4, -15), armL: [4, -4] }), () => ({ body: [2, 1], legR: [4, -1], legL: [-3, 0], armR: [7, -9], armL: [-2, 0] })],
+  catch: [() => ({ body: [0, -2], legR: [1, -2], legL: [-1, -2], armR: UP(3, -22), armL: UP(2, -22) })],
+  cheer: [() => ({ armR: UP(1, -21), armL: UP(-1, -21) }), () => ({ body: [0, -3], legR: [0, -3], legL: [0, -3], armR: UP(2, -24), armL: UP(-2, -24) })],
+  kick: [() => ({ body: [-1, 0], legR: [-4, -1], legL: [2, 0], armR: [-3, -3], armL: [3, -4] }), () => ({ body: [-2, 0], legR: [7, -8], armR: [-4, -5], armL: [4, -5] })],
+  juke: [() => ({ body: [-2, 1], legR: [5, 0], legL: [-5, 0], armR: [4, -3], armL: [-3, -2] })],
+  stiff: [() => ({ body: [1, 0], legR: [3, 0], legL: [-3, 0], armR: [8, -7], armL: [-2, 0] })],
+  kneel: [() => ({ body: [0, 6], legR: [3, 0], legL: [-4, 5], armR: [2, 4], armL: [0, 3] })],
+  backpedal: [() => ({ body: [-1, 0], legR: [-2, -1], legL: [2, 0] }), () => ({ body: [-1, 1], legR: [2, 0], legL: [-2, -1] })],
+};
+const ORDER = { front: ['legR', 'legL', 'body', 'armR', 'armL'], side: ['armL', 'legL', 'body', 'legR', 'armR'] };
 
-function compose(look, poseName, frame, face) {
-  const { parts, gw, gh } = look.cut || (look.cut = partsOf(look));
+function compose(look, view, poseName, frame, face) {
+  const cut = (look.cut ||= {}), { parts, gw, gh } = cut[view] || (cut[view] = stretched(look, view));
   const cw = gw + PAD_X * 2, ch = gh + PAD_TOP + PAD_BOTTOM, px = new Array(cw * ch).fill(null);
-  const list = POSES[poseName] || POSES.stand, moves = list[frame % list.length](face);
-  ORDER.forEach((name) => {
+  const book = view === 'side' ? SIDE : FRONT, list = book[poseName] || (poseName === 'backpedal' ? book.run : book.stand), moves = list[frame % list.length](face);
+  (ORDER[view] || ORDER.front).forEach((name) => {
     const [dx = 0, dy = 0, flip] = moves[name] || [];
     parts[name].forEach(([x, y, c]) => {
       const yy = (flip ? 31 + 39 - y : y) + dy + PAD_TOP, xx = x + dx + PAD_X;
@@ -72,6 +79,7 @@ function compose(look, poseName, frame, face) {
   });
   const c = document.createElement('canvas'); c.width = cw; c.height = ch;
   const ctx = c.getContext('2d');
+  if (view === 'side' && face < 0) { ctx.translate(cw, 0); ctx.scale(-1, 1); }
   for (let y = 0; y < ch; y++) for (let x = 0; x < cw; x++) {   // the dark outline, like the Drip tab art
     const k = px[y * cw + x];
     if (k) { ctx.fillStyle = k; ctx.fillRect(x, y, 1, 1); continue; }
@@ -91,15 +99,15 @@ function turned(img, deg) { // lying on the turf (90) or diving (about 60)
 }
 
 const cache = new Map();
-// look: { key, colors (the game uniform), face (portrait looks), number, drip, design, wide, tall }.
-// pose: stand, set, run, block, throw, catch, cheer, kick, down, dive. face: 1 right, -1 left. Returns a canvas with footX/footY.
-export function sprite(look, pose, frame, face) {
-  const k = `${look.key}|${pose}|${frame}|${face}`;
+// look: { key, colors (the game uniform), face (portrait looks), number, drip, design, wide, tall }. view: front | back | side.
+// pose: stand, set, run, block, throw, catch, cheer, kick, juke, stiff, kneel, backpedal, down, dive. face: 1 right, -1 left.
+export function sprite(look, view, pose, frame, face) {
+  const k = `${look.key}|${view}|${pose}|${frame}|${face}`;
   let c = cache.get(k);
   if (!c) {
-    if (pose === 'down') c = turned(compose(look, 'stand', 0, face), 90 * face);
-    else if (pose === 'dive') c = turned(compose(look, 'run', 0, face), 62 * face);
-    else c = compose(look, pose, frame, face);
+    if (pose === 'down') c = turned(compose(look, 'side', 'stand', 0, face), 90 * face);
+    else if (pose === 'dive') c = turned(compose(look, 'side', 'run', 0, face), 62 * face);
+    else c = compose(look, view, pose, frame, face);
     cache.set(k, c);
   }
   return c;

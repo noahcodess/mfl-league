@@ -41,7 +41,7 @@ export default function GameField({ team, look = {}, crowd = 'normal', shot = nu
     let raf;
     const frame = () => {
       if (liveRef.current) target.current = clampCam(liveRef.current.target());
-      cam.current = glide(cam.current, target.current, liveRef.current ? 0.1 : shot?.k);
+      cam.current = glide(cam.current, target.current, liveRef.current ? 0.07 : shot?.k);
       if (view.current && world.current) {
         const ctx = view.current.getContext('2d');
         blit(ctx, world.current, cam.current);
