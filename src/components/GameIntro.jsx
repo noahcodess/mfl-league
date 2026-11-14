@@ -20,8 +20,8 @@ import { STING_MID } from '../lib/pixelSwarm.js';
 // Day games (~26s): transition, network logo, the two teams with three players each, transition, the crowd, transition, then a
 // long shot of the field with the weather, who receives, and the scorebug. Primetime (~40s) adds the player to watch and a
 // tale of the tape. Every shot fades out before the next one. [shot, how long in ms]
-const DAY = [['sting'], ['open', 5000], ['matchup', 8600], ['sting'], ['crowd', 4800], ['sting'], ['field', 6500], ['end']];
-const PRIME = [['sting'], ['open', 5500], ['matchup', 8800], ['player', 6800], ['tape', 7000], ['sting'], ['crowd', 4800], ['sting'], ['field', 6500], ['end']];
+const DAY = [['sting'], ['open', 5000], ['matchup', 8600], ['sting'], ['crowd', 5000], ['sting'], ['field', 6500], ['end']];
+const PRIME = [['sting'], ['open', 5500], ['matchup', 8800], ['player', 6800], ['tape', 7000], ['sting'], ['crowd', 5000], ['sting'], ['field', 6500], ['end']];
 const FADE = 450;
 
 // The full-screen broadcast intro for a game. Ends on a "kickoff is next" card for now.

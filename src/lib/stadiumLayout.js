@@ -1,7 +1,8 @@
 // The stadium shot's measurements: the picture size, how far each layer slides while the camera rises (near things slide
 // more, which is what makes it feel 3D), where each level sits, and every seat in both decks.
 export const W = 480, H = 270;
-export const TRAVEL = { far: 46, upper: 130, lower: 200, front: 330 };
+// The two seating decks slide together so no row ever pops out from behind the level below it.
+export const TRAVEL = { far: 46, upper: 200, lower: 200, front: 330 };
 // Lower layer, top to bottom: the rail, the video ribbon between levels, suites, the concourse wall with tunnels, the lower bowl.
 export const L = { rail: 190, ribbon: 196, ribbonH: 20, suites: 220, suitesH: 36, wall: 256, wallH: 36, rows: 292, rowH: 14, pitch: 11, n: 14, aisle: 12 };
 // Upper layer: sky room for the roof, the roof, the back wall, then the upper deck (set back, so smaller fans).

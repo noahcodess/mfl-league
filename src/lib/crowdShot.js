@@ -16,7 +16,7 @@ const CALLS = { jump: 'JUMP JUMP JUMP', wave: 'DO THE WAVE', towels: 'WAVE YOUR 
 // o: { team, look, act, dress (fan color or null), theme (the alternate's name), logo (loaded image or null), stadiumName, ms }.
 // Returns draw(ctx, t) for a canvas that is a whole number of times bigger than 480x270.
 export function makeCrowdShot(o) {
-  const { team, look, act, dress } = o, nick = (team.nickname || team.name.split(' ').pop()).toUpperCase(), ms = o.ms || 4800;
+  const { team, look, act, dress } = o, nick = (team.nickname || team.name.split(' ').pop()).toUpperCase(), ms = o.ms || 3500; // the climb; the 5-second shot then holds at the top
   const far = paintSky(look), upper = paintUpper(look, team, o.logo), poles = paintPoles(look), lower = paintLower(look, team, o.logo), front = paintFront(look);
   paintRoof(upper.getContext('2d'), look);
   const fans = makeFans(team, dress, act === 'cards'), shake = act === 'jump' && team.id === 'ddc';
@@ -26,7 +26,8 @@ export function makeCrowdShot(o) {
 
   return (ctx, ms0) => {
     const t = Math.max(0, ms0); // the first frame can land a hair before the clock starts
-    const S = ctx.canvas.width / W, r = brush(ctx), x = Math.min(1, t / ms), p = 1 - (1 - x) ** 1.5, glow = [];
+    const S = ctx.canvas.width / W, r = brush(ctx), x = Math.min(1, t / ms), p = x * x * (3 - 2 * x) * 0.5 + x * 0.5, // steady climb that eases to a stop
+       glow = [];
     const q = (t % JUMP_MS) / JUMP_MS, k = (q - 0.55) / 0.3, thud = shake && k > 0 && k < 1;
     const sy = thud ? Math.round(Math.cos(k * Math.PI * 3) * 3 * (1 - k)) : 0, sx = thud ? Math.round(Math.sin(k * Math.PI * 4) * 1.5 * (1 - k)) : 0;
     const off = (travel, near = 1) => Math.round(-(1 - p) * travel * S) / S + sy * near; // art pixels, snapped to real pixels
@@ -34,8 +35,8 @@ export function makeCrowdShot(o) {
     const crowd = (list, y0, cut) => list.forEach((f) => { const sy0 = f.y + y0; if (sy0 > -18 && sy0 < cut) { const pose = fanPose(act, f, t, env); drawFan(r, f, f.y + (pose.dy || 0), pose, glow); } });
     ctx.imageSmoothingEnabled = false;
     at(off(TRAVEL.far, 0.3), 0.3); ctx.drawImage(far, 0, 0);
-    const uy = off(TRAVEL.upper, 0.8), ly = off(TRAVEL.lower), mark = glow.length;
-    at(uy, 0.8); ctx.drawImage(upper, 0, 0); crowd(fans.upper, uy, ly + L.rail + 6);
+    const uy = off(TRAVEL.upper), ly = off(TRAVEL.lower), mark = glow.length; // both decks move as one piece
+    at(uy); ctx.drawImage(upper, 0, 0); crowd(fans.upper, uy, ly + L.rail + 16);
     for (let i = mark; i < glow.length; i += 3) glow[i + 1] += uy;
     if (poles) ctx.drawImage(poles, 0, 0);
     const mark2 = glow.length;
