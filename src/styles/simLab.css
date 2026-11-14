@@ -1,0 +1,15 @@
+/* The game engine's test tools on Commissioner's Desk → Test (the lineup check for now). */
+.lc-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(330px, 1fr)); gap: 14px; width: 100%; }
+.lc-side { border-top: 4px solid var(--tc); background: #0c0705; padding: 10px 12px; min-width: 0; }
+.lc-side h4 { margin: 0 0 8px; font-size: 15px; }
+.lc-side h4 small { color: var(--dim); font-weight: 400; margin-left: 6px; }
+.lc-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.lc-table th { text-align: left; color: var(--dim); font-size: 11px; text-transform: uppercase; letter-spacing: 1px; padding: 3px 6px; }
+.lc-table td { padding: 3px 6px; border-top: 1px solid var(--line); white-space: nowrap; }
+.lc-sec td { color: var(--gold); font-weight: 700; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; }
+.lc-fill td { color: var(--gold); }
+.lc-empty td { color: #ff6b6b; }
+.lc-units { margin-top: 10px; font-size: 12px; color: var(--dim); display: grid; gap: 4px; }
+.lc-units p { margin: 0; }
+.lc-units b { color: var(--text); }
+.lc-problems { margin: 10px 0 0; padding: 0; list-style: none; font-size: 12px; color: #ffb36b; display: grid; gap: 3px; }

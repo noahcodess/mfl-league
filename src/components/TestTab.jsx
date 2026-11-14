@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import SandboxButton from './SandboxButton.jsx';
 import TestSimLoading from './TestSimLoading.jsx';
 import CrowdShotTest from './CrowdShotTest.jsx';
+import LineupCheck from './LineupCheck.jsx';
 import { inSandbox } from '../data/sandbox.js';
 import { simToSeason } from '../data/testSim.js';
 import { currentPhase, offseasonStep, PHASE_NAMES } from '../data/teams.js';
@@ -44,6 +45,7 @@ export default function TestTab({ canControl, reload }) {
         </section>
       </div>
       <CrowdShotTest />
+      <LineupCheck />
       {log !== null && <TestSimLoading log={log} error={error} onClose={() => { setLog(null); setError(''); }} />}
     </div>
   );

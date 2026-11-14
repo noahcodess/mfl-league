@@ -40,6 +40,7 @@ import './styles/introFonts.css';
 import './styles/introDay.css';
 import './styles/introPrime.css';
 import './styles/attendance.css';
+import './styles/simLab.css';
 import './styles/scorebug.css';
 import './styles/scorebugNets.css';
 import './styles/scorebugShapes.css';
