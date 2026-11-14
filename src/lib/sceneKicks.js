@@ -1,6 +1,7 @@
 // Scenes for the plays that aren't a normal snap: kickoffs, punts, field goals and extra points, kneel-downs and flags
 // before the snap. Plus buildScene, which picks the right scene for any play report.
-import { newScene, add, go, stay, pose, hold, fly, lineUp, buildRun, buildPass, carryOut, yps } from './sceneBuild.js';
+import { newScene, add, go, stay, pose, hold, fly, lineUp, buildRun, carryOut, yps } from './sceneBuild.js';
+import { buildPass } from './scenePass.js';
 
 const ev = (play, type) => play.events.find((e) => e.type === type);
 const row = (S, players, side, along, idle) => players.filter(Boolean).map((p, i, list) => add(S, p, side, along, -18 + (36 * i) / Math.max(1, list.length - 1), idle));

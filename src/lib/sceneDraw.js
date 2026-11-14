@@ -3,6 +3,7 @@
 import { FY0, FY1, YD, MID_Y, yardX } from './fieldLayout.js';
 import { sprite } from './fieldSprite.js';
 import { lookAt } from './scenePose.js';
+import { drawBall } from './sceneBall.js';
 
 export const SPRITE_PX = 0.5; // world pixels per sprite pixel: a player stands about 2 yards tall, like the Drip tab art shrunk down
 
@@ -18,6 +19,8 @@ export function posAt(a, t) {
   const dist = Math.hypot(B.x - A.x, B.y - A.y);
   return { x: lerp(A.x, B.x, u), y: lerp(A.y, B.y, u), dx: B.x - A.x, dy: B.y - A.y, moving: dist > 0.15, speed: dist / Math.max(0.001, B.t - A.t) };
 }
+// Who has the ball in his hands at time t (an id), or null.
+export function heldBy(S, t) { let st = null; for (const b of S.ball) if (b.t <= t) st = b; return st?.kind === 'held' ? st.id : null; }
 // Where the ball is at time t: { x, y (yards), h (height in yards), held }.
 export function ballAt(S, t) {
   let st = null; for (const b of S.ball) if (b.t <= t) st = b;
@@ -47,18 +50,13 @@ export function drawScene(ctx, S, t, cam, looks) {
   ctx.fillStyle = 'rgba(0,0,0,0.28)';
   list.forEach(({ a, p }) => { const down = a.down != null && t >= a.down && !(a.upAt && t >= a.upAt); ctx.fillRect(sx(p.x) - (down ? 13 : 7) * px, sy(p.y) - 1.5 * px, (down ? 26 : 14) * px, 3 * px); });
   if (S.tee && t < S.tee.t1 + 0.6) { ctx.fillStyle = '#ff7a1a'; ctx.fillRect(sx(S.tee.x) - Math.round(1.5 * sp), sy(S.tee.y) - Math.round(4 * sp), Math.round(3 * sp), Math.round(4 * sp)); }
+  const holder = heldBy(S, t);
   list.forEach(({ a, p }) => {
     const look = looks[a.id] || looks[a.side]; if (!look) return;
-    const L = lookAt(a, p, t, S), img = sprite(look, L.view, L.pose, L.frame, L.face);
-    ctx.drawImage(img, Math.round(sx(p.x) - img.footX * sp), Math.round(sy(p.y) - img.footY * sp), Math.round(img.width * sp), Math.round(img.height * sp));
+    const L = lookAt(a, p, t, S, holder), img = sprite(look, L.view, L.pose, L.frame, L.face), X = Math.round(sx(p.x) - img.footX * sp), Y = Math.round(sy(p.y) - img.footY * sp);
+    ctx.drawImage(img, X, Y, Math.round(img.width * sp), Math.round(img.height * sp));
+    a.handAt = [X + img.hand[0] * sp, Y + img.hand[1] * sp];   // where his hand is on screen, so a carried ball sits in it
   });
-  const b = ballAt(S, t);
-  if (b && !b.hide) { // the ball, drawn in the same pixel size as the players: dark outline, brown leather, white laces
-    const bx = sx(b.x), by = sy(b.y), u = sp, P = (x, y, w, h, c) => { ctx.fillStyle = c; ctx.fillRect(Math.round(bx + x * u), Math.round(y), Math.round(w * u), Math.round(h * u)); };
-    if (!b.held) { ctx.fillStyle = 'rgba(0,0,0,0.3)'; ctx.fillRect(Math.round(bx - 3 * u), by - Math.round(u), Math.round(6 * u), Math.round(2 * u)); }
-    const y = by - Math.round(b.h * YD * px) - 3 * u, wide = !b.spin || Math.floor(t * 14) % 2 === 0, hw = wide ? 4 : 2.5;
-    P(-hw, y, hw * 2, 5, '#141018'); P(-hw + 1, y + u, hw * 2 - 2, 3, '#8a4b22'); P(-hw + 1, y + u, hw * 2 - 2, 1, '#a8612f');
-    if (wide) { P(-1.5, y + 2 * u, 3, 1, '#f2f2f2'); }
-  }
+  drawBall(ctx, S, t, { sx, sy, px, sp, yd: YD }, ballAt, holder && S.by[holder]);
   if (S.flag && t >= S.flag.t) { const f = S.actors[0] && posAt(S.actors[0], t); ctx.fillStyle = '#ffd400'; ctx.fillRect(sx(S.los) + 6 * px, sy(f ? 3 : 0), 4 * px, 3 * px); }
 }

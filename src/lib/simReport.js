@@ -5,6 +5,7 @@
 // What can happen inside a play, in the order it happened. Every event has t (seconds after the snap) and the ids involved.
 export const EVENTS = {
   block: 'A blocker against a rusher or defender: who won, the move that won it, by how much',     // { off, def, win: 'off' | 'def', move, margin, double }
+  rush: 'One pass-rush matchup on the line: how many seconds the rusher needs to get home, and his move',  // { off, def, t, move }
   pressure: 'A rusher gets to the quarterback: a hurry, a hit or a sack',                           // { by, kind: 'hurry' | 'hit' | 'sack' }
   pocket: 'What the quarterback did back there: stepped up, slid, escaped, threw it away',          // { qb, move }
   read: 'The quarterback picks his target, and how open every receiver was',                        // { qb, target, open: [{ id, sep }] }

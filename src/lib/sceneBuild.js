@@ -1,10 +1,10 @@
 // Turns one play report into a scene the broadcast can act out: where all 20 players line up, where each one runs and when,
 // what the ball does, and who ends up on the ground. It only acts out what the report says happened; it never decides
 // anything. Runs, passes, sacks and scrambles are here; kicking plays are in sceneKicks.js.
-const OFF = { OT1: [-1, -4], OG1: [-0.8, -2], C: [-0.6, 0], OG2: [-0.8, 2], OT2: [-1, 4], TE: [-1.2, 6.2], QB: [-4.5, 0], RB: [-4.5, 1.8], WR1: [-0.8, -14], WR2: [-0.8, 14] };
+export const OFF = { OT1: [-1, -4], OG1: [-0.8, -2], C: [-0.6, 0], OG2: [-0.8, 2], OT2: [-1, 4], TE: [-1.2, 6.2], QB: [-4.5, 0], RB: [-4.5, 1.8], WR1: [-0.8, -14], WR2: [-0.8, 14] };
 const DEF = { DE1: [1, -5], DT1: [1, -2.1], DL: [1, 0], DT2: [1, 2.1], DE2: [1, 5], LB1: [4.5, -3.2], LB2: [4.5, 3.2], CB1: [5.5, -14], CB2: [5.5, 14], SS: [11, 0.5] };
-const MATCH = { OT1: 'DE1', OG1: 'DT1', C: 'DL', OG2: 'DT2', OT2: 'DE2' }, COVER = { WR1: 'CB1', WR2: 'CB2', TE: 'SS', RB: 'LB1' };
-const clamp = (v, a, b) => Math.max(a, Math.min(b, v)), ev = (play, type) => play.events.filter((e) => e.type === type);
+export const MATCH = { OT1: 'DE1', OG1: 'DT1', C: 'DL', OG2: 'DT2', OT2: 'DE2' }, COVER = { WR1: 'CB1', WR2: 'CB2', TE: 'SS', RB: 'LB1' };
+export const clamp = (v, a, b) => Math.max(a, Math.min(b, v)), ev = (play, type) => play.events.filter((e) => e.type === type);
 const rating = (p, k) => p?.r?.[k] ?? 60;
 // Top speed in yards per second from his Speed rating (a 99 runs about 10.5, a 50 lineman about 7). get: seconds to get going.
 export const yps = (p) => 3.4 + 0.072 * clamp(rating(p, 'speed'), 30, 99);
@@ -35,8 +35,11 @@ export function fly(S, t, t1, from, to, h) { S.ball.push({ t, kind: 'fly', t1, x
 export function lineUp(S) {
   const o = S.lineups[S.play.off], d = S.lineups[S.play.def], slot = (list) => Object.fromEntries(list.map((s) => [s.key, s.player]));
   const O = slot(o.offense), Dd = slot(d.defense);
-  Object.entries(OFF).forEach(([k, [a, l]]) => { S.A[k] = add(S, O[k], S.play.off, a, l, k.startsWith('O') || k === 'C' || k === 'TE' ? 'set' : 'stand'); });
-  Object.entries(DEF).forEach(([k, [a, l]]) => { S.D[k] = add(S, Dd[k], S.play.def, a, l, k.startsWith('D') ? 'set' : 'stand'); });
+  const stance = (k) => (/^(OT|OG|C)/.test(k) ? 'olset' : k === 'TE' ? 'olset' : k === 'QB' ? 'qbset' : k === 'RB' ? 'rbset' : k.startsWith('WR') ? 'wrset'
+    : /^(D)/.test(k) ? 'dlset' : k.startsWith('LB') ? 'lbset' : 'cbset');
+  Object.entries(OFF).forEach(([k, [a, l]]) => { S.A[k] = add(S, O[k], S.play.off, a, l, stance(k)); });
+  Object.entries(DEF).forEach(([k, [a, l]]) => { S.D[k] = add(S, Dd[k], S.play.def, a, l, stance(k)); });
+  if (S.A.QB) S.A.QB.qb = true;
   const any = (id, side) => S.by[id] || S.actors.find((a) => a.side === side);   // a sub who isn't drawn borrows a teammate
   S.who = (id, side) => any(id, side);
   S.actors.forEach((a) => { // break the huddle and jog to the line
@@ -48,18 +51,34 @@ export function lineUp(S) {
   if (S.A.C && S.A.QB) { const q = S.A.QB.keys[S.A.QB.keys.length - 1]; fly(S, S.T0, S.T0 + 0.12, S.at(0, 0), [q.x, q.y], 0.1); }   // the snap
 }
 
-// The line: blockers and rushers lock up. back: how far the pocket gives ground (pass) or pushes ahead (run, negative).
-function trenches(S, back, tEnd) {
+const hash = (id) => { let h = 7; for (const ch of String(id)) h = (h * 31 + ch.charCodeAt(0)) >>> 0; return h; };
+// The line, one matchup at a time, each playing out the engine's result on its own rhythm. Pass (pass true): the blocker
+// kick-steps; a rusher who wins (rush event sooner than the play ends) works his move and breaks free toward the QB while
+// his blocker gets driven back; the rest hand-fight. Run: pancakes put the defender on the ground, drive blocks move him
+// off the ball, sheds slip off toward the runner.
+export function trenches(S, pass, tEnd, aim) {
+  const rush = Object.fromEntries(ev(S.play, 'rush').map((e) => [e.def, e])), runB = Object.fromEntries(ev(S.play, 'block').map((e) => [e.def, e]));
   Object.entries(MATCH).forEach(([ok, dk]) => {
     const ol = S.A[ok], dl = S.D[dk]; if (!ol || !dl) return;
-    const [a, l] = OFF[ok]; stay(ol, S.T0); stay(dl, S.T0);
-    go(ol, S.T0 + 0.55, a - back, l, S); go(dl, S.T0 + 0.55, a - back + 0.9, l, S);
-    for (let t = S.T0 + 0.85, n = 0; t < tEnd; t += 0.3, n++) {   // hand fighting: they shove back and forth, locked together
-      const push = (n % 2 ? 0.3 : -0.25) + (back < 0 ? -n * 0.12 : n * 0.05), side = (n % 3 - 1) * 0.25;
-      go(ol, t, a - back - push, l + side, S); go(dl, t, a - back + 0.9 - push, l + side, S);
+    const [a, l] = OFF[ok], h = hash(dl.id), per = 0.24 + (h % 6) * 0.045, sway = ((h >> 3) % 3 - 1) * 0.35, start = S.T0 + 0.35 + (h % 4) * 0.05;
+    stay(ol, S.T0); stay(dl, S.T0);
+    const r = rush[dl.id], b = runB[dl.id] || Object.values(runB).find((e) => e.off === ol.id);
+    const base = pass ? -1.3 : 0.3, gap = 1.45; go(ol, start, a + base, l, S); go(dl, start, a + base + gap, l + sway * 0.4, S);
+    const winAt = pass && r && S.T0 + r.t < tEnd + 0.2 ? S.T0 + r.t : null, shed = !pass && b?.move === 'shed', pancake = !pass && b?.move === 'pancake';
+    const stop = winAt ? Math.max(start + 0.3, winAt - 0.55) : shed ? S.T0 + 0.9 : pancake ? S.T0 + 0.8 : tEnd;
+    for (let t = start + per, n = 0; t < stop; t += per, n++) {          // his own shove-and-reset rhythm
+      const give = pass ? (winAt ? n * 0.22 : n * 0.06) : (b?.win === 'def' ? n * 0.18 : -n * 0.2), wob = (n % 2 ? 0.28 : -0.2) + sway * (n % 3 === 1 ? 0.5 : 0);
+      go(ol, t, a + base - give - wob * 0.5, l + sway * 0.2, S); go(dl, t, a + base - give + gap - wob * 0.5, l + sway * 0.4, S);
     }
+    if (winAt) { // he beats his man: a swim or rip move, then free toward the quarterback
+      const q = aim || [-7, 0], move = r.move === 'swim move' ? 'swim' : 'rush';
+      go(dl, winAt - 0.25, q[0] + 1.6, q[1] + sway * 1.5 + (r.move === 'speed rush' ? (l >= 0 ? 1.8 : -1.8) : 0), S); go(dl, winAt, q[0] + 0.7, q[1] + 0.3, S);
+      go(ol, winAt, a + base - 1.6, l + sway * 0.6, S);
+      pose(dl, S.T0, winAt - 0.25, move); pose(ol, S.T0 + 0.1, start + 0.2, 'anchor'); pose(ol, start + 0.2, winAt + 0.6, 'driven');
+    } else if (pancake) { go(ol, S.T0 + 1.1, a + 2, l, S); go(dl, S.T0 + 1.0, a + 2.4, l + sway, S); dl.down = S.T0 + 1.0; pose(ol, S.T0, tEnd, 'drive'); }
+    else if (shed) { pose(dl, S.T0, S.T0 + 0.9, 'swim'); pose(ol, S.T0, tEnd, 'driven'); if (aim) go(dl, S.T0 + 1.5, aim[0], aim[1], S); }
+    else { pose(ol, S.T0 + 0.05, tEnd, pass ? (h % 2 ? 'anchor' : 'block') : b?.win === 'def' ? 'driven' : 'drive'); pose(dl, S.T0, tEnd, pass ? (r?.move === 'swim move' ? 'swim' : 'rush') : b?.win === 'def' ? 'drive' : 'driven'); }
     stay(ol, tEnd); stay(dl, tEnd);
-    pose(ol, S.T0 + 0.1, tEnd, 'block'); pose(dl, S.T0, tEnd, 'block');
   });
 }
 
@@ -94,52 +113,11 @@ export function buildRun(S, gain) {
   const play = S.play, hand = ev(play, 'handoff')[0], qb = S.A.QB, c = play.scramble ? qb : S.who(hand?.to, play.off) || S.A.RB;
   const [type, sideName] = (hand?.gap || 'inside right').split(' '), sg = sideName === 'left' ? -1 : 1, gap = sg * (type === 'outside' ? 7.5 : 1.3);
   hold(S, S.T0 + 0.12, qb); let t = S.T0 + 0.5;
-  if (play.scramble) { go(qb, S.T0 + 0.9, -7, 0, S); go(qb, S.T0 + 1.7, -5, gap * 3, S); t = S.T0 + 1.7; trenches(S, 1.2, t + 1); return carryOut(S, qb, [-5, gap * 3], t, gain); }
+  if (play.scramble) { go(qb, S.T0 + 0.9, -7, 0, S); go(qb, S.T0 + 1.7, -5, gap * 3, S); t = S.T0 + 1.7; trenches(S, true, t + 1, [-6, 0]); return carryOut(S, qb, [-5, gap * 3], t, gain); }
   if (c !== qb) { stay(c, S.T0 + 0.05); go(c, t, -3.6, gap * 0.25, S); go(qb, t, -3.9, gap * 0.25 - sg * 0.8, S); hold(S, t, c); go(qb, t + 0.8, -5.5, -sg * 3, S); }
-  trenches(S, -0.7, t + 1.2);
+  trenches(S, false, t + 1.2, [1, gap]);
   [['WR1', 'CB1'], ['WR2', 'CB2']].forEach(([w, cb]) => { if (S.A[w] && S.D[cb]) { stay(S.A[w], S.T0); go(S.A[w], S.T0 + 1, 4.5, OFF[w][1], S); pose(S.A[w], S.T0 + 1, 9, 'block'); } });
   const hit = t + Math.hypot(3.9, gap) / yps(c.p);
   go(c, hit, Math.min(0.3, gain), gap, S);
   return carryOut(S, c, [Math.min(0.3, gain), gap], hit, gain);
-}
-
-export function buildPass(S, gain) {
-  const play = S.play, qb = S.A.QB, thr = ev(play, 'throw')[0], cat = ev(play, 'catch')[0], sackEv = ev(play, 'pressure').find((e) => e.kind === 'sack');
-  hold(S, S.T0 + 0.12, qb); go(qb, S.T0 + 0.8, -7, 0, S); qb.back = [[S.T0, S.T0 + 0.8]];
-  const tThrow = S.T0 + clamp(thr?.t ?? 2.4, 1.1, 3.4), tgt = thr && S.who(thr.target, play.off), d = thr?.air ?? 5, tCatch = tThrow + 0.35 + d / 24;
-  Object.entries(COVER).forEach(([rk, ck]) => { // routes, with the coverage running along
-    const r = S.A[rk], cv = S.D[ck]; if (!r) return;
-    const [a0, l0] = OFF[rk], mine = r === tgt, depth = mine ? d : rk === 'RB' ? 2 : 13, lat = mine ? l0 * 0.62 : l0 * 0.9 + (rk === 'RB' ? 5 : 0);
-    const go0 = S.T0 + getGoing(r.p), fast = go0 + Math.hypot(depth - a0, lat - l0) / yps(r.p), tArr = mine ? Math.max(tCatch, fast) : fast;
-    stay(r, go0); go(r, Math.min(fast, tArr) - (fast - go0) * 0.35, a0 + (depth - a0) * 0.65, l0, S); go(r, tArr, depth, lat, S);
-    if (cv) { stay(cv, S.T0 + 0.1 + getGoing(cv.p)); if (rk !== 'RB') cv.back = [[S.T0, S.T0 + 0.7]]; go(cv, tArr, depth + (mine && cat ? clamp(cat.sep ?? 1.5, 0.4, 4) : 1.6), lat + 0.7, S); }
-  });
-  const end = sackEv ? tThrow : tCatch;
-  trenches(S, 1.4, end + 0.4);
-  if (sackEv) { // the rusher gets home
-    const by = S.who(sackEv.by, play.def); stay(by, tThrow - 0.9); go(by, tThrow, -7 + 0.5, 0.3, S); by.poses = []; go(qb, tThrow, gain, 0, S); qb.down = tThrow; by.down = tThrow + 0.05; return tThrow + 0.2;
-  }
-  if (thr?.away) { // throws it out of bounds: over everyone's head, lands past the sideline
-    pose(qb, tThrow - 0.32, tThrow + 0.25, 'throw'); const q = qb.keys[qb.keys.length - 1], sd = q.y >= 0 ? 1 : -1;
-    fly(S, tThrow, tThrow + 1.1, [q.x, q.y], [q.x + S.dir * 9, sd * 28.5], 3.2); S.ball.push({ t: tThrow + 1.1, kind: 'ground', x: q.x + S.dir * 9.5, y: sd * 28.8 });
-    return tThrow + 1.2;
-  }
-  if (!thr || !tgt) return tThrow;
-  const pk = ev(play, 'pocket')[0], hurry = ev(play, 'pressure').find((e) => e.kind === 'hurry');
-  if (pk?.move === 'step up') { stay(qb, Math.max(S.T0 + 0.85, tThrow - 0.75)); go(qb, tThrow - 0.3, -5.3, 0.4, S); }        // climbs the pocket
-  else if (pk?.move === 'slide') { const sd = (play.n % 2 ? 1 : -1) * 2.6; stay(qb, Math.max(S.T0 + 0.85, tThrow - 0.8)); go(qb, tThrow - 0.25, -7.4, sd, S); }
-  if (hurry && thr.pressured) { // the rusher gets there as he lets it go and puts him on the ground
-    const by = S.who(hurry.by, play.def), q = qb.keys[qb.keys.length - 1];
-    if (by && by !== qb) { by.poses = []; stay(by, tThrow - 0.6); go(by, tThrow + 0.1, (q.x - S.los) * S.dir + 0.6, q.y + 0.3, S); by.down = tThrow + 0.12; by.upAt = tThrow + 1.7; qb.down = tThrow + 0.18; qb.upAt = tThrow + 1.9; }
-  }
-  pose(qb, tThrow - 0.32, tThrow + 0.25, 'throw');
-  const from = qb.keys[qb.keys.length - 1], spot = S.at(d, OFF[Object.keys(S.A).find((k) => S.A[k] === tgt)]?.[1] * 0.62 || 0);
-  const res = cat?.result;
-  fly(S, tThrow, tCatch, [from.x, from.y], res === 'miss' ? [spot[0] + S.dir * 3, spot[1] + 2] : spot, 2 + d * 0.16);
-  pose(tgt, tCatch - 0.3, tCatch + 0.1, 'catch');
-  if (res === 'catch') { hold(S, tCatch, tgt); return carryOut(S, tgt, [d, spot[1]], tCatch, gain); }
-  if (res === 'int') { const df = S.who(cat.def, play.def); go(df, tCatch, d, spot[1], S); hold(S, tCatch, df); go(df, tCatch + 1.2, d - 6, spot[1] * 0.8, S); df.down = tCatch + 1.25; return tCatch + 1.3; }
-  S.ball.push({ t: tCatch, kind: 'ground', x: spot[0] + S.dir * (res === 'miss' ? 3 : 1.2), y: spot[1] + (res === 'miss' ? 2 : 0.6) });
-  if (res === 'breakup') { const df = S.who(cat.def, play.def); go(df, tCatch, d + 0.3, spot[1], S); pose(df, tCatch - 0.2, tCatch + 0.3, 'catch'); }
-  return tCatch + 0.4;
 }

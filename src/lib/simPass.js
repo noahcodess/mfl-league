@@ -14,8 +14,10 @@ const rushMove = (p) => [['speed_rush', 'speed rush'], ['power_moves', 'bull rus
 // How long until each rusher gets home. Returns { t, by, blocker }: the first one there.
 function rush(G, play, def) {
   const { R, O, D } = G; let first = { t: 9, by: null };
+  const cap = 4.3 + R.r() * 1.7;                    // even a great line only holds about 4 to 6 seconds before the pocket collapses
   LINE.forEach(([o, d]) => {
-    const t = Math.max(1.3, 4.75 + (mix(G, O[o], PROTECT) - rushOf(G, D[d])) / 17 + R.gauss(0, 0.9));
+    const t = Math.min(cap + R.r() * 0.4, Math.max(0.9, 4.6 + (mix(G, O[o], PROTECT) - rushOf(G, D[d])) / 17 + R.gauss(0, 0.9)));
+    addEvent(play, 'rush', 0, { off: O[o].id, def: D[d].id, t: Math.round(t * 100) / 100, move: rushMove(D[d]) });   // every matchup on the line, for the broadcast
     if (t < first.t) first = { t, by: D[d], blocker: O[o] };
   });
   if (def.blitz) { // the extra man: the back picks him up or he comes free
