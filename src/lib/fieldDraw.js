@@ -24,14 +24,24 @@ function yardNumbers(r) {
   }
 }
 
-// The goal post, drawn flat like everything else on the field: a padded base behind the end line, the neck out to the
-// crossbar, and the crossbar with its two uprights at the ends. No fake shadows or top-down tricks.
+// The goal post, standing up off the field the classic 2D way: height goes up the screen and leans back away from the
+// field a little, so you see the padded base, the gooseneck rising to the crossbar, the crossbar across the back of the end
+// zone, and both uprights reaching up, with their shadow on the grass.
 function goalPost(r, x, side) {
-  const back = side < 0 ? x - 12 : x + 4;
-  r(back, MID_Y - 4, 8, 8, '#2b2f36'); r(back + 1, MID_Y - 3, 6, 6, '#3d434c');                 // padded base
-  r(side < 0 ? x - 4 : x + 2, MID_Y - 1, 4, 2, shade(POST, 0.8));                                 // the neck
-  r(x, MID_Y - 37, 3, 74, POST); r(x + 2, MID_Y - 37, 1, 74, shade(POST, 0.78));                 // crossbar
-  r(x - 1, MID_Y - 38, 5, 3, POST); r(x - 1, MID_Y + 35, 5, 3, POST);                            // the uprights' ends
+  const out = side < 0 ? -1 : 1, lean = 0.34, Y = MID_Y, bar = 30, up = 70, half = 37, INKC = '#2a2410';
+  const line = (x0, y0, x1, y1, w, c) => { const n = Math.ceil(Math.max(Math.abs(x1 - x0), Math.abs(y1 - y0))); for (let k = 0; k <= n; k++) r(x0 + ((x1 - x0) * k) / n - w / 2, y0 + ((y1 - y0) * k) / n - w / 2, w, w, c); };
+  const up3 = (gx, gy, h) => [gx + out * h * lean, gy - h];                    // a point h pixels above the ground spot
+  const dark = 'rgba(0,0,0,0.22)';
+  line(x, Y, x + out * (bar + up) * 0.9, Y + 6, 3, dark);                        // shadows on the grass
+  line(x + out * bar * 0.9, Y - half + 6, x + out * bar * 0.9, Y + half + 6, 3, dark);
+  r(x - 4, Y - 4, 8, 8, '#2b2f36'); r(x - 3, Y - 3, 6, 6, '#3d434c');           // padded base
+  const top = up3(x, Y, bar), base = up3(x, Y, 4);
+  const beam = (a, b, w, c) => { line(a[0], a[1], b[0], b[1], w + 2, INKC); line(a[0], a[1], b[0], b[1], w, c); line(a[0] - 1, a[1], b[0] - 1, b[1], 1, '#fff3a0'); };   // outlined like the players
+  beam(base, top, 5, '#d8b62c');                                                                   // the gooseneck
+  const ends = [-half, half].map((dy) => [top[0], top[1] + dy]);
+  ends.forEach((a) => beam(a, up3(a[0], a[1], up), 4, POST));                                       // uprights
+  beam(ends[0], ends[1], 5, POST);                                                                 // crossbar
+  ends.forEach((a) => { const b = up3(a[0], a[1], up); r(b[0] - 3, b[1] - 6, 6, 5, '#e2433b'); r(b[0] - 3, b[1] - 6, 6, 1, '#ff8a80'); });   // wind flags on top
 }
 
 // team: { color, accent, name, location?, nickname? }. art: { teamLogo, leagueLogo } as loaded Images (either can be null).

@@ -88,3 +88,9 @@
 .pg-full .ct-row { position: absolute; top: .8cqw; right: .8cqw; gap: .4cqw; padding: .3cqw; background: rgba(0, 0, 0, .5); border-radius: 8px; opacity: .35; transition: opacity .2s; }
 .pg-full .ct-row:hover { opacity: 1; }
 .pg-full .ct-row .btn, .pg-full .ct-row .dim { font-size: .9cqw; padding: .25cqw .6cqw; color: #fff; }
+/* Pacing director graphics: instant replay bug, flag close-up caption, key play badge */
+.pg-replay { position: absolute; top: 2cqw; left: 2cqw; padding: .4cqw 1.4cqw; background: #111; color: #fff; font: 900 1.8cqw/1 var(--font-display, system-ui); letter-spacing: .14em; transform: skewX(-12deg); border-left: .5cqw solid #ffd83a; animation: pg-pop .3s both; }
+.pg-replay.net-cbs { border-left-color: #1f5fc4; } .pg-replay.net-espn { border-left-color: #d10f0f; } .pg-replay.net-nbc { border-left-color: #6460aa; }
+.pg-flag { position: absolute; left: 50%; bottom: 9cqw; transform: translateX(-50%); display: flex; gap: .8cqw; align-items: center; padding: .6cqw 1.6cqw; background: #ffd400; color: #111; font: 800 1.5cqw/1.2 var(--font-display, system-ui); border-radius: .4cqw; white-space: nowrap; animation: pg-pop .3s both; }
+.pg-key { position: absolute; top: 2cqw; left: 50%; transform: translateX(-50%); padding: .3cqw 1.2cqw; background: #d10f0f; color: #fff; font: 900 1.3cqw/1.2 var(--font-display, system-ui); letter-spacing: .12em; border-radius: .3cqw; animation: pg-blink 1s infinite alternate; }
+@keyframes pg-blink { to { opacity: .55; } }

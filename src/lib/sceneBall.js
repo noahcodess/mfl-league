@@ -1,5 +1,5 @@
 // The football: pointed ends, laces and a highlight, turned to point the way it's flying. Passes spiral (the laces flash),
-// kicks tumble end over end, a shadow on the grass shows where it is over the field, and a short trail shows its path.
+// kicks tumble end over end, deflections and throws made while getting hit wobble like a duck, a shadow on the grass shows where it is over the field, and a short trail shows its path.
 const ART = ['...OOOOO...', '.OOHHBBBOO.', 'OBHHBWBWBBO', 'OBBWWWWWBBO', 'OBBBBWBWBDO', '.OODDDDDOO.', '...OOOOO...'];
 const COL = { O: '#1a0f08', B: '#8b4a1f', H: '#b8692f', W: '#f4f1e8', D: '#6b3614' };
 const cache = new Map();
@@ -29,7 +29,7 @@ export function drawBall(ctx, S, t, v, ballAt, holderAt) {
     put(turned(stepOf(face > 0 ? (qb ? -0.6 : 0) : Math.PI + (qb ? 0.6 : 0)), false), a.handAt[0], a.handAt[1]);
     return;
   }
-  const kick = ['kickoff', 'punt', 'fg', 'xp'].includes(S.play.kind) && b.spin;
+  const kick = ['kickoff', 'punt', 'fg', 'xp'].includes(S.play.kind) && b.spin && !b.wobble;
   ctx.fillStyle = 'rgba(0,0,0,0.3)';                                                     // its shadow on the grass
   const sw = Math.max(3, 8 - b.h * 0.35) * v.sp; ctx.fillRect(Math.round(gx - sw / 2), Math.round(gy - v.sp), Math.round(sw), Math.round(2 * v.sp));
   if (b.spin) { // a short fading trail so you can see where it's going
@@ -38,7 +38,8 @@ export function drawBall(ctx, S, t, v, ballAt, holderAt) {
   }
   let ang = 0;
   if (kick) ang = t * 14;                                                                // end over end
+  else if (b.wobble) ang = t * 9 + Math.sin(t * 23) * 0.8;                                // a duck: tumbling, not a spiral
   else if (b.spin) { const n = ballAt(S, t + 0.03); if (n) ang = Math.atan2((v.sy(n.y) - n.h * v.yd * v.px) - hy, v.sx(n.x) - gx); }
   else if (S.tee && t < S.tee.t1 + 0.05) ang = Math.PI / 2;                              // standing up on the tee
-  put(turned(stepOf(ang), b.spin && !kick && Math.floor(t * 18) % 2 === 0), gx, hy);
+  put(turned(stepOf(ang), b.spin && !kick && !b.wobble && Math.floor(t * 18) % 2 === 0), gx, hy);
 }

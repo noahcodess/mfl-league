@@ -1,19 +1,20 @@
 // Turns one play report into a scene the broadcast can act out: where all 20 players line up, where each one runs and when,
 // what the ball does, and who ends up on the ground. It only acts out what the report says happened; it never decides
 // anything. Runs, passes, sacks and scrambles are here; kicking plays are in sceneKicks.js.
-export const OFF = { OT1: [-1, -4], OG1: [-0.8, -2], C: [-0.6, 0], OG2: [-0.8, 2], OT2: [-1, 4], TE: [-1.2, 6.2], QB: [-4.5, 0], RB: [-4.5, 1.8], WR1: [-0.8, -14], WR2: [-0.8, 14] };
-const DEF = { DE1: [1, -5], DT1: [1, -2.1], DL: [1, 0], DT2: [1, 2.1], DE2: [1, 5], LB1: [4.5, -3.2], LB2: [4.5, 3.2], CB1: [5.5, -14], CB2: [5.5, 14], SS: [11, 0.5] };
+export const OFF = { OT1: [-1.6, -4], OG1: [-1.45, -2], C: [-1.3, 0], OG2: [-1.45, 2], OT2: [-1.6, 4], TE: [-1.7, 6.2], QB: [-4.5, 0], RB: [-4.5, 1.8], WR1: [-0.8, -14], WR2: [-0.8, 14] };
+const DEF = { DE1: [1.7, -5], DT1: [1.6, -2.1], DL: [1.6, 0], DT2: [1.6, 2.1], DE2: [1.7, 5], LB1: [4.5, -3.2], LB2: [4.5, 3.2], CB1: [5.5, -14], CB2: [5.5, 14], SS: [11, 0.5] };
 export const MATCH = { OT1: 'DE1', OG1: 'DT1', C: 'DL', OG2: 'DT2', OT2: 'DE2' }, COVER = { WR1: 'CB1', WR2: 'CB2', TE: 'SS', RB: 'LB1' };
 export const clamp = (v, a, b) => Math.max(a, Math.min(b, v)), ev = (play, type) => play.events.filter((e) => e.type === type);
 const rating = (p, k) => p?.r?.[k] ?? 60;
-// Top speed in yards per second from his Speed rating (a 99 runs about 10.5, a 50 lineman about 7). get: seconds to get going.
-export const yps = (p) => 3.4 + 0.072 * clamp(rating(p, 'speed'), 30, 99);
+// Top speed in yards per second from his Speed rating (a 99 runs about 11.6, a 50 lineman about 8). get: seconds to get going.
+export const yps = (p) => 4.3 + 0.074 * clamp(rating(p, 'speed'), 30, 99);
 export const getGoing = (p) => 0.34 - 0.003 * clamp(rating(p, 'acceleration'), 30, 99);
 
 // Scene helpers. Positions are [yards from the offense's goal line going its way (along), yards from the middle of the field (lat)].
-export function newScene(play, lineups) {
+// pace: from the pacing director ({ T0: seconds before the snap }).
+export function newScene(play, lineups, pace = {}) {
   const dir = play.off === 'away' ? 1 : -1, los = play.off === 'away' ? play.before.ballOn : 100 - play.before.ballOn;
-  const S = { play, dir, los, T0: 2.6, dur: 4, actors: [], A: {}, D: {}, by: {}, ball: [], first: play.before.toGo < 100 - play.before.ballOn ? los + dir * play.before.toGo : null, lineups };
+  const S = { play, dir, los, T0: pace.T0 || 2.8, dur: 4, actors: [], A: {}, D: {}, by: {}, ball: [], first: play.before.toGo < 100 - play.before.ballOn ? los + dir * play.before.toGo : null, lineups };
   S.at = (along, lat) => [S.los + S.dir * along, clamp(lat, -25.5, 25.5)];
   return S;
 }
@@ -30,22 +31,25 @@ export const stay = (a, t) => { const k = a.keys[a.keys.length - 1]; if (t > k.t
 export const spotOf = (a, S) => { const k = a.keys[a.keys.length - 1]; return [(k.x - S.los) * S.dir, k.y]; };
 export const pose = (a, t0, t1, name) => a.poses.push({ t0, t1, pose: name });
 export const hold = (S, t, a) => S.ball.push({ t, kind: 'held', id: a.id });
-export function fly(S, t, t1, from, to, h) { S.ball.push({ t, kind: 'fly', t1, x0: from[0], y0: from[1], x1: to[0], y1: to[1], h }); }
+// extra: { wobble } for a ball that isn't a clean spiral (deflected, or thrown while he's hit).
+export function fly(S, t, t1, from, to, h, extra = {}) { S.ball.push({ t, kind: 'fly', t1, x0: from[0], y0: from[1], x1: to[0], y1: to[1], h, ...extra }); }
 
 export function lineUp(S) {
   const o = S.lineups[S.play.off], d = S.lineups[S.play.def], slot = (list) => Object.fromEntries(list.map((s) => [s.key, s.player]));
   const O = slot(o.offense), Dd = slot(d.defense);
   const stance = (k) => (/^(OT|OG|C)/.test(k) ? 'olset' : k === 'TE' ? 'olset' : k === 'QB' ? 'qbset' : k === 'RB' ? 'rbset' : k.startsWith('WR') ? 'wrset'
     : /^(D)/.test(k) ? 'dlset' : k.startsWith('LB') ? 'lbset' : 'cbset');
-  Object.entries(OFF).forEach(([k, [a, l]]) => { S.A[k] = add(S, O[k], S.play.off, a, l, stance(k)); });
+  const under = S.play.call?.sub === 'sneak' || S.play.call?.name === 'QB Sneak';   // under center for a sneak
+  Object.entries(OFF).forEach(([k, [a, l]]) => { const [aa, ll] = under && k === 'QB' ? [-2.3, 0] : under && k === 'RB' ? [-6.5, 0] : [a, l]; S.A[k] = add(S, O[k], S.play.off, aa, ll, under && k === 'QB' ? 'rbset' : stance(k)); });
   Object.entries(DEF).forEach(([k, [a, l]]) => { S.D[k] = add(S, Dd[k], S.play.def, a, l, stance(k)); });
   if (S.A.QB) S.A.QB.qb = true;
-  const any = (id, side) => S.by[id] || S.actors.find((a) => a.side === side);   // a sub who isn't drawn borrows a teammate
+  const near = (side) => S.actors.filter((a) => a.side === side).sort((m, n) => Math.abs(m.keys[0].x - S.los) + Math.abs(m.keys[0].y) * 0.3 - Math.abs(n.keys[0].x - S.los) - Math.abs(n.keys[0].y) * 0.3)[0];
+  const any = (id, side) => S.by[id] || near(side);   // a sub who isn't drawn borrows the teammate closest to the ball, never one across the field
   S.who = (id, side) => any(id, side);
   S.actors.forEach((a) => { // break the huddle and jog to the line
     const k = a.keys[0], [al, lat] = [(k.x - S.los) * S.dir, k.y], off = a.side === S.play.off;
-    const from = off ? S.at(-7 - Math.abs(lat) * 0.05, lat * 0.25) : S.at(al + 4, lat * 0.6), arrive = S.T0 - 0.9 + Math.abs(lat) * 0.02;
-    a.keys = [{ t: 0, x: from[0], y: from[1] }, { t: 0.5, x: from[0], y: from[1] }, { t: Math.min(S.T0 - 0.35, arrive), x: k.x, y: k.y }];
+    const from = off ? S.at(-7 - Math.abs(lat) * 0.05, lat * 0.25) : S.at(al + 4, lat * 0.6), arrive = Math.max(0.9, S.T0 - 1.25 - Math.abs(lat) * 0.01);   // set and still for over a second before the snap
+    a.keys = [{ t: 0, x: from[0], y: from[1] }, { t: 0.3, x: from[0], y: from[1] }, { t: arrive, x: k.x, y: k.y }];
   });
   if (S.A.C) S.ball.push({ t: 0, kind: 'ground', x: S.at(0, 0)[0], y: 0 });
   if (S.A.C && S.A.QB) { const q = S.A.QB.keys[S.A.QB.keys.length - 1]; fly(S, S.T0, S.T0 + 0.12, S.at(0, 0), [q.x, q.y], 0.1); }   // the snap
@@ -91,7 +95,8 @@ export function carryOut(S, c, from, t0, gain, opts = {}) {
     const made = e.result === 'made', meet = made ? gain : clamp(e.at ?? gain, Math.min(along, gain), Math.max(along, gain)), tk = S.who(e.def, S.play.def);
     run(meet, (i % 2 ? -1 : 1) * drift * (Math.abs(meet - along) > 4 ? 1.6 : 0.5));
     if (tk && tk !== c) {
-      stay(tk, Math.max(S.T0, t - 0.8)); go(tk, t, along + 0.4, lat + 0.3, S); tk.down = t + 0.05;
+      const tl = tk.keys[tk.keys.length - 1], far = Math.hypot((tl.x - S.los) * S.dir - along, tl.y - lat), lead = Math.max(0.6, far / (yps(tk.p) * 0.95));
+      stay(tk, Math.max(S.T0 + 0.1, Math.min(tl.t + 0.01, t - lead), t - lead)); go(tk, t, along + 0.4, lat + 0.3, S); tk.down = t + 0.05;
       if (!made) { // he whiffs and hits the turf while the carrier makes his move
         tk.upAt = t + 1.6; go(tk, t + 0.2, along + 1.2, lat + (e.move === 'juke' ? -0.9 : 0.6), S);
         const mv = { juke: 'juke', shake: 'juke', spin: 'spin', 'stiff arm': 'stiff', truck: 'block' }[e.move] || 'juke';
@@ -114,6 +119,12 @@ export function buildRun(S, gain) {
   const [type, sideName] = (hand?.gap || 'inside right').split(' '), sg = sideName === 'left' ? -1 : 1, gap = sg * (type === 'outside' ? 7.5 : 1.3);
   hold(S, S.T0 + 0.12, qb); let t = S.T0 + 0.5;
   if (play.scramble) { go(qb, S.T0 + 0.9, -7, 0, S); go(qb, S.T0 + 1.7, -5, gap * 3, S); t = S.T0 + 1.7; trenches(S, true, t + 1, [-6, 0]); return carryOut(S, qb, [-5, gap * 3], t, gain); }
+  if (c === qb && !play.scramble) { // QB sneak: under center, he takes it and drives straight into the pile behind his center
+    trenches(S, false, S.T0 + 2, [0.5, 0]); pose(qb, S.T0 + 0.1, S.T0 + 0.25, 'rbset');
+    const end = Math.max(gain, -0.5) + 0.3, tHit = S.T0 + 0.75; go(qb, S.T0 + 0.35, -1.4, 0, S); go(qb, tHit, -0.6, 0.2, S); go(qb, S.T0 + 1.5, end, 0.3, S);
+    pose(qb, S.T0 + 0.3, S.T0 + 1.5, 'drive'); qb.down = S.T0 + 1.55; if (S.A.C) { stay(S.A.C, S.T0 + 0.6); go(S.A.C, S.T0 + 1.5, end + 0.8, 0, S); }
+    return S.T0 + 1.6;
+  }
   if (c !== qb) { stay(c, S.T0 + 0.05); go(c, t, -3.6, gap * 0.25, S); go(qb, t, -3.9, gap * 0.25 - sg * 0.8, S); hold(S, t, c); go(qb, t + 0.8, -5.5, -sg * 3, S); }
   trenches(S, false, t + 1.2, [1, gap]);
   [['WR1', 'CB1'], ['WR2', 'CB2']].forEach(([w, cb]) => { if (S.A[w] && S.D[cb]) { stay(S.A[w], S.T0); go(S.A[w], S.T0 + 1, 4.5, OFF[w][1], S); pose(S.A[w], S.T0 + 1, 9, 'block'); } });

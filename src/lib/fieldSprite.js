@@ -79,7 +79,7 @@ function turned(img, deg) { // lying on the turf (90) or diving (about 60)
   const c = document.createElement('canvas'); c.width = w; c.height = h;
   const ctx = c.getContext('2d'); ctx.imageSmoothingEnabled = false;
   ctx.translate(w / 2, h / 2); ctx.rotate(r); ctx.drawImage(img, -img.width / 2, -img.height / 2);
-  c.footX = w / 2; c.footY = Math.abs(deg) >= 80 ? h * 0.62 : h * 0.85; c.hand = [w / 2 + 6 * Math.sign(deg), c.footY - 6]; c.hand2 = c.hand;
+  c.footX = w / 2; c.footY = Math.abs(deg) >= 80 ? h * 0.62 : h * 0.85; c.hand = Math.abs(deg) >= 80 ? [w / 2, c.footY - 3] : [w / 2 + 6 * Math.sign(deg), c.footY - 6]; c.hand2 = c.hand;   // a downed carrier keeps it tucked against him
   return c;
 }
 

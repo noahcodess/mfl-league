@@ -31,7 +31,7 @@ export function ballAt(S, t) {
     const side = !v || v.view === 'side';
     return { x: p.x + (side ? (v?.face || a.face) * 0.22 : 0), y: p.y + (v?.view === 'front' ? 0.08 : 0), h: 0.62, held: true, hide: v?.view === 'back' };
   }
-  if (st.kind === 'fly') { const u = Math.min(1, (t - st.t) / Math.max(0.01, st.t1 - st.t)); return { x: lerp(st.x0, st.x1, u), y: lerp(st.y0, st.y1, u), h: 0.8 + st.h * 4 * u * (1 - u), spin: u < 1 }; }
+  if (st.kind === 'fly') { const u = Math.min(1, (t - st.t) / Math.max(0.01, st.t1 - st.t)); return { x: lerp(st.x0, st.x1, u), y: lerp(st.y0, st.y1, u), h: 0.8 + st.h * 4 * u * (1 - u), spin: u < 1, wobble: !!st.wobble }; }
   return { x: st.x, y: st.y, h: S.tee && t < S.tee.t1 && st.x === S.tee.x ? 0.22 : 0.1 };
 }
 

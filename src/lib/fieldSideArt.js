@@ -52,7 +52,7 @@ function arm(look, which, tone, hw) {
   for (let y = 33; y <= 37; y++) F.row(y, 15 + hw, 18 + hw, armAt(y, 0));
   const gl = on(d.gloves ?? 'both', which) ? shade(tok(d.gloveColor || 'trim', C, C.trim), tone) : skin;
   F.row(38, 15 + hw, 18 + hw, gl); F.row(39, 15 + hw, 18 + hw, gl);
-  if (d.playsheet && which === 'left') { F.row(34, 15 + hw, 18 + hw, shade('#f4f4f0', tone)); F.row(35, 15 + hw, 18 + hw, shade('#5a6270', tone)); }
+  if (d.playsheet && which === 'left') { F.row(34, 15 + hw, 18 + hw, shade('#f4f4f0', tone)); F.row(35, 15 + hw, 18 + hw, shade('#5a6270', tone)); }   // QBs wear it on the left wrist
   return [U, F];
 }
 
@@ -75,9 +75,10 @@ function leg(look, which, tone, hw, tall) {
   return [T, S];
 }
 
-// look: { colors, face, drip, design, wide, tall }. Returns the pieces, near (right) side bright and far (left) side shaded.
-export function sideArt(look) {
-  const w = look.wide || 0, hw = Math.round(w / 2), t = look.tall || 0;
-  const [nu, nf] = arm(look, 'right', 1, hw), [fu, ff] = arm(look, 'left', 0.78, hw), [nt, ns] = leg(look, 'right', 1, hw, t), [ft, fs] = leg(look, 'left', 0.8, hw, t);
+// look: { colors, face, drip, design, wide, tall }. face: 1 facing right (his right arm and leg toward the camera), -1 left
+// (his left side toward the camera), so a sleeve or leg sleeve on one side shows when that side faces us.
+export function sideArt(look, face = 1) {
+  const w = look.wide || 0, hw = Math.round(w / 2), t = look.tall || 0, near = face < 0 ? 'left' : 'right', far = face < 0 ? 'right' : 'left';
+  const [nu, nf] = arm(look, near, 1, hw), [fu, ff] = arm(look, far, 0.78, hw), [nt, ns] = leg(look, near, 1, hw, t), [ft, fs] = leg(look, far, 0.8, hw, t);
   return { body: body(look, w), nu, nf, fu, ff, nt, ns, ft, fs };
 }

@@ -58,9 +58,9 @@ function kickScene(S, play, L) { // field goals and extra points
   return tEnd + 0.3;
 }
 
-// lineups: { home, away } from loadLineups. Returns the scene: actors with their moves, the ball's story, and how long it runs.
-export function buildScene(play, lineups) {
-  const S = newScene(play, lineups); let tEnd;
+// lineups: { home, away } from loadLineups. pace: from the pacing director. Returns the scene: actors with their moves, the ball's story, and how long it runs.
+export function buildScene(play, lineups, pace = {}) {
+  const S = newScene(play, lineups, pace); let tEnd;
   if (play.kind === 'kickoff') tEnd = kickoffScene(S, play, lineups);
   else if (play.kind === 'punt') tEnd = puntScene(S, play, lineups);
   else if (play.kind === 'fg' || play.kind === 'xp') tEnd = kickScene(S, play, lineups);

@@ -63,7 +63,7 @@ function paint(piece, a, at, out, tag) {
 // Builds one side-view frame. Returns a canvas with footX/footY (where his feet meet the ground) and hand/hand2 (canvas
 // spots of his near and far hand, for carrying the ball).
 export function rigFrame(look, poseName, frame, face) {
-  const art = look.rig || (look.rig = sideArt(look));
+  const rigs = (look.rig ||= {}), art = rigs[face] || (rigs[face] = sideArt(look, face));
   const list = POSES[poseName] || POSES.stand, f = list[frame % list.length], [tilt, nu, nf, fu, ff, nt, ns, ft, fs, lift = 0] = f;
   const hip = art.body.pivot, pts = [], ab = rad(tilt);
   const shoulder = add2(hip, rot(sub2(art.nu.pivot, hip), ab)), limb = (deg) => rad(-deg);

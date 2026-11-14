@@ -76,7 +76,7 @@ export function passPlay(G, play, call, def, plan = {}) {
     tgt = best;
   }
   play.targetSlot = tgt.slot;
-  addEvent(play, 'read', tgt.at, { qb: qb.id, target: tgt.p.id, open: open.map((o) => ({ id: o.p.id, sep: Math.round(o.sep * 10) / 10 })) });
+  addEvent(play, 'read', tgt.at, { qb: qb.id, target: tgt.p.id, open: open.map((o) => ({ id: o.p.id, sep: Math.round(o.sep * 10) / 10, depth: o.depth })) });
   let tThrow = tgt.at + (1 - val(G, qb, 'vision', 55) / 100) * 0.5, pressured = false, onRun = false;
   if (heat.by) addEvent(play, 'block', Math.min(heat.t, tThrow), { off: heat.blocker.id, def: heat.by.id, win: heat.t < tThrow ? 'def' : 'off', move: heat.t < tThrow ? rushMove(heat.by) : 'anchor', margin: Math.round((heat.t - tThrow) * 10) });
   const hot = heat.t < tThrow && ranked.find((o) => o.at + 0.25 <= heat.t && o.seen > 0.6);
@@ -110,8 +110,9 @@ export function passPlay(G, play, call, def, plan = {}) {
   };
   if (q < need) { // off target
     if (q < need - 0.45 && tgt.sep < 2.8 && R.chance(clamp(0.1 + (val(G, tgt.c, 'ball_skills', 50) - 65) * 0.005, 0.08, 0.4))) return picked();
-    addEvent(play, 'catch', tCatch, { target: tgt.p.id, def: tgt.c.id, result: 'miss', sep: Math.round(tgt.sep * 10) / 10 });
-    return miss(`${d > 20 ? 'goes deep' : 'throws'} for ${tgt.p.last}... ${R.pick(['overthrown', 'behind him', 'too high', 'out of reach'])}.`);
+    const why = R.pick(['overthrown', 'behind him', 'too high', 'out of reach']);
+    addEvent(play, 'catch', tCatch, { target: tgt.p.id, def: tgt.c.id, result: 'miss', why, sep: Math.round(tgt.sep * 10) / 10 });
+    return miss(`${d > 20 ? 'goes deep' : 'throws'} for ${tgt.p.last}... ${why}.`);
   }
   const hands = val(G, tgt.p, 'catching', 55);
   if (tight) { // a fight for the ball
@@ -127,7 +128,7 @@ export function passPlay(G, play, call, def, plan = {}) {
     return miss(`finds ${tgt.p.last}... DROPPED.`);
   }
   const type = tight ? (val(G, tgt.p, 'spectacular_catch', 0) > 82 && R.chance(0.4) ? 'one-handed' : 'contested') : d > 20 ? 'over the shoulder' : 'in stride';
-  addEvent(play, 'catch', tCatch, { target: tgt.p.id, def: tgt.c.id, result: 'catch', type, sep: Math.round(tgt.sep * 10) / 10, contested: tight });
+  addEvent(play, 'catch', tCatch, { target: tgt.p.id, def: tgt.c.id, result: 'catch', catchType: type, sep: Math.round(tgt.sep * 10) / 10, contested: tight });
   const help = [D.SS, D.LB1, D.LB2, D.CB1, D.CB2].filter((p) => p !== tgt.c).sort(() => R.r() - 0.5);
   const out = carry(G, play, tgt.p, d, [{ p: tgt.c, at: d + Math.max(0, tgt.sep - 0.6) * 1.3 }, { p: help[0], at: d + 4 + R.int(0, 3) }, { p: help[1], at: d + 9 + R.int(0, 4) }, { p: help[2], at: d + 17 }], toGoal, [D.CB1, D.CB2, D.SS], tCatch);
   const gain = Math.round(out.end);
