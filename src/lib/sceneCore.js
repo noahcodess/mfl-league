@@ -1,0 +1,92 @@
+// The live play simulation behind the pixel broadcast (built the Sim Test 1 way): every player has a "brain" that steers him
+// each frame (run this route, shadow that receiver, block that rusher, chase the ball carrier) and he can never move faster
+// than his own top speed, so nobody teleports. The engine has already decided what happens; the brains just get everyone
+// there. The ball flies in an arc, sits in a carrier's hands, or bounces and rolls when it's loose.
+
+export const clamp = (v, a, b) => Math.max(a, Math.min(b, v)), lerp = (a, b, k) => a + (b - a) * k;
+export const dist = (ax, ay, bx, by) => Math.hypot(bx - ax, by - ay);
+const rating = (p, k) => p?.r?.[k] ?? 60;
+// Top speed in yards per second from his Speed rating (a 99 runs about 11.6, a 50 lineman about 8). getGoing: seconds to start.
+export const yps = (p) => 4.3 + 0.074 * clamp(rating(p, 'speed'), 30, 99);
+export const getGoing = (p) => 0.34 - 0.003 * clamp(rating(p, 'acceleration'), 30, 99);
+export function rng(seed) { let a = seed >>> 0; return () => { a = (a + 0x6d2b79f5) | 0; let t = Math.imul(a ^ (a >>> 15), 1 | a); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
+
+// Moves a toward (tx, ty) at no more than `speed` yards per second. Returns how far is left.
+export function stepTo(a, tx, ty, speed, dt) {
+  const dx = tx - a.x, dy = ty - a.y, d = Math.hypot(dx, dy);
+  if (d < 1e-4) return 0;
+  const s = Math.min(d, speed * dt); a.x += (dx / d) * s; a.y += (dy / d) * s;
+  return d - s;
+}
+
+// Brains: functions (a, dt, S) run every frame.
+export const B = {
+  idle: () => () => {},
+  to: (x, y, speed, then) => { let done = false; return (a, dt, S) => { if (stepTo(a, x, y, speed, dt) <= 0.02 && !done) { done = true; then?.(a, S); } }; },
+  // Along a list of points, aiming to finish at t1 but never faster than max (if he can't make it, he's late, not a blur).
+  path: (pts, t0, t1, max, then) => {
+    let i = 0, done = false;
+    return (a, dt, S) => {
+      if (S.t < t0 || done) return;
+      let left = 0; for (let k = i; k < pts.length; k++) left += dist(k === i ? a.x : pts[k - 1][0], k === i ? a.y : pts[k - 1][1], pts[k][0], pts[k][1]);
+      const speed = Math.min(max, left / Math.max(0.05, t1 - S.t));
+      if (stepTo(a, pts[i][0], pts[i][1], Math.max(speed, 0.5), dt) <= 0.03) { if (i < pts.length - 1) i++; else { done = true; then?.(a, S); } }
+    };
+  },
+  pursue: (target, speed, stop = 1) => (a, dt) => { if (dist(a.x, a.y, target.x, target.y) > stop) stepTo(a, target.x + (target.vx || 0) * 0.25, target.y + (target.vy || 0) * 0.25, speed, dt); },
+  // Get to (px, py) at tArrive, no faster than max; if he's late he keeps going until he gets there.
+  meet: (px, py, tArrive, max, then) => {
+    let done = false;
+    return (a, dt, S) => {
+      if (done) return;
+      const d = dist(a.x, a.y, px, py), rem = tArrive - S.t, speed = rem > 0.02 ? Math.min(max, d / rem) : max;
+      if (stepTo(a, px, py, speed, dt) <= 0.05) { done = true; then?.(a, S); }
+    };
+  },
+  shadow: (rcv, trail, side, max) => (a, dt) => stepTo(a, rcv.x - trail, rcv.y + side, max, dt),
+  gather: (S, px, py, r = 2) => { const ang = S.rand() * 6.28, rr = r * (0.7 + S.rand() * 0.6), tx = px + Math.cos(ang) * rr, ty = clamp(py + Math.sin(ang) * rr * 0.7, -26, 26); return (a, dt) => stepTo(a, tx, ty, 3.2, dt); },
+};
+
+export class Scene {
+  constructor(play, seed) {
+    Object.assign(this, { play, actors: [], by: {}, t: 0, timers: [], rand: rng(seed), T0: 2.8, tEnd: 4, dur: 6, flag: null, tee: null, lines: null });
+    this.ball = { x: 50, y: 0, h: 0.1, holder: null, flight: null, loose: null, wobble: false, spin: false };
+  }
+  // side: 'home' | 'away'. face: 1 right, -1 left. idle: his stance before the snap.
+  add(p, side, x, y, face, idle = 'stand') {
+    if (!p) return null;
+    const a = { id: p.id, p, side, x, y, vx: 0, vy: 0, face, homeFace: face, brain: null, down: false, pose: null, poseAt: 0, idle, max: yps(p) };
+    this.actors.push(a); this.by[p.id] = a; return a;
+  }
+  when(t, fn) { this.timers.push({ t, fn, fired: false }); }   // do fn at time t
+  setPose(a, name, hold) { if (!a) return; a.pose = name; a.poseAt = this.t; if (hold) this.when(this.t + hold, () => { if (a.pose === name) a.pose = null; }); }
+  knock(a, upAfter = null) { if (!a) return; a.down = true; a.pose = null; a.downAt = this.t; if (upAfter) this.when(this.t + upAfter, () => { a.down = false; a.brain = B.idle(); }); }
+  update(dt) {
+    this.t += dt;
+    for (const tm of this.timers) if (!tm.fired && this.t >= tm.t) { tm.fired = true; tm.fn(this); }
+    for (const a of this.actors) {
+      const ox = a.x, oy = a.y;
+      if (a.pre && this.t < this.T0) { if (this.t > 0.4) stepTo(a, a.pre.x, a.pre.y, a.pre.speed, dt); }   // jogging to his spot from the huddle
+      else if (a.brain && !a.down) a.brain(a, dt, this);
+      a.y = clamp(a.y, -29, 29);
+      a.vx = (a.x - ox) / dt; a.vy = (a.y - oy) / dt;
+    }
+    const b = this.ball;
+    if (b.flight) {
+      const f = b.flight, u = clamp((this.t - f.t0) / (f.t1 - f.t0), 0, 1);
+      b.x = lerp(f.x0, f.x1, u); b.y = lerp(f.y0, f.y1, u); b.h = lerp(f.h0, f.h1, u) + f.apex * 4 * u * (1 - u);
+      if (u >= 1) { b.flight = null; b.spin = false; f.land?.(this); }
+    } else if (b.holder) { b.x = b.holder.x; b.y = b.holder.y; b.h = b.holder.down ? 0.25 : 0.62; }
+    else if (b.loose) { // bounces, then rolls to a stop
+      const L = b.loose; L.vh -= 26 * dt; b.x += L.vx * dt; b.y += L.vy * dt; b.h += L.vh * dt;
+      if (b.h <= 0.12) { b.h = 0.12; if (Math.abs(L.vh) > 1.5) { L.vh = -L.vh * 0.45; L.vx *= 0.65; L.vy *= 0.65; L.wild = !L.wild; } else { L.vh = 0; L.vx *= 1 - dt * 3; L.vy *= 1 - dt * 3; } }
+    }
+  }
+  // The ball in the air from where it is now to (x1, y1) at height h1, taking `dur` seconds and peaking `apex` yards higher.
+  throwBall(x1, y1, h1, dur, apex, land, opts = {}) {
+    const b = this.ball; b.holder = null; b.loose = null; b.spin = true; b.wobble = !!opts.wobble; b.kick = !!opts.kick;
+    b.flight = { x0: b.x, y0: b.y, h0: b.h, x1, y1, h1, t0: this.t, t1: this.t + dur, apex, land };
+  }
+  give(a) { const b = this.ball; b.holder = a; b.flight = null; b.loose = null; b.spin = false; b.wobble = false; }
+  loose(vx, vy, vh) { const b = this.ball; b.holder = null; b.flight = null; b.spin = false; b.loose = { vx, vy, vh }; }
+}

@@ -1,82 +1,85 @@
-// Scenes for the plays that aren't a normal snap: kickoffs, punts, field goals and extra points, kneel-downs and flags
-// before the snap. Plus buildScene, which picks the right scene for any play report.
-import { newScene, add, go, stay, pose, hold, fly, lineUp, buildRun, carryOut, yps } from './sceneBuild.js';
-import { buildPass } from './scenePass.js';
+// Kicking plays on the field: kickoffs (ball on a tee, the kicker's run-up, the coverage sprinting down, the return and
+// the tackle), punts (snap, kick, gunners, fair catch or return), and field goals and extra points (snap, hold, kick through
+// the uprights or wide). Everyone moves at his own speed; the tackler is whoever really gets there.
+import { B, clamp, dist } from './sceneCore.js';
+import { frame, pursueAll, finishCarry, ev } from './sceneLineup.js';
 
-const ev = (play, type) => play.events.find((e) => e.type === type);
-const row = (S, players, side, along, idle) => players.filter(Boolean).map((p, i, list) => add(S, p, side, along, -18 + (36 * i) / Math.max(1, list.length - 1), idle));
+const row = (n, w = 34) => Array.from({ length: n }, (_, i) => -w / 2 + (w * i) / Math.max(1, n - 1));
+const absOf = (side, ballOn) => (side === 'away' ? ballOn : 100 - ballOn);
 
-// A returner fielding a kick and bringing it back, with the coverage closing on him.
-function bringBack(S, play, ret, land, yards, cover, tLand) {
-  const td = play.result.td, end = td ? land - yards - 4 : land - yards, t = tLand + Math.max(0.5, Math.abs(yards) / (yps(ret.p) * 0.92));
-  hold(S, tLand, ret); go(ret, t, end, ret.keys[0].y * 0.3, S);
-  cover.forEach((c, i) => { stay(c, S.T0 + 0.3); go(c, t, end - 1 - (i % 3) * 2, (i - cover.length / 2) * 2.2, S); });
-  if (td) pose(ret, t, t + 9, 'cheer'); else { ret.down = t; if (cover[0]) cover[0].down = t + 0.05; }
-  return t;
+// A return after the catch: returner runs to `end`, the coverage chases, his blockers pick men off.
+function runBack(S, ret, from, end, tCatch, cover, blockers, td) {
+  const L = dist(from[0], from[1], end[0], end[1]), mid = [(from[0] + end[0]) / 2, clamp((from[1] + end[1]) / 2 + (S.rand() - 0.5) * 8, -24, 24)];
+  const tEnd = tCatch + 0.15 + L / (ret.max * 0.9);
+  S.when(tCatch, () => { ret.brain = B.path([mid, end], tCatch, tEnd, ret.max); });
+  pursueAll(S, ret, tCatch - 0.3, []);
+  S.when(tCatch - 0.3, (s) => blockers.forEach((b, i) => { const m = cover[i % cover.length]; if (m) b.brain = (a, dt) => { const k = s.dir; if (dist(a.x, a.y, m.x, m.y) < 1.4) s.setPose(a, 'block'); const dx = m.x + k * 1 - a.x, dy = m.y - a.y, d = Math.hypot(dx, dy); if (d > 0.05) { const st = Math.min(d, a.max * 0.85 * dt); a.x += (dx / d) * st; a.y += (dy / d) * st; } }; }));
+  finishCarry(S, ret, end, tEnd, { td });
+  return tEnd;
 }
 
-function kickoffScene(S, play, L) {
-  const k = L[play.off].kickTeams.kickoff, r = L[play.def].kickTeams.kickReturn, a = play.after;
-  S.los = play.off === 'away' ? 35 : 65; S.first = null; S.T0 = 3.2; S.tee = { x: S.los, y: 0, t1: S.T0 };
-  const endAbs = a.poss === 'away' ? a.ballOn : 100 - a.ballOn, endAlong = (endAbs - S.los) * S.dir, re = ev(play, 'ret');
-  const kicker = add(S, k.players[0], play.off, -9, -1.5), cover = row(S, k.players.slice(1), play.off, -6), ret = add(S, r.returner, play.def, 60, 0);
-  cover.forEach((c) => { stay(c, S.T0 - 1.4); go(c, S.T0, -0.6, c.keys[0].y, S); });   // they run up with the kicker and hit the line as he kicks
-  row(S, r.players.slice(1, 7), play.def, 34).forEach((b) => { stay(b, S.T0 + 2); go(b, S.T0 + 4, 40, b.keys[0].y * 0.6, S); pose(b, S.T0 + 3, 9, 'block'); });
-  stay(kicker, S.T0 - 1.6); go(kicker, S.T0, -0.4, -0.2, S); pose(kicker, S.T0 - 0.12, S.T0 + 0.4, 'kick'); S.ball.push({ t: 0, kind: 'ground', x: S.los, y: 0 });
-  go(kicker, S.T0 + 2.4, 20, -3, S);
-  if (play.onside) { fly(S, S.T0, S.T0 + 1.2, [S.los, 0], S.at(11, 3), 1); cover.forEach((c) => { stay(c, S.T0); go(c, S.T0 + 1.6, 10, c.keys[0].y * 0.2, S); }); return S.T0 + 2.4; }
-  const land = re ? endAlong + re.yards : 68, tLand = S.T0 + 3.2;
-  if (ret) { ret.keys[0].x = S.at(land, 0)[0]; ret.keys[0].y = (play.n % 3 - 1) * 6; }
-  fly(S, S.T0, tLand, [S.los, 0], S.at(land, ret ? ret.keys[0].y : 0), 13);
-  if (!re || !ret) { cover.forEach((c) => { stay(c, S.T0); go(c, tLand, 30, c.keys[0].y, S); }); return tLand + 0.6; }
-  return bringBack(S, play, ret, land, re.yards, cover, tLand);
-}
-
-function puntScene(S, play, L) {
-  const k = L[play.off].kickTeams.punt, r = L[play.def].kickTeams.puntReturn, kick = ev(play, 'kick'), re = ev(play, 'ret');
-  const punter = add(S, k.players[0], play.off, -13, 0), cover = row(S, k.players.slice(1), play.off, -1, 'set'); row(S, r.players.slice(1, 7), play.def, 1.2, 'set');
-  const land = Math.min(kick?.dist ?? 42, 100 - play.before.ballOn + 6), ret = add(S, r.returner, play.def, land, 2), tKick = S.T0 + 1.3, tLand = tKick + 3.4;
-  S.ball.push({ t: 0, kind: 'ground', x: S.los, y: 0 }); fly(S, S.T0, S.T0 + 0.6, [S.los, 0], S.at(-12.5, 0), 1.5); hold(S, S.T0 + 0.6, punter);
-  pose(punter, tKick - 0.15, tKick + 0.4, 'kick'); fly(S, tKick, tLand, S.at(-12.5, 0), S.at(land, 2), 15);
-  if (re && !re.fair && ret) return bringBack(S, play, ret, land, re.yards, cover, tLand);
-  cover.forEach((c) => { stay(c, tKick); go(c, tLand, land - 3, c.keys[0].y * 0.4, S); });
-  if (ret && re?.fair) { pose(ret, tLand - 0.6, tLand + 1, 'catch'); hold(S, tLand, ret); } else S.ball.push({ t: tLand, kind: 'ground', x: S.at(land + 4, 2)[0], y: 2 });
-  return tLand + 0.5;
-}
-
-function kickScene(S, play, L) { // field goals and extra points
-  const u = L[play.off].kickTeams.fieldGoal, kick = ev(play, 'kick'), goalAbs = play.off === 'away' ? 100 : 0;
-  if (play.kind === 'xp') S.los = goalAbs - S.dir * 15;
-  S.first = null;
-  const holder = add(S, u.holder || u.players[1], play.off, -7, 0, 'set'), kicker = add(S, u.kicker, play.off, -9.5, -2);
-  row(S, u.players.slice(2), play.off, -0.8, 'set').forEach((a, i, l) => { a.keys[0].y = -6 + (12 * i) / Math.max(1, l.length - 1); pose(a, S.T0, 9, 'block'); });
-  row(S, L[play.def].kickTeams.fieldGoalBlock.players.slice(0, 8), play.def, 1, 'set').forEach((a, i, l) => { a.keys[0].y = -6 + (12 * i) / Math.max(1, l.length - 1); pose(a, S.T0, 9, 'block'); });
-  const tKick = S.T0 + 1.1, toPosts = (goalAbs - S.los) * S.dir + 10, tEnd = tKick + 1 + toPosts / 30;
-  S.ball.push({ t: 0, kind: 'ground', x: S.los, y: 0 }); fly(S, S.T0, S.T0 + 0.4, [S.los, 0], S.at(-6.8, 0), 0.6); if (holder) hold(S, S.T0 + 0.4, holder);
-  if (kicker) { stay(kicker, S.T0 + 0.4); go(kicker, tKick, -7.6, -0.4, S); pose(kicker, tKick - 0.12, tKick + 0.4, 'kick'); }
-  fly(S, tKick, tEnd, S.at(-6.8, 0), S.at(toPosts + 2, kick?.good ? 0.5 : 6.5), 9);
-  return tEnd + 0.3;
-}
-
-// lineups: { home, away } from loadLineups. pace: from the pacing director. Returns the scene: actors with their moves, the ball's story, and how long it runs.
-export function buildScene(play, lineups, pace = {}) {
-  const S = newScene(play, lineups, pace); let tEnd;
-  if (play.kind === 'kickoff') tEnd = kickoffScene(S, play, lineups);
-  else if (play.kind === 'punt') tEnd = puntScene(S, play, lineups);
-  else if (play.kind === 'fg' || play.kind === 'xp') tEnd = kickScene(S, play, lineups);
-  else {
-    lineUp(S);
-    const made = play.events.find((e) => e.type === 'tackle' && e.result === 'made');
-    const gain = play.kind === 'two' ? (play.headline === '2-PT GOOD' ? 3.5 : 1) : play.flagged ? (made?.at ?? 0) : play.result.gain;
-    if (play.kind === 'penalty') { const who = S.by[ev(play, 'flag')?.on]; if (who) { stay(who, 0.6); go(who, 0.9, (who.side === play.off ? 0.6 : -0.6) + (who.keys[0].x - S.los) * S.dir, who.keys[0].y, S); who.idle = 'stand'; } S.flag = { t: 1 }; tEnd = 1.6; }
-    else if (play.kind === 'kneel') { hold(S, S.T0 + 0.12, S.A.QB); pose(S.A.QB, S.T0 + 0.3, S.T0 + 3, 'kneel'); tEnd = S.T0 + 1.2; }
-    else if (play.events.some((e) => e.type === 'throw' || (e.type === 'pressure' && e.kind === 'sack'))) tEnd = buildPass(S, gain);
-    else tEnd = buildRun(S, gain);
-    if (play.flagged) S.flag = { t: tEnd };
+export function buildKickoff(S, lineups) {
+  const play = S.play, kick = lineups[play.off].kickTeams.kickoff, rec = lineups[play.def].kickTeams.kickReturn, retEv = ev(play, 'ret')[0];
+  const from = play.before.ballOn > 0 ? 35 : 35; frame(S, play, play.off === 'away' ? from : 100 - from); S.lines = null;
+  const dir = S.dir, T0 = (S.T0 = 3.2); S.tee = { x: S.los, y: 0, t1: T0 };
+  const K = S.add(kick.kicker, play.off, ...S.at(-9, -1.5), dir), cover = kick.players.slice(1).map((p, i) => S.add(p, play.off, ...S.at(-6, row(kick.players.length - 1)[i]), dir));
+  const ret = S.add(rec.returner, play.def, ...S.at(60, 0), -dir), blockers = rec.players.slice(1).map((p, i) => S.add(p, play.def, ...S.at(i < 5 ? 12 : 35, row(5, 30)[i % 5]), -dir, 'lbset'));
+  S.ball.x = S.los; S.ball.y = 0; S.ball.h = 0.22;
+  K.brain = B.path([S.at(-0.5, -0.2)], T0 - 1.6, T0, K.max * 0.8); cover.forEach((c) => { c.brain = B.path([S.at(-0.6, c.y)], T0 - 1.5, T0, c.max * 0.9); });
+  S.when(T0 - 0.12, (s) => s.setPose(K, 'kick', 0.5));
+  if (play.onside) {
+    const land = S.at(11, (S.rand() - 0.5) * 6), got = play.headline === 'ONSIDE RECOVERED';
+    S.when(T0, (s) => s.throwBall(land[0], land[1], 0.12, 1.1, 1.2, (ss) => ss.loose(dir * 1.5, 0, 2.5), { kick: true }));
+    [...cover, ...blockers].forEach((a) => { a.brain = (b, dt, s) => { if (s.t > T0 + 0.1) { const dx = land[0] - b.x, dy = land[1] - b.y, d = Math.hypot(dx, dy); if (d > 1.2) { const st = Math.min(d, b.max * 0.8 * dt); b.x += (dx / d) * st; b.y += (dy / d) * st; } } }; });
+    const win = got ? cover[2] : blockers[0]; S.when(T0 + 1.7, (s) => { if (win) win.brain = B.meet(s.ball.x, s.ball.y, s.t + 0.35, win.max, (a, ss) => { ss.knock(a); ss.give(a); }); });
+    S.tEnd = T0 + 2.4; return;
   }
-  S.actors.forEach((a) => { if (a.down != null && !a.upAt) a.upAt = Math.max(a.down + 1.4, tEnd + 1); });   // everybody gets back up
-  if (play.result.td) { const scorer = S.actors.find((a) => a.poses.some((q) => q.pose === 'cheer')); if (scorer) S.actors.filter((a) => a.side === scorer.side && a !== scorer).slice(0, 4).forEach((a, i) => { const k = scorer.keys[scorer.keys.length - 1]; stay(a, tEnd + 0.2); go(a, tEnd + 1.6, (k.x - S.los) * S.dir - 1 - i * 0.7, k.y + (i % 2 ? 1.2 : -1.2) * (1 + i * 0.3), S); pose(a, tEnd + 1.6, 99, 'cheer'); }); }
-  S.tEnd = tEnd; S.dur = tEnd + (play.result.td ? 3.6 : play.headline ? 2.8 : 2.4);
-  return S;
+  const endRcv = play.result.td ? 100 : play.after.ballOn, retYds = retEv?.yards ?? 0, landOn = retEv ? endRcv - retYds : -4, hang = 3.4;
+  const landAbs = absOf(play.def, landOn), landY = clamp((S.rand() - 0.5) * 12, -20, 20);
+  ret.x = landAbs - dir * 2; ret.y = landY;
+  S.when(T0, (s) => s.throwBall(landAbs, landY, retEv ? 0.62 : 0.12, hang, 13, (ss) => { if (retEv) ss.give(ret); else ss.loose(dir * 2, 0, 2); }, { kick: true }));
+  ret.brain = B.path([[landAbs, landY]], T0 + 1, T0 + hang - 0.05, ret.max);
+  S.when(T0 + 0.1, (s) => cover.forEach((c) => { c.brain = B.to(landAbs - dir * (10 + s.rand() * 8), clamp(c.y * 0.7, -25, 25), c.max * 0.92); }));
+  if (!retEv) { S.when(T0 + hang + 0.2, (s) => s.setPose(ret, 'kneel')); S.tEnd = T0 + hang + 0.6; return; }
+  const end = [absOf(play.def, play.result.td ? 102 : endRcv), clamp(landY + (S.rand() - 0.5) * 14, -24, 24)];
+  S.tEnd = runBack(S, ret, [landAbs, landY], end, T0 + hang, cover, blockers, play.result.td);
 }
-export { carryOut };
+
+export function buildPunt(S, lineups) {
+  const play = S.play, me = lineups[play.off].kickTeams.punt, them = lineups[play.def].kickTeams.puntReturn, kick = ev(play, 'kick')[0], retEv = ev(play, 'ret')[0];
+  frame(S, play); const dir = S.dir, T0 = S.T0; S.lines = null;
+  const P = S.add(me.punter, play.off, ...S.at(-14, 0), dir), line = me.players.slice(1).map((p, i) => S.add(p, play.off, ...S.at(-1.5, i < 2 ? (i ? 19 : -19) : row(me.players.length - 3, 12)[i - 2]), dir, i < 2 ? 'wrset' : 'olset'));
+  const rush = them.players.slice(1).map((p, i) => S.add(p, play.def, ...S.at(1.6, row(them.players.length - 1, 22)[i]), -dir, 'dlset'));
+  const gross = kick?.dist ?? 44, landAl = Math.min(gross, 100 - play.before.ballOn + 6), land = S.at(landAl, clamp((S.rand() - 0.5) * 14, -20, 20));
+  const ret = S.add(them.returner, play.def, land[0] + dir * 3, land[1], -dir);
+  S.ball.x = S.los; S.ball.y = 0;
+  S.when(T0, (s) => s.throwBall(P.x, P.y, 0.62, 0.55, 0.3, (ss) => ss.give(P)));
+  const tKick = T0 + 1.35, hang = 4, tLand = tKick + hang;
+  S.when(tKick - 0.15, (s) => s.setPose(P, 'kick', 0.5));
+  S.when(tKick, (s) => s.throwBall(land[0], land[1], retEv ? 0.62 : 0.12, hang, 15, (ss) => { if (retEv) ss.give(ret); else ss.loose(dir * 3, 0, 3); }, { kick: true }));
+  ret.brain = B.path([land], T0 + 1.5, tLand - 0.05, ret.max);
+  line.forEach((a, i) => { a.brain = B.path([S.at(landAl - 4 - (i % 4) * 2, land[1] + (i - 4) * 2.2)], i < 2 ? T0 : tKick + 0.2, tLand + 0.3, a.max * 0.95); });
+  rush.forEach((a) => { a.brain = B.path([S.at(-3, a.y * 0.6)], T0 + 0.1, tKick + 0.4, a.max * 0.6); });
+  if (!retEv) { S.tEnd = tLand + 0.8; return; }
+  if (retEv.fair) { S.when(tLand - 0.6, (s) => s.setPose(ret, 'catch', 0.6)); S.when(tLand + 0.2, (s) => s.setPose(ret, 'kneel')); S.tEnd = tLand + 0.5; return; }
+  const endRcv = play.result.td ? 102 : play.after.ballOn, end = [absOf(play.def, endRcv), clamp(land[1] + (S.rand() - 0.5) * 12, -24, 24)];
+  S.tEnd = runBack(S, ret, land, end, tLand, line, rush, play.result.td);
+}
+
+// Field goals and extra points: snap, hold, kick; through the uprights or wide.
+export function buildKick(S, lineups) {
+  const play = S.play, u = lineups[play.off].kickTeams.fieldGoal, blk = lineups[play.def].kickTeams.fieldGoalBlock, kick = ev(play, 'kick')[0];
+  frame(S, play, play.kind === 'xp' ? (play.off === 'away' ? 85 : 15) : undefined); const dir = S.dir, T0 = S.T0; S.lines = null;
+  const holder = S.add(u.holder || u.players[1], play.off, ...S.at(-7, 0), dir, 'kneel'), K = S.add(u.kicker, play.off, ...S.at(-9.5, -2.2), dir);
+  u.players.slice(2).forEach((p, i, l) => S.add(p, play.off, ...S.at(-1.3, -6 + (12 * i) / Math.max(1, l.length - 1)), dir, 'olset'));
+  blk.players.slice(0, 9).forEach((p, i) => { const a = S.add(p, play.def, ...S.at(1.6, -6 + 1.5 * i), -dir, 'dlset'); if (a) a.brain = B.path([S.at(0.4, a.y * 0.9)], T0, T0 + 1.2, 1.4); });
+  if (holder) holder.idle = 'kneel';
+  S.ball.x = S.los; S.ball.y = 0;
+  S.when(T0, (s) => s.throwBall(holder.x + dir * 0.4, holder.y, 0.3, 0.35, 0.2, () => {}));
+  const tKick = T0 + 1.05, goalX = dir > 0 ? 110 : -10;
+  K.brain = B.path([S.at(-7.6, -0.4)], T0 + 0.35, tKick, K.max * 0.7);
+  S.when(tKick - 0.12, (s) => s.setPose(K, 'kick', 0.5));
+  const good = kick?.good, dur = Math.max(0.9, Math.abs(goalX - S.los) / 21), y1 = good ? (S.rand() - 0.5) * 2 : (S.rand() < 0.5 ? -1 : 1) * (4.5 + S.rand() * 2);
+  S.when(tKick, (s) => s.throwBall(goalX + dir * 2, y1, good ? 4 : 2, dur, Math.min(9, Math.abs(goalX - S.los) * 0.2), (ss) => ss.loose(dir * 2, 0, -1), { kick: true }));
+  S.tEnd = tKick + dur;
+}

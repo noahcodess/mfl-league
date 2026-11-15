@@ -9,8 +9,8 @@ import { useGameKits } from '../data/gameKits.js';
 import { useDrips, helmetDesign } from '../data/drip.js';
 import { looksFor } from '../lib/portraitLooks.js';
 import { buildOf } from '../lib/fieldSprite.js';
-import { buildScene } from '../lib/sceneKicks.js';
-import { drawScene, ballAt } from '../lib/sceneDraw.js';
+import { buildScene, seek } from '../lib/sceneBuild.js';
+import { drawScene } from '../lib/sceneDraw.js';
 import { yardX, MID_Y, YD } from '../lib/fieldLayout.js';
 import { paceFor, shotsFor, slowAt } from '../lib/pacing.js';
 import { clockFace } from '../lib/broadcastClock.js';
@@ -38,7 +38,8 @@ export default function PixelGame({ game, teams, lineups, onClose, match = null,
   const looks = useMemo(() => (kits ? makeLooks(lineups, kits, teams, drips) : {}), [lineups, kits?.home?.name, kits?.away?.name, drips]); // eslint-disable-line react-hooks/exhaustive-deps
   const bc = useMemo(() => broadcastFor(match || { window: null }, teams.home), [match, teams.home]);
   const play = game.plays[i], done = i >= game.plays.length, pace = useMemo(() => play && paceFor(play), [play]);
-  const S = useMemo(() => (play ? buildScene(play, lineups, pace) : null), [play, lineups, pace]), shots = useMemo(() => S && shotsFor(S, pace), [S, pace]);
+  const S = useMemo(() => (play ? buildScene(play, lineups, pace, game.seed || 1) : null), [play, lineups, pace, game.seed]), shots = useMemo(() => S && shotsFor(S, pace), [S, pace]);
+  const live0 = useRef(null); useEffect(() => { live0.current = S; }, [S]);   // the play as it's being acted out right now
   const clock = useRef({ t: 0, last: 0, phase: 'live', rt: 0, hold: 0 }), ctl = useRef({}); ctl.current = { speed, paused, S, i, shots, pace };
   useEffect(() => { Object.assign(clock.current, { t: 0, phase: 'live', rt: 0, hold: 0 }); setBeat({ post: false, phase: 'live' }); }, [i]);
   useEffect(() => { // the play clock, scorebug flip and which shot we're in, a few times a second
@@ -49,7 +50,7 @@ export default function PixelGame({ game, teams, lineups, onClose, match = null,
     target() {
       const { S: s, shots: sh } = ctl.current, c = clock.current; if (!s) return { x: yardX(50), y: MID_Y, zoom: 0.7 };
       if (c.phase === 'flag' && sh?.flag) return { x: yardX(sh.flag.x), y: MID_Y + sh.flag.y * YD, zoom: 2.1 };   // close-up on the flag
-      const tt = c.phase === 'replay' ? c.rt : c.t, b = ballAt(s, tt) || { x: s.los, y: 0, h: 0 };
+      const cur = live0.current || s, b = cur.ball;
       if (c.phase === 'replay') return { x: yardX(b.x), y: MID_Y + b.y * YD * 0.8, zoom: 1.95 };              // same angle, zoomed in
       const slow = slowAt(sh, c.t) < 1, z = slow ? 1.6 : b.h > 3 ? 1.0 : 1.3, k = ctl.current.i === 0 ? Math.min(1, c.t / 3.8) : 1;   // the opening kickoff starts wide and slowly pushes in
       return { x: yardX(b.x), y: MID_Y + b.y * YD * 0.55 * k, zoom: 0.62 + (z - 0.62) * k * k * (3 - 2 * k) };
@@ -63,7 +64,8 @@ export default function PixelGame({ game, teams, lineups, onClose, match = null,
         else if (c.phase === 'flag') { c.hold += dt; if (c.hold > 2.4) { if (sh.replay) { c.phase = 'replay'; c.rt = sh.replay.from; } else next(); } }
         else if (c.phase === 'replay') { c.rt += dt * sh.replay.speed; if (c.rt > sh.replay.to) next(); }
       }
-      drawScene(ctx, s, c.phase === 'replay' ? c.rt : c.t, cam, looks);
+      live0.current = seek(live0.current || s, c.phase === 'replay' ? c.rt : c.t);   // step the live play to now (a replay rewinds and replays it)
+      drawScene(ctx, live0.current, cam, looks);
     },
   }), [looks]);
   const b4 = play && { quarter: play.before.quarter, clock: play.before.clock, score: play.before.score, poss: play.kind === 'kickoff' ? play.def : play.off,

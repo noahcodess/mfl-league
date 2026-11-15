@@ -1,44 +1,40 @@
-// Decides how each player looks at one moment: which way he faces (front, back or side, left or right) and which pose
-// and frame he's in. Facing follows where he's moving, except on a backpedal; a spin move turns him all the way around.
+// Decides how each player looks this frame: which way he faces (front, back or side, left or right) and which pose and
+// frame he's in. It reads the live player (where he's moving and how fast, what he's doing), so the picture always matches
+// the motion. Linemen and anyone squared up to an opponent keep facing their man however they get shoved.
 const SIDE_ONLY = ['olset', 'dlset', 'qbset', 'rbset', 'wrset', 'cbset', 'lbset', 'qbready', 'qbdrop', 'throw', 'block', 'anchor', 'driven', 'drive', 'swim', 'rush',
   'reach', 'drop', 'cut', 'juke', 'stiff', 'kick', 'kneel', 'backpedal', 'tackle'];
 const PREFER = { cheer: 'front', ...Object.fromEntries(SIDE_ONLY.map((k) => [k, 'side'])) };
-const SQUARE = new Set(['olset', 'dlset', 'qbset', 'rbset', 'wrset', 'cbset', 'lbset', 'block', 'anchor', 'driven', 'drive', 'swim', 'rush', 'throw', 'kick', 'stiff', 'qbready', 'qbdrop', 'cut']);
-// Every player keeps his own rhythm so nobody moves in sync: a beat length and a starting point from his id.
-const beat = (a) => { let h = 7; for (const ch of String(a.id)) h = (h * 31 + ch.charCodeAt(0)) >>> 0; return { per: 0.22 + (h % 7) * 0.035, off: (h % 97) / 97 }; };
+const SQUARE = new Set(['olset', 'dlset', 'qbset', 'rbset', 'wrset', 'cbset', 'lbset', 'block', 'anchor', 'driven', 'drive', 'swim', 'rush', 'throw', 'kick', 'stiff', 'qbready', 'qbdrop', 'backpedal']);
 const SPIN = [['side', 1], ['front', 1], ['side', -1], ['back', 1]];
+const beat = (a) => { if (a.beat) return a.beat; let h = 7; for (const ch of String(a.id)) h = (h * 31 + ch.charCodeAt(0)) >>> 0; return (a.beat = { per: 0.22 + (h % 7) * 0.035, off: (h % 97) / 97 }); };
 
-// a: the actor. p: posAt(a, t). S: the scene. holder: who has the ball right now. Returns { view, face, pose, frame } and
-// remembers his facing on a.vis.
-export function lookAt(a, p, t, S, holder) {
-  const down = a.down != null && t >= a.down && !(a.upAt && t >= a.upAt);
-  const set = a.poses.find((q) => t >= q.t0 && t < q.t1), last = a.vis || { view: 'side', face: a.face };
-  let view = last.view, face = last.face;
-  const back = a.back?.some(([t0, t1]) => t >= t0 && t < t1);
-  if (p.moving && !back) {
-    if (Math.abs(p.dy) > Math.abs(p.dx) * 1.4) view = p.dy > 0 ? 'front' : 'back';
-    else { view = 'side'; face = p.dx > 0 ? 1 : -1; }
-  } else if (!p.moving) { view = 'side'; if (t < S.T0 || !a.vis) face = a.face; }
-  if (back) { view = 'side'; face = a.face; }
-  let pose;
-  if (down) pose = 'down';
-  else if (a.down != null && t >= a.down - 0.22) pose = 'dive';
-  else if (a.upAt && t >= a.upAt - 0.4 && t < a.upAt) pose = 'kneel';
-  else if (set) pose = set.pose;
-  else if (a.qb && holder === a.id && t > S.T0 + 0.15) pose = p.moving ? 'qbdrop' : 'qbready';   // ball up by his ear, in the pocket
-  else if (back && p.moving) pose = 'backpedal';
-  else if (p.moving) pose = holder === a.id ? 'carry' : 'run';
-  else pose = t < S.T0 ? a.idle : holder === a.id ? 'carry' : 'stand';
-  if (pose === 'spin') { const s = SPIN[Math.min(3, Math.floor(((t - set.t0) / (set.t1 - set.t0)) * 4))]; view = s[0]; face = s[1] * (a.vis?.face || 1); pose = 'run'; }
-  if (SQUARE.has(pose)) face = a.face;   // squared up to his man (or downfield), however he gets shoved
+// a: a live actor (sceneCore). holder: the actor with the ball, or null. Returns { view, face, pose, frame }.
+export function lookAt(a, t, S, holder) {
+  const speed = Math.hypot(a.vx, a.vy), moving = speed > 0.7, mine = holder === a, back = a.backUntil && t < a.backUntil && moving;
+  let view = a.vis?.view || 'side', face = a.vis?.face || a.face, pose;
+  if (a.down) pose = 'down';
+  else if (a.pose === 'tackle') pose = 'dive';
+  else if (a.celebrate || a.pose === 'cheer') pose = 'cheer';
+  else if (a.pose === 'spin') pose = 'spin';
+  else if (a.pose) pose = a.pose;
+  else if (a.qb && mine && t > S.T0 + 0.15) pose = moving ? 'qbdrop' : 'qbready';   // ball up by his ear in the pocket
+  else if (back) pose = 'backpedal';
+  else if (moving) pose = mine ? 'carry' : 'run';
+  else pose = t < S.T0 ? a.idle : mine ? 'carry' : 'stand';
+  if (moving && !SQUARE.has(pose)) {
+    if (Math.abs(a.vy) > Math.abs(a.vx) * 1.4) view = a.vy > 0 ? 'front' : 'back';
+    else { view = 'side'; face = a.vx > 0 ? 1 : -1; }
+  } else if (!moving) view = 'side';
+  if (SQUARE.has(pose) || (t < S.T0 && !moving)) face = a.homeFace;
+  if (pose === 'spin') { const k = Math.min(3, Math.floor(((t - a.poseAt) / 0.4) * 4)); view = SPIN[k][0]; face = SPIN[k][1] * (a.vis?.face || 1); pose = 'carry'; }
   if (PREFER[pose]) view = PREFER[pose];
-  if (pose === 'catch' && !p.moving) view = 'front';
-  let frame = 0; const b = beat(a);
-  if (pose === 'run' || pose === 'carry') frame = Math.floor(t * (5 + p.speed * 0.9) + b.off * 4) & 3;
+  if (pose === 'catch' && !moving) view = 'front';
+  const b = beat(a); let frame = 0;
+  if (pose === 'run' || pose === 'carry') frame = Math.floor(t * (5 + speed * 0.9) + b.off * 4) & 3;
   else if (pose === 'backpedal' || pose === 'qbdrop') frame = Math.floor(t * 7 + b.off * 2) & 1;
   else if (['block', 'anchor', 'driven', 'drive', 'swim', 'rush', 'cheer'].includes(pose)) frame = Math.floor(t / b.per + b.off * 2) & 1;
-  else if (pose === 'throw') { const u = set ? (t - set.t0) / (set.t1 - set.t0) : 0; frame = u < 0.45 ? 0 : u < 0.7 ? 1 : 2; }
-  else if (pose === 'kick' || pose === 'drop') frame = set && t > set.t0 + (set.t1 - set.t0) * 0.4 ? 1 : 0;
+  else if (pose === 'throw') { const u = (t - a.poseAt) / 0.6; frame = u < 0.45 ? 0 : u < 0.7 ? 1 : 2; }
+  else if (pose === 'kick' || pose === 'drop') frame = t - a.poseAt > (pose === 'kick' ? 0.15 : 0.5) ? 1 : 0;
   a.vis = { view, face };
   return { view, face, pose, frame };
 }

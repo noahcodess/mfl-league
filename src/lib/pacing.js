@@ -31,15 +31,15 @@ export function paceFor(play) {
 // After the scene is built: { slow: [[t0, t1, speed]], replay: { from, to, speed } | null, flag: { x, y, text } | null, dur }.
 export function shotsFor(S, pace, names = {}) {
   const play = S.play, m = MODES[pace.mode], out = { slow: [], replay: null, flag: null };
-  const flyIdx = S.ball.findIndex((b) => b.kind === 'fly' && b.t > S.T0 + 0.3), caught = flyIdx >= 0 && S.ball.slice(flyIdx + 1).find((b) => b.kind === 'held');
+  const res = play.events.find((e) => e.type === 'catch')?.result, caught = S.tCatch && res === 'catch';
   const air = play.events.find((e) => e.type === 'throw')?.air || 0;
-  const key = caught ? caught.t : play.result.td || play.kind === 'sack' ? S.tEnd - 0.2 : S.tEnd - 0.6;
-  if (m.slow && caught && air >= 15) out.slow.push([caught.t - 0.45, caught.t + 0.25, 0.45]);   // the ball arriving, in slow motion
+  const key = caught ? S.tCatch : play.result.td || play.kind === 'sack' ? S.tEnd - 0.2 : S.tEnd - 0.6;
+  if (m.slow && caught && air >= 15) out.slow.push([S.tCatch - 0.45, S.tCatch + 0.25, 0.45]);   // the ball arriving, in slow motion
   if (m.slow && play.result.td) out.slow.push([S.tEnd - 0.7, S.tEnd + 0.2, 0.5]);
   const flag = play.events.find((e) => e.type === 'flag');
   if (flag) {
-    const who = names[flag.on] || S.by[flag.on]?.p, k = S.actors[0]?.keys[0];
-    out.flag = { x: S.los + S.dir * 1.5, y: k ? 3 : 0, text: `FLAG: ${flag.name}${who ? `, #${who.number ?? ''} ${who.last || who.name || ''}` : ''} · ${flag.yards} yards` };
+    const who = names[flag.on] || S.by[flag.on]?.p;
+    out.flag = { x: S.flag?.x ?? S.los, y: S.flag?.y ?? 0, text: `FLAG: ${flag.name}${who ? `, #${who.number ?? ''} ${who.last || who.name || ''}` : ''} · ${flag.yards} yards` };
   }
   let live = S.tEnd + pace.dead;
   if (m.replayFor(play)) { // the instant replay: the moment that mattered, from the same angle, zoomed in and slowed down
