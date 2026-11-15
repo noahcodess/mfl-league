@@ -16,7 +16,7 @@ function rush(G, play, def) {
   const { R, O, D } = G; let first = { t: 9, by: null };
   const cap = 4.3 + R.r() * 1.7;                    // even a great line only holds about 4 to 6 seconds before the pocket collapses
   LINE.forEach(([o, d]) => {
-    const t = Math.min(cap + R.r() * 0.4, Math.max(0.9, 4.6 + (mix(G, O[o], PROTECT) - rushOf(G, D[d])) / 17 + R.gauss(0, 0.9)));
+    const t = Math.min(cap + R.r() * 0.4, Math.max(0.9, 4.3 + (mix(G, O[o], PROTECT) - rushOf(G, D[d])) / 17 + R.gauss(0, 0.9)));
     addEvent(play, 'rush', 0, { off: O[o].id, def: D[d].id, t: Math.round(t * 100) / 100, move: rushMove(D[d]) });   // every matchup on the line, for the broadcast
     if (t < first.t) first = { t, by: D[d], blocker: O[o] };
   });
@@ -34,7 +34,7 @@ function routes(G, call, def, plan) {
     const fixed = plan.depths?.[slot], p = O[slot], c = cover[slot], depth = fixed === 0 ? 0 : Math.max(1, Math.round((fixed ?? base) * (0.8 + R.r() * 0.4))), deep = depth >= 18;
     const get = mix(G, p, deep ? { route_running: 0.3, speed: 0.45, release: 0.25 } : { route_running: 0.45, speed: 0.2, release: 0.2, agility: 0.15 }, 50);
     const stick = zone ? mix(G, c, { zone_cover: 0.5, play_rec: 0.3, speed: 0.2 }, 45) : mix(G, c, deep ? { man_cover: 0.4, speed: 0.45, press: 0.15 } : { man_cover: 0.5, speed: 0.2, press: 0.15, agility: 0.15 }, 45);
-    let sep = 2.0 + (get - stick) / 12 + R.gauss(0, 1.5) + (zone ? (deep ? -0.5 : 0.5) : 0);
+    let sep = 1.45 + (get - stick) / 12 + R.gauss(0, 1.5) + (zone ? (deep ? -0.5 : 0.5) : 0);
     if (depth === 0) sep += 1.6;                                                  // screens: blockers out in front
     if (plan.pa && depth >= 9) sep += 0.6;                                        // the linebackers bit on the fake
     if (def.prevent) sep += depth >= 15 ? -1.3 : 0.9;
@@ -54,6 +54,9 @@ function sack(G, play, qb, by, t) {
 }
 
 // call: 'quick' | 'short' | 'medium' | 'deep'. def: { cov: 'man' | 'zone', blitz }. Fills the report, returns the result.
+// Drop chance on a catchable ball by Catching rating: about 1% at 80+, 2-3% in the 70s, uncommon in the 60s, common below.
+const dropOdds = (h) => (h >= 80 ? 0.01 : h >= 70 ? 0.01 + (80 - h) * 0.0018 : h >= 60 ? 0.028 + (70 - h) * 0.0035 : Math.min(0.2, 0.063 + (60 - h) * 0.005));
+
 function throwAway(G, play, qb, t, hit) {
   play.kind = 'pass'; stat(play, qb, 'att');
   addEvent(play, 'throw', t, { qb: qb.id, target: null, air: 12, accuracy: 0, pressured: hit, away: true });
@@ -71,8 +74,11 @@ export function passPlay(G, play, call, def, plan = {}) {
   const ranked = order.map((sl) => open.find((o) => o.slot === sl)).filter(Boolean).map((o, k) => ({ ...o, seen: o.sep + R.gauss(0, see), at: o.at + k * 0.38 }));
   let tgt = ranked.find((o, k) => o.seen >= 1.35 - k * 0.3 + (bold > 1 ? -0.4 : 0) && o.at < heat.t + 0.35) || null;
   if (!tgt) { // nobody's open: the smart ones throw it away, the rest force it to whoever looks best
-    const best = ranked.slice().sort((a, b) => b.seen - a.seen)[0];
-    if (R.chance(0.1 + val(G, qb, 'awareness', 55) / 260 - (bold > 1 ? 0.15 : 0))) return throwAway(G, play, qb, Math.min(heat.t, best.at) + 0.2, heat.t < best.at);
+    const best = ranked.slice().sort((a, b) => b.seen - a.seen)[0], inFace = heat.by && heat.t < best.at + 0.3;
+    if (inFace && R.chance(0.22 + val(G, qb, 'awareness', 55) / 250 - (bold > 1 ? 0.15 : 0))) { // only with a rusher in his face
+      stat(play, heat.by, 'pres'); addEvent(play, 'pressure', heat.t, { by: heat.by.id, kind: 'hurry' });
+      return throwAway(G, play, qb, heat.t + 0.15, true);
+    }
     tgt = best;
   }
   play.targetSlot = tgt.slot;
@@ -84,7 +90,7 @@ export function passPlay(G, play, call, def, plan = {}) {
   if (heat.t < tThrow) { // the rush got there first
     stat(play, heat.by, 'pres');
     const slip = odds(val(G, qb, 'break_sack', 45) * 0.6 + val(G, qb, 'speed', 50) * 0.4 - val(G, heat.by, 'tackling', 55) * 0.5 - val(G, heat.by, 'speed', 55) * 0.5 - 4, 12);
-    if (!R.chance(slip)) { if (R.chance(clamp((tThrow - heat.t) / 1.3, 0.15, 0.8))) return sack(G, play, qb, heat.by, heat.t); pressured = true; }
+    if (!R.chance(slip)) { if (R.chance(clamp((tThrow - heat.t) / 1.35, 0.16, 0.7))) return sack(G, play, qb, heat.by, heat.t); pressured = true; }
     else if (R.chance(qb.style === 'scrambler' ? 0.6 : val(G, qb, 'speed', 50) > 76 ? 0.4 : 0.15)) { // he takes off
       addEvent(play, 'pocket', heat.t, { qb: qb.id, move: 'escape' }); stat(play, qb, 'car');
       const out = carry(G, play, qb, -3, [{ p: D.LB1, at: 2 + R.int(0, 4) }, { p: D.SS, at: 8 }, { p: D.CB1, at: 13 }], toGoal, [D.CB1, D.CB2], heat.t), gain = Math.round(out.end);
@@ -93,14 +99,18 @@ export function passPlay(G, play, call, def, plan = {}) {
       return { gain, td: out.td, fumble: out.fumble, time: out.time + 1.5, oob: !out.td && R.chance(0.35) };
     } else { addEvent(play, 'pocket', heat.t, { qb: qb.id, move: 'slide' }); pressured = true; onRun = true; tThrow = heat.t + 0.4; }
     addEvent(play, 'pressure', heat.t, { by: heat.by.id, kind: 'hurry' });
-  } else if (heat.t - tThrow < 0.5) addEvent(play, 'pocket', tThrow - 0.3, { qb: qb.id, move: 'step up' });
+  } else if (heat.by && heat.t - tThrow < 0.35) { // the rusher arrives as he lets it go: a hurried throw and a hit
+    stat(play, heat.by, 'pres'); pressured = true; addEvent(play, 'pressure', tThrow, { by: heat.by.id, kind: 'hurry' });
+  } else if (heat.t - tThrow < 0.6) addEvent(play, 'pocket', tThrow - 0.3, { qb: qb.id, move: 'step up' });
   // the throw
   const d = tgt.depth, base = d < 10 ? val(G, qb, 'short_acc', 55) : d > 20 ? val(G, qb, 'deep_acc', 50) : (val(G, qb, 'short_acc', 55) + val(G, qb, 'deep_acc', 50)) / 2;
   let acc = pressured ? base * 0.5 + val(G, qb, 'throw_pressure', 50) * 0.5 - 5 : base; if (onRun) acc = acc * 0.5 + val(G, qb, 'throw_on_run', 50) * 0.5;
   if (d > 14 + (val(G, qb, 'throw_power', 55) - 50) * 0.5) acc -= 8;             // past what his arm can do
-  const q = (acc - 70) / 28 + R.gauss(0, 0.9), need = -0.78 + d * 0.036, air = 0.35 + d / 22;
+  const q = (acc - 62) / 26 + R.gauss(0, 0.75), need = -0.78 + d * 0.036, air = 0.35 + d / 22;   // pros hit most throws; misses climb with depth and pressure
   play.kind = 'pass'; play.target = tgt.p.id; stat(play, qb, 'att'); stat(play, tgt.p, 'tgt'); stat(play, tgt.c, 'tgtd');
   addEvent(play, 'throw', tThrow, { qb: qb.id, target: tgt.p.id, air: d, accuracy: Math.round(acc), pressured, onRun });
+  const close = air * clamp(0.75 + (val(G, tgt.c, 'speed', 55) - val(G, tgt.p, 'speed', 60)) / 40 + (val(G, tgt.c, 'play_rec', 50) - 60) / 80, 0.25, 1.3);   // he closes while it's in the air
+  tgt = { ...tgt, sep: Math.max(0.1, tgt.sep - close) };
   const tight = tgt.sep < 1.4, tCatch = tThrow + air, miss = (why) => { play.text = `${qb.last} ${why}`; return { gain: 0, incomplete: true, time: tCatch + 1 }; };
   const picked = () => {
     addEvent(play, 'catch', tCatch, { target: tgt.p.id, def: tgt.c.id, result: 'int', sep: Math.round(tgt.sep * 10) / 10, contested: tight });
@@ -123,7 +133,7 @@ export function passPlay(G, play, call, def, plan = {}) {
       addEvent(play, 'catch', tCatch, { target: tgt.p.id, def: tgt.c.id, result: 'breakup', contested: true }); stat(play, tgt.c, 'pd');
       return miss(`throws for ${tgt.p.last}... broken up by ${tgt.c.last}.`);
     }
-  } else if (!R.chance(clamp(0.9 + (hands - 65) * 0.004, 0.72, 0.985))) {
+  } else if (R.chance(dropOdds(hands))) {
     addEvent(play, 'catch', tCatch, { target: tgt.p.id, def: tgt.c.id, result: 'drop' }); stat(play, tgt.p, 'drops');
     return miss(`finds ${tgt.p.last}... DROPPED.`);
   }

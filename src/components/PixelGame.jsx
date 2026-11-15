@@ -13,6 +13,7 @@ import { buildScene } from '../lib/sceneKicks.js';
 import { drawScene, ballAt } from '../lib/sceneDraw.js';
 import { yardX, MID_Y, YD } from '../lib/fieldLayout.js';
 import { paceFor, shotsFor, slowAt } from '../lib/pacing.js';
+import { clockFace } from '../lib/broadcastClock.js';
 
 const SPEEDS = [1, 2, 4];
 const everyone = (lineups, side) => [...lineups[side].all, ...Object.values(lineups[side].kickTeams).flatMap((u) => u.players)].filter(Boolean);
@@ -32,16 +33,16 @@ function makeLooks(lineups, kits, teams, drips) {
 // game: a result from playGame. teams: { home, away }. lineups: from useGameLineups. match: the scheduled game (its network and
 // uniforms), if it's a real one. full: fills the broadcast screen with the controls on top.
 export default function PixelGame({ game, teams, lineups, onClose, match = null, full = false }) {
-  const [i, setI] = useState(0), [speed, setSpeed] = useState(1), [paused, setPaused] = useState(false), [beat, setBeat] = useState({ post: false, pc: 12 });
+  const [i, setI] = useState(0), [speed, setSpeed] = useState(1), [paused, setPaused] = useState(false), [beat, setBeat] = useState({ post: false, phase: 'live' });
   const kits = useGameKits(teams.home, teams.away, match), ids = useMemo(() => ['home', 'away'].flatMap((s) => everyone(lineups, s).map((p) => p.id)), [lineups]), drips = useDrips(ids);
   const looks = useMemo(() => (kits ? makeLooks(lineups, kits, teams, drips) : {}), [lineups, kits?.home?.name, kits?.away?.name, drips]); // eslint-disable-line react-hooks/exhaustive-deps
   const bc = useMemo(() => broadcastFor(match || { window: null }, teams.home), [match, teams.home]);
   const play = game.plays[i], done = i >= game.plays.length, pace = useMemo(() => play && paceFor(play), [play]);
   const S = useMemo(() => (play ? buildScene(play, lineups, pace) : null), [play, lineups, pace]), shots = useMemo(() => S && shotsFor(S, pace), [S, pace]);
   const clock = useRef({ t: 0, last: 0, phase: 'live', rt: 0, hold: 0 }), ctl = useRef({}); ctl.current = { speed, paused, S, i, shots, pace };
-  useEffect(() => { Object.assign(clock.current, { t: 0, phase: 'live', rt: 0, hold: 0 }); setBeat({ post: false, pc: 12, phase: 'live' }); }, [i]);
+  useEffect(() => { Object.assign(clock.current, { t: 0, phase: 'live', rt: 0, hold: 0 }); setBeat({ post: false, phase: 'live' }); }, [i]);
   useEffect(() => { // the play clock, scorebug flip and which shot we're in, a few times a second
-    const id = setInterval(() => { const { S: s } = ctl.current, c = clock.current; if (s) setBeat({ post: c.t >= s.tEnd, pc: Math.max(1, Math.round(15 - (c.t / s.T0) * 12)), phase: c.phase }); }, 120);
+    const id = setInterval(() => { const { S: s, i: n, pace: pc } = ctl.current, c = clock.current; if (s) setBeat({ post: c.t >= s.tEnd, phase: c.phase, ...clockFace(game, n, c.t, s, c.phase, pc.dead) }); }, 100);
     return () => clearInterval(id);
   }, []);
   const live = useMemo(() => ({
@@ -68,8 +69,9 @@ export default function PixelGame({ game, teams, lineups, onClose, match = null,
   const b4 = play && { quarter: play.before.quarter, clock: play.before.clock, score: play.before.score, poss: play.kind === 'kickoff' ? play.def : play.off,
     down: ['kickoff', 'xp', 'two'].includes(play.kind) ? null : play.before.down, toGo: play.before.toGo, ballOn: play.before.ballOn };   // before the snap
   const a = done ? game.plays[game.plays.length - 1].after : beat.post ? play.after : b4;
-  const st = { status: done ? 'final' : 'live', quarter: a.quarter, clock_left: Math.max(0, Math.round(a.clock)), clock_running: false, home_score: a.score.home, away_score: a.score.away, home_timeouts: 3, away_timeouts: 3,
-    possession: teams[a.poss]?.id, down: a.down, togo: a.toGo, ball_on: a.ballOn, play_clock: beat.post ? 40 : beat.pc };
+  const ticking = !done && beat.clock != null, clk = ticking ? beat.clock : a.clock;
+  const st = { status: done ? 'final' : 'live', quarter: a.quarter, clock_left: Math.max(0, Math.ceil(clk)), clock_running: ticking && beat.running, home_score: a.score.home, away_score: a.score.away, home_timeouts: 3, away_timeouts: 3,
+    possession: teams[a.poss]?.id, down: a.down, togo: a.toGo, ball_on: a.ballOn, play_clock: beat.playClock ?? 40 };
   return (
     <div className={`pg-wrap${full ? ' pg-full' : ''}`}>
       <div className="pg">

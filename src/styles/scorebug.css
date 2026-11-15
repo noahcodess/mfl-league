@@ -18,8 +18,8 @@
 .sb-score { margin-left: auto; min-width: 1.7em; padding: 0 .3em; height: 100%; display: grid; place-items: center; background: var(--sb-box); color: var(--sb-box-fg);
   font-family: var(--sb-num); font-size: 1.6em; font-variant-numeric: tabular-nums; }
 .sb-team .sb-score { height: auto; align-self: stretch; margin-right: -.6em; }
-.sb-line { display: flex; align-items: center; gap: .35em; }
-.sb-rec { font-size: .72em; color: #ffffffd9; font-weight: 700; line-height: 1; }
+.sb-line { display: flex; align-items: center; gap: .35em; white-space: nowrap; }
+.sb-rec { font-size: .72em; color: #ffffffd9; font-weight: 700; line-height: 1; white-space: nowrap; flex-shrink: 0; font-variant-numeric: tabular-nums; }
 .sb-arrow { flex: none; display: inline-block; }
 .sb-arrow.fox { width: .95em; height: .7em; background: linear-gradient(180deg, #ffd34a, #f4b800); clip-path: polygon(0 50%, 48% 0, 48% 28%, 100% 28%, 100% 72%, 48% 72%, 48% 100%);
   filter: drop-shadow(0 .06em 0 #000); }
@@ -34,3 +34,4 @@
 
 .sb-num.bump { animation: sb-bump .8s cubic-bezier(.2, 1.4, .4, 1); }
 @keyframes sb-bump { 0% { transform: scale(1.9); filter: brightness(2) drop-shadow(0 0 .3em #fff); } 60% { transform: scale(.92); } 100% { transform: scale(1); filter: none; } }
+.tnf-id small, .snf-id small { white-space: nowrap; font-variant-numeric: tabular-nums; }   /* a record like 10-6 always stays on one line */

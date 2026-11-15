@@ -23,9 +23,11 @@ function ease(G, side) {
   const d = s.score[side] - s.score[side === 'home' ? 'away' : 'home'];
   return d >= 21 ? -4 : d >= 14 ? -2 : d <= -21 ? 2 : d <= -14 ? 1 : 0;
 }
+const SPREAD = 0.72;
 export function val(G, p, key, floor = 35) {
   if (!p) return floor;
-  return (p.r[key] ?? floor) + ease(G, p.side) - (MOOD[p.mood] || 0) + G.mom * (p.side === 'home' ? 2.5 : -2.5) + (G.form?.[p.side] || 0) + (p.form || 0);
+  const raw = p.r[key] ?? floor, r = 66 + (raw - 66) * SPREAD;   // pros are closer together on any one snap than their ratings look
+  return r + ease(G, p.side) - (MOOD[p.mood] || 0) + G.mom * (p.side === 'home' ? 1.5 : -1.5) + (G.form?.[p.side] || 0) + (p.form || 0);
 }
 // A weighted blend of ratings: mix(G, p, { pass_block: 0.5, strength: 0.5 }).
 export const mix = (G, p, weights, floor = 35) => Object.entries(weights).reduce((s, [k, w]) => s + val(G, p, k, floor) * w, 0);
