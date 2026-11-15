@@ -108,3 +108,10 @@
 .desk-start > div { flex: 1; min-width: 220px; display: flex; flex-direction: column; gap: 3px; } .desk-start small { color: #93a0c4; }
 .btn.start-draft { background: linear-gradient(180deg, #35d07f, #1d8a4f); color: #fff; font-weight: 900; font-size: 18px; letter-spacing: 2px; padding: 12px 22px; }
 .btn.start-draft:not(:disabled) { animation: pulse-glow 1.6s ease-in-out infinite; }
+/* My Team → Draft tab */
+.draft-tab { display: flex; flex-direction: column; gap: 14px; }
+.scout-counts { display: flex; gap: 12px; flex-wrap: wrap; margin: 8px 0; }
+.scout-counts div { border: 2px solid #3a466e; padding: 6px 12px; display: flex; gap: 10px; align-items: baseline; }
+.scout-counts b { font-size: 20px; }
+.watch-row { margin: 6px 0 2px; }
+.watch-btn.on { border-color: #ff6b3d; color: #ff6b3d; }

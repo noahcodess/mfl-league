@@ -4,7 +4,7 @@ import FaOfferModal, { FA_JERSEY } from '../components/FaOfferModal.jsx';
 import MyOffers from '../components/MyOffers.jsx';
 import { getFreeAgents } from '../data/players.js';
 import { getTeam } from '../data/teams.js';
-import { OFFENSE, DEFENSE } from '../data/positions.js';
+import { ALL_POSITIONS } from '../data/positions.js';
 import { usePotentials } from '../data/potentials.js';
 import { useFaOffers, faOpen, faRound, faRounds } from '../data/freeAgency.js';
 import { useMyScouts } from '../data/scouting.js';
@@ -42,7 +42,7 @@ export default function FreeAgentsPage({ viewer }) {
         <section className="card">
           <div className="pos-chips">
             <button className={pos === 'ALL' ? 'on' : ''} onClick={() => setPos('ALL')}>All <small>{all.length}</small></button>
-            {[...OFFENSE, ...DEFENSE].map((p) => (
+            {ALL_POSITIONS.map((p) => (
               <button key={p} className={pos === p ? 'on' : ''} disabled={!count(p)} onClick={() => setPos(p)}>{p} <small>{count(p)}</small></button>
             ))}
           </div>

@@ -1,6 +1,6 @@
 // The AI coaches: what the offense calls (by down, distance, field position, score and clock), what the defense calls
 // (coverage and whether to blitz), fourth-down decisions, and going for two.
-import { fgOdds } from './simKicks.js';
+import { kickOdds, kickRange } from './simKicks.js';
 import { pickPlay } from './simPlaybook.js';
 
 // Seconds left in regulation (0 in overtime) and how far the side with the ball is ahead.
@@ -15,7 +15,7 @@ export function offenseCall(G) {
     const fgDist = toGoal + 17, must = (late && up < 0 && (t < 150 || up < -8)) || s.ot;
     const go = s.toGo <= 1 ? (s.ballOn > 45 ? 0.75 : s.ballOn > 30 ? 0.35 : 0.05) : s.toGo <= 3 ? (s.ballOn > 55 && fgDist > 52 ? 0.5 : 0.08) : 0;
     if (must && up < -3 && !s.ot) return play(G, true);
-    if (fgDist <= 56 && (s.ot || !(must && up < -3)) && !(s.toGo <= 1 && toGoal <= 3 && R.chance(0.5)) && fgOdds(fgDist) > (s.ot ? 0.3 : 0.45)) return { type: 'fg' };
+    if (fgDist <= kickRange(G, s.poss) && (s.ot || !(must && up < -3)) && !(s.toGo <= 1 && toGoal <= 3 && R.chance(0.5)) && kickOdds(G, s.poss, fgDist) > (s.ot ? 0.3 : 0.45)) return { type: 'fg' };
     if (must || R.chance(go)) return play(G, true);
     return s.ot ? play(G, true) : { type: 'punt' };
   }

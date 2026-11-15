@@ -15,7 +15,7 @@ export default function ScoutButton({ player, left, scouted, known, onScouted })
   return (
     <div className="scout-box">
       <button className="btn" disabled={busy || !left} onClick={go}>{busy ? 'Scout on the way...' : `🔭 Send a scout (${left ?? 0} left)`}</button>
-      <small className="dim">{player.status === 'prospect' ? 'Draft scouts: 2 per 1st-round pick, 1 per 2nd or 3rd.' : 'Free agency scouts: 5 each offseason.'} Only your team sees what he finds.</small>
+      <small className="dim">{player.status === 'prospect' ? 'Draft scouts: 2 per 1st-round pick, 1 per 2nd or 3rd, for this draft only.' : 'Free agency scouts: 5 a season.'} Only your team sees what he finds.</small>
       {error && <div className="form-error">{error}</div>}
     </div>
   );

@@ -1,4 +1,4 @@
-"""Writes the 9 attributes for each position, once, to both places that need them:
+"""Writes the attributes for each position, once, to both places that need them:
 src/lib/attributeDefs.js (the site's labels) and supabase/seed/08_attribute_defs.sql (the database, which the sim will use).
 Edit DEFS here and re-run so the two never drift apart.
 """
@@ -32,6 +32,9 @@ POSITION = {
            ('agility', 'Agility'), ('tackling', 'Tackling'), ('jumping', 'Jumping'), ('play_rec', 'Play Recognition')],
     'SS': [('zone_cover', 'Zone Coverage'), ('man_cover', 'Man Coverage'), ('tackling', 'Tackling'), ('hit_power', 'Hit Power'),
            ('ball_skills', 'Ball Skills'), ('play_rec', 'Play Recognition'), ('pursuit', 'Pursuit'), ('blitzing', 'Blitzing')],
+    # Kickers kick AND punt. Only 5 of their own bars: there's nothing else a kicker needs (Tackling is for stopping returns).
+    'K': [('kick_power', 'Kick Power'), ('kick_accuracy', 'Kick Accuracy'), ('punt_power', 'Punt Power'), ('punt_accuracy', 'Punt Accuracy'),
+          ('tackling', 'Tackling')],
 }
 DEFS = {pos: attrs + EVERYONE for pos, attrs in POSITION.items()}
 
@@ -76,6 +79,10 @@ STYLES = {
     'SS': [('box_safety', 'Box Safety', ['tackling', 'hit_power'], ['man_cover']),
            ('ball_hawk', 'Ball Hawk', ['ball_skills', 'zone_cover'], ['hit_power']),
            ('center_fielder', 'Center Fielder', ['zone_cover', 'speed', 'play_rec'], ['tackling'])],
+    'K': [('big_leg', 'Big Leg', ['kick_power', 'punt_power'], ['kick_accuracy']),
+          ('sniper', 'Sniper', ['kick_accuracy', 'punt_accuracy'], ['kick_power']),
+          ('kick_specialist', 'Kick Specialist', ['kick_power', 'kick_accuracy'], ['punt_power', 'punt_accuracy']),
+          ('punt_specialist', 'Punt Specialist', ['punt_power', 'punt_accuracy'], ['kick_power', 'kick_accuracy'])],
 }
 
 lines = ',\n'.join(f'  {pos}: ' + json.dumps([[k, l] for k, l in attrs]) for pos, attrs in DEFS.items())

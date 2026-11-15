@@ -11,6 +11,7 @@ import TradeActions from './TradeActions.jsx';
 import PlayerFlags from './PlayerFlags.jsx';
 import MoraleBox from './MoraleBox.jsx';
 import DripTab from './DripTab.jsx';
+import WatchButton from './WatchButton.jsx';
 import { contractOf, yearsLeft, contractLabel } from '../data/contracts.js';
 import { POSITION_NAMES } from '../data/positions.js';
 import { money, heightLabel } from '../lib/format.js';
@@ -34,6 +35,7 @@ export default function PlayerModal({ player, team, canSeePotential, potential, 
           </div>
         </div>
         <TradeActions player={player} myTeamId={myTeamId} onDone={onClose} />
+        <WatchButton player={player} myTeamId={myTeamId} />
         <div className="pcard-grid">
           <div><span>Age</span><b>{player.age ?? '-'}</b></div>
           <div><span>Height</span><b>{heightLabel(player.height)}</b></div>

@@ -4,7 +4,8 @@
 import { traitsFor } from './playerTraits.js';
 
 const BASE = { 1: 28000, 1.5: 38000, 2: 47000, 2.5: 61000, 3: 80000, 3.5: 93000, 4: 117000, 4.5: 150000, 5: 198000 };
-const POSITION = { QB: 1.25, WR: 1.1, DE: 1.1, OT: 1.1, TE: 0.9, OG: 0.9, C: 0.9, DT: 0.9, SS: 0.9 };
+// Kickers: the NFL's top kicker makes $7M against $42.15M for its top receiver (0.166x the WR scale), so 1.1 x 0.166 = 0.2.
+const POSITION = { QB: 1.25, WR: 1.1, DE: 1.1, OT: 1.1, TE: 0.9, OG: 0.9, C: 0.9, DT: 0.9, SS: 0.9, K: 0.2 };
 const AGE = { 21: 0.9, 22: 0.9, 26: 0.95, 27: 0.85 };
 export const MIN_SALARY = 10000;
 export const MAX_CONTRACT_TOTAL = 1000000;
@@ -21,6 +22,7 @@ export function marketValue(p) {
 // What the player himself asks for: market value, plus a bump if he knows he's still growing, times his greed.
 // Mood matters too: unhappy players want more to stay, happy ones give a discount.
 export function askingPrice(p, potential, traits) {
+  if (p.status === 'free_agent' && p.faAsk) return p.faAsk;   // a set asking contract (every kicker started on the same deal)
   const value = marketValue(p);
   if (value == null) return null;
   const t = traits || traitsFor(p);
@@ -33,6 +35,7 @@ export function askingPrice(p, potential, traits) {
 export const maxYears = (p, maxAge = 27) => Math.max(1, Math.min(3, maxAge - (p.age ?? 25) + 1));
 
 export function preferredYears(p, potential, maxAge = 27) {
+  if (p.status === 'free_agent' && p.faAskYears) return Math.min(p.faAskYears, maxYears(p, maxAge));
   if (p.age == null) return 2;
   const left = maxYears(p, maxAge);
   const rising = potential != null && potential > p.stars;

@@ -14,6 +14,9 @@ const GROUPS = [
   ['Bot teams (seconds)', [['draft_bot_min_seconds', 'Fastest pick'], ['draft_bot_max_seconds', 'Slowest pick']]],
   ['Announcing (seconds)', [['draft_countdown_seconds', '"Revealed in" countdown'], ['draft_auto_approve_seconds', 'Accept a coach pick on its own after'], ['draft_auto_announce_seconds', 'Announce on its own after']]],
   ['Rooms open early (minutes)', [['draft_room_opens_minutes', 'Draft room'], ['game_room_opens_minutes', 'Game rooms']]],
+  ['Draft class & scouting', [['prospect_reveal_week', 'Next class comes out in week (1–5)'], ['draft_class_size', 'Prospects per class'],
+    ['draft_scouts_r1', 'Scouts per 1st-round pick'], ['draft_scouts_later', 'Scouts per 2nd/3rd-round pick'], ['fa_scouts', 'Free agency scouts a season']]],
+  ['Kickers', [['k_pot5_pct', 'Chance a kicker prospect has 5★ potential (%)'], ['k_pot45_max', '4.5★+ potential kickers before 4.5s get rare']]],
 ];
 const KEYS = GROUPS.flatMap(([, items]) => items.map(([k]) => k));
 

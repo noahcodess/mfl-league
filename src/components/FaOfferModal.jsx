@@ -6,6 +6,7 @@ import OfferForm, { snapMoney } from './OfferForm.jsx';
 import BiddingBoard from './BiddingBoard.jsx';
 import PlayerSkills from './PlayerSkills.jsx';
 import ScoutButton from './ScoutButton.jsx';
+import WatchButton from './WatchButton.jsx';
 import Tabs from './Tabs.jsx';
 import PastTeams from './PastTeams.jsx';
 import InterestMeter, { SIGN_LINE } from './InterestMeter.jsx';
@@ -105,6 +106,7 @@ export default function FaOfferModal({ player, myTeam, canOffer, potential, scou
         ) },
         { key: 'player', label: 'Player', render: () => (
           <>
+            {myTeam?.id && <WatchButton player={player} myTeamId={myTeam.id} />}
             {scouts && <ScoutButton player={player} left={scouts.fa} scouted={scouted} known={potential != null} onScouted={() => onChanged?.()} />}
             <PlayerSkills player={player} potential={potential} />
           </>

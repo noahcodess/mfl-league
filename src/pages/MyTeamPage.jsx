@@ -2,16 +2,15 @@ import React from 'react';
 import Tabs from '../components/Tabs.jsx';
 import CustomizeTab from '../components/CustomizeTab.jsx';
 import TeamOverview from '../components/TeamOverview.jsx';
-import PickList from '../components/PickList.jsx';
+import DraftTab from '../components/DraftTab.jsx';
 import TeamSchedule from '../components/TeamSchedule.jsx';
 import TeamPage from './TeamPage.jsx';
 import FreeAgentsPage from './FreeAgentsPage.jsx';
 import TradesPage from './TradesPage.jsx';
-import { getPicks } from '../data/picks.js';
-import { currentSeason } from '../data/teams.js';
 
 // My Team: everything about your own team in one place, by tab. Overview (hub, countdowns, contracts), Schedule, Roster
-// (depth chart), Free agency (sign players), Trades (offers, block, builder), Customize (uniforms and end zones) and Draft picks.
+// (depth chart), Free agency (sign players), Trades (offers, block, builder), Customize (uniforms and end zones) and Draft
+// (picks, next draft class, scouting, watch list).
 export default function MyTeamPage({ viewer, reload, initialTab }) {
   return (
     <div className="myteam">
@@ -22,7 +21,7 @@ export default function MyTeamPage({ viewer, reload, initialTab }) {
         { key: 'fa', label: '💰 Free agency', render: () => <FreeAgentsPage viewer={viewer} /> },
         { key: 'trades', label: '🔁 Trades', render: () => <TradesPage viewer={viewer} /> },
         { key: 'customize', label: '🎨 Customize', render: () => <CustomizeTab teamId={viewer.team_id} /> },
-        { key: 'picks', label: '🎟️ Picks', render: () => <PickList picks={getPicks(viewer.team_id)} currentSeason={currentSeason()} title="All your draft picks" /> },
+        { key: 'picks', label: '🎓 Draft', render: () => <DraftTab viewer={viewer} /> },
       ]} />
     </div>
   );

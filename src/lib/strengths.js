@@ -23,17 +23,21 @@ const PHRASES = {
   tackling: ['Sure tackler', 'Misses tackles'], play_rec: ['Diagnoses plays fast', 'Bites on fakes'], hit_power: ['Big hitter', 'Light hitter'],
   zone_cover: ['Smart in zone coverage', 'Lost in zone'], man_cover: ['Sticky in man coverage', 'Gets beat in man'],
   press: ['Physical at the line', 'Soft at the line'], ball_skills: ['Takes the ball away', 'Rarely makes plays on the ball'],
+  kick_power: ['Huge leg, long field goals and touchbacks', 'Short leg, limited range'], kick_accuracy: ['Automatic on field goals', 'Shaky on field goals'],
+  punt_power: ['Booms punts with big hang time', 'Short punts'], punt_accuracy: ['Pins teams deep, never shanks', 'Shanks punts'],
 };
 const RB_VISION = ['Finds the running lane', 'Misses running lanes'];
+const K_TACKLE = ['Will make the touchdown-saving tackle', 'Won\'t tackle anybody'];
 
 export function strengthsAndWeaknesses(position, ratings) {
   if (!ratings) return { strengths: [], weaknesses: [] };
   const entries = Object.entries(ratings);
   const avg = entries.reduce((s, [, v]) => s + v, 0) / entries.length;
-  const words = (k) => (k === 'vision' && position === 'RB' ? RB_VISION : PHRASES[k]) || [k, k];
+  const words = (k) => (k === 'vision' && position === 'RB' ? RB_VISION : k === 'tackling' && position === 'K' ? K_TACKLE : PHRASES[k]) || [k, k];
   const sorted = [...entries].sort((a, b) => b[1] - a[1]);
   return {
     strengths: sorted.filter(([, v]) => v >= avg + 5 || v >= 90).slice(0, 3).map(([k]) => words(k)[0]),
-    weaknesses: sorted.reverse().filter(([, v]) => v <= avg - 5 && v < 75).slice(0, 3).map(([k]) => words(k)[1]),
+    // a kicker being slow or a weak tackler is normal, so it's never called a weakness
+    weaknesses: sorted.reverse().filter(([k, v]) => v <= avg - 5 && v < 75 && !(position === 'K' && (k === 'speed' || k === 'tackling'))).slice(0, 3).map(([k]) => words(k)[1]),
   };
 }

@@ -130,7 +130,14 @@ insert into public.attribute_defs (position, ord, key, label) values
 ('SS', 7, 'pursuit', 'Pursuit'),
 ('SS', 8, 'blitzing', 'Blitzing'),
 ('SS', 9, 'speed', 'Speed'),
-('SS', 10, 'toughness', 'Toughness');
+('SS', 10, 'toughness', 'Toughness'),
+('K', 1, 'kick_power', 'Kick Power'),
+('K', 2, 'kick_accuracy', 'Kick Accuracy'),
+('K', 3, 'punt_power', 'Punt Power'),
+('K', 4, 'punt_accuracy', 'Punt Accuracy'),
+('K', 5, 'tackling', 'Tackling'),
+('K', 6, 'speed', 'Speed'),
+('K', 7, 'toughness', 'Toughness');
 delete from public.style_defs;
 insert into public.style_defs (position, style, label, boosts, drops) values
 ('QB', 'gunslinger', 'Gunslinger', '{throw_power,deep_acc}', '{short_acc,vision}'),
@@ -175,4 +182,8 @@ insert into public.style_defs (position, style, label, boosts, drops) values
 ('CB', 'physical', 'Physical Corner', '{press,tackling}', '{speed}'),
 ('SS', 'box_safety', 'Box Safety', '{tackling,hit_power}', '{man_cover}'),
 ('SS', 'ball_hawk', 'Ball Hawk', '{ball_skills,zone_cover}', '{hit_power}'),
-('SS', 'center_fielder', 'Center Fielder', '{zone_cover,speed,play_rec}', '{tackling}');
+('SS', 'center_fielder', 'Center Fielder', '{zone_cover,speed,play_rec}', '{tackling}'),
+('K', 'big_leg', 'Big Leg', '{kick_power,punt_power}', '{kick_accuracy}'),
+('K', 'sniper', 'Sniper', '{kick_accuracy,punt_accuracy}', '{kick_power}'),
+('K', 'kick_specialist', 'Kick Specialist', '{kick_power,kick_accuracy}', '{punt_power,punt_accuracy}'),
+('K', 'punt_specialist', 'Punt Specialist', '{punt_power,punt_accuracy}', '{kick_power,kick_accuracy}');

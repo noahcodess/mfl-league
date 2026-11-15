@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Headshot from './Headshot.jsx';
 import StarRating from './StarRating.jsx';
-import { OFFENSE, DEFENSE, POSITION_NAMES } from '../data/positions.js';
+import { OFFENSE, DEFENSE, SPECIAL, POSITION_NAMES } from '../data/positions.js';
 
 // The roster as a real depth chart: a card per position, players stacked top to bottom with the best starter on top
 // (WR1, WR2...), backups tucked under "+ backups". Insiders also see contract years and potential.
@@ -37,6 +37,7 @@ function PositionCard({ pos, players, vacancies, team, onOpen, insider, showAll 
       <div className="pos-card-head"><b>{pos}</b><span>{POSITION_NAMES[pos]}</span></div>
       {starters.map((p, i) => <DepthRow key={p.id} p={p} label={starters.length > 1 ? `${pos}${i + 1}` : pos} team={team} onOpen={onOpen} insider={insider} />)}
       {expanded && backups.map((p, i) => <DepthRow key={p.id} p={p} label={`${pos}${starters.length + i + 1}`} team={team} onOpen={onOpen} insider={insider} backup />)}
+      {pos === 'K' && !starters.length && !backups.length && <div className="depth-open">No kicker: a backup kicks in an emergency (badly). Sign one in free agency.</div>}
       {openSpots > 0 && <div className="depth-open">{openSpots} open spot{openSpots > 1 ? 's' : ''}</div>}
       {backups.length > 0 && !showAll && (
         <button className="show-more" onClick={() => setOpen(!open)}>{open ? 'Hide backups' : `+ ${backups.length} backup${backups.length > 1 ? 's' : ''}`}</button>
@@ -66,6 +67,7 @@ export default function Roster(props) {
     <>
       <Side title="Offense" positions={OFFENSE} {...props} />
       <Side title="Defense" positions={DEFENSE} {...props} />
+      <Side title="Special teams" positions={SPECIAL} {...props} />
     </>
   );
 }

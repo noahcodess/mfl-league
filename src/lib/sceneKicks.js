@@ -34,8 +34,8 @@ export function buildKickoff(S, lineups) {
     const win = got ? cover[2] : blockers[0]; S.when(T0 + 1.7, (s) => { if (win) win.brain = B.meet(s.ball.x, s.ball.y, s.t + 0.35, win.max, (a, ss) => { ss.knock(a); ss.give(a); }); });
     S.tEnd = T0 + 2.4; return;
   }
-  const endRcv = play.result.td ? 100 : play.after.ballOn, retYds = retEv?.yards ?? 0, landOn = retEv ? endRcv - retYds : -4, hang = 3.4;
-  const landAbs = absOf(play.def, landOn), landY = clamp((S.rand() - 0.5) * 12, -20, 20);
+  const oob = ev(play, 'kick')[0]?.oob, endRcv = play.result.td ? 100 : play.after.ballOn, retYds = retEv?.yards ?? 0, landOn = oob ? 6 : retEv ? endRcv - retYds : -4, hang = 3.4;
+  const landAbs = absOf(play.def, landOn), landY = oob ? (S.rand() < 0.5 ? -28 : 28) : clamp((S.rand() - 0.5) * 12, -20, 20);   // a hooked kick lands out of bounds
   ret.x = landAbs - dir * 2; ret.y = landY;
   S.when(T0, (s) => s.throwBall(landAbs, landY, retEv ? 0.62 : 0.12, hang, 13, (ss) => { if (retEv) ss.give(ret); else ss.loose(dir * 2, 0, 2); }, { kick: true }));
   ret.brain = B.path([[landAbs, landY]], T0 + 1, T0 + hang - 0.05, ret.max);
@@ -50,11 +50,11 @@ export function buildPunt(S, lineups) {
   frame(S, play); const dir = S.dir, T0 = S.T0; S.lines = null;
   const P = S.add(me.punter, play.off, ...S.at(-14, 0), dir), line = me.players.slice(1).map((p, i) => S.add(p, play.off, ...S.at(-1.5, i < 2 ? (i ? 19 : -19) : row(me.players.length - 3, 12)[i - 2]), dir, i < 2 ? 'wrset' : 'olset'));
   const rush = them.players.slice(1).map((p, i) => S.add(p, play.def, ...S.at(1.6, row(them.players.length - 1, 22)[i]), -dir, 'dlset'));
-  const gross = kick?.dist ?? 44, landAl = Math.min(gross, 100 - play.before.ballOn + 6), land = S.at(landAl, clamp((S.rand() - 0.5) * 14, -20, 20));
+  const gross = kick?.dist ?? 44, landAl = Math.min(gross, 100 - play.before.ballOn + 6), land = S.at(landAl, kick?.shank ? (S.rand() < 0.5 ? -28 : 28) : clamp((S.rand() - 0.5) * 14, -20, 20));
   const ret = S.add(them.returner, play.def, land[0] + dir * 3, land[1], -dir);
   S.ball.x = S.los; S.ball.y = 0;
   S.when(T0, (s) => s.throwBall(P.x, P.y, 0.62, 0.55, 0.3, (ss) => ss.give(P)));
-  const tKick = T0 + 1.35, hang = 4, tLand = tKick + hang;
+  const tKick = T0 + 1.35, hang = kick?.hang ?? 4, tLand = tKick + hang;
   S.when(tKick - 0.15, (s) => s.setPose(P, 'kick', 0.5));
   S.when(tKick, (s) => s.throwBall(land[0], land[1], retEv ? 0.62 : 0.12, hang, 15, (ss) => { if (retEv) ss.give(ret); else ss.loose(dir * 3, 0, 3); }, { kick: true }));
   ret.brain = B.path([land], T0 + 1.5, tLand - 0.05, ret.max);

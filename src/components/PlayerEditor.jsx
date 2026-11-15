@@ -5,7 +5,7 @@ import StarRating from './StarRating.jsx';
 import ConfirmButton from './ConfirmButton.jsx';
 import { getTeams, getTeam } from '../data/teams.js';
 import { contractOf, yearsLeft } from '../data/contracts.js';
-import { OFFENSE, DEFENSE } from '../data/positions.js';
+import { ALL_POSITIONS } from '../data/positions.js';
 import { updatePlayer, playerPotential } from '../data/commishEdit.js';
 import { MOODS, MOOD_NAMES, forceTradeRequest } from '../data/morale.js';
 
@@ -66,7 +66,7 @@ export default function PlayerEditor({ player, canControl, onClose, onSaved }) {
       </div>
       <fieldset className="pe-grid" disabled={!canControl}>
         <label className="field wide"><span>Name</span><input value={f.name} onChange={set('name')} maxLength={40} /></label>
-        <label className="field"><span>Position</span><select value={f.position} onChange={set('position')}>{[...OFFENSE, ...DEFENSE].map((p) => <option key={p}>{p}</option>)}</select></label>
+        <label className="field"><span>Position</span><select value={f.position} onChange={set('position')}>{ALL_POSITIONS.map((p) => <option key={p}>{p}</option>)}</select></label>
         <label className="field"><span>Age</span><input type="number" min="18" max="40" value={f.age} onChange={set('age')} /></label>
         <label className="field"><span>Stars</span><select value={f.stars} onChange={set('stars')}>{HALVES.map((s) => <option key={s} value={s}>{s.toFixed(1)}</option>)}</select></label>
         <label className="field"><span>Potential</span><select value={f.potential} onChange={set('potential')}><option value="">Not rated</option>{HALVES.map((s) => <option key={s} value={s}>{s.toFixed(1)}</option>)}</select></label>

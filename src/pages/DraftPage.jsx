@@ -128,7 +128,7 @@ export default function DraftPage({ viewer, canControl, stageRoute }) {
           onScouted={() => setVersion((v) => v + 1)} onClose={() => setOpen(null)}
           footer={myTeam && !taken.has(open.id) && (
             <>
-              <button className={`btn ghost${flags.has(open.id) ? ' on' : ''}`} onClick={() => toggle(open.id)}>{flags.has(open.id) ? '⚑ Flagged' : '⚑ Flag him'}</button>
+              <button className={`btn ghost${flags.has(open.id) ? ' on' : ''}`} onClick={() => toggle(open.id)}>{flags.has(open.id) ? '👀 Watching' : '👀 Watch him'}</button>
               {onClock && <button className="btn" onClick={() => { setDrafting(open); setOpen(null); }}>🏈 Draft him</button>}
             </>
           )} />
