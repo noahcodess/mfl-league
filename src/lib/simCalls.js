@@ -18,6 +18,7 @@ export function offenseCall(G) {
   // victory formation: up late and the other side can't stop the clock enough to get it back
   if (late && up > 0 && s.down < 4 && s.clock < 40 * (4 - s.down) - 10 * to) return { type: 'kneel' };
   if (s.quarter === 2 && up >= 0 && s.clock < 30 && s.ballOn < 40 && s.down < 4) return { type: 'kneel' };   // nothing to gain before half
+  if (late && up === 0 && s.clock < 25 && s.ballOn < 35 && s.down < 4 && !s.ot) return { type: 'kneel' };      // tied, deep in his own end: take it to overtime
   if (G.spikeNow) { G.spikeNow = false; return { type: 'spike' }; }
   if (s.down === 4) {
     const d = fourthDown(G);
@@ -48,10 +49,16 @@ function play(G, must) {
     + (hurry ? 0 : Math.max(-0.05, Math.min(0.05, (G.hot?.[side] || 0) * 0.015)));     // a hot quarterback keeps throwing
   pass += Math.max(-0.16, Math.min(0.16, lean));
   if (hurry) pass = Math.max(pass, 0.85);
+  // the last minute of a half, or needing a touchdown late: throw it. A run only makes sense when a field goal is all
+  // he needs and he's already in range (set it up in the middle), never 70 yards away with the clock running out.
+  const halfLeft = s.quarter === 2 || late ? s.clock : 999, fgDist = 100 - s.ballOn + 17, needTd = late && up < -3 && up >= -8 && t < 150;
+  const fgEnough = s.quarter === 2 || (late && up >= -3 && up <= 0), inRange = fgDist <= 50;
+  if ((hurry && halfLeft < 60 && !(fgEnough && inRange)) || needTd) pass = 1;
   else if (clock) pass -= late && t < 150 ? 0.4 : 0.25;                           // protect the lead: run, stay in bounds
   else if (up <= -14 && s.quarter >= 3) pass += 0.15;
   if (up >= 24) pass = Math.min(pass, 0.25);                                      // way ahead: run it and get out of here
   if (must && s.toGo >= 4) pass = Math.max(pass, 0.8);
+  if (pass >= 1) return pickPlay(G, 'pass', depth(G, plan, ctx, must, up, t), ctx);
   if (ctx.short && !hurry && s.toGo <= 1 && R.chance(0.16)) return pickPlay(G, 'run', 'sneak', ctx);
   if (!R.chance(Math.max(0.08, Math.min(0.95, pass)))) return pickPlay(G, 'run', 'any', ctx);
   return pickPlay(G, 'pass', depth(G, plan, ctx, must, up, t), ctx);

@@ -21,13 +21,13 @@ export function tempo(G) {
   return goal === 'stop' ? R.int(9, 14) : goal === 'run' ? R.int(36, 39) : R.int(24, 32);
 }
 
-// Does the ball carrier end up out of bounds? base: how often this kind of play drifts out anyway (outside runs and
-// scrambles more than catches over the middle). A runner who wants the clock stopped heads for the sideline and gives up
+// Does the ball carrier end up out of bounds? base: how often this kind of play ends there in normal football (rare:
+// runners fight to stay in bounds; outside runs and scrambles a bit more than catches). A runner who wants the clock stopped heads for the sideline and gives up
 // a yard to get there (smarter, more aware players find it more often); one killing the clock cuts back inside and takes
 // the hit. Returns { oob, gain }.
 export function outOfBounds(G, carrier, base, gain) {
   const goal = clockGoal(G), r = carrier?.r || {}, iq = ((r.vision ?? r.awareness ?? r.route_running ?? 60) - 60) / 100;
-  if (goal === 'stop') { const oob = G.R.chance(Math.min(0.85, base * 2.4 + 0.18 + iq * 0.4)); return { oob, gain: oob && gain > 3 ? gain - 1 : gain }; }
+  if (goal === 'stop') { const oob = G.R.chance(Math.min(0.85, base * 4 + 0.16 + iq * 0.4)); return { oob, gain: oob && gain > 3 ? gain - 1 : gain }; }
   if (goal === 'run') return { oob: G.R.chance(base * 0.12), gain };
   return { oob: G.R.chance(base), gain };
 }

@@ -32,6 +32,7 @@ export function buildPass(S, lineups) {
     const r = A[rk]; if (!r) continue;
     const info = read[r.id], mine = r === tgt, l0 = r.y, a0 = S.along(r);
     const pts = route(rk, l0, mine ? thr.air : info?.depth ?? depths[rk], play.n + rk.length).map(([al, lat]) => S.at(al, lat));
+    if (mine && play.result.oob) { const e = pts[pts.length - 1], sg = Math.sign(l0 || 1); e[1] = sg * Math.max(sg * e[1], 18 + S.rand() * 4); }   // a catch that goes out of bounds was made near the sideline
     let L = dist(r.x, r.y, pts[0][0], pts[0][1]); for (let i = 1; i < pts.length; i++) L += dist(pts[i - 1][0], pts[i - 1][1], pts[i][0], pts[i][1]);
     const go0 = T0 + getGoing(r.p), arrive = go0 + L / (r.max * 0.95), toBreak = dist(r.x, r.y, pts[0][0], pts[0][1]) / (r.max * 0.95);
     if (mine) {
@@ -93,9 +94,10 @@ function outcome(S, play, tgt, cat, at, tThrow, tCatch, wob) {
   }, wob));
   if (res === 'breakup' && df) { S.when(tThrow, () => { df.brain = B.meet(at[0] + dir * 0.5, at[1] + (at[1] >= 0 ? 0.7 : -0.7), tCatch - 0.03, df.max * 1.15); }); S.when(tCatch - 0.22, (s) => s.setPose(df, 'catch', 0.35)); }
   if (res !== 'catch') { S.when(tCatch + 0.15, (s) => { tgt.brain = B.to(tgt.x + dir * 1.2, tgt.y, 2); s.setPose(tgt, 'drop', 1.6); }); S.tEnd = tCatch + 0.6; return; }
-  const end = S.at(play.result.td ? play.result.gain + 2 : play.result.gain, play.result.oob ? (at[1] >= 0 ? 26.2 : -26.2) : clamp(at[1] + (S.rand() - 0.5) * 8, -25, 25));
+  const end = S.at(play.result.td ? play.result.gain + 2 : play.result.gain, play.result.oob ? (at[1] >= 0 ? 26.9 : -26.9) : clamp(at[1] + (S.rand() - 0.5) * 8, -25, 25));
   const tEnd = tCatch + 0.05 + Math.max(0.3, dist(at[0], at[1], end[0], end[1]) / (tgt.max * 0.9));
-  S.when(tCatch, () => { tgt.brain = B.carry([end], tCatch, tEnd, tgt.max); });
+  const a0 = S.along({ x: at[0] }), yacPts = play.result.oob ? [S.at(a0 + (play.result.gain - a0) * 0.6, at[1] + (end[1] - at[1]) * 0.5), end] : [end];   // upfield, then angle out
+  S.when(tCatch, () => { tgt.brain = B.carry(yacPts, tCatch, tEnd, tgt.max); });
   pursueAll(S, tgt, tCatch, []);
   const made = play.events.find((e) => e.type === 'tackle' && e.result === 'made');
   finishCarry(S, tgt, end, tEnd, { tk: made && S.by[made.def], td: play.result.td, oob: play.result.oob, fumble: play.events.find((e) => e.type === 'fumble') });

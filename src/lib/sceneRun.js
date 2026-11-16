@@ -9,8 +9,9 @@ const MOVE = { juke: 'juke', shake: 'juke', spin: 'spin', 'stiff arm': 'stiff', 
 // The carrier's run after he has the ball: through each broken tackle to the end spot. Returns tEnd.
 function carryPath(S, c, from, t0, endAlong, endLat, play) {
   const broken = ev(play, 'tackle').filter((e) => e.result === 'broken'), made = ev(play, 'tackle').find((e) => e.result === 'made');
-  const end = S.at(play.result.td ? endAlong + 2 : endAlong, play.result.oob ? (endLat >= 0 ? 26.2 : -26.2) : endLat);
+  const end = S.at(play.result.td ? endAlong + 2 : endAlong, play.result.oob ? (endLat >= 0 ? 26.9 : -26.9) : endLat);
   const pts = [from], marks = [];
+  if (play.result.oob) { const al0 = S.along({ x: from[0] }); pts.push(S.at(al0 + (endAlong - al0) * 0.6, from[1] + (end[1] - from[1]) * 0.55)); }   // upfield first, then angle out
   broken.forEach((e, i) => { const al = clamp(e.at, S.along({ x: from[0] }) + 1, endAlong - 0.5), k = (al - S.along({ x: from[0] })) / Math.max(1, endAlong - S.along({ x: from[0] })); const p = S.at(al, from[1] + (end[1] - from[1]) * k + (i % 2 ? 1.6 : -1.6)); pts.push(p); marks.push({ e, p }); });
   pts.push(end);
   let L = 0; const at = [0]; for (let i = 1; i < pts.length; i++) { L += dist(pts[i - 1][0], pts[i - 1][1], pts[i][0], pts[i][1]); at.push(L); }

@@ -40,6 +40,7 @@ export const B = {
     let i = 0, done = false;
     return (a, dt, S) => {
       if (S.t < t0 || done) return;
+      if (Math.abs(pts[pts.length - 1][1]) >= 26) a.oobOK = true;   // this run is meant to end out of bounds
       let left = 0; for (let k = i; k < pts.length; k++) left += dist(k === i ? a.x : pts[k - 1][0], k === i ? a.y : pts[k - 1][1], pts[k][0], pts[k][1]);
       const speed = Math.min(max, (left + 0.6) / Math.max(0.05, t1 - S.t));
       let [tx, ty] = pts[i];
@@ -94,7 +95,7 @@ export class Scene {
       const ox = a.x, oy = a.y;
       if (a.pre && this.t < this.T0) { if (this.t > 0.4) stepTo(a, a.pre.x, a.pre.y, a.pre.speed, dt); }   // jogging to his spot from the huddle
       else if (a.brain && !a.down) a.brain(a, dt, this);
-      a.y = clamp(a.y, -29, 29);
+      const edge = a.oobOK || this.t > (this.tEnd ?? 99) ? 29 : 26.4; a.y = clamp(a.y, -edge, edge);   // nobody leaves the field mid-play unless the play goes out
       a.vx = (a.x - ox) / dt; a.vy = (a.y - oy) / dt;
     }
     const b = this.ball;
