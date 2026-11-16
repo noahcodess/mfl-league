@@ -11,7 +11,7 @@ const absOf = (side, ballOn) => (side === 'away' ? ballOn : 100 - ballOn);
 function runBack(S, ret, from, end, tCatch, cover, blockers, td) {
   const L = dist(from[0], from[1], end[0], end[1]), mid = [(from[0] + end[0]) / 2, clamp((from[1] + end[1]) / 2 + (S.rand() - 0.5) * 8, -24, 24)];
   const tEnd = tCatch + 0.15 + L / (ret.max * 0.9);
-  S.when(tCatch, () => { ret.brain = B.path([mid, end], tCatch, tEnd, ret.max); });
+  S.when(tCatch, () => { ret.brain = B.carry([mid, end], tCatch, tEnd, ret.max); });
   pursueAll(S, ret, tCatch - 0.3, []);
   S.when(tCatch - 0.3, (s) => blockers.forEach((b, i) => { const m = cover[i % cover.length]; if (m) b.brain = (a, dt) => { const k = s.dir; if (dist(a.x, a.y, m.x, m.y) < 1.4) s.setPose(a, 'block'); const dx = m.x + k * 1 - a.x, dy = m.y - a.y, d = Math.hypot(dx, dy); if (d > 0.05) { const st = Math.min(d, a.max * 0.85 * dt); a.x += (dx / d) * st; a.y += (dy / d) * st; } }; }));
   finishCarry(S, ret, end, tEnd, { td });

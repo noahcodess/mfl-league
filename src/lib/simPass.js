@@ -4,6 +4,7 @@
 import { addEvent } from './simReport.js';
 import { clamp, odds, mix, val, top, stat, swing } from './simCore.js';
 import { carry } from './simCarry.js';
+import { outOfBounds } from './simClock.js';
 
 const PROTECT = { pass_block: 0.45, footwork: 0.2, anchor: 0.2, strength: 0.15 };
 const LINE = [['OT1', 'DE1'], ['OG1', 'DT1'], ['C', 'DL'], ['OG2', 'DT2'], ['OT2', 'DE2']];
@@ -101,7 +102,8 @@ export function passPlay(G, play, call, def, plan = {}) {
       const out = carry(G, play, qb, -3, [{ p: D.LB1, at: 2 + R.int(0, 4) }, { p: D.SS, at: 8 }, { p: D.CB1, at: 13 }], toGoal, [D.CB1, D.CB2], heat.t), gain = Math.round(out.end);
       stat(play, qb, 'ryds', gain); stat(play, qb, 'rlong', gain); if (out.td) stat(play, qb, 'rtd');
       play.kind = 'run'; play.scramble = true; play.carrier = qb.id; play.text = out.td ? `${qb.last} escapes and runs it in... TOUCHDOWN!` : `${qb.last} scrambles for ${gain}.`;
-      return { gain, td: out.td, fumble: out.fumble, time: out.time + 1.5, oob: !out.td && R.chance(0.35) };
+      const ob = out.td ? { oob: false, gain } : outOfBounds(G, qb, 0.25, gain);
+      return { gain: ob.gain, td: out.td, fumble: out.fumble, time: out.time + 1.5, oob: ob.oob };
     } else { addEvent(play, 'pocket', heat.t, { qb: qb.id, move: 'slide' }); pressured = true; onRun = true; tThrow = heat.t + 0.4; }
     addEvent(play, 'pressure', heat.t, { by: heat.by.id, kind: 'hurry' });
   } else if (heat.by && heat.t - tThrow < 0.35) { // the rusher arrives as he lets it go: a hurried throw and a hit
@@ -151,5 +153,6 @@ export function passPlay(G, play, call, def, plan = {}) {
   if (out.td) { stat(play, qb, 'ptd'); stat(play, tgt.p, 'rectd'); }
   play.carrier = tgt.p.id; play.catchType = type;
   play.text = out.td ? `${qb.last} ${d > 20 ? 'deep ' : ''}to ${tgt.p.last}... TOUCHDOWN!` : `${qb.last} ${d > 20 ? 'deep to' : 'to'} ${tgt.p.last}${type === 'one-handed' ? ' with one hand' : ''} for ${gain}${out.tackler ? `. Tackle by ${out.tackler.last}` : ''}.`;
-  return { gain, td: out.td, fumble: out.fumble, time: out.time + 1.5, oob: !out.td && R.chance(0.14) };
+  const ob = out.td ? { oob: false, gain } : outOfBounds(G, tgt.p, d >= 10 && (call === 'medium' || call === 'deep') ? 0.16 : 0.08, gain);   // sideline routes get out more
+  return { gain: ob.gain, td: out.td, fumble: out.fumble, time: out.time + 1.5, oob: ob.oob };
 }

@@ -3,6 +3,7 @@ import Tabs from '../components/Tabs.jsx';
 import CustomizeTab from '../components/CustomizeTab.jsx';
 import TeamOverview from '../components/TeamOverview.jsx';
 import DraftTab from '../components/DraftTab.jsx';
+import { isTestMode } from '../data/teams.js';
 import TeamSchedule from '../components/TeamSchedule.jsx';
 import TeamPage from './TeamPage.jsx';
 import FreeAgentsPage from './FreeAgentsPage.jsx';
@@ -14,6 +15,10 @@ import TradesPage from './TradesPage.jsx';
 export default function MyTeamPage({ viewer, reload, initialTab }) {
   return (
     <div className="myteam">
+      {isTestMode() && (
+        <div className="test-lock">🧪 <b>Test mode is on.</b> A test coach (bot) is running your team like every other team: re-signing, free agency,
+          the draft and game calls. You can look around, but moves are locked until the commissioner turns test mode off.</div>
+      )}
       <Tabs initial={initialTab} tabs={[
         { key: 'overview', label: '🏠 Overview', render: () => <TeamOverview viewer={viewer} reload={reload} /> },
         { key: 'schedule', label: '📅 Schedule', render: () => <TeamSchedule teamId={viewer.team_id} canPick /> },

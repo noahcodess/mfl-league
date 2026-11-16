@@ -33,6 +33,32 @@ export const B = {
       if (stepTo(a, pts[i][0], pts[i][1], Math.max(speed, 0.5), dt) <= 0.03) { if (i < pts.length - 1) i++; else { done = true; then?.(a, S); } }
     };
   },
+  // A ball carrier on his way to the engine's spot by t1: follows the path, but cuts around a defender squared up in front
+  // of him (away from the sideline unless he's headed out of bounds). A defender off to the side or behind him is ignored:
+  // with the angle and the speed he just runs by. The tackler waiting at the end of the run isn't dodged.
+  carry: (pts, t0, t1, max) => {
+    let i = 0, done = false;
+    return (a, dt, S) => {
+      if (S.t < t0 || done) return;
+      let left = 0; for (let k = i; k < pts.length; k++) left += dist(k === i ? a.x : pts[k - 1][0], k === i ? a.y : pts[k - 1][1], pts[k][0], pts[k][1]);
+      const speed = Math.min(max, (left + 0.6) / Math.max(0.05, t1 - S.t));
+      let [tx, ty] = pts[i];
+      const dx = tx - a.x, dy = ty - a.y, m = Math.hypot(dx, dy) || 1, ux = dx / m, uy = dy / m;
+      if (S.t < t1 - 0.6) {
+        for (const d of S.actors) {
+          if (d.side === a.side || d.down || d === S.tackler) continue;
+          const rx = d.x - a.x, ry = d.y - a.y, ahead = rx * ux + ry * uy, side = rx * -uy + ry * ux;
+          if (ahead > 0.2 && ahead < 3.5 && Math.abs(side) < 1.7) {   // squared up in front: cut around him
+            const away = side > 0 ? -1 : 1, edge = Math.abs(a.y + away * 2) > 24.5 && Math.abs(ty) < 26 ? -away : away, clear = 1.9 - Math.abs(side) * 0.5;
+            tx = a.x + ux * 2.4 + -uy * edge * clear; ty = a.y + uy * 2.4 + ux * edge * clear;   // a hard cut around him, then back on line
+            break;
+          }
+        }
+      }
+      if (Math.abs(pts[pts.length - 1][1]) < 26) ty = clamp(ty, -25.6, 25.6);   // stays in bounds unless the play goes out
+      if (stepTo(a, tx, ty, Math.max(speed, 0.5), dt) <= 0.03 || dist(a.x, a.y, pts[i][0], pts[i][1]) < 0.35) { if (i < pts.length - 1) i++; else done = true; }
+    };
+  },
   pursue: (target, speed, stop = 1) => (a, dt) => { if (dist(a.x, a.y, target.x, target.y) > stop) stepTo(a, target.x + (target.vx || 0) * 0.25, target.y + (target.vy || 0) * 0.25, speed, dt); },
   // Get to (px, py) at tArrive, no faster than max; if he's late he keeps going until he gets there.
   meet: (px, py, tArrive, max, then) => {

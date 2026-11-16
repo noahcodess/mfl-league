@@ -3,6 +3,7 @@
 import { addEvent } from './simReport.js';
 import { mix, val, stat } from './simCore.js';
 import { carry } from './simCarry.js';
+import { outOfBounds } from './simClock.js';
 
 const R0 = (G) => G.R.r();
 
@@ -46,5 +47,6 @@ export function runPlay(G, play, call, plan = {}, def = {}) {
   play.kind = 'run'; play.carrier = rb.id;
   play.text = out.td ? `${rb.last} ${call === 'outside' ? 'around the edge' : 'up the middle'}... TOUCHDOWN!`
     : `${rb.last} ${sneak ? 'sneaks' : call === 'outside' ? `sweeps ${side}` : 'up the middle'} for ${gain > 0 ? `${gain} yard${gain === 1 ? '' : 's'}` : gain === 0 ? 'no gain' : `a loss of ${-gain}`}${out.tackler ? `. Tackle by ${out.tackler.last}` : ''}.`;
-  return { gain, td: out.td, fumble: out.fumble, time: out.time + 1.5, oob: call === 'outside' && !out.td && R.chance(0.18) };
+  const ob = out.td || sneak ? { oob: false, gain } : outOfBounds(G, rb, call === 'outside' ? 0.14 : 0.03, gain);   // he knows what the clock needs
+  return { gain: ob.gain, td: out.td, fumble: out.fumble, time: out.time + 1.5, oob: ob.oob };
 }

@@ -74,7 +74,8 @@ export function scrimmage(G) {
     s.running = false; play.result.endOn = s.ballOn; return log(G, play, 0);
   }
   // a coach in the coaching room can make the call on a key play; otherwise the AI coach does
-  const call = (play.keyPlay && G.opts.coachCall?.(G, o)) || offenseCall(G), def = defenseCall(G, call);   // the defense sees the formation first
+  // a human coach calls key plays (never in test mode: bots coach everyone); the defense sees the formation first
+  const call = (play.keyPlay && !G.opts.testMode && G.opts.coachCall?.(G, o)) || offenseCall(G), def = defenseCall(G, call);
   play.call = call; play.defCall = def; play.clock.playClockAtSnap = s.snapClock ?? 40;
   let res, ended = null, secs = 5, moving = false;
   const touchdown = (side, how) => { score(G, play, side, 6, how); play.result.td = true; play.headline = play.headline || 'TOUCHDOWN'; s.poss = side; s.phase = 'pat'; s.patSide = side; ended = side === o ? 'td' : 'defTd'; };

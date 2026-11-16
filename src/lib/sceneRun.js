@@ -15,7 +15,7 @@ function carryPath(S, c, from, t0, endAlong, endLat, play) {
   pts.push(end);
   let L = 0; const at = [0]; for (let i = 1; i < pts.length; i++) { L += dist(pts[i - 1][0], pts[i - 1][1], pts[i][0], pts[i][1]); at.push(L); }
   const v = c.max * (L > 20 ? 0.97 : 0.9), tEnd = t0 + 0.1 + L / v;
-  S.when(t0, () => { c.brain = B.path(pts.slice(1), t0, tEnd, c.max); });
+  S.when(t0, () => { c.brain = B.carry(pts.slice(1), t0, tEnd, c.max); });
   marks.forEach(({ e, p }, i) => { // each whiff
     const t = t0 + 0.1 + at[i + 1] / v, d = S.by[e.def];
     S.when(t - 0.3, (s) => s.setPose(c, MOVE[e.move] || 'juke', 0.4));

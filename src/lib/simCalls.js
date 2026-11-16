@@ -6,6 +6,7 @@ import { pickPlay } from './simPlaybook.js';
 import { fourthDown } from './fourthDown.js';
 import { working } from './coachPlan.js';
 import { SCHEME_LEAN } from './playbookFormations.js';
+import { clockGoal } from './simClock.js';
 
 const secondsLeft = (s) => (s.ot ? 0 : (4 - s.quarter) * s.qlen + s.clock);
 const leadOf = (s) => s.score[s.poss] - s.score[s.poss === 'home' ? 'away' : 'home'];
@@ -32,8 +33,7 @@ export function offenseCall(G) {
 function play(G, must) {
   const { R, s } = G, side = s.poss, plan = G.teams[side].plan || { off: 'balanced', run: 0, risk: 0, sharp: 1, report: { fam: {} } };
   const up = leadOf(s), t = secondsLeft(s), toGoal = 100 - s.ballOn, late = s.quarter === 4 && !s.ot;
-  const hurry = (s.quarter === 2 && s.clock < 75) || (late && up < 0 && t < 210) || (late && up < -8 && t < 420);
-  const clock = !hurry && ((late && up > 0 && t < 330) || (s.quarter >= 3 && up >= 17));
+  const goal = clockGoal(G), hurry = goal === 'stop', clock = goal === 'run' && up < 24;   // same clock plan as the tempo and the runners
   const ctx = { short: s.toGo <= 2, red: toGoal <= 20, goal: toGoal <= 4, clock, hurry, long: s.toGo >= 8 && s.down >= 3,
     hail: (s.quarter === 2 || late) && s.clock <= 5 && toGoal > 35 && toGoal < 65 && (s.quarter === 2 || up < 0) };
   if (ctx.hail) return pickPlay(G, 'pass', 'deep', ctx);

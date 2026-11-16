@@ -1,14 +1,35 @@
-// Clock management for both coaches: how fast the offense snaps (hurry-up, normal, milking it), when either side burns a
-// timeout, and when a hurrying offense with no timeouts spikes it. Smarter (Clutch) coaches manage the end of a half better.
+// Clock management for both coaches: what the offense wants from the clock right now (stop it or run it), how fast it
+// snaps, when either side burns a timeout, when a hurrying offense with no timeouts spikes it, and whether a ball carrier
+// gets out of bounds. The coach and his players always want the same thing: the play caller, the tempo and the runner
+// all read clockGoal, so a team racing the clock throws to the sideline AND its runners get out, and a team killing the
+// clock runs AND its runners stay in bounds. Smarter (Clutch) coaches manage the end of a half better.
 const secondsLeft = (s) => (s.ot ? 0 : (4 - s.quarter) * s.qlen + s.clock);
 const leadOf = (s, side) => s.score[side] - s.score[side === 'home' ? 'away' : 'home'];
 
+// What the team with the ball wants from the clock: 'stop' (two-minute drill, behind late), 'run' (protecting a lead,
+// way ahead) or null (play normal football).
+export function clockGoal(G) {
+  const s = G.s, up = leadOf(s, s.poss), t = secondsLeft(s), late = s.quarter === 4 && !s.ot;
+  if ((s.quarter === 2 && s.clock < 75) || (late && up < 0 && t < 210) || (late && up < -8 && t < 420)) return 'stop';
+  if ((late && up > 0 && t < 330) || (s.quarter >= 3 && up >= 17) || up >= 24) return 'run';
+  return null;
+}
+
 // How many seconds run off before the next snap when the clock is moving.
 export function tempo(G) {
-  const { R, s } = G, up = leadOf(s, s.poss), t = secondsLeft(s);
-  if ((s.quarter === 2 && s.clock < 75) || (s.quarter === 4 && up < 0 && t < 210)) return R.int(9, 14);         // hurry-up
-  if ((s.quarter === 4 && up > 0 && t < 330) || (s.quarter >= 3 && up >= 17) || up >= 24) return R.int(36, 39);   // milking it
-  return R.int(24, 32);
+  const goal = clockGoal(G), { R } = G;
+  return goal === 'stop' ? R.int(9, 14) : goal === 'run' ? R.int(36, 39) : R.int(24, 32);
+}
+
+// Does the ball carrier end up out of bounds? base: how often this kind of play drifts out anyway (outside runs and
+// scrambles more than catches over the middle). A runner who wants the clock stopped heads for the sideline and gives up
+// a yard to get there (smarter, more aware players find it more often); one killing the clock cuts back inside and takes
+// the hit. Returns { oob, gain }.
+export function outOfBounds(G, carrier, base, gain) {
+  const goal = clockGoal(G), r = carrier?.r || {}, iq = ((r.vision ?? r.awareness ?? r.route_running ?? 60) - 60) / 100;
+  if (goal === 'stop') { const oob = G.R.chance(Math.min(0.85, base * 2.4 + 0.18 + iq * 0.4)); return { oob, gain: oob && gain > 3 ? gain - 1 : gain }; }
+  if (goal === 'run') return { oob: G.R.chance(base * 0.12), gain };
+  return { oob: G.R.chance(base), gain };
 }
 
 // With the clock running before a snap: does someone stop it? Returns { side, kind: 'timeout' } or { kind: 'spike' } or null.
