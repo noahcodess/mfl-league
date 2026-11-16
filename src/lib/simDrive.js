@@ -48,7 +48,7 @@ export function doKickoff(G) {
 export function twoPoint(G, side) {
   const s = G.s; s.poss = side; s.ballOn = 97; s.down = 1; s.toGo = 3; sides(G);
   const play = start(G); play.noStats = true;
-  const ctx = { short: true, red: true, goal: true }, call = G.R.chance(0.55) ? pickPlay(G, 'pass', G.R.chance(0.6) ? 'quick' : 'short', ctx) : pickPlay(G, 'run', 'any', ctx), def = defenseCall(G);
+  const ctx = { short: true, red: true, goal: true }, call = G.R.chance(0.55) ? pickPlay(G, 'pass', G.R.chance(0.6) ? 'quick' : 'short', ctx) : pickPlay(G, 'run', 'any', ctx), def = defenseCall(G, call);
   play.call = call; play.defCall = def;
   const res = call.type === 'pass' ? passPlay(G, play, call.sub, def, call) : runPlay(G, play, call.sub, call, def);
   const good = !res.turnover && !res.fumble?.lost && !res.incomplete && (res.td || res.gain >= 3);
@@ -74,7 +74,7 @@ export function scrimmage(G) {
     s.running = false; play.result.endOn = s.ballOn; return log(G, play, 0);
   }
   // a coach in the coaching room can make the call on a key play; otherwise the AI coach does
-  const call = (play.keyPlay && G.opts.coachCall?.(G, o)) || offenseCall(G), def = defenseCall(G);
+  const call = (play.keyPlay && G.opts.coachCall?.(G, o)) || offenseCall(G), def = defenseCall(G, call);   // the defense sees the formation first
   play.call = call; play.defCall = def; play.clock.playClockAtSnap = s.snapClock ?? 40;
   let res, ended = null, secs = 5, moving = false;
   const touchdown = (side, how) => { score(G, play, side, 6, how); play.result.td = true; play.headline = play.headline || 'TOUCHDOWN'; s.poss = side; s.phase = 'pat'; s.patSide = side; ended = side === o ? 'td' : 'defTd'; };

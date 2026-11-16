@@ -1,19 +1,21 @@
-// Coaching schemes (Madden-style): 6 offenses and 6 defenses, and what Auto picks from a roster.
+// Coaching schemes (Madden-style): 6 offenses and 6 defenses, and what Auto picks from a roster. Written for the 10-man teams
+// the league plays with: QB, RB, TE, 2 WRs and 5 linemen on offense; 5 linemen, 2 LBs, 2 CBs and 1 safety on defense.
+// A scheme sets a team's habits (favorite formations, calls and how often it throws), never more than about half its calls.
 export const OFFENSES = [
-  ['air_raid', 'Air Raid', 'Spread out with four or five receivers and throw on almost every down.'],
-  ['west_coast', 'West Coast', 'Quick, timed short passes that work like a run game to move the chains.'],
-  ['balanced', 'Balanced', 'A pro-style mix of run and pass so the defense never knows what is coming.'],
-  ['ground_pound', 'Ground & Pound', 'Power runs behind big blockers to control the clock and wear defenses down.'],
-  ['vertical', 'Vertical Attack', 'Stretch the field with deep routes and big-armed throws for explosive plays.'],
-  ['zone_run', 'Zone Run & Play Action', 'Outside zone runs that set up play-action passes off the same look.'],
+  ['air_raid', 'Air Raid', 'Shotgun, Trips and Empty: spread the receivers, tight end and even the running back out and throw it all over.'],
+  ['west_coast', 'West Coast', 'Quick, timed short passes out of Bunch and Twins that work like a run game to move the chains.'],
+  ['balanced', 'Balanced', 'A pro-style mix of formations, runs and passes so the defense never knows what is coming.'],
+  ['ground_pound', 'Ground & Pound', 'Under center with the tight end leading the way from the H-Back spot: power runs that wear defenses down.'],
+  ['vertical', 'Vertical Attack', 'Stretch the field with deep routes, double moves and play-action shots for explosive plays.'],
+  ['zone_run', 'Zone Run & Play Action', 'Pistol and Singleback zone runs that set up bootlegs and play action off the same look.'],
 ];
 export const DEFENSES = [
-  ['blitz', 'Blitz Heavy', 'Send linebackers and safeties after the QB to force sacks and rushed throws.'],
-  ['lockdown_man', 'Lockdown Man', 'Trust your corners to win one-on-one so everyone else can attack the ball.'],
+  ['blitz', 'Blitz Heavy', 'Send linebackers and the safety after the QB: sacks and rushed throws, but nobody deep when it misses.'],
+  ['lockdown_man', 'Lockdown Man', 'Corners lock up the receivers one on one, linebackers take the back and tight end, the safety stays deep.'],
   ['balanced', 'Balanced', 'Mix fronts and coverages so the offense can never settle into a rhythm.'],
-  ['cover2', 'Cover 2 Zone', 'Two safeties split the deep field while corners and linebackers jump short routes.'],
-  ['cover3', 'Cover 3 Zone', 'Three deep defenders plus an extra man near the line to shut down the run.'],
-  ['bend', "Bend Don't Break", 'Keep safeties deep so nothing gets over the top and make offenses drive the whole field.'],
+  ['cover2', 'Cover 2 Roll', 'With one safety, a corner rolls back so the two split the deep field in halves while everyone else jumps short routes.'],
+  ['cover3', 'Cover 3 Zone', 'Both corners and the safety each take a deep third while the linemen and linebackers stay home against the run.'],
+  ['bend', "Bend Don't Break", 'Corners and the safety play deep so nothing gets over the top, and offenses have to drive the whole field.'],
 ];
 export const schemeName = (list, id) => list.find(([k]) => k === id)?.[1] || 'Balanced';
 export const schemeInfo = (list, id) => list.find(([k]) => k === id) || list[2];

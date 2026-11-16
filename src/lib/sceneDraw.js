@@ -13,7 +13,7 @@ export function drawScene(ctx, S, cam, looks) {
   const sx = (yd) => Math.round((yardX(yd) - cam.x) * px + cw / 2), sy = (lat) => Math.round((MID_Y + lat * YD - cam.y) * px + ch / 2);
   const top = Math.round((FY0 - cam.y) * px + ch / 2), bottom = Math.round((FY1 - cam.y) * px + ch / 2);
   ctx.imageSmoothingEnabled = false;
-  if (S.lines && t < S.T0 + 0.4) { // broadcast lines, gone right after the snap
+  if (S.lines && t < (S.tEnd ?? 99) + 1.2) { // broadcast lines: line of scrimmage (blue) and line to gain (yellow), up for the whole play
     ctx.globalAlpha = 0.75; ctx.fillStyle = '#2f7de1'; ctx.fillRect(sx(S.lines.los) - px, top, 2 * px, bottom - top);
     const f = S.lines.first; if (f != null && f > 0 && f < 100) { ctx.fillStyle = '#ffd83a'; ctx.fillRect(sx(f) - px, top, 2 * px, bottom - top); }
     ctx.globalAlpha = 1;

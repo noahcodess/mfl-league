@@ -31,16 +31,20 @@ export function buildRun(S, lineups, gainOverride) {
   const blocks = Object.fromEntries(ev(play, 'block').map((e) => [e.def, e.move]));
   S.when(T0, (s) => s.give(qb));
   lineFight(S, A, D, false, { blocks, carrier: c });
-  if (c === qb) { // QB sneak: he takes it and drives straight into the pile behind his center
+  if (c === qb && (sneak || play.kind === 'two' || !A.RB)) { // QB sneak: he takes it and drives straight into the pile behind his center
     S.when(T0 + 0.15, (s) => s.setPose(qb, 'drive'));
     qb.brain = B.path([S.at(-1.2, 0), S.at(Math.max(gain, -0.5) + 0.2, 0.2)], T0 + 0.1, T0 + 1.4, qb.max * 0.6);
     S.when(T0 + 1.45, (s) => { s.knock(qb, 1.6); }); S.tEnd = T0 + 1.5; return;
   }
   const side = /left/.test(hand?.gap || '') ? -1 : 1, outside = /outside/.test(hand?.gap || ''), under = Math.abs(S.along(qb)) < 3;
   const mesh = S.at(under ? -3.6 : -4.2, side * 0.8), tMesh = T0 + (under ? 0.6 : 0.5);
+  const keeper = c === qb, rb = A.RB;   // keeper: an option read where the quarterback pulls it and runs
   qb.brain = B.path([S.at(under ? -3.1 : -4.4, side * 0.3)], T0, tMesh, qb.max);
-  c.brain = B.path([mesh], T0 + 0.05, tMesh, c.max);
-  S.when(tMesh, (s) => { s.give(c); qb.brain = B.to(qb.x - S.dir * 1.5, qb.y - side * 4, 4.5); });   // the fake
+  if (!keeper) c.brain = B.path([mesh], T0 + 0.05, tMesh, c.max); else if (rb) rb.brain = B.path([mesh], T0 + 0.05, tMesh, rb.max);
+  S.when(tMesh, (s) => {
+    if (!keeper) { s.give(c); qb.brain = B.to(qb.x - S.dir * 1.5, qb.y - side * 4, 4.5); }   // the fake
+    else if (rb) rb.brain = B.to(rb.x + S.dir * 4, rb.y - side * 2, rb.max * 0.8);             // the back carries out the fake
+  });
   const holeLat = outside ? side * (6 + S.rand() * 3) : side * (0.8 + S.rand() * 1.8), endLat = holeLat + (S.rand() - 0.5) * (outside ? 8 : 5);
   const from = gain > 0.6 ? S.at(Math.min(0.6, gain), holeLat) : mesh;
   S.when(tMesh, () => { c.brain = B.path([from], tMesh, tMesh + dist(mesh[0], mesh[1], from[0], from[1]) / (c.max * 0.85), c.max); });

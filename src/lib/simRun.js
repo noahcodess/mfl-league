@@ -30,7 +30,8 @@ export function runPlay(G, play, call, plan = {}, def = {}) {
   addEvent(play, 'handoff', 0.5, { qb: O.QB.id, to: rb.id, gap: `${call} ${side}` });
   stat(play, rb, 'car');
   const burst = (val(G, rb, 'vision', 55) - 65) / 30 + (val(G, rb, 'acceleration', val(G, rb, 'speed', 55)) - 65) / 40;
-  const lean = (m.yds || 0) + (G.s.toGo <= 2 ? m.short || 0 : 0) - (def.box || 0) + (def.blitz ? m.vsRush || 0 : 0) - (def.blitz && !m.vsRush ? 0.15 : 0);
+  const lean = (m.yds || 0) + (G.s.toGo <= 2 ? m.short || 0 : 0) - (def.box || 0) + (def.blitz ? m.vsRush || 0 : 0) - (def.blitz && !m.vsRush ? 0.15 : 0)
+    - (keep && def.robber ? 0.8 : 0);   // a robber spying the QB takes away his keeper
   const pre = sneak ? 0.8 + hole / 10 + lean * 0.5 + R.gauss(0, 0.6) : (call === 'outside' ? 3.7 : 3.4) + hole / 8 + burst + lean + R.gauss(0, (call === 'outside' ? 1.9 : 1.2) * (m.var || 1));
   const near = side === 'left' ? D.LB1 : D.LB2, far = side === 'left' ? D.LB2 : D.LB1, read = (lb) => (val(G, lb, 'play_rec', 55) - 65) / 22;
   const line = [];

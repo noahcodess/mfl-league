@@ -6,7 +6,7 @@ import { mix, val } from './simCore.js';
 import { RUNS } from './playbookRuns.js';
 import { PASSES } from './playbookPasses.js';
 import { FORMATIONS, SCHEME_FORMATIONS } from './playbookFormations.js';
-import { working, family } from './coachPlan.js';
+import { working, family, myTendency } from './coachPlan.js';
 
 // How much better this receiver should beat his man today, roughly (positive = good matchup).
 function edge(G, slot) {
@@ -31,7 +31,7 @@ export function pickPlay(G, type, sub, ctx) {
     w *= sigShare > 0.5 && fit >= 1.4 ? 1 : fit;                                   // his scheme's plays, up to about half the calls
     CTX_TAGS.forEach((t) => { if (ctx[t] && pl.tags.includes(t)) w *= 2.4; });
     if (pl.tags.includes('goal') && !ctx.goal && !ctx.short) w *= 0.3;
-    if (pl.form === 'goal_line') w *= ctx.goal || (ctx.short && ctx.red) ? 3 : ctx.short ? 0.6 : 0.03;
+    if (pl.form === 'jumbo') w *= ctx.goal || (ctx.short && ctx.red) ? 3 : ctx.short ? 0.6 : 0.03;
     if (pl.concept === 'Fade' && !ctx.red) w *= 0.15;
     if (pl.tags.includes('hail')) w = ctx.hail ? 50 : 0;
     else if (ctx.hail) w *= 0.02;
@@ -53,6 +53,8 @@ export function pickPlay(G, type, sub, ctx) {
       w *= Math.exp(edge(G, first) / 14) * Math.max(0.5, 1.2 - ((tg[first] || 0) / total) * 0.8) * (first === G.O.star ? 1.4 : 1);   // feed the matchup, spread it around
     }
     if (mem.slice(-3).includes(pl.concept)) w *= 0.3;                             // don't keep running the same thing
+    const tend = myTendency(plan, pl.form);                                         // break your own tendencies: the defense is watching
+    if (tend != null) { const same = type === 'pass' ? tend : 1 - tend; if (same > 0.7) w *= 1 - 0.5 * plan.sharp * (same - 0.7) / 0.3; }
     return { pl, w: Math.max(0, w) };
   });
   const sum = scored.reduce((a, o) => a + o.w, 0); let roll = R.r() * sum, pick = scored[0]?.pl;
@@ -65,7 +67,7 @@ export function pickPlay(G, type, sub, ctx) {
 // The call the engine runs: the play plus its formation's small effects folded in.
 function toCall(type, pl) {
   const f = FORMATIONS[pl.form] || FORMATIONS.singleback, m = pl.mods || {};
-  const call = { type, sub: pl.sub, name: pl.name, concept: pl.concept || pl.name, formation: f.name };
+  const call = { type, sub: pl.sub, name: pl.name, concept: pl.concept || pl.name, formation: f.name, form: pl.form, look: f.look };
   if (type === 'run') {
     call.mods = { yds: (m.yds || 0) + f.run, short: f.short || 0, var: m.var || 1, fool: m.fool || 0, vsRush: m.vsRush || 0, option: !!m.option };
     call.draw = pl.concept === 'Draw' || pl.concept === 'Delay';

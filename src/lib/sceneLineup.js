@@ -1,7 +1,8 @@
 // Shared pieces of every scrimmage play: lining up (with a huddle break when there's time), the line battle, pursuit, and
 // the tackle. The tackle goes to the engine's tackler if he can actually get there at his own speed; if he can't, the
 // closest defender who can makes it, so nobody ever has to warp across the field.
-import { B, clamp, dist, stepTo, getGoing } from './sceneCore.js';   // a.pre: where a player jogs to before the snap (sceneCore runs it)
+import { B, clamp, dist, stepTo, getGoing } from './sceneCore.js';
+import { FORMATIONS } from './playbookFormations.js';   // a.pre: where a player jogs to before the snap (sceneCore runs it)
 
 export const OFF = { OT1: [-1.6, -4], OG1: [-1.45, -2], C: [-1.3, 0], OG2: [-1.45, 2], OT2: [-1.6, 4], TE: [-1.7, 6.2], QB: [-4.5, 0], RB: [-4.5, 1.8], WR1: [-0.8, -14], WR2: [-0.8, 14] };
 export const DEF = { DE1: [1.7, -5], DT1: [1.6, -2.1], DL: [1.6, 0], DT2: [1.6, 2.1], DE2: [1.7, 5], LB1: [4.5, -3.2], LB2: [4.5, 3.2], CB1: [5.5, -14], CB2: [5.5, 14], SS: [11, 0.5] };
@@ -17,7 +18,8 @@ export function frame(S, play, losOverride) {
   S.along = (a) => (a.x - S.los) * S.dir;
 }
 
-// Lines everyone up for a snap. opts: { under (QB under center), huddle (break the huddle and jog in) }. Returns { A, D }.
+// Lines everyone up for a snap in the play's formation, with the defense matching it (corners over their receivers, a
+// linebacker out over a back split wide). opts: { under (QB under center), huddle (break the huddle and jog in) }.
 export function lineup(S, lineups, opts = {}) {
   const play = S.play, slot = (list) => Object.fromEntries(list.map((s) => [s.key, s.player]));
   const O = slot(lineups[play.off].offense), Dd = slot(lineups[play.def].defense), A = {}, D = {};
@@ -26,8 +28,12 @@ export function lineup(S, lineups, opts = {}) {
     if (a) a.key = key;
     return a;
   };
-  Object.entries(OFF).forEach(([k, spot]) => { A[k] = place(O[k], play.off, opts.under && k === 'QB' ? [-2.2, 0] : opts.under && k === 'RB' ? [-6.5, 0] : spot, k); });
-  Object.entries(DEF).forEach(([k, spot]) => { D[k] = place(Dd[k], play.def, spot, k); });
+  const spots = FORMATIONS[play.call?.form]?.spots || {};
+  Object.entries(OFF).forEach(([k, spot]) => { A[k] = place(O[k], play.off, opts.under && k === 'QB' ? [-2.2, 0] : opts.under && k === 'RB' ? [-6.5, 0] : spots[k] || spot, k); });
+  const lat = (k, fb) => (A[k] ? (A[k].y - (S.at(0, 0)[1])) : fb);
+  const dspot = { ...DEF, CB1: [5.5, lat('WR1', -14)], CB2: [5.5, lat('WR2', 14)], SS: [11, clamp(lat('TE', 6) * 0.15, -3, 3)] };
+  if (Math.abs(lat('RB', 0)) > 6) dspot.LB1 = [4, lat('RB', 0) * 0.85];   // a back split out wide gets a linebacker over him
+  Object.entries(DEF).forEach(([k]) => { D[k] = place(Dd[k], play.def, dspot[k], k); });
   if (A.QB) { A.QB.qb = true; if (opts.under) A.QB.idle = 'rbset'; }
   S.ball.x = S.los; S.ball.y = 0; S.ball.h = 0.12;
   if (opts.huddle && S.T0 >= 3) { // break the huddle: everyone jogs to his spot and is set and still well before the snap

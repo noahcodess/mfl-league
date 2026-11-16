@@ -25,7 +25,7 @@ export function makePlan(lineup, opp, coach = {}) {
     // underdogs need more variance to win (go for it, take shots); favorites lean on being better and keep it simple
     aggression: style.aggression - edge * 0.12, risk: style.risk - edge * 0.1, run: style.run + edge * 0.02,
     sharp: 0.5 + (r.game_planning ?? 60) / 100, clutch: (r.clutch ?? 60) / 100, edge,
-    report: { fam: {}, oppDef: { plays: 0, blitz: 0, zone: 0, deepHelp: 0 }, oppOff: {}, sig: { off: 0, def: 0, n: 0, dn: 0 } },
+    report: { fam: {}, oppDef: { plays: 0, blitz: 0, zone: 0, deepHelp: 0 }, oppOff: {}, oppForm: {}, myForm: {}, sig: { off: 0, def: 0, n: 0, dn: 0 } },
   };
 }
 
@@ -50,11 +50,25 @@ export function scout(G, side, call, def, res) {
   const od = off.report.oppDef; od.plays += 1; if (def?.blitz) od.blitz += 1; if (def?.cov === 'zone') od.zone += 1; if ((def?.deep || 0) < -0.3) od.deepHelp += 1;
   const s = G.s, dd = s.down === 1 ? '1st' : s.toGo <= 3 ? 'short' : s.toGo >= 8 ? 'long' : 'mid', k = (defn.report.oppOff[dd] ||= { pass: 0, n: 0 });
   k.n += 1; if (call.type === 'pass') k.pass += 1;
+  if (call.form) {   // both sides remember what this offense runs out of each formation
+    for (const book of [defn.report.oppForm, off.report.myForm]) { const fk = (book[call.form] ||= { pass: 0, n: 0 }); fk.n += 1; if (call.type === 'pass') fk.pass += 1; }
+  }
 }
 
-// The other offense's pass rate in this kind of down, blended with a normal team's until the defense has seen enough.
-export function readOffense(plan, s) {
+// How likely the other offense is to throw right now, from what the defense can see and remember: the down and distance,
+// the formation it just lined up in (heavy sets usually run, spread sets usually throw), and what it has actually done in
+// each today. Everything starts from a normal team and moves as the defense sees more (faster for a sharper coach).
+const FORM_PRIOR = { jumbo: 0.25, hback: 0.4, tight: 0.42, singleback: 0.5, twins: 0.55, pistol: 0.5, gun_wing: 0.58, shotgun: 0.68, gun_trips: 0.75, gun_bunch: 0.75, empty: 0.92 };
+export function readOffense(plan, s, form) {
   const dd = s.down === 1 ? '1st' : s.toGo <= 3 ? 'short' : s.toGo >= 8 ? 'long' : 'mid', base = { '1st': 0.5, short: 0.4, mid: 0.6, long: 0.8 }[dd];
-  const k = plan.report.oppOff[dd]; if (!k) return base;
-  const w = 4 / plan.sharp; return (k.pass + base * w) / (k.n + w);
+  const w = 4 / plan.sharp, blend = (k, b) => (k ? (k.pass + b * w) / (k.n + w) : b);
+  const byDown = blend(plan.report.oppOff[dd], base);
+  if (!form) return byDown;
+  const byForm = blend(plan.report.oppForm?.[form], FORM_PRIOR[form] ?? 0.55);
+  return byDown * 0.5 + byForm * 0.5;
+}
+
+// The offense's own tendency out of a formation (how often it has thrown from it today), so a smart coach can break it.
+export function myTendency(plan, form) {
+  const k = plan.report.myForm?.[form]; return k && k.n >= 4 ? k.pass / k.n : null;
 }
