@@ -1,5 +1,6 @@
 // Loads what the game engine needs to line two teams up: every player's ratings and archetype plus his injury ratings,
-// then builds both lineups and kick teams. Works offline in demo mode with stand-in ratings.
+// and each team's coach (scheme, personality, coach ratings) for the play callers, then builds both lineups and kick
+// teams. Works offline in demo mode with stand-in ratings and default coaches.
 import { useEffect, useState } from 'react';
 import { db } from './supabase.js';
 import { DEMO } from './demo.js';
@@ -11,14 +12,15 @@ import { buildKickTeams } from '../lib/simKickTeams.js';
 const chunks = (a, n) => a.length ? [a.slice(0, n), ...chunks(a.slice(n), n)] : [];
 
 export async function loadLineups(teamIds) {
-  const rosters = teamIds.map((id) => getPlayers(id)), ids = rosters.flat().map((p) => p.id), attrs = {}, inj = {};
+  const rosters = teamIds.map((id) => getPlayers(id)), ids = rosters.flat().map((p) => p.id), attrs = {}, inj = {}, coaches = {};
   if (!DEMO) {
     await Promise.all(chunks(ids, 150).flatMap((part) => [
       db.from('player_attributes').select('player_id, ratings, style').in('player_id', part).then(({ data }) => (data || []).forEach((r) => { attrs[r.player_id] = r; })),
       db.from('player_injury_ratings').select('player_id, durability, recovery').in('player_id', part).then(({ data }) => (data || []).forEach((r) => { inj[r.player_id] = r; })),
-    ]));
+    ]).concat(db.from('coaches').select('team_id, scheme, ratings, brain').in('team_id', teamIds)
+      .then(({ data }) => (data || []).forEach((c) => { coaches[c.team_id] = { scheme: c.scheme, ratings: c.ratings, archetype: c.brain?.archetype }; }))));
   }
-  return teamIds.map((id, i) => { const lineup = buildLineup(getTeam(id), rosters[i], attrs, inj); return { ...lineup, kickTeams: buildKickTeams(lineup) }; });
+  return teamIds.map((id, i) => { const lineup = buildLineup(getTeam(id), rosters[i], attrs, inj); return { ...lineup, kickTeams: buildKickTeams(lineup), coach: coaches[id] || {} }; });
 }
 
 // Returns { home, away } lineups, or null while loading.

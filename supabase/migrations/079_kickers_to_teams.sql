@@ -1,0 +1,6 @@
+-- One-time data step (already run on the live league, kept here as the record): 13 more veteran kickers were generated,
+-- the best 16 went to the 16 teams in a random order on starter deals (2 years, $50K total, normal morale), the other 7
+-- stayed in free agency asking the normal kicker scale, and the Season 8 class was trimmed to 5 kickers re-rated as rookies.
+--   select public.generate_free_agents(13, 'K');
+--   (top 16 by stars, shuffled, joined to shuffled teams) -> status active, starter, assign_number, contract 25000/yr S8-S9
+--   delete the weakest kicker prospect; kicker_rookie_stars() + generate_attributes() for the other 5

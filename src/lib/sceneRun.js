@@ -72,3 +72,13 @@ export function buildKneel(S, lineups) {
   S.when(S.T0 + 0.25, (s) => { for (const a of s.actors) if (a !== qb) a.pose = 'stand'; });
   S.tEnd = S.T0 + 1;
 }
+
+// A spike: under center, snap, and throw it straight into the ground to stop the clock.
+export function buildSpike(S, lineups) {
+  const { A } = lineup(S, lineups, { under: true, huddle: false }), qb = A.QB;
+  S.when(S.T0, (s) => s.give(qb));
+  S.when(S.T0 + 0.3, (s) => { for (const a of s.actors) if (a !== qb) a.pose = 'stand'; });
+  S.when(S.T0 + 0.35, (s) => { s.setPose(qb, 'throw', 0.6); });
+  S.when(S.T0 + 0.6, (s) => { s.loose(S.dir * 3, 0, -5); });
+  S.tEnd = S.T0 + 1.4;
+}

@@ -29,14 +29,18 @@ function rush(G, play, def) {
 
 // How open each receiver gets: separation in yards at the top of his route.
 function routes(G, call, def, plan) {
-  const { R, O, D } = G, cover = { WR1: D.CB1, WR2: D.CB2, TE: D.SS, RB: D.LB1 }, zone = def.cov === 'zone';
-  return Object.entries(DEPTH[call]).map(([slot, base]) => {
+  const { R, O, D } = G, cover = { WR1: D.CB1, WR2: D.CB2, TE: D.SS, RB: D.LB1 }, zone = def.cov === 'zone', md = plan.mods || {};
+  return Object.entries(DEPTH[call]).filter(([slot]) => !(md.maxProtect && slot === 'RB')).map(([slot, base]) => {   // max protect keeps the back in to block
     const fixed = plan.depths?.[slot], p = O[slot], c = cover[slot], depth = fixed === 0 ? 0 : Math.max(1, Math.round((fixed ?? base) * (0.8 + R.r() * 0.4))), deep = depth >= 18;
     const get = mix(G, p, deep ? { route_running: 0.3, speed: 0.45, release: 0.25 } : { route_running: 0.45, speed: 0.2, release: 0.2, agility: 0.15 }, 50);
     const stick = zone ? mix(G, c, { zone_cover: 0.5, play_rec: 0.3, speed: 0.2 }, 45) : mix(G, c, deep ? { man_cover: 0.4, speed: 0.45, press: 0.15 } : { man_cover: 0.5, speed: 0.2, press: 0.15, agility: 0.15 }, 45);
     let sep = 1.45 + (get - stick) / 12 + R.gauss(0, 1.5) + (zone ? (deep ? -0.5 : 0.5) : 0);
     if (depth === 0) sep += 1.6;                                                  // screens: blockers out in front
-    if (plan.pa && depth >= 9) sep += 0.6;                                        // the linebackers bit on the fake
+    if (plan.pa && depth >= 9) sep += 0.6 + (md.pa || 0);                         // the linebackers bit on the fake
+    // the formation and concept against this coverage: rubs and man-beaters vs man, zone-beaters vs zone, screens vs blitz,
+    // and the coverage's own shape (safeties deep take away the deep ball and leave room underneath)
+    sep += (md.sep || 0) + (zone ? md.beatsZone || 0 : (md.rub || 0) + (md.beatsMan || 0)) + (def.blitz ? md.beatsBlitz || 0 : 0)
+      + (depth >= 15 ? def.deep || 0 : depth > 0 && depth < 10 ? def.under || 0 : 0);
     if (def.prevent) sep += depth >= 15 ? -1.3 : 0.9;
     if (def.blitz) sep += 0.6; else if (slot === G.O.star) sep -= 0.7;          // the free linebacker shades the best receiver
     return { slot, p, c, depth, sep, at: (depth === 0 ? 0.9 : 1.25 + depth / 13) + (plan.pa ? 0.35 : 0) };
@@ -68,6 +72,7 @@ function throwAway(G, play, qb, t, hit) {
 // plan: the playbook call ({ name, read: the order he reads it, depths, pa, screen }).
 export function passPlay(G, play, call, def, plan = {}) {
   const { R, O, D } = G, qb = O.QB, toGoal = 100 - G.s.ballOn, heat = rush(G, play, def), open = routes(G, call, def, plan);
+  heat.t = Math.max(0.9, heat.t + (plan.mods?.protect || 0) - (def.rush || 0));   // extra blockers buy time, a pressure call takes it away
   const see = (1 - val(G, qb, 'vision', 55) / 100) * 2.2, bold = qb.style === 'gunslinger' ? 1.6 : 1;
   // the read: first look, then the next, then the next; he takes the first one open enough (that bar drops as time runs out)
   const order = [...(plan.read || ['WR1', 'WR2', 'TE']), 'WR1', 'WR2', 'TE', 'RB'].filter((v, k, a) => a.indexOf(v) === k);

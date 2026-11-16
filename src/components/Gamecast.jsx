@@ -40,7 +40,7 @@ export default function Gamecast({ game, teams, names, finished = false }) {
       </div>
       <div className="gc-mom" title="Momentum (hidden from coaches)"><span>{teams.away.id.toUpperCase()}</span><div><i style={{ left: `${50 + (a.mom || 0) * 50}%` }} /></div><span>{teams.home.id.toUpperCase()}</span></div>
       <div className={`gc-now${play.headline ? ' big' : ''}`} key={i}>{play.headline && <b>{play.headline}</b>}<p>{play.text}</p>
-        {play.call?.type && <small>{teams[play.off].id.toUpperCase()} called {play.call.type}{play.call.sub ? ` (${play.call.sub})` : ''}{play.defCall ? ` · defense in ${play.defCall.cov}${play.defCall.blitz ? ' with a blitz' : ''}` : ''}{play.keyPlay ? ' · 🔑 key play' : ''}</small>}</div>
+        {play.call?.type && <small>{teams[play.off].id.toUpperCase()} called {play.call.name || play.call.type}{play.defCall ? ` · defense: ${play.defCall.name || play.defCall.cov}${play.defCall.blitz ? ' (blitz)' : ''}` : ''}{play.keyPlay ? ' · 🔑 key play' : ''}</small>}</div>
       <div className="gc-ctl">
         <button className="btn small ghost" onClick={() => { setOn(false); setI(Math.max(0, i - 1)); }}>⏮</button>
         <button className="btn small" onClick={() => setOn(!on)}>{on && !done ? '⏸ Pause' : '▶ Play'}</button>

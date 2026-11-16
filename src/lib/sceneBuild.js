@@ -3,7 +3,7 @@
 // broadcast steps forward frame by frame, plus rebuild() so a replay or the Back button can rewind it.
 import { Scene, B } from './sceneCore.js';
 import { frame, lineup, ev } from './sceneLineup.js';
-import { buildRun, buildScramble, buildKneel } from './sceneRun.js';
+import { buildRun, buildScramble, buildKneel, buildSpike } from './sceneRun.js';
 import { buildPass } from './scenePass.js';
 import { buildKickoff, buildPunt, buildKick } from './sceneKicks.js';
 
@@ -27,6 +27,7 @@ export function buildScene(play, lineups, pace = {}, seed = 1) {
   else if (play.kind === 'fg' || play.kind === 'xp') buildKick(S, lineups);
   else if (play.kind === 'penalty') buildPenalty(S, lineups);
   else if (play.kind === 'kneel') buildKneel(S, lineups);
+  else if (play.kind === 'spike') buildSpike(S, lineups);
   else if (play.scramble) buildScramble(S, lineups);
   else if (play.kind === 'two') { frame(S, play, play.off === 'away' ? 98 : 2); if (thr) buildPass(S, lineups); else buildRun(S, lineups, play.headline === '2-PT GOOD' ? 3.5 : 1); }
   else if (play.kind === 'pass' || play.kind === 'sack' || thr) buildPass(S, lineups);

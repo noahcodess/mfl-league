@@ -1,68 +1,81 @@
-// The AI coaches: what the offense calls (by down, distance, field position, score and clock), what the defense calls
-// (coverage and whether to blitz), fourth-down decisions, and going for two.
-import { kickOdds, kickRange } from './simKicks.js';
+// The offensive play caller: run or pass and how deep, every snap. It starts from what real teams do on each down and
+// distance (run about half the time on 1st and 10, throw on 3rd and long), then leans: his scheme (a little), his players
+// (more: skills outweigh the playbook), his personality, what's been working today, the score and the clock (two-minute
+// drill, killing clock, way behind), and a hot or cold quarterback. Fourth downs go to fourthDown, the play to pickPlay.
 import { pickPlay } from './simPlaybook.js';
+import { fourthDown } from './fourthDown.js';
+import { working } from './coachPlan.js';
+import { SCHEME_LEAN } from './playbookFormations.js';
 
-// Seconds left in regulation (0 in overtime) and how far the side with the ball is ahead.
-const left = (s) => (s.ot ? 0 : (4 - s.quarter) * s.qlen + s.clock);
-const lead = (s) => s.score[s.poss] - s.score[s.poss === 'home' ? 'away' : 'home'];
+const secondsLeft = (s) => (s.ot ? 0 : (4 - s.quarter) * s.qlen + s.clock);
+const leadOf = (s) => s.score[s.poss] - s.score[s.poss === 'home' ? 'away' : 'home'];
+const pickW = (R, w) => { const sum = Object.values(w).reduce((a, b) => a + b, 0); let r = R.r() * sum; for (const [k, v] of Object.entries(w)) { r -= v; if (r <= 0) return k; } return Object.keys(w)[0]; };
 
-// Returns { type: 'run' | 'pass' | 'punt' | 'fg' | 'kneel', sub }.
+// Returns a call: { type: 'run' | 'pass' | 'punt' | 'fg' | 'kneel' | 'spike', ... }.
 export function offenseCall(G) {
-  const { R, s } = G, up = lead(s), t = left(s), toGoal = 100 - s.ballOn, late = s.quarter === 4 && !s.ot;
-  if (late && up > 0 && s.clock < 40 * (4 - s.down) - 10 * G.s.to[G.defSide] && s.down < 4) return { type: 'kneel' };
+  const { s } = G, up = leadOf(s), late = s.quarter === 4 && !s.ot, to = s.to[G.defSide];
+  // victory formation: up late and the other side can't stop the clock enough to get it back
+  if (late && up > 0 && s.down < 4 && s.clock < 40 * (4 - s.down) - 10 * to) return { type: 'kneel' };
+  if (s.quarter === 2 && up >= 0 && s.clock < 30 && s.ballOn < 40 && s.down < 4) return { type: 'kneel' };   // nothing to gain before half
+  if (G.spikeNow) { G.spikeNow = false; return { type: 'spike' }; }
   if (s.down === 4) {
-    const fgDist = toGoal + 17, must = (late && up < 0 && (t < 150 || up < -8)) || s.ot;
-    const go = s.toGo <= 1 ? (s.ballOn > 45 ? 0.75 : s.ballOn > 30 ? 0.35 : 0.05) : s.toGo <= 3 ? (s.ballOn > 55 && fgDist > 52 ? 0.5 : 0.08) : 0;
-    if (must && up < -3 && !s.ot) return play(G, true);
-    if (fgDist <= kickRange(G, s.poss) && (s.ot || !(must && up < -3)) && !(s.toGo <= 1 && toGoal <= 3 && R.chance(0.5)) && kickOdds(G, s.poss, fgDist) > (s.ot ? 0.3 : 0.45)) return { type: 'fg' };
-    if (must || R.chance(go)) return play(G, true);
-    return s.ot ? play(G, true) : { type: 'punt' };
+    const d = fourthDown(G);
+    if (d === 'fg') return { type: 'fg' };
+    if (d === 'punt') return { type: 'punt' };
+    return play(G, true);
   }
+  // last snap of a half in field goal range: kick it now
+  if ((s.quarter === 2 || late) && s.clock <= 6 && !s.running && 100 - s.ballOn + 17 <= 55 && (s.quarter === 2 || (up >= -3 && up <= 0))) return { type: 'fg' };
   return play(G, false);
 }
 
 function play(G, must) {
-  const { R, s } = G, up = lead(s), t = left(s), toGoal = 100 - s.ballOn, hurry = (s.quarter === 2 && s.clock < 60) || (s.quarter === 4 && up < 0 && t < 180);
-  let pass = s.down === 1 ? 0.5 : s.toGo >= 8 ? 0.8 : s.toGo >= 4 ? 0.62 : 0.35;
-  if (hurry) pass = 0.88; else if ((s.quarter === 4 && up > 0 && t < 240) || (s.quarter >= 3 && up >= 17)) pass -= 0.3; else if (up < -14) pass += 0.15;   // a big lead keeps it on the ground
-  if (up >= 24) pass = Math.min(pass, 0.2);                                         // way ahead: run it and get out of here
-  pass += (G.O.passEdge || 0);                                                       // lean on what this offense does best
-  const side = s.poss, hot = G.hot?.[side] || 0, mine = G.mom * (side === 'home' ? 1 : -1);
-  if (!hurry) pass += Math.max(-0.12, Math.min(0.1, hot * 0.025));                    // a hot quarterback keeps throwing; a cold one hands off
-  const ctx = { short: s.toGo <= 2, red: toGoal <= 20, clock: (s.quarter === 4 && up > 0 && t < 300) || up >= 17, hurry, long: s.toGo >= 8 && s.down >= 3,
-    blitzy: (G.blitzes?.[side === 'home' ? 'away' : 'home'] || 0) > 4 };
-  if (s.toGo <= 1 && !hurry && R.chance(0.45)) return pickPlay(G, 'run', R.chance(0.4) ? 'sneak' : 'inside', ctx);
-  if (!R.chance(pass)) return pickPlay(G, 'run', R.chance(toGoal < 6 ? 0.7 : 0.58) ? 'inside' : 'outside', ctx);
-  const far = must ? s.toGo : s.toGo * 0.8, roll = R.r() - Math.max(0, mine) * 0.08, deepOk = toGoal > 22;   // momentum makes a coach take his shot
-  const sub = far > 12 || (hurry && t < 40 && deepOk) ? (roll < 0.5 && deepOk ? 'deep' : 'medium') : far > 6 ? (roll < 0.18 && deepOk ? 'deep' : roll < 0.7 ? 'medium' : 'short')
-    : roll < 0.12 && deepOk ? 'deep' : roll < 0.4 ? 'medium' : roll < 0.75 ? 'short' : 'quick';
-  return pickPlay(G, 'pass', sub, ctx);
+  const { R, s } = G, side = s.poss, plan = G.teams[side].plan || { off: 'balanced', run: 0, risk: 0, sharp: 1, report: { fam: {} } };
+  const up = leadOf(s), t = secondsLeft(s), toGoal = 100 - s.ballOn, late = s.quarter === 4 && !s.ot;
+  const hurry = (s.quarter === 2 && s.clock < 75) || (late && up < 0 && t < 210) || (late && up < -8 && t < 420);
+  const clock = !hurry && ((late && up > 0 && t < 330) || (s.quarter >= 3 && up >= 17));
+  const ctx = { short: s.toGo <= 2, red: toGoal <= 20, goal: toGoal <= 4, clock, hurry, long: s.toGo >= 8 && s.down >= 3,
+    hail: (s.quarter === 2 || late) && s.clock <= 5 && toGoal > 35 && toGoal < 65 && (s.quarter === 2 || up < 0) };
+  if (ctx.hail) return pickPlay(G, 'pass', 'deep', ctx);
+  // where real offenses start: chance of a pass by down and distance
+  let pass = s.down === 1 ? (s.toGo > 10 ? 0.58 : ctx.goal ? 0.4 : 0.43)
+    : s.toGo <= 1 ? 0.3 : s.toGo <= 3 ? (s.down === 2 ? 0.38 : 0.5) : s.toGo <= 6 ? (s.down === 2 ? 0.55 : 0.75) : s.down === 2 ? 0.68 : 0.88;
+  // the leans, added up and capped so no team turns into a pure passing or pure running team on normal downs
+  const runWorks = (working(plan, 'inside') + working(plan, 'outside')) / 2, passWorks = (working(plan, 'short') + working(plan, 'medium') + working(plan, 'quick')) / 3;
+  const lean = (SCHEME_LEAN[plan.off]?.pass || 0) - (plan.run || 0)                     // scheme and personality (small)
+    + (G.O.passEdge || 0)                                                              // what his players do best (bigger)
+    + Math.max(-0.06, Math.min(0.06, (passWorks - runWorks) * 0.2))                    // keep doing what's working
+    + (hurry ? 0 : Math.max(-0.05, Math.min(0.05, (G.hot?.[side] || 0) * 0.015)));     // a hot quarterback keeps throwing
+  pass += Math.max(-0.16, Math.min(0.16, lean));
+  if (hurry) pass = Math.max(pass, 0.85);
+  else if (clock) pass -= late && t < 150 ? 0.4 : 0.25;                           // protect the lead: run, stay in bounds
+  else if (up <= -14 && s.quarter >= 3) pass += 0.15;
+  if (up >= 24) pass = Math.min(pass, 0.25);                                      // way ahead: run it and get out of here
+  if (must && s.toGo >= 4) pass = Math.max(pass, 0.8);
+  if (ctx.short && !hurry && s.toGo <= 1 && R.chance(0.16)) return pickPlay(G, 'run', 'sneak', ctx);
+  if (!R.chance(Math.max(0.08, Math.min(0.95, pass)))) return pickPlay(G, 'run', 'any', ctx);
+  return pickPlay(G, 'pass', depth(G, plan, ctx, must, up, t), ctx);
 }
 
-// Returns { cov: 'man' | 'zone', blitz, prevent }. Reads the offense's habits: blitz a pass-happy team on third and long,
-// play zone against a team that's beating man, and sit back in prevent when protecting a late lead.
-export function defenseCall(G) {
-  const { R, s } = G, long = s.toGo >= 8 && s.down >= 2, up = -lead(s), t = left(s), o = s.poss;
-  const passRate = (G.passes?.[o] || 0) / Math.max(4, (G.passes?.[o] || 0) + (G.runs?.[o] || 0));
-  if (s.quarter === 4 && up > 0 && up <= 16 && t < 120 && 100 - s.ballOn > 25) return { cov: 'zone', blitz: false, prevent: true };
-  const blitz = R.chance((s.down === 3 && s.toGo >= 5 ? 0.3 : 0.14) + (passRate - 0.55) * 0.3 + (s.toGo <= 2 ? 0.08 : 0));
-  if (blitz) { G.blitzes ||= { home: 0, away: 0 }; G.blitzes[other(o)] += 1; }
-  return { cov: R.chance((long ? 0.6 : 0.45) + (passRate - 0.55) * 0.3) ? 'zone' : 'man', blitz, prevent: false };
+// How deep to throw: what the yardage asks for, then his scheme's taste, his risk appetite, momentum, and what's working.
+function depth(G, plan, ctx, must, up, t) {
+  const { R, s } = G, need = must ? s.toGo : s.toGo * 0.8, roomDeep = 100 - s.ballOn > 22, mine = G.mom * (s.poss === 'home' ? 1 : -1);
+  const w = need > 12 ? { quick: 0.2, short: 0.6, medium: 2, deep: 1.6 } : need > 6 ? { quick: 0.6, short: 1.4, medium: 2, deep: 0.6 }
+    : need > 3 ? { quick: 1.4, short: 2, medium: 1.1, deep: 0.35 } : { quick: 2.2, short: 1.8, medium: 0.6, deep: 0.3 };
+  if (s.down === 2 && s.toGo <= 3) w.deep *= 2.2;                                 // 2nd and short: the shot play
+  if (ctx.hurry && t < 40 && roomDeep) { w.deep *= 1.6; w.medium *= 1.3; }
+  if (ctx.clock) { w.deep *= 0.4; w.quick *= 1.4; }
+  const lean = SCHEME_LEAN[plan.off]?.depth || {};
+  for (const k of Object.keys(w)) w[k] *= (lean[k] || 1) * working(plan, k);
+  w.deep *= Math.exp((plan.risk || 0) * 1.5 + Math.max(0, mine) * 0.4) * (up < -10 ? 1.4 : 1);
+  if (!roomDeep) { w.deep = 0; w.medium *= 0.6; }
+  return pickW(R, w);
 }
-const other = (side) => (side === 'home' ? 'away' : 'home');
 
 // After a touchdown: true = go for two. diff: the scoring team's lead right after the six points.
 export function goForTwo(G, diff) {
-  const s = G.s;
+  const s = G.s, plan = G.teams[s.patSide || s.poss]?.plan || {};
   if (s.ot >= 2) return true;
-  if (s.quarter < 4) return false;
-  return [-2, -5, -10, 1, 5, 12].includes(diff) || (diff === -8 && left(s) < 120);
-}
-// How many seconds run off before the next snap when the clock is moving.
-export function tempo(G) {
-  const { R, s } = G, up = lead(s), t = left(s);
-  if ((s.quarter === 2 && s.clock < 70) || (s.quarter === 4 && up < 0 && t < 200)) return R.int(9, 14);       // hurry-up
-  if ((s.quarter === 4 && up > 0 && t < 260) || (s.quarter >= 3 && up >= 17) || up >= 24) return R.int(36, 39);                                             // milking it
-  return R.int(24, 32);
+  if (s.quarter < 4) return (plan.aggression || 0) > 0.2 && G.R.chance(0.05);
+  return [-2, -5, -10, 1, 5, 12].includes(diff) || (diff === -8 && s.clock < 120) || ((plan.aggression || 0) > 0.15 && diff === -1 && s.clock < 60);
 }

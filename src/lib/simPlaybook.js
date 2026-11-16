@@ -1,57 +1,81 @@
-// The playbook every AI coach calls from: named runs and pass concepts, each with the order the quarterback reads it
-// (first look, second, third, then the checkdown) and any special depth per route. pickPlay chooses one for the moment:
-// down and distance, field spot, clock, score, how the quarterback is throwing today, momentum, and which receiver has
-// the best matchup, while never leaning on the same play or the same receiver too much.
-import { mix } from './simCore.js';
-
-// run: [name, sub, tags]. pass: [name, sub, read order, tags, depths]. Tags: short (short yardage), red (red zone), clock
-// (milking it), hurry (two-minute), pa (play action), screen, long (third and long), shot (deep shot).
-const RUNS = [['Inside Zone', 'inside', ''], ['Duo', 'inside', 'clock'], ['Power', 'inside', 'short red clock'], ['Counter', 'inside', 'red'],
-  ['Trap', 'inside', ''], ['Draw', 'inside', 'long'], ['QB Sneak', 'sneak', 'short'], ['Outside Zone', 'outside', ''], ['Toss Sweep', 'outside', 'red'],
-  ['Stretch', 'outside', 'clock'], ['Pitch', 'outside', '']];
-const PASSES = [
-  ['Slant-Flat', 'quick', ['WR1', 'RB', 'TE'], 'short red hurry'], ['Stick', 'quick', ['TE', 'WR2', 'RB'], 'short'], ['Hitch', 'quick', ['WR2', 'WR1', 'RB'], 'hurry'],
-  ['Quick Out', 'quick', ['WR1', 'WR2', 'TE'], 'hurry'], ['Bubble Screen', 'quick', ['WR2', 'WR1'], 'screen', { WR2: 0 }], ['Fade', 'quick', ['WR1', 'WR2'], 'red', { WR1: 9, WR2: 9 }],
-  ['Mesh', 'short', ['TE', 'WR2', 'WR1', 'RB'], ''], ['Spacing', 'short', ['WR2', 'TE', 'WR1', 'RB'], ''], ['Curl-Flat', 'short', ['WR1', 'RB', 'TE'], ''],
-  ['Drive', 'short', ['TE', 'WR1', 'RB'], 'red'], ['RB Screen', 'short', ['RB', 'TE'], 'screen long', { RB: 0 }], ['Snag', 'short', ['WR2', 'TE', 'RB'], 'red'],
-  ['Dagger', 'medium', ['WR2', 'WR1', 'TE'], 'long'], ['Levels', 'medium', ['WR1', 'TE', 'WR2'], ''], ['Flood', 'medium', ['TE', 'WR1', 'RB'], ''],
-  ['Smash', 'medium', ['WR2', 'WR1', 'TE'], 'red'], ['Y-Cross', 'medium', ['TE', 'WR1', 'WR2'], 'long'], ['PA Boot', 'medium', ['TE', 'WR2', 'RB'], 'pa'],
-  ['Dig', 'medium', ['WR1', 'WR2', 'TE'], 'hurry'], ['Sail', 'medium', ['WR2', 'TE', 'RB'], 'hurry'],
-  ['Four Verticals', 'deep', ['WR2', 'WR1', 'TE'], 'hurry long shot'], ['PA Shot', 'deep', ['WR1', 'WR2', 'TE'], 'pa shot'], ['Post-Wheel', 'deep', ['WR2', 'RB', 'WR1'], 'shot', { RB: 18 }],
-  ['Go Route', 'deep', ['WR1', 'TE'], 'shot'], ['Double Move', 'deep', ['WR2', 'WR1'], 'shot'], ['Seam', 'deep', ['TE', 'WR2', 'WR1'], '', { TE: 19 }],
-];
-const has = (tags, t) => tags.split(' ').includes(t);
+// Picks the exact play from the 400-play book once the coach knows what he wants (run, or a pass of some depth). It weighs:
+// the moment (short yardage, red zone, goal line, two-minute, killing clock, 3rd and long), his scheme's favorite plays and
+// formations (never more than about half his calls), what has worked today, what the other defense keeps doing (blitzing,
+// sitting in zone, playing man), which receiver has the best matchup, and not running the same thing over and over.
+import { mix, val } from './simCore.js';
+import { RUNS } from './playbookRuns.js';
+import { PASSES } from './playbookPasses.js';
+import { FORMATIONS, SCHEME_FORMATIONS } from './playbookFormations.js';
+import { working, family } from './coachPlan.js';
 
 // How much better this receiver should beat his man today, roughly (positive = good matchup).
 function edge(G, slot) {
   const p = G.O[slot], c = { WR1: G.D.CB1, WR2: G.D.CB2, TE: G.D.SS, RB: G.D.LB1 }[slot];
   return mix(G, p, { route_running: 0.4, speed: 0.3, release: 0.15, catching: 0.15 }, 50) - mix(G, c, { man_cover: 0.35, zone_cover: 0.35, speed: 0.3 }, 45);
 }
+const CTX_TAGS = ['short', 'red', 'goal', 'clock', 'hurry', 'long'];
+const DEFAULT_PLAN = { off: 'balanced', sharp: 1, report: { fam: {}, oppDef: { plays: 0, blitz: 0, zone: 0, deepHelp: 0 }, sig: { off: 0, n: 0 } } };
 
-// type: 'run' | 'pass'. sub: the depth or run type the coach wants. ctx: { short, red, clock, hurry, long }.
-// Returns { type, sub, name, read, depths, pa, screen }.
+// type: 'run' | 'pass'. sub: pass depth ('quick' | 'short' | 'medium' | 'deep'), or for runs 'sneak' to force a sneak.
+// ctx: { short, red, goal, clock, hurry, long, hail }.
 export function pickPlay(G, type, sub, ctx) {
-  const { R } = G, side = G.s.poss, mem = (G.calls ||= { home: [], away: [] })[side], tg = (G.targets ||= { home: {}, away: {} })[side];
+  const { R } = G, side = G.s.poss, plan = G.teams[side].plan || DEFAULT_PLAN, rep = plan.report, od = rep.oppDef;
+  const mem = (G.calls ||= { home: [], away: [] })[side], tg = (G.targets ||= { home: {}, away: {} })[side];
   const total = Object.values(tg).reduce((a, b) => a + b, 0) || 1, ranOk = (G.runGain?.[side] || 0) / Math.max(1, G.runs?.[side] || 1);
-  const list = type === 'run' ? RUNS.filter(([, s]) => s === sub || (sub === 'inside' && s === 'sneak' && ctx.short)) : PASSES.filter(([, s]) => s === sub);
+  const seen = Math.max(4, od.plays), blitzRate = od.blitz / seen, zoneRate = od.zone / seen, sigShare = rep.sig.n ? rep.sig.off / rep.sig.n : 0;
+  const forms = SCHEME_FORMATIONS[plan.off] || SCHEME_FORMATIONS.balanced, qbFast = val(G, G.O.QB, 'speed', 50) >= 74;
+  const list = type === 'run' ? (sub === 'sneak' ? RUNS.filter((p) => p.sub === 'sneak') : RUNS) : PASSES.filter((p) => p.sub === sub);
   const scored = list.map((pl) => {
-    const [name, , a, b] = pl, tags = type === 'run' ? a : b;
-    let w = 1;
-    ['short', 'red', 'clock', 'hurry', 'long'].forEach((t) => { if (ctx[t] && has(tags, t)) w *= 2.4; });
-    if (has(tags, 'red') && !ctx.red && name === 'Fade') w *= 0.15;
-    if (has(tags, 'pa')) w *= ranOk > 4.2 ? 2 : ranOk < 3 ? 0.5 : 1;                    // play action works once the run is working
-    if (has(tags, 'screen') && ctx.blitzy) w *= 1.8;
-    if (name === 'QB Sneak' && !ctx.short) w = 0;
-    if (type === 'pass') { const first = a[0]; w *= Math.exp(edge(G, first) / 14); w *= Math.max(0.5, 1.2 - ((tg[first] || 0) / total) * 0.8) * (first === G.O.star ? 1.5 : 1); }   // feed the matchup, spread it around
-    if (mem.slice(-2).includes(name)) w *= 0.25;                                          // don't run the same thing three times
+    let w = forms[pl.form] ?? 0.5;
+    const fit = pl.fit[plan.off] || 1;
+    w *= sigShare > 0.5 && fit >= 1.4 ? 1 : fit;                                   // his scheme's plays, up to about half the calls
+    CTX_TAGS.forEach((t) => { if (ctx[t] && pl.tags.includes(t)) w *= 2.4; });
+    if (pl.tags.includes('goal') && !ctx.goal && !ctx.short) w *= 0.3;
+    if (pl.form === 'goal_line') w *= ctx.goal || (ctx.short && ctx.red) ? 3 : ctx.short ? 0.6 : 0.03;
+    if (pl.concept === 'Fade' && !ctx.red) w *= 0.15;
+    if (pl.tags.includes('hail')) w = ctx.hail ? 50 : 0;
+    else if (ctx.hail) w *= 0.02;
+    if (pl.tags.includes('screen')) w *= (ctx.goal ? 0.2 : 1) * (1 + blitzRate * 3 * plan.sharp);
+    if (ctx.hurry && type === 'run') w *= 0.4;
+    if (ctx.clock && pl.tags.includes('hurry')) w *= 0.5;                          // killing clock: stay in bounds
+    const m = pl.mods || {};
+    if (type === 'run') {
+      w *= working(plan, pl.sub === 'outside' ? 'outside' : 'inside');
+      if (pl.sub === 'sneak') w = ctx.short ? (ctx.goal ? 3 : 2) * (val(G, G.O.QB, 'strength', 55) >= 60 ? 1.3 : 1) : 0;
+      if (m.option) w *= qbFast ? 1.8 : 0.3;                                       // option runs need a quarterback who can run
+      if (m.vsRush) w *= ctx.long ? 1 + blitzRate * 2 : 0.5;
+    } else {
+      w *= working(plan, pl.mods.screen ? 'screen' : pl.mods.pa ? 'pa' : pl.sub);
+      if (m.pa) w *= ranOk > 4.4 ? 1.8 : ranOk < 3.2 ? 0.55 : 1;                   // play action works once the run is working
+      if (m.rpo) w *= working(plan, 'inside') > 1.05 ? 1.5 : 1;
+      w *= 1 + ((m.beatsZone || 0) * (zoneRate - 0.4) + (m.beatsMan || 0) * (0.6 - zoneRate) + (m.beatsBlitz || 0) * blitzRate) * 2 * plan.sharp;
+      const first = pl.read[0];
+      w *= Math.exp(edge(G, first) / 14) * Math.max(0.5, 1.2 - ((tg[first] || 0) / total) * 0.8) * (first === G.O.star ? 1.4 : 1);   // feed the matchup, spread it around
+    }
+    if (mem.slice(-3).includes(pl.concept)) w *= 0.3;                             // don't keep running the same thing
     return { pl, w: Math.max(0, w) };
   });
   const sum = scored.reduce((a, o) => a + o.w, 0); let roll = R.r() * sum, pick = scored[0]?.pl;
   for (const o of scored) { roll -= o.w; if (roll <= 0) { pick = o.pl; break; } }
-  if (!pick) return { type, sub, name: type === 'run' ? 'Inside Zone' : 'Curl-Flat' };
-  mem.push(pick[0]); if (mem.length > 6) mem.shift();
-  if (type === 'run') return { type, sub: pick[1], name: pick[0], draw: pick[0] === 'Draw' };
-  return { type, sub: pick[1], name: pick[0], read: pick[2], depths: pick[4] || null, pa: has(pick[3], 'pa'), screen: has(pick[3], 'screen') };
+  mem.push(pick.concept || pick.name); if (mem.length > 8) mem.shift();
+  rep.sig.n += 1; if ((pick.fit[plan.off] || 1) >= 1.4) rep.sig.off += 1;
+  return toCall(type, pick);
+}
+
+// The call the engine runs: the play plus its formation's small effects folded in.
+function toCall(type, pl) {
+  const f = FORMATIONS[pl.form] || FORMATIONS.singleback, m = pl.mods || {};
+  const call = { type, sub: pl.sub, name: pl.name, concept: pl.concept || pl.name, formation: f.name };
+  if (type === 'run') {
+    call.mods = { yds: (m.yds || 0) + f.run, short: f.short || 0, var: m.var || 1, fool: m.fool || 0, vsRush: m.vsRush || 0, option: !!m.option };
+    call.draw = pl.concept === 'Draw' || pl.concept === 'Delay';
+  } else {
+    call.read = pl.read; call.depths = pl.depths; call.pa = !!m.pa; call.screen = !!m.screen;
+    call.mods = { sep: f.sep, rub: (f.rub || 0) + (m.rub || 0), pa: f.pa, protect: f.protect + (m.protect || 0) + (m.rollout ? 0.2 : 0), rollout: !!m.rollout,
+      beatsZone: m.beatsZone || 0, beatsMan: m.beatsMan || 0, beatsBlitz: m.beatsBlitz || 0, maxProtect: (m.protect || 0) >= 0.3 };
+  }
+  call.family = family(call);
+  return call;
 }
 
 // After every snap: what the offense did and how it went, so both coaches can adjust (run game working? QB hot?).

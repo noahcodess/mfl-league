@@ -5,8 +5,10 @@ import { clamp, other, stat, swing } from './simCore.js';
 import { runPlay } from './simRun.js';
 import { passPlay } from './simPass.js';
 import { kickoff, punt, fieldGoal, extraPoint } from './simKicks.js';
-import { offenseCall, defenseCall, goForTwo } from './simCalls.js';
-import { remember } from './simPlaybook.js';
+import { offenseCall, goForTwo } from './simCalls.js';
+import { defenseCall } from './defenseBrain.js';
+import { remember, pickPlay } from './simPlaybook.js';
+import { scout } from './coachPlan.js';
 import { preSnapFlag, postPlayFlag } from './simFlags.js';
 
 export function sides(G) { const s = G.s; G.defSide = other(s.poss); G.O = G.teams[s.poss].O; G.D = G.teams[G.defSide].D; }
@@ -46,7 +48,9 @@ export function doKickoff(G) {
 export function twoPoint(G, side) {
   const s = G.s; s.poss = side; s.ballOn = 97; s.down = 1; s.toGo = 3; sides(G);
   const play = start(G); play.noStats = true;
-  const res = G.R.chance(0.55) ? passPlay(G, play, 'quick', defenseCall(G)) : runPlay(G, play, 'inside');
+  const ctx = { short: true, red: true, goal: true }, call = G.R.chance(0.55) ? pickPlay(G, 'pass', G.R.chance(0.6) ? 'quick' : 'short', ctx) : pickPlay(G, 'run', 'any', ctx), def = defenseCall(G);
+  play.call = call; play.defCall = def;
+  const res = call.type === 'pass' ? passPlay(G, play, call.sub, def, call) : runPlay(G, play, call.sub, call, def);
   const good = !res.turnover && !res.fumble?.lost && !res.incomplete && (res.td || res.gain >= 3);
   play.kind = 'two'; play.text = `Two-point try: ${play.text} ${good ? 'GOOD!' : 'No good.'}`; play.headline = good ? '2-PT GOOD' : '2-PT FAILED';
   if (good) score(G, play, side, 2, 'two-point try');
@@ -80,13 +84,16 @@ export function scrimmage(G) {
   } else if (call.type === 'punt') {
     res = punt(G, play); secs = res.time; ended = 'punt';
     if (res.td) touchdown(d, 'punt return'); else give(G, d, res.ballOn);
+  } else if (call.type === 'spike') {
+    play.kind = 'spike'; play.text = `${G.O.QB.last} spikes it to stop the clock.`; stat(play, G.O.QB, 'att');
+    play.result.gain = 0; play.result.incomplete = true; s.down += 1; secs = 1;
   } else if (call.type === 'kneel') {
     play.kind = 'kneel'; play.text = `${G.O.QB.last} takes a knee.`; stat(play, G.O.QB, 'car'); stat(play, G.O.QB, 'ryds', -1);
     play.result.gain = -1; s.ballOn = Math.max(1, s.ballOn - 1); s.down += 1; s.toGo += 1; secs = 2; moving = true;
     if (s.down > 4) { give(G, d, 100 - s.ballOn); ended = 'downs'; moving = false; }
   } else {
-    res = call.type === 'run' ? runPlay(G, play, call.sub, call) : passPlay(G, play, call.sub, def, call);
-    remember(G, o, call, play, res);
+    res = call.type === 'run' ? runPlay(G, play, call.sub, call, def) : passPlay(G, play, call.sub, def, call);
+    scout(G, o, call, def, res); remember(G, o, call, play, res);
     secs = res.time; play.result.gain = res.gain; play.result.oob = !!res.oob;
     const flag = postPlayFlag(G, play, res, call), spot = s.ballOn + res.gain;
     if (flag) { // the play doesn't count
