@@ -1,0 +1,41 @@
+/* Broadcast graphics: the field goal bar over the scorebug and the "ball on" tag, in each network's look. */
+.bg-fg, .bg-ballon { position: absolute; left: 50%; z-index: 4; pointer-events: none; white-space: nowrap; color: #fff;
+  --g-bg: #111; --g-fg: #fff; --g-acc: #f4b800; --g-acc-fg: #111; --g-font: 'Barlow Condensed', sans-serif; --g-r: .3cqw; }
+
+/* the field goal bar rises out of the top of the scorebug, holds, and drops back in */
+.bg-fg { bottom: 8.3cqw; display: flex; align-items: stretch; font: 800 1.5cqw/1 var(--g-font); letter-spacing: .06em; border-radius: var(--g-r);
+  background: var(--g-bg); color: var(--g-fg); overflow: hidden; box-shadow: 0 .4cqw .8cqw #0009;
+  animation: bg-rise .5s cubic-bezier(.2, 1.2, .4, 1) both; transform-origin: 50% 100%; }
+.bg-fg b { padding: .55cqw 1.3cqw; background: var(--g-acc); color: var(--g-acc-fg); font-weight: 900; }
+.bg-fg span { padding: .55cqw 1.2cqw; text-transform: uppercase; opacity: .92; }
+@keyframes bg-rise { from { transform: translate(-50%, 2.6cqw) scaleY(.2); opacity: 0; } to { transform: translate(-50%, 0) scaleY(1); opacity: 1; } }
+
+/* "ball on": also rises out of the scorebug, with an arrow nudging the way the offense is going, then sinks back in */
+.bg-ballon { bottom: 8.3cqw; display: flex; align-items: center; gap: .8cqw; padding: .45cqw 1.1cqw; font-family: var(--g-font);
+  background: var(--g-bg); color: var(--g-fg); border-radius: var(--g-r); border-bottom: .3cqw solid var(--tc, var(--g-acc));
+  box-shadow: 0 .4cqw 1cqw #000a; animation: bg-rise .5s cubic-bezier(.2, 1.2, .4, 1) both; transform-origin: 50% 100%; }
+.bg-fg.out, .bg-ballon.out { animation: bg-sink .4s ease-in both; }
+@keyframes bg-sink { from { transform: translate(-50%, 0) scaleY(1); opacity: 1; } to { transform: translate(-50%, 2.6cqw) scaleY(.2); opacity: 0; } }
+.bg-ballon img { width: 2.6cqw; height: 2.6cqw; object-fit: contain; }
+.bg-ballon span { display: flex; flex-direction: column; line-height: 1; }
+.bg-ballon small { font-size: .85cqw; font-weight: 800; letter-spacing: .18em; opacity: .75; }
+.bg-ballon b { font-size: 2cqw; font-weight: 900; letter-spacing: .04em; }
+.bg-arrow { width: 0; height: 0; border-top: .9cqw solid transparent; border-bottom: .9cqw solid transparent; }
+.bg-arrow.right { border-left: 1.3cqw solid var(--g-acc); animation: bg-nudge-r .9s ease-in-out .4s infinite; }
+.bg-arrow.left { border-right: 1.3cqw solid var(--g-acc); animation: bg-nudge-l .9s ease-in-out .4s infinite; }
+@keyframes bg-nudge-r { 50% { transform: translateX(.5cqw); } }
+@keyframes bg-nudge-l { 50% { transform: translateX(-.5cqw); } }
+
+/* the network looks */
+.bgx-fox { --g-bg: linear-gradient(180deg, #2a2a2a, #070707); --g-acc: #f4b800; --g-acc-fg: #111; --g-font: 'Anton', Impact, sans-serif; --g-r: .15cqw; }
+.bgx-fox b { font-style: italic; font-weight: 400; }
+.bgx-cbs { --g-bg: #fff; --g-fg: #0b3a82; --g-acc: #0b3a82; --g-acc-fg: #fff; --g-r: 0; }
+.bgx-cbs.bg-ballon small { color: #0b3a82; }
+.bgx-nbc { --g-bg: linear-gradient(180deg, #1c2a4a, #0b1226); --g-acc: #fcb711; --g-acc-fg: #0b1226; --g-r: .5cqw; }
+.bgx-espn { --g-bg: linear-gradient(180deg, #4b5560, #262d34); --g-acc: #e3261b; --g-acc-fg: #fff; --g-font: 'Russo One', sans-serif; --g-r: 0; }
+.bgx-espn.bg-fg, .bgx-espn.bg-ballon { clip-path: polygon(.8cqw 0, 100% 0, calc(100% - .8cqw) 100%, 0 100%); padding-left: .8cqw; padding-right: .8cqw; }
+.bgx-espn.bg-ballon { border-top: .25cqw solid #e3261b; }
+.bgx-tnf { --g-bg: #0b46a8; --g-acc: #fff; --g-acc-fg: #0b46a8; --g-font: 'Bungee', sans-serif; --g-r: 1.2cqw; }
+.bgx-tnf b, .bgx-tnf.bg-ballon b { font-weight: 400; }
+.bgx-snf { --g-bg: linear-gradient(180deg, #2a3a6a 0%, #121c3c 55%, #0a1022 100%); --g-acc: #6460aa; --g-acc-fg: #fff; --g-font: 'Exo 2', sans-serif; --g-r: 0; }
+.bgx-snf.bg-fg, .bgx-snf.bg-ballon { box-shadow: inset 0 .2cqw 0 #d6dee8, 0 .4cqw 1cqw #000a; }

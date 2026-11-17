@@ -109,11 +109,15 @@ export function passPlay(G, play, call, def, plan = {}) {
   } else if (heat.by && heat.t - tThrow < 0.35) { // the rusher arrives as he lets it go: a hurried throw and a hit
     stat(play, heat.by, 'pres'); pressured = true; addEvent(play, 'pressure', tThrow, { by: heat.by.id, kind: 'hurry' });
   } else if (heat.t - tThrow < 0.6) addEvent(play, 'pocket', tThrow - 0.3, { qb: qb.id, move: 'step up' });
+  if (plan.mods?.rollout && !pressured) { onRun = true; addEvent(play, 'pocket', Math.max(0.6, tThrow - 1.2), { qb: qb.id, move: 'rollout' }); }   // a boot: he throws on the move
+  // a pump fake on a longer look: it can freeze his man for a step
+  const pump = tgt.depth >= 14 && tThrow > 2 && !pressured && R.chance(0.3 + (val(G, qb, 'vision', 55) - 60) / 200);
+  if (pump) addEvent(play, 'pump', tThrow - 0.6, { qb: qb.id });
   // the throw
   const d = tgt.depth, base = d < 10 ? val(G, qb, 'short_acc', 55) : d > 20 ? val(G, qb, 'deep_acc', 50) : (val(G, qb, 'short_acc', 55) + val(G, qb, 'deep_acc', 50)) / 2;
   let acc = pressured ? base * 0.5 + val(G, qb, 'throw_pressure', 50) * 0.5 - 5 : base; if (onRun) acc = acc * 0.5 + val(G, qb, 'throw_on_run', 50) * 0.5;
   if (d > 14 + (val(G, qb, 'throw_power', 55) - 50) * 0.5) acc -= 8;             // past what his arm can do
-  const q = (acc - 62) / 26 + R.gauss(0, 0.75), need = -0.78 + d * 0.036, air = 0.35 + d / 22;   // pros hit most throws; misses climb with depth and pressure
+  const q = (acc - 62) / 26 + R.gauss(0, 0.75) + (pump ? 0.12 : 0), need = -0.78 + d * 0.036, air = 0.35 + d / 22;   // pros hit most throws; misses climb with depth and pressure
   play.kind = 'pass'; play.target = tgt.p.id; stat(play, qb, 'att'); stat(play, tgt.p, 'tgt'); stat(play, tgt.c, 'tgtd');
   addEvent(play, 'throw', tThrow, { qb: qb.id, target: tgt.p.id, air: d, accuracy: Math.round(acc), pressured, onRun });
   const close = air * clamp(0.75 + (val(G, tgt.c, 'speed', 55) - val(G, tgt.p, 'speed', 60)) / 40 + (val(G, tgt.c, 'play_rec', 50) - 60) / 80, 0.25, 1.3);   // he closes while it's in the air

@@ -44,6 +44,7 @@ import './styles/simLab.css';
 import './styles/scorebug.css';
 import './styles/scorebugNets.css';
 import './styles/scorebugShapes.css';
+import './styles/broadcastGraphics.css';
 import './styles/coachRoom.css';
 import './styles/coachBoard.css';
 import './styles/keyPlay.css';

@@ -4,17 +4,10 @@
 // a bullet, touch or a lob, and the catch, drop, breakup, pick or miss exactly as the report says.
 import { B, clamp, dist, getGoing, stepTo } from './sceneCore.js';
 import { lineup, lineFight, pursueAll, finishCarry, ev, COVER } from './sceneLineup.js';
+import { carryPath } from './sceneCarry.js';
+import { routeFor } from './sceneRoutes.js';
 
 const DEPTH = { quick: { WR1: 5, WR2: 4, TE: 4, RB: 1 }, short: { WR1: 8, WR2: 7, TE: 6, RB: 2 }, medium: { WR1: 15, WR2: 12, TE: 9, RB: 3 }, deep: { WR1: 28, WR2: 22, TE: 14, RB: 3 } };
-// The route as points [along, lat]; the last point is where he wants the ball. out: 1 toward his sideline.
-function route(slot, l0, d, n) {
-  const out = l0 >= 0 ? 1 : -1, alt = (n + slot.length) % 2 === 0;
-  if (d <= 2) return [[1.5, l0 + out * 2], [Math.max(d, 1), l0 + out * 6]];
-  if (d <= 6) return slot === 'TE' ? [[d, l0], [d, l0 + out * 1.5]] : [[2.5, l0], [d, l0 - out * 4]];
-  if (d <= 11) return alt ? [[d, l0], [d, l0 + out * 5]] : [[d + 1.8, l0], [d, l0 - out * 1]];
-  if (d <= 18) return [[d, l0], [d, l0 - out * (slot === 'TE' ? 4 : 7)]];
-  return alt || slot === 'TE' ? [[10, l0], [d, l0 + out * 1.5]] : [[d - 8, l0], [d, l0 - out * 6]];
-}
 // Chase the QB so he gets there right at tArrive, never faster than his own top speed.
 const timedChase = (qb, tArrive) => (a, dt, s) => stepTo(a, qb.x, qb.y, Math.min(a.max, dist(a.x, a.y, qb.x, qb.y) / Math.max(0.05, tArrive - s.t)), dt);
 
@@ -26,12 +19,18 @@ export function buildPass(S, lineups) {
   S.when(T0, (s) => s.give(qb));
   const drop = S.at(play.call?.sub === 'quick' ? -6 : -7.3, 0), tDrop = T0 + 0.85;
   qb.brain = B.path([drop], T0, tDrop, qb.max); qb.backUntil = tDrop;
+  if (play.call?.pa && A.RB) { // play action: he turns and sticks the ball in the back's belly, the back carries out the fake
+    const side = S.rand() < 0.5 ? -1 : 1, mesh = S.at(-3.4, side * 0.9);
+    qb.brain = B.path([S.at(-3.0, side * 0.5), drop], T0, tDrop + 0.35, qb.max); qb.backUntil = tDrop + 0.35;
+    S.when(T0 + 0.4, (s) => s.setPose(qb, 'reach', 0.4));
+    if (thr?.target !== A.RB.id) A.RB.brain = B.path([mesh, S.at(1.2, side * 2)], T0, T0 + 1.2, A.RB.max * 0.9);
+  }
   const tgtKey = Object.keys(COVER).find((k) => A[k]?.id === thr?.target) || 'WR1', tgt = thr && !thr.away ? A[tgtKey] : null;   // a sub who isn't drawn: his spot's starter stands in
   let tThrow = T0 + clamp(thr?.t ?? 2.4, 0.9, 6.2), catchAt = null, tCatch = null;
   for (const [rk, ck] of Object.entries(COVER)) { // routes: everyone runs his own; the target's last point is where the ball goes
     const r = A[rk]; if (!r) continue;
     const info = read[r.id], mine = r === tgt, l0 = r.y, a0 = S.along(r);
-    const pts = route(rk, l0, mine ? thr.air : info?.depth ?? depths[rk], play.n + rk.length).map(([al, lat]) => S.at(al, lat));
+    const pts = routeFor(play.call?.concept, rk, l0, mine ? thr.air : info?.depth ?? depths[rk], play.n + rk.length).map(([al, lat]) => S.at(al, lat));   // the play's real route
     if (mine && play.result.oob) { const e = pts[pts.length - 1], sg = Math.sign(l0 || 1); e[1] = sg * Math.max(sg * e[1], 18 + S.rand() * 4); }   // a catch that goes out of bounds was made near the sideline
     let L = dist(r.x, r.y, pts[0][0], pts[0][1]); for (let i = 1; i < pts.length; i++) L += dist(pts[i - 1][0], pts[i - 1][1], pts[i][0], pts[i][1]);
     const go0 = T0 + getGoing(r.p), arrive = go0 + L / (r.max * 0.95), toBreak = dist(r.x, r.y, pts[0][0], pts[0][1]) / (r.max * 0.95);
@@ -60,9 +59,13 @@ export function buildPass(S, lineups) {
   lineFight(S, A, D, true, { rush, qb, contact, throwAt: thr ? tThrow : null });
   S.tThrow = tThrow; S.tCatch = tCatch; S.catchAt = catchAt;
   if (sackEv) return sack(S, play, qb, sackEv);
-  const pk = ev(play, 'pocket')[0];   // the pocket moves: climb, slide, or roll out when it takes too long
-  if (pk?.move === 'step up') S.when(tThrow - 0.8, () => { qb.brain = B.to(drop[0] + dir * 1.8, drop[1], 2.5); });
-  else if (pk?.move === 'slide' || tThrow - T0 > 3.6) { const sd = S.rand() < 0.5 ? -1 : 1; S.when(Math.max(tDrop, tThrow - 1.2), () => { qb.brain = B.to(drop[0] - dir * 0.5, sd * 3.2, 3.5); }); }
+  const pk = ev(play, 'pocket')[0];   // the pocket moves: climb, slide, roll out on a boot, or bail when it takes too long
+  const sd = tgt ? (tgt.y >= 0 ? 1 : -1) : S.rand() < 0.5 ? -1 : 1;
+  if (pk?.move === 'rollout') { S.when(Math.max(tDrop - 0.3, T0 + 0.5), () => { qb.brain = B.to(drop[0] + dir * 1.5, sd * 9, qb.max * 0.85); }); }   // rolls out and throws on the run
+  else if (pk?.move === 'step up') S.when(tThrow - 0.8, () => { qb.brain = B.to(drop[0] + dir * 1.8, drop[1], 4.2); });
+  else if (pk?.move === 'slide' || tThrow - T0 > 3.6) { S.when(Math.max(tDrop, tThrow - 1.2), () => { qb.brain = B.to(drop[0] - dir * 0.5, sd * 3.8, 5.2); }); }
+  const pump = ev(play, 'pump')[0];   // the pump fake (the camera bites a little too)
+  if (pump) { const tp = Math.max(tDrop, T0 + pump.t); S.when(tp, (s) => s.setPose(qb, 'pump', 0.4)); S.pumpAt = tp; }
   if (hurry && thr?.pressured) { const by = S.by[hurry.by]; if (by) { S.when(Math.max(T0 + 0.4, tThrow - 1.3), () => { by.pose = null; by.brain = timedChase(qb, tThrow + 0.1); }); S.when(tThrow + 0.12, (s) => { if (dist(by.x, by.y, qb.x, qb.y) < 2.5) { s.knock(qb, 1.6); s.knock(by, 1.4); } }); } }
   if (!thr) { S.tEnd = tThrow; return; }
   S.when(tThrow - 0.3, (s) => s.setPose(qb, 'throw', 0.6));
@@ -97,14 +100,8 @@ function outcome(S, play, tgt, cat, at, tThrow, tCatch, wob) {
   }, wob));
   if (res === 'breakup' && df) { S.when(tThrow, () => { df.brain = B.meet(at[0] + dir * 0.5, at[1] + (at[1] >= 0 ? 0.7 : -0.7), tCatch - 0.03, df.max * 1.15); }); S.when(tCatch - 0.22, (s) => s.setPose(df, 'catch', 0.35)); }
   if (res !== 'catch') { S.when(tCatch + 0.15, (s) => { tgt.brain = B.to(tgt.x + dir * 1.2, tgt.y, 2); s.setPose(tgt, 'drop', 1.6); }); S.tEnd = tCatch + 0.6; return; }
-  const end = S.at(play.result.td ? play.result.gain + 2 : play.result.gain, play.result.oob ? (at[1] >= 0 ? 26.9 : -26.9) : clamp(at[1] + (S.rand() - 0.5) * 8, -25, 25));
-  const tEnd = tCatch + 0.05 + Math.max(0.3, dist(at[0], at[1], end[0], end[1]) / (tgt.max * 0.9));
-  const a0 = S.along({ x: at[0] }), yacPts = play.result.oob ? [S.at(a0 + (play.result.gain - a0) * 0.6, at[1] + (end[1] - at[1]) * 0.5), end] : [end];   // upfield, then angle out
-  S.when(tCatch, () => { tgt.brain = B.carry(yacPts, tCatch, tEnd, tgt.max); });
+  S.tEnd = carryPath(S, tgt, at, tCatch, play.result.gain, clamp(at[1] + (S.rand() - 0.5) * 8, -25, 25), play);   // run after the catch, broken tackles and all
   pursueAll(S, tgt, tCatch, []);
-  const made = play.events.find((e) => e.type === 'tackle' && e.result === 'made');
-  finishCarry(S, tgt, end, tEnd, { tk: made && S.by[made.def], td: play.result.td, oob: play.result.oob, fumble: play.events.find((e) => e.type === 'fumble') });
-  S.tEnd = tEnd;
 }
 
 // The rusher (or blitzer) who got home runs the QB down on his own legs; the QB drifts to where it happens.

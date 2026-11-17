@@ -46,7 +46,7 @@ export function pickPlay(G, type, sub, ctx) {
       if (m.vsRush) w *= ctx.long ? 1 + blitzRate * 2 : 0.5;
     } else {
       w *= working(plan, pl.mods.screen ? 'screen' : pl.mods.pa ? 'pa' : pl.sub);
-      if (m.pa) w *= ranOk > 4.4 ? 1.8 : ranOk < 3.2 ? 0.55 : 1;                   // play action works once the run is working
+      if (m.pa) w *= (ranOk > 4.4 ? 1.8 : ranOk < 3.2 ? 0.6 : 1) * 1.4;              // play action works once the run is working
       if (m.rpo) w *= working(plan, 'inside') > 1.05 ? 1.5 : 1;
       w *= 1 + ((m.beatsZone || 0) * (zoneRate - 0.4) + (m.beatsMan || 0) * (0.6 - zoneRate) + (m.beatsBlitz || 0) * blitzRate) * 2 * plan.sharp;
       const first = pl.read[0];

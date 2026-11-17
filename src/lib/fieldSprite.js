@@ -92,6 +92,7 @@ export function sprite(look, view, pose, frame, face) {
   if (!c) {
     if (pose === 'down') c = turned(rigFrame(look, 'stand', 0, face), 90 * face);
     else if (pose === 'dive') c = turned(rigFrame(look, 'tackle', 0, face), 50 * face);
+    else if (pose === 'layout') c = turned(rigFrame(look, 'layout', 0, face), 72 * face);   // flying through the air
     else if (view === 'side') c = rigFrame(look, pose, frame, face);
     else c = compose(look, view, pose, frame, face);
     cache.set(k, c);

@@ -67,8 +67,8 @@ function play(G, must) {
 // How deep to throw: what the yardage asks for, then his scheme's taste, his risk appetite, momentum, and what's working.
 function depth(G, plan, ctx, must, up, t) {
   const { R, s } = G, need = must ? s.toGo : s.toGo * 0.8, roomDeep = 100 - s.ballOn > 22, mine = G.mom * (s.poss === 'home' ? 1 : -1);
-  const w = need > 12 ? { quick: 0.2, short: 0.6, medium: 2, deep: 1.6 } : need > 6 ? { quick: 0.6, short: 1.4, medium: 2, deep: 0.6 }
-    : need > 3 ? { quick: 1.4, short: 2, medium: 1.1, deep: 0.35 } : { quick: 2.2, short: 1.8, medium: 0.6, deep: 0.3 };
+  const w = need > 12 ? { quick: 0.2, short: 0.6, medium: 2, deep: 2.3 } : need > 6 ? { quick: 0.6, short: 1.3, medium: 2, deep: 1 }
+    : need > 3 ? { quick: 1.3, short: 1.9, medium: 1.2, deep: 0.6 } : { quick: 2, short: 1.7, medium: 0.7, deep: 0.45 };   // shots down the field keep defenses honest
   if (s.down === 2 && s.toGo <= 3) w.deep *= 2.2;                                 // 2nd and short: the shot play
   if (ctx.hurry && t < 40 && roomDeep) { w.deep *= 1.6; w.medium *= 1.3; }
   if (ctx.clock) { w.deep *= 0.4; w.quick *= 1.4; }

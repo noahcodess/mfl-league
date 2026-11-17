@@ -39,6 +39,10 @@ export const POSES = {
   backpedal: [P(18, 25, 60, 15, 55, 30, -10, 0, -30), P(18, 15, 55, 25, 60, 0, -30, 30, -10)],
   cheer: [P(-4, 170, 175, 165, 170, 5, 0, -5, -2), P(-6, 160, 185, 175, 165, 10, -5, -10, -20, 3)],
   tackle: [P(40, 90, 95, 85, 90, 50, -10, -30, -70)],
+  wrap: [P(32, 70, 140, 66, 135, 45, -10, -20, -55)],                      // arms around the carrier, driving through
+  layout: [P(20, 100, 95, 95, 92, -20, -30, -45, -40)],                     // a full-out dive (drawn tipped forward)
+  stumble: [P(38, 125, 60, -45, -15, 65, 35, -50, -85), P(44, 140, 80, -30, -5, 55, 20, -60, -95)],   // tripped up, arms out for balance
+  pump: [P(-6, -110, 185, 60, 75, 28, 0, -28, -30), P(8, 70, 110, 40, 60, 24, -5, -32, -40)],         // the pump fake: cocks it, starts forward, holds
 };
 const GROUND_HANDS = new Set(['olset', 'dlset']);
 const rad = (d) => (d * Math.PI) / 180;

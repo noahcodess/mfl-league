@@ -6,13 +6,20 @@
 
 const MODES = {
   fast: { T0: 3.8, dead: 2.2, replayFor: () => false, slow: false, gap: 11 },
-  normal: { T0: 6.4, dead: 4.3, replayFor: (p) => p.result.td || p.result.turnover || p.result.safety || p.result.gain >= 25 || p.onside, slow: false, gap: 18 },
-  cinematic: { T0: 7.4, dead: 5, replayFor: big, slow: true, gap: 20 },
+  normal: { T0: 5.4, dead: 4, replayFor: big, slow: false, gap: 18 },
+  cinematic: { T0: 6.4, dead: 4.6, replayFor: big, slow: true, gap: 20 },
 };
 function big(p) {
   const kick = p.events.find((e) => e.type === 'kick');
   return p.result.td || p.result.turnover || p.result.safety || p.kind === 'sack' || p.result.gain >= 15 || p.onside
-    || (p.kind === 'fg' && kick?.dist >= 45) || (p.before.down >= 3 && p.result.firstDown) || p.headline === 'NO GOOD';
+    || (p.kind === 'fg' && kick?.dist >= 45) || (p.before.down >= 3 && p.result.firstDown) || p.headline === 'NO GOOD'
+    || p.events.some((e) => e.type === 'tackle' && e.result === 'broken') || p.events.some((e) => e.type === 'catch' && e.contested && e.result === 'catch');
+}
+// Replay speed: super slow for the biggest moments, slower for a big catch or hit, a quicker look at the rest.
+function replaySpeed(p, mode) {
+  if (p.result.td || p.result.turnover || p.result.safety) return 0.38;
+  if (p.kind === 'sack' || p.result.gain >= 20) return 0.5;
+  return mode === 'cinematic' ? 0.55 : 0.7;
 }
 
 // How tense the moment is: 'fast' (a blowout), 'cinematic' (close and late, overtime, or a tight two-minute drill), or 'normal'.
@@ -44,9 +51,9 @@ export function shotsFor(S, pace, names = {}) {
   }
   let live = S.tEnd + pace.dead;
   if (m.replayFor(play)) { // the instant replay: the moment that mattered, from the same angle, zoomed in and slowed down
-    const speed = pace.mode === 'cinematic' ? 0.5 : 0.6, from = Math.max(S.T0 - 0.2, key - 2.2), to = Math.min(S.tEnd + 0.5, key + 1.4);
+    const speed = replaySpeed(play, pace.mode), from = Math.max(S.T0 - 0.2, key - 2.2), to = Math.min(S.tEnd + 0.5, key + 1.4);
     const slowExtra = out.slow.reduce((x, [a, b, k]) => x + (b - a) * (1 / k - 1), 0);
-    const budget = m.gap - (pace.T0 + (S.tEnd - S.T0) + pace.dead + slowExtra + (out.flag ? 2.4 : 0)) + (pace.keyPlay ? 8 : 0);   // keep snap to snap under the limit
+    const budget = m.gap + 4 - (pace.T0 + (S.tEnd - S.T0) + pace.dead + slowExtra + (out.flag ? 2.4 : 0)) + (pace.keyPlay ? 8 : 0);   // keep snap to snap near the limit
     const len = Math.min(to - from, Math.max(0, budget) * speed);
     if (len >= 1.2) out.replay = { from: to - len, to, speed };
   }

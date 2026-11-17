@@ -8,6 +8,7 @@ export const EVENTS = {
   rush: 'One pass-rush matchup on the line: how many seconds the rusher needs to get home, and his move',  // { off, def, t, move }
   pressure: 'A rusher gets to the quarterback: a hurry, a hit or a sack',                           // { by, kind: 'hurry' | 'hit' | 'sack' }
   pocket: 'What the quarterback did back there: stepped up, slid, escaped, threw it away',          // { qb, move }
+  pump: 'A pump fake before the throw (the defender may bite)',                                         // { qb }
   read: 'The quarterback picks his target, and how open every receiver was',                        // { qb, target, open: [{ id, sep }] }
   throw: 'The ball leaves his hand',                                                                 // { qb, target, air, accuracy, pressured, onRun }
   catch: 'The ball arrives',                                                                         // { target, def, result: 'catch' | 'drop' | 'breakup' | 'int', type, sep, contested }

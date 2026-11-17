@@ -37,10 +37,10 @@ export function lineup(S, lineups, opts = {}) {
   if (A.QB) { A.QB.qb = true; if (opts.under) A.QB.idle = 'rbset'; }
   S.ball.x = S.los; S.ball.y = 0; S.ball.h = 0.12;
   if (opts.huddle && S.T0 >= 3) { // break the huddle: everyone jogs to his spot and is set and still well before the snap
-    const ready = S.T0 - 1.3;
+    const ready = S.T0 - 1.3, breakAt = Math.max(0.4, ready - 2.4);   // huddle up, then a brisk 2-3 second walk to the line
     for (const a of S.actors) {
       const sx = a.x, sy = a.y, off = a.side === play.off, [hx, hy] = off ? S.at(-8 + S.rand() * 1.5, sy * 0.15) : S.at(S.along(a) + 3.5, sy * 0.55);
-      a.x = hx; a.y = hy; a.pre = { x: sx, y: sy, speed: Math.min(7.5, dist(hx, hy, sx, sy) / Math.max(0.6, ready - 0.4)) };
+      a.x = hx; a.y = hy; a.pre = { x: sx, y: sy, at: breakAt + S.rand() * 0.25, speed: Math.min(7.5, Math.max(3.2, dist(hx, hy, sx, sy) / Math.max(0.6, ready - breakAt))) };
     }
   }
   S.lines = { los: S.los, first: play.before.ballOn + play.before.toGo < 100 ? S.los + S.dir * play.before.toGo : null };
@@ -121,13 +121,21 @@ export function pursueAll(S, carrier, t, except = []) {
 
 // The end of a carry: the carrier reaches `end` at tEnd and is tackled (or scores, or steps out). tk: who the engine says made it.
 export function finishCarry(S, carrier, end, tEnd, { tk = null, td = false, oob = false, fumble = null } = {}) {
-  const runDir = Math.sign(end[0] - carrier.x) || S.dir;
-  if (!td && !oob) S.when(Math.max(S.T0, tEnd - 1.1), (s) => { // pick whoever can really get there in time
-    const can = (a) => a && !a.down && dist(a.x, a.y, end[0], end[1]) <= a.max * 1.1 * (tEnd - s.t) + 1.5;
-    const best = can(tk) ? tk : s.actors.filter((a) => a.side !== carrier.side && can(a)).sort((m, n) => dist(m.x, m.y, end[0], end[1]) - dist(n.x, n.y, end[0], end[1]))[0] || tk;
+  const runDir = Math.sign(end[0] - carrier.x) || S.dir, hit = { done: false };
+  if (!td && !oob) S.when(Math.max(S.T0, tEnd - 2.2), (s) => { // pick whoever can really get there (closing burst included)
+    const can = (a) => a && !a.down && dist(a.x, a.y, end[0], end[1]) <= a.max * 1.2 * (tEnd - s.t) + 2.5;
+    const best = can(tk) ? tk : s.actors.filter((a) => a.side !== carrier.side && !a.down && a !== carrier).sort((m, n) => dist(m.x, m.y, end[0], end[1]) - dist(n.x, n.y, end[0], end[1]))[0] || tk;
     if (!best) return;
-    best.pose = null; best.brain = B.meet(end[0] + runDir * 0.7, end[1] + 0.2, tEnd, best.max * 1.1);
-    s.when(tEnd - 0.22, () => s.setPose(best, 'tackle', 0.3)); s.tackler = best;
+    best.pose = null; best.blockedUntil = 0; best.brain = B.meet(end[0] + runDir * 0.7, end[1] + 0.2, tEnd, best.max * 1.25); s.tackler = best;
+  });
+  // the last moment: a tackler on top of him wraps him up, one a few yards off lays out in a dive, and if nobody is close
+  // enough the runner stumbles (tripped up, losing his feet) until someone actually gets a hand on him
+  if (!td && !oob) S.when(tEnd - 0.4, (s) => {
+    const tk2 = s.tackler; if (!tk2) return;
+    const reach = tk2.max * 1.25 * 0.4, d = dist(tk2.x, tk2.y, end[0] + runDir * 0.7, end[1] + 0.2);   // how far he still is from the meeting spot
+    if (d <= reach + 0.8) s.when(tEnd - 0.2, (ss) => ss.setPose(tk2, ss.rand() < 0.5 ? 'wrap' : 'tackle', 0.6));
+    else if (d <= reach + 3.2) { s.when(tEnd - 0.25, (ss) => { ss.setPose(tk2, 'layout', 0.7); const dd = dist(tk2.x, tk2.y, carrier.x, carrier.y); tk2.brain = (a, dt) => stepTo(a, carrier.x, carrier.y, Math.min(dd / 0.25 + 2, a.max * 1.9), dt); }); }   // flying at him
+    else { s.setPose(carrier, 'stumble', 0.9); tk2.brain = B.pursue(carrier, tk2.max * 1.15, 0.3); }
   });
   S.when(tEnd, (s) => {
     if (td) { // he scores: celebrate, teammates come over, the defense jogs off
@@ -136,8 +144,18 @@ export function finishCarry(S, carrier, end, tEnd, { tk = null, td = false, oob 
       return;
     }
     if (oob) { carrier.brain = B.to(carrier.x + runDir * 1.5, carrier.y > 0 ? 28.5 : -28.5, 4.5); return; }
-    s.knock(carrier, 1.7); if (s.tackler && dist(s.tackler.x, s.tackler.y, carrier.x, carrier.y) < 2.2) s.knock(s.tackler, 1.5);
-    if (fumble) { s.loose(runDir * 3, (s.rand() - 0.5) * 4, 4); const rec = s.by[fumble.recoveredBy]; if (rec) s.when(s.t + 0.5, () => { rec.down = false; rec.brain = B.meet(s.ball.x, s.ball.y, s.t + 0.6, rec.max, (r, ss) => { ss.knock(r); ss.give(r); }); }); }
-    for (const a of s.actors) if (!a.down && a !== carrier && a !== s.tackler) { a.pose = null; a.brain = dist(a.x, a.y, carrier.x, carrier.y) < 16 ? B.gather(s, carrier.x, carrier.y, 2.2) : B.to(a.x + (carrier.x - a.x) * 0.25, a.y, 2.2); }
+    // contact only: if nobody has a hand on him yet, he keeps stumbling forward until someone does (or he loses his feet)
+    const wrapUp = (ss) => {
+      ss.knock(carrier, 1.7); if (ss.tackler && dist(ss.tackler.x, ss.tackler.y, carrier.x, carrier.y) < 2.4) ss.knock(ss.tackler, 1.5);
+      if (fumble) { ss.loose(runDir * 3, (ss.rand() - 0.5) * 4, 4); const rec = ss.by[fumble.recoveredBy]; if (rec) ss.when(ss.t + 0.5, () => { rec.down = false; rec.brain = B.meet(ss.ball.x, ss.ball.y, ss.t + 0.6, rec.max, (r, s3) => { ss.knock(r); s3.give(r); }); }); }
+      for (const a of ss.actors) if (!a.down && a !== carrier && a !== ss.tackler) { a.pose = null; a.brain = dist(a.x, a.y, carrier.x, carrier.y) < 16 ? B.gather(ss, carrier.x, carrier.y, 2.2) : B.to(a.x + (carrier.x - a.x) * 0.25, a.y + (carrier.y - a.y) * 0.25, 2); }
+    };
+    const close = () => s.actors.some((a) => a.side !== carrier.side && !a.down && dist(a.x, a.y, carrier.x, carrier.y) < 1.5);
+    if (close()) wrapUp(s);
+    else {
+      s.setPose(carrier, 'stumble', 1.2); carrier.brain = B.to(carrier.x + runDir * 0.8, carrier.y, 1.2);
+      if (s.tackler) { s.setPose(s.tackler, 'layout', 0.7); s.tackler.brain = B.pursue(carrier, s.tackler.max * 1.25, 0.2); }
+      for (let k = 1; k <= 10; k++) s.when(s.t + k * 0.1, (ss) => { if (carrier.down) return; if (close() || k === 10) wrapUp(ss); });
+    }
   });
 }
