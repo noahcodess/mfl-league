@@ -1,0 +1,57 @@
+/* The scoring takeover of the scorebug (ScoreTakeover). The bar opens out of the bug's middle in the scoring team's colors,
+   the word drops in letter by letter, the players slide up, sparks pop off the top, and the score rolls up. The network's
+   look comes from the bgx-<bug> variables (--g-font, --g-acc, --g-r) plus the touches at the bottom. */
+.pg-bug .sb { transition: opacity .35s ease; }
+.pg-bug.taken .sb { opacity: 0; }
+.sbt { --g-font: 'Barlow Condensed', sans-serif; --g-acc: #f4b800; --g-acc-fg: #111; --g-r: .3em;
+  position: absolute; left: 50%; bottom: 0; z-index: 2; display: flex; align-items: center; gap: .9em; height: 3.4em; padding: 0 0 0 .6em;
+  font-size: 1.35cqw; color: #fff; white-space: nowrap; transform: translateX(-50%); isolation: isolate;
+  animation: sbt-open .55s cubic-bezier(.22, .9, .3, 1) both; filter: drop-shadow(0 .3em .6em #000a); }
+.sbt::before { content: ''; position: absolute; inset: 0; z-index: -1; border-radius: var(--g-r);
+  background: linear-gradient(100deg, color-mix(in srgb, var(--tc) 75%, #fff) 0%, var(--tc) 38%, color-mix(in srgb, var(--tc) 40%, #000) 100%);
+  box-shadow: inset 0 -.2em 0 var(--ta, #fff); }
+.sbt::after { content: ''; position: absolute; inset: 0; z-index: 3; pointer-events: none; border-radius: var(--g-r);
+  background: linear-gradient(100deg, #fff0 40%, #ffffff70 50%, #fff0 60%) no-repeat; background-size: 260% 100%; animation: sbe-glint .9s ease-in-out .55s both; }
+@keyframes sbt-open { from { clip-path: inset(-3em 46% 0 46%); opacity: .3; } to { clip-path: inset(-3em 0 0 0); opacity: 1; } }
+
+.sbt-logo { width: 2.8em; height: 2.8em; object-fit: contain; image-rendering: pixelated; filter: drop-shadow(0 .1em .1em #0008); animation: sbt-in .45s ease-out .35s both; }
+.sbt-word { display: flex; font: 400 1.9em/1 var(--g-font); letter-spacing: .03em; text-shadow: 0 .06em 0 color-mix(in srgb, var(--tc) 50%, #000), 0 0 .4em #fff6; }
+.sbt-word span { display: inline-block; animation: sbt-letter .4s cubic-bezier(.2, 1.3, .4, 1) both; }
+.sbt-people { display: flex; gap: .7em; }
+.sbt-p { display: flex; align-items: flex-end; gap: .35em; height: 3.4em; animation: sbt-up .45s cubic-bezier(.22, .9, .3, 1) both; }
+.sbt-p img { height: 3.1em; width: auto; image-rendering: pixelated; filter: drop-shadow(.08em 0 .08em #0008); }
+.sbt-p > span { display: grid; gap: .12em; align-self: center; line-height: 1; }
+.sbt-p b { font: 400 .95em/1 var(--g-font); text-transform: uppercase; letter-spacing: .03em; }
+.sbt-p small { font-size: .62em; font-weight: 800; letter-spacing: .06em; opacity: .9; }
+.sbt-score { align-self: stretch; display: grid; place-items: center; align-content: center; min-width: 3.2em; padding: 0 .6em; margin-left: .2em;
+  background: #0009; border-radius: 0 var(--g-r) var(--g-r) 0; animation: sbt-in .4s ease-out .5s both; }
+.sbt-score small { font-size: .6em; font-weight: 800; letter-spacing: .12em; opacity: .75; }
+.sbt-score b { font: 400 1.7em/1 var(--g-font); font-variant-numeric: tabular-nums; }
+.sbt-sparks { position: absolute; left: 50%; top: 0; width: 0; height: 0; z-index: 4; pointer-events: none; }
+.sbt-sparks b { position: absolute; width: .32em; height: .32em; margin: -.16em; border-radius: 50%; background: #fff; box-shadow: 0 0 .5em var(--tc);
+  animation: sbt-spark .9s cubic-bezier(.15, .7, .3, 1) .4s both; --a: calc(var(--k) * 30deg - 165deg); }
+.sbt-sparks b:nth-child(even) { animation-delay: .85s; }
+.sbt-sparks b:nth-child(3n) { background: var(--ta, #fff); }
+@keyframes sbt-spark { 0% { opacity: 0; transform: rotate(var(--a)) translateX(0); } 10% { opacity: 1; } 100% { opacity: 0; transform: rotate(var(--a)) translateX(7em); } }
+@keyframes sbt-letter { from { opacity: 0; transform: translateY(-.6em) scale(1.8); filter: blur(.08em); } }
+@keyframes sbt-up { from { opacity: 0; transform: translateY(.8em); } }
+@keyframes sbt-in { from { opacity: 0; } }
+
+/* each program's take */
+.sbt.bgx-fox { --g-font: 'Anton', Impact, sans-serif; --g-r: .15em; }
+.sbt.bgx-fox::before { box-shadow: inset 0 -.25em 0 #f4b800; }
+.sbt.bgx-fox .sbt-word { font-style: italic; }
+.sbt.bgx-cbs { --g-r: 0; }
+.sbt.bgx-cbs::before { box-shadow: 0 0 0 .14em #0b3a82, inset 0 -.2em 0 #fff; }
+.sbt.bgx-cbs .sbt-score { background: #fff; color: #0b3a82; }
+.sbt.bgx-espn { --g-font: 'Russo One', sans-serif; --g-r: 0; padding-left: 1.2em; }
+.sbt.bgx-espn::before { clip-path: polygon(.9em 0, 100% 0, calc(100% - .9em) 100%, 0 100%); box-shadow: inset 0 .22em 0 #e3261b; }
+.sbt.bgx-espn .sbt-score { background: #e3261b; clip-path: polygon(0 0, 100% 0, calc(100% - .9em) 100%, 0 100%); padding-right: 1.2em; }
+.sbt.bgx-tnf { --g-font: 'Bungee', sans-serif; --g-r: 1.2em; font-size: 1.6cqw; }
+.sbt.bgx-tnf::before { box-shadow: 0 0 0 .18em #fff, 0 0 0 .32em #0b46a855; }
+.sbt.bgx-tnf .sbt-word { font-size: 1.5em; }
+.sbt.bgx-snf { --g-font: 'Exo 2', sans-serif; --g-r: 0; padding-left: 1.8em; }
+.sbt.bgx-snf::before { clip-path: polygon(1.6em 0, calc(100% - 1.6em) 0, 100% 100%, 0 100%); box-shadow: inset 0 .16em 0 #d6dee8, inset 0 -.22em 0 #6460aa; }
+.sbt.bgx-snf .sbt-word, .sbt.bgx-snf .sbt-p b { font-style: italic; font-weight: 800; }
+.sbt.bgx-snf .sbt-score { margin-right: 1.4em; border-radius: 0; }
+.sbt.bgx-nbc { --g-r: .6em; }

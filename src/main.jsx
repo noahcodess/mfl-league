@@ -47,7 +47,7 @@ import './styles/scorebugShapes.css';
 import './styles/broadcastGraphics.css';
 import './styles/scorebugEnter.css';
 import './styles/scorebugCard.css';
-import './styles/touchdownShow.css';
+import './styles/scoreTakeover.css';
 import './styles/downText.css';
 import './styles/coachRoom.css';
 import './styles/coachBoard.css';

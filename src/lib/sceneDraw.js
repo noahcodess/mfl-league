@@ -1,9 +1,11 @@
 // Draws the live play onto the broadcast canvas: the line of scrimmage and first-down line before the snap, the kickoff
-// tee, shadows, every player in the right pose and facing (scenePose), the ball (sceneBall) and any flag.
+// tee, shadows, the ball-carrier ring (sceneRing), every player in the right pose and facing (scenePose), the ball
+// (sceneBall) and any flag.
 import { FY0, FY1, YD, MID_Y, yardX } from './fieldLayout.js';
 import { sprite } from './fieldSprite.js';
 import { lookAt } from './scenePose.js';
 import { drawBall } from './sceneBall.js';
+import { drawRing } from './sceneRing.js';
 
 export const SPRITE_PX = 0.5; // world pixels per sprite pixel: a player stands about 2 yards tall, like the Drip tab art shrunk down
 
@@ -22,6 +24,7 @@ export function drawScene(ctx, S, cam, looks) {
   const list = S.actors.slice().sort((m, n) => m.y - n.y), holder = S.ball.holder;
   ctx.fillStyle = 'rgba(0,0,0,0.28)';
   for (const a of list) ctx.fillRect(sx(a.x) - (a.down ? 13 : 7) * px, sy(a.y) - 1.5 * px, (a.down ? 26 : 14) * px, 3 * px);
+  const tag = drawRing(ctx, S, { sx, sy, px, yd: YD }, looks);   // the ring around whoever has the ball (its name goes on top, below)
   for (const a of list) {
     const look = looks[a.id]; if (!look) continue;
     const L = lookAt(a, t, S, holder), img = sprite(look, L.view, L.pose, L.frame, L.face), X = Math.round(sx(a.x) - img.footX * sp), Y = Math.round(sy(a.y) - img.footY * sp);
@@ -30,5 +33,6 @@ export function drawScene(ctx, S, cam, looks) {
     a.hand2At = [X + img.hand2[0] * sp, Y + img.hand2[1] * sp];
   }
   drawBall(ctx, S, { sx, sy, px, sp, yd: YD });
+  tag?.();
   if (S.flag && t >= S.flag.t) { ctx.fillStyle = '#ffd400'; ctx.fillRect(sx(S.flag.x) + 4 * px, sy(S.flag.y) - 2 * px, 4 * px, 3 * px); }
 }

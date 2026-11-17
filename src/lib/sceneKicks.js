@@ -37,7 +37,7 @@ export function buildKickoff(S, lineups) {
   const oob = ev(play, 'kick')[0]?.oob, endRcv = play.result.td ? 100 : play.after.ballOn, retYds = retEv?.yards ?? 0, landOn = oob ? 6 : retEv ? endRcv - retYds : -4, hang = 3.4;
   const landAbs = absOf(play.def, landOn), landY = oob ? (S.rand() < 0.5 ? -28 : 28) : clamp((S.rand() - 0.5) * 12, -20, 20);   // a hooked kick lands out of bounds
   ret.x = landAbs - dir * 2; ret.y = landY;
-  S.when(T0, (s) => s.throwBall(landAbs, landY, retEv ? 0.62 : 0.12, hang, 13, (ss) => { if (retEv) ss.give(ret); else ss.loose(dir * 2, 0, 2); }, { kick: true }));
+  S.when(T0, (s) => s.throwBall(landAbs, landY, retEv ? 0.62 : 0.12, hang, 13, (ss) => { if (retEv) ss.give(ret); else ss.loose(dir * 2, 0, 2); }, { kick: true, to: retEv ? ret : null }));
   ret.brain = B.path([[landAbs, landY]], T0 + 1, T0 + hang - 0.05, ret.max);
   S.when(T0 + 0.1, (s) => cover.forEach((c) => { c.brain = B.to(landAbs - dir * (10 + s.rand() * 8), clamp(c.y * 0.7, -25, 25), c.max * 0.92); }));
   if (!retEv) { S.when(T0 + hang + 0.2, (s) => s.setPose(ret, 'kneel')); S.tEnd = T0 + hang + 0.6; return; }
@@ -53,10 +53,10 @@ export function buildPunt(S, lineups) {
   const gross = kick?.dist ?? 44, landAl = Math.min(gross, 100 - play.before.ballOn + 6), land = S.at(landAl, kick?.shank ? (S.rand() < 0.5 ? -28 : 28) : clamp((S.rand() - 0.5) * 14, -20, 20));
   const ret = S.add(them.returner, play.def, land[0] + dir * 3, land[1], -dir);
   S.ball.x = S.los; S.ball.y = 0;
-  S.when(T0, (s) => s.throwBall(P.x, P.y, 0.62, 0.55, 0.3, (ss) => ss.give(P)));
+  S.when(T0, (s) => s.throwBall(P.x, P.y, 0.62, 0.55, 0.3, (ss) => ss.give(P), { to: P }));
   const tKick = T0 + 1.35, hang = kick?.hang ?? 4, tLand = tKick + hang;
   S.when(tKick - 0.15, (s) => s.setPose(P, 'kick', 0.5));
-  S.when(tKick, (s) => s.throwBall(land[0], land[1], retEv ? 0.62 : 0.12, hang, 15, (ss) => { if (retEv) ss.give(ret); else ss.loose(dir * 3, 0, 3); }, { kick: true }));
+  S.when(tKick, (s) => s.throwBall(land[0], land[1], retEv ? 0.62 : 0.12, hang, 15, (ss) => { if (retEv) ss.give(ret); else ss.loose(dir * 3, 0, 3); }, { kick: true, to: retEv ? ret : null }));
   ret.brain = B.path([land], T0 + 1.5, tLand - 0.05, ret.max);
   line.forEach((a, i) => { a.brain = B.path([S.at(landAl - 4 - (i % 4) * 2, land[1] + (i - 4) * 2.2)], i < 2 ? T0 : tKick + 0.2, tLand + 0.3, a.max * 0.95); });
   rush.forEach((a) => { a.brain = B.path([S.at(-3, a.y * 0.6)], T0 + 0.1, tKick + 0.4, a.max * 0.6); });

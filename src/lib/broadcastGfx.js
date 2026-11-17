@@ -1,7 +1,7 @@
 // The graphics producer: plans every on-screen graphic for a game before it plays, so only one is ever up at a time.
 // Before each snap there's one slot over the scorebug, given out in this order: the drive summary (after a touchdown), the
 // field goal bar, a player's stat card (after a big play, with cooldowns so it isn't every play or the same guy), then the
-// "ball on" tag. Touchdowns get their own show on the scoring play itself.
+// "ball on" tag. Touchdowns and field goals take over the scorebug itself on the scoring play (score).
 const KICKS = new Set(['kickoff', 'xp', 'two', 'fg', 'punt', 'kneel', 'spike', 'penalty']);
 const MAXED = new Set(['plong', 'reclong', 'rlong', 'fglong']);
 const sideOf = (play, id) => (play.stats.some(([pid, k]) => pid === id && ['tkl', 'sacks', 'dint', 'pd', 'tfl', 'ff', 'dtd', 'fr', 'kr', 'krtd', 'kryds', 'pr', 'prtd', 'pryds'].includes(k)) ? play.def : play.off);
@@ -54,16 +54,20 @@ function driveOf(plays, n) {
   return { side, plays: Math.max(1, count), yards: 100 - start, time: `${Math.floor(secs / 60)}:${String(Math.round(secs % 60)).padStart(2, '0')}` };
 }
 
-// plays: the game's play reports. Returns one entry per play: { pre: graphic | null, td: { side, id, how, yards } | null }.
+// plays: the game's play reports. Returns one entry per play: { pre: graphic | null, score: null | { type: 'td' | 'fg', side,
+// ids: [scorer, passer?], how, yards, from, to } } (from/to: that team's points before and after).
 export function planGraphics(plays) {
-  const tot = {}, seen = {}, out = plays.map(() => ({ pre: null, td: null }));
+  const tot = {}, seen = {}, out = plays.map(() => ({ pre: null, score: null }));
   let lastCard = -99, lastKind = null, lastTag = -4, owed = null;
   plays.forEach((p, n) => {
     const next = plays[n + 1];
     if (p.result.td && !['xp', 'two'].includes(p.kind)) {
-      const sc = scorerOf(p); if (sc) out[n].td = { side: sideOf(p, sc.id), id: sc.id, how: sc.how, yards: yardsFor(p, sc.id) };
+      const sc = scorerOf(p), side = sc && sideOf(p, sc.id), passer = sc?.how === 'RECEIVING' ? p.stats.find(([, k]) => k === 'cmp')?.[0] : null;
+      if (sc) out[n].score = { type: 'td', side, ids: [sc.id, passer].filter(Boolean), how: sc.how, yards: yardsFor(p, sc.id), from: p.before.score[side], to: p.after?.score?.[side] ?? p.before.score[side] + 6 };
       if (next && ['xp', 'two'].includes(next.kind) && ['run', 'pass'].includes(p.kind) && !p.result.turnover) out[n + 1].pre = { type: 'drive', ...driveOf(plays, n) };
     }
+    const kick = p.kind === 'fg' && p.events.find((e) => e.type === 'kick');
+    if (kick?.good) out[n].score = { type: 'fg', side: p.off, ids: [kick.by], how: 'FIELD GOAL', yards: kick.dist, from: p.before.score[p.off], to: p.before.score[p.off] + 3 };
     if (p.kind === 'fg' && !out[n].pre) out[n].pre = { type: 'fg', dist: p.events.find((e) => e.type === 'kick')?.dist, by: p.events.find((e) => e.type === 'kick')?.by };
     if (owed && n - owed.at > 3) owed = null;   // too stale to bother
     if (!out[n].pre && owed && !KICKS.has(p.kind)) { out[n].pre = owed; owed = null; lastCard = n; }   // a card that was waiting on a free slot

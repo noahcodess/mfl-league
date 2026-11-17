@@ -105,7 +105,7 @@ function outcome(S, play, tgt, cat, at, tThrow, tCatch, wob) {
     if (res === 'breakup') { ss.loose(-dir * 2, (at[1] >= 0 ? 1 : -1) * 3, 4.5); return; }
     ss.loose(dir * 1.5, (ss.rand() - 0.5) * 2, 3.5);   // drop: it pops off his hands
   }, { ...wob, to: res === 'breakup' && df ? df : tgt }));   // into his hands (or the defender's, knocking it away)
-  if (res === 'breakup' && df) { S.when(tThrow, () => { df.brain = B.meet(at[0] + dir * 0.5, at[1] + (at[1] >= 0 ? 0.7 : -0.7), tCatch - 0.03, df.max * 1.15); }); }
+  if (res === 'breakup' && df) { S.when(tCatch + 0.05, (s) => { s.star = { a: df, at: s.t + 0.1 }; }); S.when(tThrow, () => { df.brain = B.meet(at[0] + dir * 0.5, at[1] + (at[1] >= 0 ? 0.7 : -0.7), tCatch - 0.03, df.max * 1.15); }); }
   if (res !== 'catch') { S.when(tCatch + 0.15, (s) => { tgt.brain = B.to(tgt.x + dir * 1.2, tgt.y, 2); s.setPose(tgt, 'drop', 1.6); }); S.tEnd = tCatch + 0.6; return; }
   S.tEnd = carryPath(S, tgt, at, tCatch, play.result.gain, clamp(at[1] + (S.rand() - 0.5) * 8, -25, 25), play);   // run after the catch, broken tackles and all
   pursueAll(S, tgt, tCatch, []);
@@ -117,6 +117,6 @@ function sack(S, play, qb, e) {
   S.when(Math.max(S.T0 + 1, tS - 1), () => { qb.brain = B.to(spot[0], spot[1], 3); });
   if (by) S.when(Math.max(S.T0 + 0.4, tS - 1.6), () => { by.pose = null; by.brain = timedChase(qb, tS); });
   S.when(tS - 0.2, (s) => s.setPose(by, 'tackle', 0.3));
-  S.when(tS, (s) => { s.knock(qb, 1.8); if (by && dist(by.x, by.y, qb.x, qb.y) < 3) s.knock(by, 1.5); for (const a of s.actors) if (!a.down && a !== by && dist(a.x, a.y, qb.x, qb.y) < 12) { a.pose = null; a.brain = B.gather(s, qb.x, qb.y, 2); } });
+  S.when(tS, (s) => { if (by) s.star = { a: by, at: s.t + 0.2 }; s.knock(qb, 1.8); if (by && dist(by.x, by.y, qb.x, qb.y) < 3) s.knock(by, 1.5); for (const a of s.actors) if (!a.down && a !== by && dist(a.x, a.y, qb.x, qb.y) < 12) { a.pose = null; a.brain = B.gather(s, qb.x, qb.y, 2); } });
   S.tEnd = tS + 0.2;
 }

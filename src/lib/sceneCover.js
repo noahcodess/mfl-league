@@ -24,6 +24,7 @@ export function routeBrain(pts, t0, t1, max) {
   return (a, dt, S) => {
     if (S.t < t0 || done) return;
     if (fresh) { a.hd = null; fresh = false; }
+    a.now = S.t;
     let left = 0; for (let k = i; k < pts.length; k++) left += dist(k === i ? a.x : pts[k - 1][0], k === i ? a.y : pts[k - 1][1], pts[k][0], pts[k][1]);
     const want = Math.min(max, Math.max(0.5, left / Math.max(0.05, t1 - S.t)));
     if (runStep(a, pts[i][0], pts[i][1], want, dt, routeSkill(a.p)) < 0.35) { if (i < pts.length - 1) i++; else done = true; }

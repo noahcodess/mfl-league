@@ -157,12 +157,14 @@ export function finishCarry(S, carrier, end, tEnd, { tk = null, td = false, oob 
     if (oob) {
       carrier.brain = B.to(carrier.x + runDir * 1.5, carrier.y > 0 ? 28.5 : -28.5, 4.5);
       const tk2 = s.tackler;   // driven out: the shove, and the defender's momentum carries him over the line too
-      if (forced && tk2 && dist(tk2.x, tk2.y, carrier.x, carrier.y) < 3.5) { s.setPose(tk2, 'tackle', 0.5); s.setPose(carrier, 'stumble', 0.8); tk2.oobOK = true; tk2.brain = B.to(carrier.x + runDir * 0.8, carrier.y > 0 ? 27.6 : -27.6, 4); }
+      if (forced && tk2 && dist(tk2.x, tk2.y, carrier.x, carrier.y) < 3.5) { s.star = { a: tk2, at: s.t + 0.3 }; s.setPose(tk2, 'tackle', 0.5); s.setPose(carrier, 'stumble', 0.8); tk2.oobOK = true; tk2.brain = B.to(carrier.x + runDir * 0.8, carrier.y > 0 ? 27.6 : -27.6, 4); }
       return;
     }
     // contact only: if nobody has a hand on him yet, he keeps stumbling forward until someone does (or he loses his feet)
     const wrapUp = (ss) => {
       ss.knock(carrier, 1.7); if (ss.tackler && dist(ss.tackler.x, ss.tackler.y, carrier.x, carrier.y) < 2.4) ss.knock(ss.tackler, 1.5);
+      const by = ss.tackler || ss.actors.filter((x) => x.side !== carrier.side && !x.down).sort((m, n) => dist(m.x, m.y, carrier.x, carrier.y) - dist(n.x, n.y, carrier.x, carrier.y))[0];
+      if (by) ss.star = { a: by, at: ss.t + 0.25 };   // the ring goes to the man who made the tackle
       if (fumble) { ss.loose(runDir * 3, (ss.rand() - 0.5) * 4, 4); const rec = ss.by[fumble.recoveredBy]; if (rec) ss.when(ss.t + 0.5, () => { rec.down = false; rec.brain = B.meet(ss.ball.x, ss.ball.y, ss.t + 0.6, rec.max, (r, s3) => { ss.knock(r); s3.give(r); }); }); }
       for (const a of ss.actors) if (!a.down && a !== carrier && a !== ss.tackler) { a.pose = null; a.brain = dist(a.x, a.y, carrier.x, carrier.y) < 16 ? B.gather(ss, carrier.x, carrier.y, 2.2) : B.to(a.x + (carrier.x - a.x) * 0.25, a.y + (carrier.y - a.y) * 0.25, 2); }
     };

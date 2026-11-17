@@ -3,7 +3,7 @@
 // the motion. Linemen and anyone squared up to an opponent keep facing their man however they get shoved.
 const SIDE_ONLY = ['olset', 'dlset', 'qbset', 'rbset', 'wrset', 'cbset', 'lbset', 'qbready', 'qbdrop', 'throw', 'block', 'anchor', 'driven', 'drive', 'swim', 'rush',
   'reach', 'drop', 'cut', 'juke', 'stiff', 'kick', 'kneel', 'backpedal', 'tackle', 'wrap', 'layout', 'stumble', 'pump',
-  'catch', 'hands', 'shoulder', 'highpoint', 'onehand', 'scoop', 'contest', 'swat', 'stretch'];
+  'catch', 'hands', 'shoulder', 'highpoint', 'onehand', 'scoop', 'contest', 'swat', 'stretch', 'plant', 'plantc'];
 const PREFER = { cheer: 'front', ...Object.fromEntries(SIDE_ONLY.map((k) => [k, 'side'])) };
 const SQUARE = new Set(['olset', 'dlset', 'qbset', 'rbset', 'wrset', 'cbset', 'lbset', 'block', 'anchor', 'driven', 'drive', 'swim', 'rush', 'throw', 'pump', 'kick', 'stiff', 'qbready', 'qbdrop', 'backpedal']);
 const SPIN = [['side', 1], ['front', 1], ['side', -1], ['back', 1]];
@@ -19,6 +19,7 @@ export function lookAt(a, t, S, holder) {
   else if (a.pose === 'spin') pose = 'spin';
   else if (a.pose) pose = a.pose;
   else if (a.qb && mine && t > S.T0 + 0.15) pose = moving ? 'qbdrop' : 'qbready';   // ball up by his ear in the pocket
+  else if (moving && a.plantAt != null && t - a.plantAt < a.plantDur) pose = mine ? 'plantc' : 'plant';   // planting to cut
   else if (back) pose = 'backpedal';
   else if (moving) pose = mine ? 'carry' : 'run';
   else pose = t < S.T0 ? a.idle : mine ? 'carry' : 'stand';
@@ -36,6 +37,7 @@ export function lookAt(a, t, S, holder) {
   else if (pose === 'pump') frame = t - a.poseAt > 0.18 ? 1 : 0;
   else if (pose === 'hands' || pose === 'shoulder') frame = moving ? Math.floor(t * (4 + speed * 0.6) + b.off * 2) & 1 : 0;   // legs still running through the catch
   else if (pose === 'swat') frame = t - a.poseAt > 0.14 ? 1 : 0;
+  else if (pose === 'plant' || pose === 'plantc') frame = a.plantFoot > 0 ? 1 : 0;   // cutting toward the camera plants the far foot
   else if (pose === 'throw') { const u = (t - a.poseAt) / 0.6; frame = u < 0.45 ? 0 : u < 0.7 ? 1 : 2; }
   else if (pose === 'kick' || pose === 'drop') frame = t - a.poseAt > (pose === 'kick' ? 0.15 : 0.5) ? 1 : 0;
   a.vis = { view, face };

@@ -30,6 +30,8 @@ export function runStep(a, tx, ty, want, dt, sk = null) {   // sk: his cutting s
   const ux = dx / d, uy = dy / d, cut = sk ?? cutSkill(a.p);
   if (!a.hd) { const v = Math.hypot(a.vx || 0, a.vy || 0); a.hd = v > 0.5 ? [a.vx / v, a.vy / v] : [ux, uy]; a.sp = Math.min(v, a.max); }
   const ang = Math.acos(clamp(a.hd[0] * ux + a.hd[1] * uy, -1, 1)), turn = (4.2 + 6.5 * cut) * dt;
+  // a real cut: he plants the outside foot for a beat (quicker for a better cutter), then drives off it (scenePose shows it)
+  if (a.now != null && ang > 0.55 && a.sp > 3 && !(a.plantAt > a.now - 0.45)) { a.plantAt = a.now; a.plantDur = 0.34 - 0.17 * cut; a.plantFoot = uy - a.hd[1] >= 0 ? 1 : -1; }
   if (ang <= turn || d < 0.6) a.hd = [ux, uy];
   else { const sg = a.hd[0] * uy - a.hd[1] * ux >= 0 ? 1 : -1, c = Math.cos(turn * sg), sn = Math.sin(turn * sg); a.hd = [a.hd[0] * c - a.hd[1] * sn, a.hd[0] * sn + a.hd[1] * c]; }
   const cap = want * (1 - (0.55 - 0.4 * cut) * Math.min(1, ang / 1.57));   // a 90-degree cut: the best keep 85%, the worst 45%
@@ -61,6 +63,7 @@ export const B = {
     return (a, dt, S) => {
       if (S.t < t0 || done) return;
       if (fresh) { a.hd = null; fresh = false; }   // momentum starts from how he's moving right now
+      a.now = S.t;
       if (Math.abs(pts[pts.length - 1][1]) >= 26) a.oobOK = true;   // this run is meant to end out of bounds
       let left = 0; for (let k = i; k < pts.length; k++) left += dist(k === i ? a.x : pts[k - 1][0], k === i ? a.y : pts[k - 1][1], pts[k][0], pts[k][1]);
       const speed = Math.min(max, (left + 0.6) / Math.max(0.05, t1 - S.t));
