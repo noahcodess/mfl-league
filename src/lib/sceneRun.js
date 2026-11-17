@@ -26,8 +26,9 @@ export function buildRun(S, lineups, gainOverride) {
     if (!keeper) { s.give(c); qb.brain = B.to(qb.x - S.dir * 1.5, qb.y - side * 4, 4.5); }   // the fake
     else if (rb) rb.brain = B.to(rb.x + S.dir * 4, rb.y - side * 2, rb.max * 0.8);             // the back carries out the fake
   });
-  const holeLat = outside ? side * (6 + S.rand() * 3) : side * (0.8 + S.rand() * 1.8), endLat = holeLat + (S.rand() - 0.5) * (outside ? 8 : 5);
-  const from = gain > 0.6 ? S.at(Math.min(0.6, gain), holeLat) : mesh;
+  const holeLat = play.result.oob ? side * (15 + S.rand() * 4) : outside ? side * (6 + S.rand() * 3) : side * (0.8 + S.rand() * 1.8),   // a run that ends out of bounds bounced to the edge first
+    endLat = holeLat + (S.rand() - 0.5) * (outside ? 8 : 5);
+  const from = gain > 0.6 ? S.at(play.result.oob ? -0.5 : Math.min(0.6, gain), holeLat) : mesh;
   S.when(tMesh, () => { c.brain = B.path([from], tMesh, tMesh + dist(mesh[0], mesh[1], from[0], from[1]) / (c.max * 0.85), c.max); });
   const t1 = tMesh + dist(mesh[0], mesh[1], from[0], from[1]) / (c.max * 0.85);
   S.tEnd = carryPath(S, c, from, t1, gain, endLat, play);

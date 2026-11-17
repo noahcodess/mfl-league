@@ -6,23 +6,23 @@ import IntroMatchup from './IntroMatchup.jsx';
 import IntroPlayer from './IntroPlayer.jsx';
 import IntroTape from './IntroTape.jsx';
 import IntroCrowd from './IntroCrowd.jsx';
-import IntroLongShot from './IntroLongShot.jsx';
 import LiveGame from './LiveGame.jsx';
 import { getTeam } from '../data/teams.js';
 import { getPlayers } from '../data/players.js';
 import { broadcastFor } from '../data/broadcast.js';
 import { useGameKits } from '../data/gameKits.js';
+import { loadLineups } from '../data/gameLineups.js';
 import { useStadiums } from '../data/stadiums.js';
 import { playerSpotlight, gameWeather } from '../lib/introFacts.js';
 import { records } from '../lib/seasonStats.js';
 import { teamStats } from '../lib/teamRanks.js';
 import { STING_MID } from '../lib/pixelSwarm.js';
 
-// Day games (~26s): transition, network logo, the two teams with three players each, transition, the crowd, transition, then a
-// long shot of the field with the weather, who receives, and the scorebug. Primetime (~40s) adds the player to watch and a
-// tale of the tape. Every shot fades out before the next one. [shot, how long in ms]
-const DAY = [['sting'], ['open', 5000], ['matchup', 8600], ['sting'], ['crowd', 5000], ['sting'], ['field', 6500], ['game']];
-const PRIME = [['sting'], ['open', 5500], ['matchup', 8800], ['player', 6800], ['tape', 7000], ['sting'], ['crowd', 5000], ['sting'], ['field', 6500], ['game']];
+// Day games (~20s): transition, network logo, the two teams with three players each, transition, the crowd, then the program's
+// transition cuts straight into the opening kickoff (the camera pushes in and the scorebug builds in as the ball is kicked).
+// Primetime (~34s) adds the player to watch and a tale of the tape. Every shot fades out before the next one. [shot, how long in ms]
+const DAY = [['sting'], ['open', 5000], ['matchup', 8600], ['sting'], ['crowd', 5000], ['sting'], ['game']];
+const PRIME = [['sting'], ['open', 5500], ['matchup', 8800], ['player', 6800], ['tape', 7000], ['sting'], ['crowd', 5000], ['sting'], ['game']];
 const FADE = 450;
 
 // The full-screen broadcast: the intro, then straight into the game from the opening kickoff (Skip intro jumps there).
@@ -35,6 +35,7 @@ export default function GameIntro({ game, season, kick, st, onClose, onReplay })
   const stats = useMemo(() => teamStats(before), [before]);
   const spot = useMemo(() => playerSpotlight(game, season, getPlayers), [game, season]);
   const weather = useMemo(() => gameWeather(game, bc.prime), [game, bc.prime]);
+  useEffect(() => { loadLineups([home.id, away.id]).catch(() => {}); }, [home.id, away.id]);   // get the starters ready during the intro
   const steps = useMemo(() => (bc.prime ? PRIME : DAY).filter(([s]) => s !== 'player' || spot), [bc.prime, spot]);
   const [i, setI] = useState(0), [scene, setScene] = useState(null), [leaving, setLeaving] = useState(false), [sting, setSting] = useState(0);
   useEffect(() => {
@@ -58,7 +59,6 @@ export default function GameIntro({ game, season, kick, st, onClose, onReplay })
           {scene === 'player' && spot && <IntroPlayer bc={bc} spot={spot} team={spotTeam} kit={spotTeam.id === home.id ? kits?.home : kits?.away} />}
           {scene === 'tape' && <IntroTape home={home} away={away} rec={rec} stats={stats} />}
           {scene === 'crowd' && <IntroCrowd bc={bc} home={home} stadium={stadium} weather={weather} gameId={game.id} dress={kits?.fans} theme={kits?.fans ? kits.home.name : ''} />}
-          {scene === 'field' && <IntroLongShot bc={bc} home={home} away={away} stadium={stadium} weather={weather} kick={kick} st={st} rec={rec} crowd={kits?.fans || 'normal'} />}
           {scene === 'game' && <LiveGame game={game} home={home} away={away} kick={kick} />}
         </div>
         {sting > 0 && <NetStinger key={sting} net={bc.net} onDone={() => setSting(0)} />}

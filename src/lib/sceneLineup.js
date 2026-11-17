@@ -120,13 +120,14 @@ export function pursueAll(S, carrier, t, except = []) {
 }
 
 // The end of a carry: the carrier reaches `end` at tEnd and is tackled (or scores, or steps out). tk: who the engine says made it.
-export function finishCarry(S, carrier, end, tEnd, { tk = null, td = false, oob = false, fumble = null } = {}) {
+export function finishCarry(S, carrier, end, tEnd, { tk = null, td = false, oob = false, forced = false, fumble = null } = {}) {
   const runDir = Math.sign(end[0] - carrier.x) || S.dir, hit = { done: false };
-  if (!td && !oob) S.when(Math.max(S.T0, tEnd - 2.2), (s) => { // pick whoever can really get there (closing burst included)
+  if (!td && (!oob || forced)) S.when(Math.max(S.T0, tEnd - 2.2), (s) => { // pick whoever can really get there (closing burst included)
     const can = (a) => a && !a.down && dist(a.x, a.y, end[0], end[1]) <= a.max * 1.2 * (tEnd - s.t) + 2.5;
     const best = can(tk) ? tk : s.actors.filter((a) => a.side !== carrier.side && !a.down && a !== carrier).sort((m, n) => dist(m.x, m.y, end[0], end[1]) - dist(n.x, n.y, end[0], end[1]))[0] || tk;
     if (!best) return;
-    best.pose = null; best.blockedUntil = 0; best.brain = B.meet(end[0] + runDir * 0.7, end[1] + 0.2, tEnd, best.max * 1.25); s.tackler = best;
+    const inside = oob ? -Math.sign(end[1]) * 3.2 : 0.2;   // driving him out: he comes at him from the inside
+    best.pose = null; best.blockedUntil = 0; best.brain = B.meet(end[0] + runDir * (oob ? 0.2 : 0.7), end[1] + inside, oob ? tEnd - 0.2 : tEnd, best.max * 1.25); s.tackler = best;
   });
   // the last moment: a tackler on top of him wraps him up, one a few yards off lays out in a dive, and if nobody is close
   // enough the runner stumbles (tripped up, losing his feet) until someone actually gets a hand on him
@@ -143,7 +144,12 @@ export function finishCarry(S, carrier, end, tEnd, { tk = null, td = false, oob 
       for (const a of s.actors) if (a !== carrier && a.side === carrier.side && dist(a.x, a.y, carrier.x, carrier.y) < 22) { a.pose = null; a.brain = B.gather(s, carrier.x, carrier.y, 2); s.when(s.t + 1.2, () => s.setPose(a, 'cheer')); }
       return;
     }
-    if (oob) { carrier.brain = B.to(carrier.x + runDir * 1.5, carrier.y > 0 ? 28.5 : -28.5, 4.5); return; }
+    if (oob) {
+      carrier.brain = B.to(carrier.x + runDir * 1.5, carrier.y > 0 ? 28.5 : -28.5, 4.5);
+      const tk2 = s.tackler;   // driven out: the shove, and the defender's momentum carries him over the line too
+      if (forced && tk2 && dist(tk2.x, tk2.y, carrier.x, carrier.y) < 3.5) { s.setPose(tk2, 'tackle', 0.5); s.setPose(carrier, 'stumble', 0.8); tk2.oobOK = true; tk2.brain = B.to(carrier.x + runDir * 0.8, carrier.y > 0 ? 27.6 : -27.6, 4); }
+      return;
+    }
     // contact only: if nobody has a hand on him yet, he keeps stumbling forward until someone does (or he loses his feet)
     const wrapUp = (ss) => {
       ss.knock(carrier, 1.7); if (ss.tackler && dist(ss.tackler.x, ss.tackler.y, carrier.x, carrier.y) < 2.4) ss.knock(ss.tackler, 1.5);

@@ -21,7 +21,7 @@ function runBack(S, ret, from, end, tCatch, cover, blockers, td) {
 export function buildKickoff(S, lineups) {
   const play = S.play, kick = lineups[play.off].kickTeams.kickoff, rec = lineups[play.def].kickTeams.kickReturn, retEv = ev(play, 'ret')[0];
   const from = play.before.ballOn > 0 ? 35 : 35; frame(S, play, play.off === 'away' ? from : 100 - from); S.lines = null;
-  const dir = S.dir, T0 = (S.T0 = 3.2); S.tee = { x: S.los, y: 0, t1: T0 };
+  const dir = S.dir, T0 = (S.T0 = play.n === 1 ? 4.2 : 3.2); S.tee = { x: S.los, y: 0, t1: T0 };   // the opening kickoff holds a second longer while the camera pushes in
   const K = S.add(kick.kicker, play.off, ...S.at(-9, -1.5), dir), cover = kick.players.slice(1).map((p, i) => S.add(p, play.off, ...S.at(-6, row(kick.players.length - 1)[i]), dir));
   const ret = S.add(rec.returner, play.def, ...S.at(60, 0), -dir), blockers = rec.players.slice(1).map((p, i) => S.add(p, play.def, ...S.at(i < 5 ? 12 : 35, row(5, 30)[i % 5]), -dir, 'lbset'));
   S.ball.x = S.los; S.ball.y = 0; S.ball.h = 0.22;

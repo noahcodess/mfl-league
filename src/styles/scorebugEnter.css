@@ -1,0 +1,76 @@
+/* The scorebug building in as the opening kickoff is struck, in each program's own way. Only "from" frames are set, so every
+   piece glides to exactly how it normally looks. Nothing snaps: everything slides, wipes, fades or draws in. */
+@keyframes sbe-wipe { from { clip-path: inset(0 50% 0 50%); opacity: .4; } }
+@keyframes sbe-box { from { clip-path: inset(100% 0 0 0); transform: translateY(.5em); } }
+@keyframes sbe-glow { 35% { filter: brightness(1.45); box-shadow: inset 0 0 1.1em #ffffffcc; } }
+@keyframes sbe-fade { from { opacity: 0; transform: scale(.85); } }
+@keyframes sbe-in { from { opacity: 0; } }
+@keyframes sbe-l { from { opacity: 0; transform: translateX(-1.2em); } }
+@keyframes sbe-r { from { opacity: 0; transform: translateX(1.2em); } }
+@keyframes sbe-down { from { opacity: 0; transform: translateY(-1.3em); } }
+@keyframes sbe-up { from { opacity: 0; transform: translateY(.8em); } }
+@keyframes sbe-glint { from { background-position: 160% 0; opacity: 1; } 85% { opacity: 1; } to { background-position: -60% 0; opacity: 0; } }
+@keyframes sbe-soft { from { opacity: 0; transform: scale(.93); filter: blur(.35em); } }
+@keyframes sbe-grow { from { opacity: 0; transform: scaleX(.22); } }
+@keyframes sbe-pop { from { opacity: 0; transform: translateY(.9em) scale(.75); } }
+@keyframes sbe-ring { from { --pc: 0; } }
+@keyframes sbe-circle { from { opacity: 0; transform: scale(.3) rotate(-60deg); } }
+@keyframes sbe-tnf-glow { 45% { box-shadow: 0 0 0 .18em #fff, 0 0 1.5em .25em #4a9cffcc, 0 .4em 1em #0009; } }
+@keyframes sbe-snf-down { from { opacity: 0; transform: translate(-50%, -1em); } }
+
+.sb-enter { --e: cubic-bezier(.22, .9, .3, 1); }
+/* a light sweep across the finished bug */
+.sb-enter .sb-bar, .sb-enter .tnf { position: relative; }
+.sb-enter .sb-bar::after, .sb-enter .tnf::after { content: ''; position: absolute; inset: 0; z-index: 5; pointer-events: none; border-radius: inherit;
+  background: linear-gradient(100deg, #fff0 42%, #ffffff55 50%, #fff0 58%) no-repeat; background-size: 260% 100%; animation: sbe-glint .9s ease-in-out 1.05s both; }
+
+/* CBS: clean boxes. The bar opens from the middle, each box rises out of its own floor with a soft glow, the logos fade in last */
+.sb-enter.sb-cbs .sb-bar { animation: sbe-wipe .5s var(--e) both; }
+.sb-enter.sb-cbs .sb-net { --d: .15s; } .sb-enter.sb-cbs .sb-team.away { --d: .25s; } .sb-enter.sb-cbs .sb-team.home { --d: .34s; }
+.sb-enter.sb-cbs .sb-time { --d: .43s; } .sb-enter.sb-cbs .sb-down { --d: .52s; }
+.sb-enter.sb-cbs :is(.sb-net, .sb-team, .sb-time, .sb-down) { animation: sbe-box .55s var(--e) var(--d) both, sbe-glow .9s ease-out calc(var(--d) + .25s) both; }
+.sb-enter.sb-cbs .sb-logo { animation: sbe-fade .55s var(--e) .8s both; }
+.sb-enter.sb-cbs :is(.sb-id, .sb-score) { animation: sbe-in .45s ease-out .9s both; }
+.sb-enter.sb-cbs .sb-bar::after { background-image: linear-gradient(100deg, #fff0 42%, #9fc0ff66 50%, #fff0 58%); }
+
+/* FOX: the black bar wipes open from the middle, the teams slide in from the edges, the gold clock drops in, logos settle */
+.sb-enter.sb-fox .sb-bar { animation: sbe-wipe .5s var(--e) both; }
+.sb-enter.sb-fox .sb-net { animation: sbe-in .4s ease-out .2s both; }
+.sb-enter.sb-fox .sb-team.away { animation: sbe-l .5s var(--e) .28s both; }
+.sb-enter.sb-fox .sb-team.home { animation: sbe-r .5s var(--e) .28s both; }
+.sb-enter.sb-fox .sb-time { animation: sbe-down .55s var(--e) .45s both; }
+.sb-enter.sb-fox .sb-down { animation: sbe-r .5s var(--e) .58s both; }
+.sb-enter.sb-fox .sb-logo { animation: sbe-down .5s var(--e) .7s both; }
+.sb-enter.sb-fox .sb-bar::after { background-image: linear-gradient(100deg, #fff0 42%, #ffd34a66 50%, #fff0 58%); }
+
+/* ESPN: the angled slate slides in, the panels follow one after another, the red clock stretches open, then a red glint */
+.sb-enter.sb-espn .sb-bar { animation: sbe-l .55s var(--e) both; }
+.sb-enter.sb-espn .sb-net { animation: sbe-in .4s ease-out .2s both; }
+.sb-enter.sb-espn .sb-team.away { animation: sbe-up .5s var(--e) .28s both; }
+.sb-enter.sb-espn .sb-team.home { animation: sbe-up .5s var(--e) .36s both; }
+.sb-enter.sb-espn .sb-time { animation: sbe-grow .55s var(--e) .46s both; }
+.sb-enter.sb-espn .sb-down { animation: sbe-in .45s ease-out .6s both; }
+.sb-enter.sb-espn .sb-logo { animation: sbe-fade .5s var(--e) .7s both; }
+.sb-enter.sb-espn .sb-bar::after { background-image: linear-gradient(100deg, #fff0 42%, #ff6a5e77 50%, #fff0 58%); }
+
+/* NBC and any other bar: the bar comes into focus, then the pieces fade up in order */
+.sb-enter:not(.sb-cbs, .sb-fox, .sb-espn, .sb-tnf, .sb-snf) .sb-bar { animation: sbe-soft .6s var(--e) both; }
+.sb-enter:not(.sb-cbs, .sb-fox, .sb-espn, .sb-tnf, .sb-snf) :is(.sb-team, .sb-time, .sb-down) { animation: sbe-up .5s var(--e) .3s both; }
+.sb-enter:not(.sb-cbs, .sb-fox, .sb-espn, .sb-tnf, .sb-snf) .sb-logo { animation: sbe-fade .5s var(--e) .65s both; }
+
+/* TNF: the rounded box stretches open from the middle with a blue glow, the team colors fill in, the logos rise up over the edge */
+.sb-enter .tnf { animation: sbe-grow .6s var(--e) both, sbe-tnf-glow 1.1s ease-out .35s both; }
+.sb-enter .tnf-mid > * { animation: sbe-in .45s ease-out .45s both; }
+.sb-enter .tnf-side { animation: sbe-in .45s ease-out .3s both; }
+.sb-enter .tnf-logo { animation: sbe-pop .6s var(--e) .6s both; }
+.sb-enter .tnf-side.home .tnf-logo { animation-delay: .68s; }
+.sb-enter :is(.tnf-id, .tnf-score) { animation: sbe-in .45s ease-out .82s both; }
+
+/* SNF: the circle spins in and its ring draws around, the plates slide out from behind it, then logos, scores and the down tag */
+.sb-enter .snf-circle { animation: sbe-circle .6s var(--e) both; }
+.sb-enter .snf-circle::before { animation: sbe-ring .9s ease-in-out .3s both; }
+.sb-enter .snf-side.away { animation: sbe-r .55s var(--e) .35s both; }
+.sb-enter .snf-side.home { animation: sbe-l .55s var(--e) .35s both; }
+.sb-enter .snf-logo { animation: sbe-fade .5s var(--e) .7s both; }
+.sb-enter :is(.snf-id, .snf-score) { animation: sbe-in .45s ease-out .82s both; }
+.sb-enter .snf-down { animation: sbe-snf-down .5s var(--e) .95s both; }

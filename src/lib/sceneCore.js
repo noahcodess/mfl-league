@@ -19,6 +19,26 @@ export function stepTo(a, tx, ty, speed, dt) {
   return d - s;
 }
 
+// How well he changes direction, 0 to 1. There's no Change of Direction rating, so it's his Agility (WR, CB, linemen) or
+// Elusiveness (RB), and for everyone else his Speed.
+const cutSkill = (p) => clamp(((p?.r?.agility ?? p?.r?.elusiveness ?? rating(p, 'speed')) - 40) / 59, 0, 1);
+// A ball carrier's step with momentum: he can only turn so fast, and a cut costs him speed (a sharp one more than a slight
+// one). The best cutters keep most of it, but everybody slows down some. Then he speeds back up at his Acceleration.
+export function runStep(a, tx, ty, want, dt) {
+  const dx = tx - a.x, dy = ty - a.y, d = Math.hypot(dx, dy);
+  if (d < 1e-4) return 0;
+  const ux = dx / d, uy = dy / d, cut = cutSkill(a.p);
+  if (!a.hd) { const v = Math.hypot(a.vx || 0, a.vy || 0); a.hd = v > 0.5 ? [a.vx / v, a.vy / v] : [ux, uy]; a.sp = Math.min(v, a.max); }
+  const ang = Math.acos(clamp(a.hd[0] * ux + a.hd[1] * uy, -1, 1)), turn = (4.2 + 6.5 * cut) * dt;
+  if (ang <= turn || d < 0.6) a.hd = [ux, uy];
+  else { const sg = a.hd[0] * uy - a.hd[1] * ux >= 0 ? 1 : -1, c = Math.cos(turn * sg), sn = Math.sin(turn * sg); a.hd = [a.hd[0] * c - a.hd[1] * sn, a.hd[0] * sn + a.hd[1] * c]; }
+  const cap = want * (1 - (0.55 - 0.4 * cut) * Math.min(1, ang / 1.57));   // a 90-degree cut: the best keep 85%, the worst 45%
+  const acc = 5 + 5 * clamp((rating(a.p, 'acceleration') - 40) / 59, 0, 1);
+  a.sp = a.sp > cap ? Math.max(cap, a.sp - 16 * dt) : Math.min(cap, a.sp + acc * dt);
+  const st = Math.min(d, Math.max(0.3, a.sp) * dt); a.x += a.hd[0] * st; a.y += a.hd[1] * st;
+  return Math.hypot(tx - a.x, ty - a.y);
+}
+
 // Brains: functions (a, dt, S) run every frame.
 export const B = {
   idle: () => () => {},
@@ -37,9 +57,10 @@ export const B = {
   // of him (away from the sideline unless he's headed out of bounds). A defender off to the side or behind him is ignored:
   // with the angle and the speed he just runs by. The tackler waiting at the end of the run isn't dodged.
   carry: (pts, t0, t1, max) => {
-    let i = 0, done = false;
+    let i = 0, done = false, fresh = true;
     return (a, dt, S) => {
       if (S.t < t0 || done) return;
+      if (fresh) { a.hd = null; fresh = false; }   // momentum starts from how he's moving right now
       if (Math.abs(pts[pts.length - 1][1]) >= 26) a.oobOK = true;   // this run is meant to end out of bounds
       let left = 0; for (let k = i; k < pts.length; k++) left += dist(k === i ? a.x : pts[k - 1][0], k === i ? a.y : pts[k - 1][1], pts[k][0], pts[k][1]);
       const speed = Math.min(max, (left + 0.6) / Math.max(0.05, t1 - S.t));
@@ -50,14 +71,14 @@ export const B = {
           if (d.side === a.side || d.down || d === S.tackler) continue;
           const rx = d.x - a.x, ry = d.y - a.y, ahead = rx * ux + ry * uy, side = rx * -uy + ry * ux;
           if (ahead > 0.2 && ahead < 3.5 && Math.abs(side) < 1.7) {   // squared up in front: cut around him
-            const away = side > 0 ? -1 : 1, edge = Math.abs(a.y + away * 2) > 24.5 && Math.abs(ty) < 26 ? -away : away, clear = 1.9 - Math.abs(side) * 0.5;
+            const away = side > 0 ? -1 : 1, edge = !a.oobOK && Math.abs(a.y + away * 2) > 19 && Math.sign(away) === Math.sign(a.y) ? -away : away, clear = 1.9 - Math.abs(side) * 0.5;   // near the sideline he cuts inside
             tx = a.x + ux * 2.4 + -uy * edge * clear; ty = a.y + uy * 2.4 + ux * edge * clear;   // a hard cut around him, then back on line
             break;
           }
         }
       }
-      if (Math.abs(pts[pts.length - 1][1]) < 26) ty = clamp(ty, -25.6, 25.6);   // stays in bounds unless the play goes out
-      if (stepTo(a, tx, ty, Math.max(speed, 0.5), dt) <= 0.03 || dist(a.x, a.y, pts[i][0], pts[i][1]) < 0.35) { if (i < pts.length - 1) i++; else done = true; }
+      if (Math.abs(pts[pts.length - 1][1]) < 26) ty = clamp(ty, -24.8, 24.8);   // stays in bounds unless the play goes out
+      if (runStep(a, tx, ty, Math.max(speed, 0.5), dt) <= 0.03 || dist(a.x, a.y, pts[i][0], pts[i][1]) < 0.35) { if (i < pts.length - 1) i++; else done = true; }
     };
   },
   pursue: (target, speed, stop = 1) => (a, dt) => { if (dist(a.x, a.y, target.x, target.y) > stop) stepTo(a, target.x + (target.vx || 0) * 0.25, target.y + (target.vy || 0) * 0.25, speed, dt); },

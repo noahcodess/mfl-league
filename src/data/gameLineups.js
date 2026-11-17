@@ -11,7 +11,16 @@ import { buildKickTeams } from '../lib/simKickTeams.js';
 
 const chunks = (a, n) => a.length ? [a.slice(0, n), ...chunks(a.slice(n), n)] : [];
 
-export async function loadLineups(teamIds) {
+// A fresh load is kept for 90 seconds, so the intro can start loading the starters and the game picks them up with no wait.
+const recent = new Map();
+export function loadLineups(teamIds) {
+  const key = teamIds.join('|'), hit = recent.get(key);
+  if (hit && Date.now() - hit.at < 90000) return hit.p;
+  const p = fetchLineups(teamIds); recent.set(key, { at: Date.now(), p }); p.catch(() => recent.delete(key));
+  return p;
+}
+
+async function fetchLineups(teamIds) {
   const rosters = teamIds.map((id) => getPlayers(id)), ids = rosters.flat().map((p) => p.id), attrs = {}, inj = {}, coaches = {};
   if (!DEMO) {
     await Promise.all(chunks(ids, 150).flatMap((part) => [

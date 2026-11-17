@@ -31,7 +31,7 @@ export function buildPass(S, lineups) {
     const r = A[rk]; if (!r) continue;
     const info = read[r.id], mine = r === tgt, l0 = r.y, a0 = S.along(r);
     const pts = routeFor(play.call?.concept, rk, l0, mine ? thr.air : info?.depth ?? depths[rk], play.n + rk.length).map(([al, lat]) => S.at(al, lat));   // the play's real route
-    if (mine && play.result.oob) { const e = pts[pts.length - 1], sg = Math.sign(l0 || 1); e[1] = sg * Math.max(sg * e[1], 18 + S.rand() * 4); }   // a catch that goes out of bounds was made near the sideline
+    if (mine && play.result.oob) { const e = pts[pts.length - 1], sg = Math.sign(l0 || 1); e[1] = sg * Math.max(sg * e[1], 22.4 + S.rand() * 1.8); }   // a catch that goes out of bounds was made near the sideline
     let L = dist(r.x, r.y, pts[0][0], pts[0][1]); for (let i = 1; i < pts.length; i++) L += dist(pts[i - 1][0], pts[i - 1][1], pts[i][0], pts[i][1]);
     const go0 = T0 + getGoing(r.p), arrive = go0 + L / (r.max * 0.95), toBreak = dist(r.x, r.y, pts[0][0], pts[0][1]) / (r.max * 0.95);
     if (mine) {

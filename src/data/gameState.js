@@ -64,6 +64,7 @@ const ORD = ['1st', '2nd', '3rd', '4th'];
 export function downText(st) {
   if (!st || st.status === 'pregame') return 'Pregame';
   if (st.status === 'final') return 'Final';
+  if (st.try) return st.try;   // an extra point or two-point try
   if (!st.down) return 'Kickoff';
   const goal = st.ball_on != null && 100 - st.ball_on <= st.togo;
   return `${ORD[st.down - 1]} & ${goal ? 'Goal' : st.togo}`;

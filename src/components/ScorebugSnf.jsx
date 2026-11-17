@@ -1,5 +1,6 @@
 import React from 'react';
 import ScoreNum from './ScoreNum.jsx';
+import ScorebugCard from './ScorebugCard.jsx';
 import { clockText } from '../data/gameState.js';
 import { recordText } from '../lib/seasonStats.js';
 
@@ -7,7 +8,7 @@ import { recordText } from '../lib/seasonStats.js';
 // edges and a peacock stripe. Big logos at the ends, abbreviation and record, score boxes with timeouts under them; the circle
 // holds the quarter, the game clock and the play clock, and its outline IS the play clock: the ring empties as it ticks down
 // (red at 5 seconds). Down and distance hangs under the circle; a silver pointer on the circle points at who has the ball.
-export default function ScorebugSnf({ home, away, st, rec = {}, pop, className = '', left, down, quarter }) {
+export default function ScorebugSnf({ home, away, st, rec = {}, pop, card, className = '', left, down, quarter }) {
   const pc = st?.play_clock ?? 40;
   const side = (t, s) => (
     <div className={`snf-side ${s}${st?.possession === t.id ? ' ball' : ''}`} style={{ '--tc': t.color }}>
@@ -15,6 +16,7 @@ export default function ScorebugSnf({ home, away, st, rec = {}, pop, className =
       <img className="snf-logo" src={t.logo} alt="" />
       <div className="snf-id"><b>{t.code}</b><small>{recordText(rec[t.id])}</small></div>
       <div className="snf-score"><ScoreNum value={st?.[`${s}_score`] ?? 0} /><span className="sb-tos">{[0, 1, 2].map((i) => <i key={i} className={i < (st?.[`${s}_timeouts`] ?? 3) ? 'on' : ''} />)}</span></div>
+      {card?.side === s && <ScorebugCard card={card} />}
     </div>
   );
   return (

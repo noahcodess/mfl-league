@@ -27,12 +27,12 @@ export function tempo(G) {
 // Does the ball carrier end up out of bounds? base: how often this kind of play ends there in normal football (rare:
 // runners fight to stay in bounds; outside runs and scrambles a bit more than catches). A runner who wants the clock stopped heads for the sideline and gives up
 // a yard to get there (smarter, more aware players find it more often); one killing the clock cuts back inside and takes
-// the hit. Returns { oob, gain }.
+// the hit. Returns { oob, gain, forced } (forced: he was driven out by a defender, not stepping out on purpose).
 export function outOfBounds(G, carrier, base, gain) {
   const goal = clockGoal(G), r = carrier?.r || {}, iq = ((r.vision ?? r.awareness ?? r.route_running ?? 60) - 60) / 100;
   if (goal === 'stop') { const oob = G.R.chance(Math.min(0.85, base * 4 + 0.16 + iq * 0.4)); return { oob, gain: oob && gain > 3 ? gain - 1 : gain }; }
-  if (goal === 'run') return { oob: G.R.chance(base * 0.12), gain };
-  return { oob: G.R.chance(base), gain };
+  if (goal === 'run') return { oob: G.R.chance(base * 0.12), gain, forced: true };
+  return { oob: G.R.chance(base), gain, forced: true };   // he didn't want out: a defender drove him out
 }
 
 // With the clock running before a snap: does someone stop it? Returns { side, kind: 'timeout' } or { kind: 'spike' } or null.

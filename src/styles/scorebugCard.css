@@ -1,0 +1,43 @@
+/* A player's stat card taking over his team's box in the scorebug (ScorebugCard): a team-color gradient, his headshot,
+   his name in the program's font and two stat lines. It wipes in across the box and wipes away before the snap. */
+.sbc { position: absolute; inset: 0; z-index: 6; display: flex; align-items: center; gap: .45em; padding: 0 .7em 0 .25em; overflow: hidden; color: #fff;
+  background: linear-gradient(100deg, color-mix(in srgb, var(--tc) 80%, #fff) 0%, var(--tc) 40%, color-mix(in srgb, var(--tc) 35%, #000) 100%);
+  box-shadow: inset 0 -.16em 0 var(--ta, #fff); animation: sbc-in .5s cubic-bezier(.22, .9, .3, 1) both; }
+.sbc.home { animation-name: sbc-in-r; }
+.sbc.out { animation: sbc-out .4s cubic-bezier(.6, 0, .8, .4) both; }
+.sbc.home.out { animation-name: sbc-out-r; }
+.sbc-face { align-self: flex-end; flex: none; height: 100%; display: flex; align-items: flex-end; animation: sbc-face .5s cubic-bezier(.22, .9, .3, 1) .18s both; }
+.sbc-face img { height: 2.9em; width: auto; image-rendering: pixelated; filter: drop-shadow(.1em 0 .1em #0007); }
+.sbc-txt { display: grid; gap: .12em; line-height: 1; min-width: 0; animation: sbc-txt .45s ease-out .3s both; }
+.sbc-txt b { font-family: var(--sb-font); font-size: 1em; letter-spacing: .03em; text-transform: uppercase; white-space: nowrap; text-shadow: 0 .07em 0 #0008; }
+.sbc-txt small { font-size: .64em; font-weight: 700; white-space: nowrap; opacity: .92; font-variant-numeric: tabular-nums; letter-spacing: .02em; }
+@keyframes sbc-in { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 0 0 0); } }
+@keyframes sbc-in-r { from { clip-path: inset(0 0 0 100%); } to { clip-path: inset(0 0 0 0); } }
+@keyframes sbc-out { from { clip-path: inset(0 0 0 0); } to { clip-path: inset(0 0 0 100%); } }
+@keyframes sbc-out-r { from { clip-path: inset(0 0 0 0); } to { clip-path: inset(0 100% 0 0); } }
+@keyframes sbc-face { from { opacity: 0; transform: translateY(70%); } }
+@keyframes sbc-txt { from { opacity: 0; transform: translateX(-.5em); } }
+
+/* the team's own logo steps aside while the card is up (some break out over the top of the bug) */
+.sb-team .sb-logo, .tnf-logo, .snf-logo { transition: opacity .3s; }
+.sb-team:has(.sbc) .sb-logo, .tnf-side:has(.sbc) .tnf-logo, .snf-side:has(.sbc) .snf-logo { opacity: 0; }
+
+/* each program's take */
+.sb-fox .sbc { box-shadow: inset 0 -.2em 0 #f4b800; }
+.sb-fox .sbc-txt b { font-style: italic; }
+.sb-cbs .sbc { background: linear-gradient(100deg, var(--tc) 0%, color-mix(in srgb, var(--tc) 55%, #0b3a82) 60%, #0b3a82 100%); box-shadow: inset 0 -.16em 0 #fff; }
+.sb-espn .sbc { box-shadow: inset 0 .2em 0 #e3261b, inset 0 -.18em 0 #1b2026; }
+.sb-tnf .sbc { border-radius: inherit; gap: .35em; }
+.sb-tnf .sbc.away { border-radius: 1.15em 0 0 1.15em; padding-left: .5em; }
+.sb-tnf .sbc.home { border-radius: 0 1.15em 1.15em 0; flex-direction: row-reverse; padding: 0 .5em 0 .7em; text-align: right; }
+.sb-tnf .sbc-face img { height: 3.4em; }
+.sb-tnf .sbc-txt b { font-family: 'Bungee', sans-serif; font-weight: 400; font-size: .72em; }
+.sb-tnf .sbc-txt small { font-size: .56em; }
+.sb-snf .sbc { box-shadow: inset 0 .16em 0 #d6dee8, inset 0 -.22em 0 #6460aa; }
+.sb-snf .sbc.away { clip-path: polygon(1.6em 0, 100% 0, 100% 100%, 0 100%); padding: 0 3.3em 0 1.6em; }
+.sb-snf .sbc.home { clip-path: polygon(0 0, calc(100% - 1.6em) 0, 100% 100%, 0 100%); padding: 0 1.6em 0 3.3em; flex-direction: row-reverse; text-align: right; }
+.sb-snf .sbc-txt b { font-family: 'Exo 2', sans-serif; font-style: italic; font-weight: 800; }
+.sb-snf .sbc, .sb-snf .sbc.home { animation-name: sbc-snf-in; }
+.sb-snf .sbc.out, .sb-snf .sbc.home.out { animation-name: sbc-snf-out; }
+@keyframes sbc-snf-in { from { opacity: 0; transform: translateY(60%); filter: brightness(1.8); } }
+@keyframes sbc-snf-out { to { opacity: 0; transform: translateY(-40%); } }

@@ -5,12 +5,13 @@ import { scrimmage, twoPoint, score } from './simDrive.js';
 import { newPlay } from './simReport.js';
 import { extraPoint } from './simKicks.js';
 
-function possession(G, side) {
+function possession(G, side, second = false) {
   const s = G.s; s.poss = side; s.ballOn = 75; s.down = 1; s.toGo = 10; s.phase = 'play'; s.running = false;
   for (let i = 0; i < 40; i++) {
     const play = scrimmage(G);
     if (!play.ended) continue;
     if (play.ended === 'td') {
+      if (second && s.score[side] > s.score[other(side)]) return false;   // a walk-off: the game's over, no try after it
       if (s.ot >= 2) twoPoint(G, side);
       else { const xp = newPlay({ ...s, hash: 'middle' }, G.plays.length + 1); xp.stats = []; xp.off = side; xp.def = other(side); if (extraPoint(G, xp, side).good) score(G, xp, side, 1, 'extra point'); xp.after = { score: { ...s.score } }; G.plays.push(xp); }
     }
@@ -24,7 +25,7 @@ export function overtime(G) {
   while (s.score.home === s.score.away && s.ot < 30) {
     s.ot += 1; s.quarter = 4 + s.ot; s.to = { home: 1, away: 1 };
     if (s.ot >= 3) { twoPoint(G, first); twoPoint(G, other(first)); }
-    else if (!possession(G, first)) possession(G, other(first));
+    else if (!possession(G, first)) possession(G, other(first), true);
     first = other(first);
   }
 }

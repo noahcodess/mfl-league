@@ -15,7 +15,7 @@ export function camTarget(S, cur, { phase, t, slow, first, flag }) {
   if (b.flight) { ax = b.x + (b.flight.x1 - b.x) * 0.45; ay = b.y + (b.flight.y1 - b.y) * 0.5; }   // look ahead to where it's going
   else if (holder) { ax += (holder.vx || 0) * 0.35; ay += (holder.vy || 0) * 0.3; }                 // lead the runner
   let zoom = phase === 'replay' ? REPLAY : slow ? SLOW : b.flight && b.h > 3 ? AIR : LIVE;
-  if (first && phase === 'live') { const k = Math.min(1, t / 3.8), e = k * k * (3 - 2 * k); zoom = 0.62 + (zoom - 0.62) * e; ay *= e; }
+  if (first && phase === 'live') { const k = Math.min(1, t / (S.T0 + 0.6)), e = k * k * (3 - 2 * k); zoom = 0.62 + (zoom - 0.62) * e; ay *= e; }
   const bugLift = (VIEW_H * 0.09) / zoom;   // the scorebug sits at the bottom: aim a little below the ball so it rides higher
   let x = yardX(ax), y = MID_Y + ay * YD * 0.92 + bugLift;
   // the pump fake: he leans with it for a moment before he catches himself

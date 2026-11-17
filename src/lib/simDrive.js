@@ -45,6 +45,13 @@ export function doKickoff(G) {
 }
 
 // A two-point try from the 3. Returns true if it's good.
+// A run or catch that reached the end zone on the spot math (not a called touchdown): credit the scorer (and the passer).
+function creditTd(play) {
+  if (play.noStats) return;
+  const id = (k) => play.stats.find(([, key]) => key === k)?.[0], rec = id('rec'), car = id('car'), qb = id('cmp');
+  if (rec) { play.stats.push([rec, 'rectd', 1]); if (qb) play.stats.push([qb, 'ptd', 1]); } else if (car) play.stats.push([car, 'rtd', 1]);
+}
+
 export function twoPoint(G, side) {
   const s = G.s; s.poss = side; s.ballOn = 97; s.down = 1; s.toGo = 3; sides(G);
   const play = start(G); play.noStats = true;
@@ -95,7 +102,7 @@ export function scrimmage(G) {
   } else {
     res = call.type === 'run' ? runPlay(G, play, call.sub, call, def) : passPlay(G, play, call.sub, def, call);
     scout(G, o, call, def, res); remember(G, o, call, play, res);
-    secs = res.time; play.result.gain = res.gain; play.result.oob = !!res.oob;
+    secs = res.time; play.result.gain = res.gain; play.result.oob = !!res.oob; if (res.forced) play.result.forced = true;
     const flag = postPlayFlag(G, play, res, call), spot = s.ballOn + res.gain;
     if (flag) { // the play doesn't count
       if (flag.off) { s.ballOn -= flag.yards; s.toGo += flag.yards; play.result.gain = -flag.yards; }
@@ -108,7 +115,7 @@ export function scrimmage(G) {
       play.result.turnover = 'fumble'; play.headline = 'FUMBLE'; swing(G, d, 0.2); ended = 'fumble';
       const at = 100 - clamp(spot, 1, 99) + R.int(0, 6); play.text += ` FUMBLE! Recovered by ${res.fumble.recoveredBy.last}.`;
       if (at >= 100) touchdown(d, 'fumble return'); else give(G, d, at);
-    } else if (res.td || spot >= 100) { play.result.gain = 100 - s.ballOn; touchdown(o, call.type === 'run' || play.scramble ? 'run' : 'pass'); }
+    } else if (res.td || spot >= 100) { play.result.gain = 100 - s.ballOn; if (!res.td) creditTd(play); touchdown(o, call.type === 'run' || play.scramble ? 'run' : 'pass'); }
     else if (spot <= 0) { score(G, play, d, 2, 'safety'); play.result.safety = true; play.headline = 'SAFETY'; s.phase = 'kickoff'; s.kicker = o; s.freeKick = true; ended = 'safety'; }
     else {
       s.ballOn = spot;
