@@ -19,7 +19,6 @@
   background: radial-gradient(ellipse at 50% 92%, #0006 0 18%, transparent 19%), linear-gradient(180deg, color-mix(in srgb, var(--tc) 50%, #000) 0%, #0b0d12 100%); }
 .cr-coach b { font: 700 20px var(--pixel); }
 .cr-coach > span { font: 700 14px var(--label); }
-.cr-headset { padding: 3px 10px; border-radius: 999px; background: #1f9d55; color: #fff; font: 700 11px var(--label); text-transform: uppercase; letter-spacing: .06em; }
 .cr-keyplay { align-content: stretch; }
 .kpp-wait { display: grid; justify-items: center; align-content: center; gap: 12px; padding: 18px; border: 2px dashed var(--line); border-radius: 12px; text-align: center; min-height: 190px; }
 .kpp-wait p { margin: 0; color: var(--dim); max-width: 380px; }

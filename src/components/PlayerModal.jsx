@@ -10,6 +10,7 @@ import PastTeams from './PastTeams.jsx';
 import TradeActions from './TradeActions.jsx';
 import PlayerFlags from './PlayerFlags.jsx';
 import MoraleBox from './MoraleBox.jsx';
+import PlayerStats from './PlayerStats.jsx';
 import DripTab from './DripTab.jsx';
 import WatchButton from './WatchButton.jsx';
 import { contractOf, yearsLeft, contractLabel } from '../data/contracts.js';
@@ -48,7 +49,7 @@ export default function PlayerModal({ player, team, canSeePotential, potential, 
         <PlayerFlags player={player} />
         <Tabs tabs={[
           { key: 'skills', label: 'Skills', render: () => <PlayerSkills player={player} potential={canSeePotential ? potential : null} /> },
-          ...(player.teamId ? [{ key: 'morale', label: 'Morale & Stats', render: () => <MoraleBox player={player} /> }, { key: 'drip', label: 'Drip', render: () => <DripTab player={player} /> }] : []),
+          ...(player.teamId ? [{ key: 'morale', label: 'Morale & Stats', render: () => <><PlayerStats player={player} /><MoraleBox player={player} /></> }, { key: 'drip', label: 'Drip', render: () => <DripTab player={player} /> }] : []),
           { key: 'contract', label: 'Contract & money', render: () => (
             <>
         <PlayerFlags player={player} contract />

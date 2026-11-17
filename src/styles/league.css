@@ -28,11 +28,18 @@
 .chip-label { font-size: 11px; color: var(--dim); }
 .chip-rank { font-weight: 700; }
 
-.cap-top, .cap-foot { display: flex; justify-content: space-between; font-size: 12px; color: var(--dim); }
-.cap-top strong { color: var(--text); }
-.cap-track { height: 12px; background: #000; border: 2px solid #000; margin: 6px 0; overflow: hidden; }
-.cap-fill { height: 100%; background: repeating-linear-gradient(90deg, var(--good) 0 6px, #3bb877 6px 8px); }
-.cap-fill.hot { background: repeating-linear-gradient(90deg, var(--warn) 0 6px, var(--bad) 6px 8px); }
+.cap-ring { display: grid; grid-template-columns: 92px 1fr; align-items: center; gap: 4px 14px; position: relative; }
+.cap-ring svg { width: 92px; height: 92px; transform: rotate(-90deg); grid-row: 1; grid-column: 1; }
+.cap-ring circle { fill: none; stroke-width: 11; }
+.cap-ring-track { stroke: #000; } .cap-ring-fill { stroke: #e0343a; stroke-linecap: butt; animation: cap-ring .9s cubic-bezier(.2, .8, .2, 1) both .15s; filter: drop-shadow(0 0 3px #e0343a88); }
+.cap-ring.hot .cap-ring-fill { stroke: #ff2a2a; filter: drop-shadow(0 0 6px #ff2a2acc); } .cap-ring.over .cap-ring-fill { stroke: #ff4d4d; animation: cap-ring .9s both .15s, cap-pulse 1.2s ease-in-out infinite 1s; }
+.cap-ring-mid { grid-row: 1; grid-column: 1; display: grid; place-items: center; align-content: center; line-height: 1; pointer-events: none; }
+.cap-ring-mid b { font-size: 20px; color: #ff6b6b; } .cap-ring-mid small { font-size: 10px; color: var(--dim); text-transform: uppercase; letter-spacing: .1em; }
+.cap-ring-side { display: flex; flex-direction: column; gap: 2px; font-size: 12px; color: var(--dim); }
+.cap-ring-side strong { color: var(--text); font-size: 16px; } .cap-ring-side strong small { color: var(--dim); font-weight: 600; } .cap-ring-side em { font-style: normal; font-weight: 700; color: var(--good); }
+.cap-ring.small { grid-template-columns: 64px 1fr; } .cap-ring.small svg { width: 64px; height: 64px; } .cap-ring.small .cap-ring-mid b { font-size: 15px; }
+@keyframes cap-ring { from { stroke-dashoffset: var(--len); } }
+@keyframes cap-pulse { 50% { opacity: .55; } }
 .warn { color: var(--warn); }
 
 .depth-head, .depth-row { display: grid; grid-template-columns: 44px 1fr 1fr; gap: 8px; align-items: center; }

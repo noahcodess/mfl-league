@@ -113,7 +113,7 @@
 .scout-counts { display: flex; gap: 12px; flex-wrap: wrap; margin: 8px 0; }
 .scout-counts div { border: 2px solid #3a466e; padding: 6px 12px; display: flex; gap: 10px; align-items: baseline; }
 .scout-counts b { font-size: 20px; }
-.watch-row { margin: 6px 0 2px; }
+.watch-btn-row { margin: 6px 0 2px; }
 .watch-btn.on { border-color: #ff6b3d; color: #ff6b3d; }
 /* Test mode lock on My Team */
 .test-lock { border: 2px solid #ffb02e; background: rgba(255, 176, 46, 0.08); padding: 10px 14px; margin-bottom: 12px; line-height: 1.45; }

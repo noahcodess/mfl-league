@@ -20,6 +20,7 @@
 .seg.small button { padding: 4px 8px; font-size: 12px; }
 .timpact { display: flex; flex-wrap: wrap; gap: 8px 18px; margin: 10px 0; padding: 8px 10px; background: #000; border: 2px solid var(--line); font-family: var(--label); font-size: 13px; color: var(--dim); }
 .timpact b { color: var(--text); } .timpact .bad, .timpact .bad b { color: var(--bad); }
+.timpact { align-items: center; justify-content: space-between; } .timpact > span { font-size: 15px; }
 .tnote { width: 100%; box-sizing: border-box; min-height: 52px; background: #000; color: var(--text); border: 2px solid var(--line); padding: 8px; font: inherit; }
 .btn.send-trade { background: var(--gold); color: #1a1000; font-weight: 800; }
 .tcard { background: var(--panel2); border: 2px solid #000; border-left: 4px solid var(--line); padding: 10px; margin-bottom: 10px; animation: rise .3s ease-out both; }
@@ -74,3 +75,11 @@
 .tcard-verdict ul { margin: 4px 0 0; padding-left: 18px; font-size: 14px; }
 .botweek { display: flex; gap: 14px; align-items: center; justify-content: space-between; flex-wrap: wrap; margin: 10px 0; padding: 10px 12px; background: var(--panel2); border: 2px solid #000; border-left: 4px solid var(--gold); }
 .botweek > div { flex: 1; min-width: 240px; } .botweek p { margin: 4px 0 0; font-size: 13px; } .botweek-result { color: var(--good); font-weight: 700; }
+.tasset.card-ok { cursor: pointer; }
+.tasset-card { flex: none; width: 22px; height: 22px; display: grid; place-items: center; border: 2px solid #000; background: #0006; color: var(--gold); font-size: 13px; line-height: 1; }
+.tasset-card:hover { background: var(--gold); color: #000; }
+.trades-page .tab-bar button { font-size: 18px; display: inline-flex; align-items: center; gap: 6px; }
+.tab-num { font-size: 11px; font-weight: 800; min-width: 18px; padding: 1px 5px; background: #0007; color: var(--dim); border: 1px solid #000; text-align: center; }
+.tab-num.on { background: var(--gold); color: #000; }
+.tip-i { font-size: 12px; color: var(--dim); cursor: help; margin-left: 4px; font-weight: 400; }
+.my-marks h3 { display: flex; align-items: center; gap: 6px; font-size: 20px; }

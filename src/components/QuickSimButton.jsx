@@ -2,19 +2,21 @@ import React, { useMemo, useState } from 'react';
 import { createPortal } from 'react-dom';
 import Modal from './Modal.jsx';
 import Gamecast from './Gamecast.jsx';
+import { simGameNow, playOfficial } from '../data/gameResults.js';
+import { isRealGame, flipKickoff } from '../data/gameState.js';
 import { loadLineups } from '../data/gameLineups.js';
-import { playGame } from '../lib/simGame.js';
 
-// Commissioner: Quick sim, under Start game. Warns first, shows a short loading screen while the engine plays the whole
-// game, then the final score pops in with the box score, scoring plays and play-by-play to scroll through.
-// For now the result is only shown, not saved: saving the score and every stat comes with the stats build.
-export default function QuickSimButton({ game, home, away }) {
+// Commissioner: Quick sim, under Start game. Warns first, then the exact same engine run a watched game uses (kickoff seed,
+// coin flip, momentum, everything) plays it in a second or two and saves it as final: score, records and every stat.
+// The final score pops in with the box score, scoring plays and play-by-play. gate: the "finish last week first" check.
+export default function QuickSimButton({ game, home, away, gate }) {
   const [step, setStep] = useState(0), [result, setResult] = useState(null), [err, setErr] = useState('');
   const run = async () => {
     setStep(2); setErr('');
     try {
-      const [[h, a]] = await Promise.all([loadLineups([home.id, away.id]), new Promise((r) => setTimeout(r, 1800))]);
-      setResult({ lineups: { home: h, away: a }, game: playGame(h, a, Math.floor(Math.random() * 1e9), { rivalry: !!game.rivalry }) }); setStep(3);
+      const sample = async () => { const [h, a] = await loadLineups([home.id, away.id]), l = { home: h, away: a }; return { lineups: l, result: playOfficial(l, home.id, away.id, { ...flipKickoff(game), seed: Math.floor(Math.random() * 1e9) }, false) }; };
+      const [out] = await Promise.all([isRealGame(game.id) ? simGameNow(game.id, home.id, away.id, 'quick') : sample(), new Promise((r) => setTimeout(r, 1200))]);
+      setResult({ lineups: out.lineups, game: out.result }); setStep(3);
     } catch (e) { setErr(e.message); setStep(1); }
   };
   const names = useMemo(() => {
@@ -25,12 +27,12 @@ export default function QuickSimButton({ game, home, away }) {
   const g = result?.game, won = g && (g.score.home > g.score.away ? home : away);
   return (
     <>
-      <button className="btn ghost gp-quick" onClick={() => setStep(1)}>⚡ Quick sim</button>
+      <button className="btn ghost gp-quick" onClick={() => (gate ? gate(() => setStep(1)) : setStep(1))}>⚡ Quick sim</button>
       {step === 1 && (
         <Modal onClose={() => setStep(0)} className="confirm-modal">
           <h2>⚠️ Quick sim this game?</h2>
           <p>The whole game is played instantly. There's no broadcast, and coaches don't get to call key plays.</p>
-          <p className="dim">Test version: you'll see the full result and stats, but nothing is saved yet, so the game stays unplayed.</p>
+          <p className="dim">✅ The result is final the moment it's done: score, records and every player's stats are saved.</p>
           {err && <p className="notice bad">{err}</p>}
           <div className="confirm-actions"><button className="btn ghost" onClick={() => setStep(0)}>Cancel</button><button className="btn" onClick={run}>Sim the game</button></div>
         </Modal>

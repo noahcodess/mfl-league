@@ -11,6 +11,7 @@
 .ptile.fa { border-left-color: #6b7280; }
 .offer-tag { font-family: var(--label); font-weight: 700; font-size: 12px; padding: 1px 6px; background: var(--good); color: #062014; border: 1px solid #000; }
 .fa-side { align-self: start; position: sticky; top: 76px; }
+.fa-side .cap-ring { padding-bottom: 12px; margin-bottom: 10px; border-bottom: 2px solid var(--line); }
 .fa-rules { margin: 0 0 16px; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 6px; font-size: 13px; color: var(--dim); }
 .offer-row { display: grid; grid-template-columns: 1fr auto; gap: 2px 8px; width: 100%; text-align: left; font: inherit; color: var(--text); padding: 7px 9px;
   margin-bottom: 6px; background: var(--panel2); border: 2px solid #000; cursor: pointer; }

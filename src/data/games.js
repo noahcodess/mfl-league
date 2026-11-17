@@ -25,13 +25,18 @@ const demoGames = () => makeSchedule(getTeams(), {}, (() => { let s = 7; return 
 
 // Null while loading, then the season's games (week order, then slot).
 export function useSeasonGames(season, version = 0) {
-  const [games, setGames] = useState(null);
+  const [games, setGames] = useState(null), [bump, setBump] = useState(0);
+  useEffect(() => {   // refetch when a game goes final anywhere on the site
+    const on = () => setBump((n) => n + 1);
+    window.addEventListener('mfl-games-changed', on);
+    return () => window.removeEventListener('mfl-games-changed', on);
+  }, []);
   useEffect(() => {
     let live = true;
     if (DEMO) { setGames(new URLSearchParams(window.location.search).get('nosched') ? [] : demoGames()); return undefined; }
     db.rpc('season_games', { p_season: season }).then(({ data }) => { if (live) setGames(data || []); });
     return () => { live = false; };
-  }, [season, version]);
+  }, [season, version, bump]);
   return games;
 }
 

@@ -63,3 +63,5 @@
 .match-bar img { height: 4cqw; }
 .intro-skip { position: absolute; top: 1.2cqw; right: 1.2cqw; z-index: 20; padding: .4cqw 1cqw; border: 0; border-radius: 999px; background: rgba(0, 0, 0, .55); color: #fff; font: 700 1.1cqw/1.2 system-ui, sans-serif; cursor: pointer; opacity: .7; }
 .intro-skip:hover { opacity: 1; }
+.lg-saved { position: absolute; left: 50%; bottom: 14px; transform: translateX(-50%); z-index: 30; padding: 6px 12px; background: #000c; border: 2px solid var(--good); color: var(--good); font-family: var(--label); font-weight: 800; font-size: 13px; animation: tab-in .3s ease-out both; }
+.lg-saved.bad { border-color: var(--bad); color: var(--bad); }

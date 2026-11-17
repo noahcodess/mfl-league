@@ -7,7 +7,7 @@ export default function WatchButton({ player, myTeamId }) {
   if (!myTeamId || !player || player.teamId === myTeamId) return null;
   const on = flags.has(player.id);
   return (
-    <div className="watch-row">
+    <div className="watch-btn-row">
       <button className={`btn small ghost watch-btn${on ? ' on' : ''}`} onClick={() => toggle(player.id)}>
         {on ? '👀 On your watch list' : '👀 Add to watch list'}
       </button>

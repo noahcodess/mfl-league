@@ -2,11 +2,11 @@ import React, { useState } from 'react';
 import Modal from './Modal.jsx';
 import TeamBadge from './TeamBadge.jsx';
 import TradeColumn from './TradeColumn.jsx';
+import CapBar from './CapBar.jsx';
 import { getTeams, getTeam, capLimit } from '../data/teams.js';
 import { teamCapUsed } from '../data/players.js';
 import { capHitOf } from '../data/contracts.js';
 import { teamAssets, proposeTrade, useTradeMarks } from '../data/trades.js';
-import { money } from '../lib/format.js';
 
 const MAX = 5;
 const pay = (list) => list.reduce((s, x) => s + (x.position ? capHitOf(x) : 0), 0);
@@ -51,26 +51,26 @@ export default function TradeBuilder({ myTeamId, partnerId, withPlayer, onClose,
       <button className="modal-x" onClick={onClose} aria-label="Close">×</button>
       <div className="tbanner" style={{ '--a': me?.color, '--b': them.color }}>
         <div className="tbanner-team"><TeamBadge team={me} size="lg" /><b>{me?.name}</b></div>
-        <div className="tbanner-mid"><span>TRADE</span><i>⇄</i>{!partnerId && <button className="btn small ghost" onClick={() => { setPartner(null); setGet([]); }}>Change team</button>}</div>
+        <div className="tbanner-mid"><span>TRADE</span><i>⇄</i>{!partnerId && <button className="btn small ghost" onClick={() => { setPartner(null); setGet([]); }} title="Change team">🔄</button>}</div>
         <div className="tbanner-team"><TeamBadge team={them} size="lg" /><b>{them.name}</b></div>
       </div>
-      {!marks.open && <p className="notice bad">Trading is closed right now. You can still build it; sending will be refused until it opens.</p>}
+      {!marks.open && <p className="notice bad" title="You can still build it; sending is refused until it opens.">🔴 Trading is closed</p>}
       <div className="tcols">
         <TradeColumn title="You send" team={me} assets={teamAssets(myTeamId)} chosen={give} max={MAX} onToggle={toggle(setGive)} untouchables={marks.untouchables} block={marks.block} requests={marks.requests} />
         <div className="tswap">⇄</div>
         <TradeColumn title="You get" team={them} assets={teamAssets(partner)} chosen={get} max={MAX} onToggle={toggle(setGet)} untouchables={marks.untouchables} block={marks.block} requests={marks.requests} lockUntouchables />
       </div>
       <div className="timpact">
-        <span className={myCap > capLimit() ? 'bad' : ''}>Your cap after: <b>{money(myCap)}</b> / {money(capLimit())}</span>
-        <span className={theirCap > capLimit() ? 'bad' : ''}>Their cap after: <b>{money(theirCap)}</b></span>
-        <span className={myRoster > 45 ? 'bad' : ''}>Your roster: <b>{myRoster}</b>/45</span>
-        <span className={theirRoster > 45 ? 'bad' : ''}>Their roster: <b>{theirRoster}</b>/45</span>
+        <CapBar small used={myCap} limit={capLimit()} />
+        <span className={myRoster > 45 ? 'bad' : ''} title="Your roster after">👥 <b>{myRoster}</b>/45</span>
+        <span className={theirRoster > 45 ? 'bad' : ''} title="Their roster after">👥 <b>{theirRoster}</b>/45</span>
+        <CapBar small used={theirCap} limit={capLimit()} />
       </div>
-      <textarea className="tnote" maxLength={300} placeholder="Add a note (optional)" value={note} onChange={(e) => setNote(e.target.value)} />
+      <textarea className="tnote" maxLength={300} placeholder="💬 Note (optional)" value={note} onChange={(e) => setNote(e.target.value)} />
       {err && <p className="notice bad">{err}</p>}
       <div className="confirm-actions">
         <button className="btn ghost" disabled={busy} onClick={onClose}>Cancel</button>
-        <button className="btn send-trade" disabled={busy || !give.length || !get.length} onClick={send}>{busy ? 'Sending...' : `Send trade to the ${them.name}`}</button>
+        <button className="btn send-trade" disabled={busy || !give.length || !get.length} onClick={send}>{busy ? 'Sending...' : `🔁 Send to ${them.name}`}</button>
       </div>
     </Modal>
   );

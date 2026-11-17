@@ -22,10 +22,10 @@
 .tnf-side.home .tnf-score { margin: 0 auto 0 0; }
 .tnf-mid { position: relative; display: grid; align-content: center; justify-items: center; gap: .22em; padding: 0 1.75em; min-width: 9.5em; z-index: 1;
   background: linear-gradient(180deg, #4a9cff 0%, #1a63d6 55%, #0b46a8 100%); box-shadow: inset .14em 0 0 #fff, inset -.14em 0 0 #fff, inset 0 .25em 0 #ffffff40; }
-.tnf-down { padding: .14em .85em; border-radius: .7em; background: #fff; color: #0b46a8; font-family: 'Bungee', sans-serif; font-size: .74em; white-space: nowrap; }
-.tnf-time { display: flex; align-items: center; gap: .45em; color: #fff; font-family: 'Bungee', sans-serif; font-size: .78em; white-space: nowrap; }
-.tnf-time b { font-weight: 400; font-size: 1.3em; font-variant-numeric: tabular-nums; }
-.tnf-time em { font-style: normal; padding: .05em .35em; border-radius: .4em; background: #ffffff30; }
+.tnf-down { padding: .08em .85em; border-radius: .7em; background: #fff; color: #0b46a8; font-family: 'Barlow Condensed', sans-serif; font-weight: 800; letter-spacing: .04em; font-size: .92em; line-height: 1.15; white-space: nowrap; }
+.tnf-time { display: flex; align-items: center; gap: .45em; color: #fff; font-family: 'Barlow Condensed', sans-serif; font-weight: 800; letter-spacing: .03em; font-size: .95em; white-space: nowrap; }   /* down, quarter and play clock in a clean condensed face: easy to read at a glance */
+.tnf-time b { font-family: 'Bungee', sans-serif; font-weight: 400; font-size: 1.05em; font-variant-numeric: tabular-nums; }
+.tnf-time em { font-style: normal; padding: 0 .4em; border-radius: .4em; background: #ffffff30; font-variant-numeric: tabular-nums; }
 .tnf-mid > span { position: relative; z-index: 1; text-shadow: 0 .07em 0 #0b2f7a99; }
 .tnf-arrow { position: absolute; top: .3em; bottom: .3em; width: 58%; background: linear-gradient(180deg, #06205a66, #06205a33); transition: background .3s; }
 .tnf-arrow.l { left: .2em; clip-path: polygon(0 50%, 26% 0, 100% 0, 100% 100%, 26% 100%); }

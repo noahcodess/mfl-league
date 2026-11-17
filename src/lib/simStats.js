@@ -1,5 +1,5 @@
 // Adds a game's play reports up into box-score numbers: one line of stats per player and one per team.
-const LONGS = new Set(['rlong', 'plong', 'reclong', 'fglong']);
+export const LONGS = new Set(['rlong', 'plong', 'reclong', 'fglong']);
 
 // plays: the game's reports. Returns { players: { id: { att, cmp, ... } }, teams: { home: {...}, away: {...} } }.
 export function tally(plays) {

@@ -5,21 +5,23 @@ import StarRating from './StarRating.jsx';
 import { getTeam, getTeamByCode } from '../data/teams.js';
 import { capHitOf } from '../data/contracts.js';
 import { money, ordinal } from '../lib/format.js';
+import { openPlayerCard } from '../lib/playerCard.js';
 
 // One thing in a trade: a player (pixel portrait in his team's jersey, position, name, stars, salary) or a draft pick (whose pick, season, round).
-// big = the roomier look used for things already in the trade.
+// big = the roomier look used for things already in the trade. The ⓘ (or a tap, when tapping does nothing else) opens his full card.
 export default function TradeAsset({ item, tag, onClick, selected, locked, big }) {
   const cls = `tasset${selected ? ' on' : ''}${locked ? ' locked' : ''}${onClick ? ' click' : ''}${big ? ' big' : ''}`;
   if (item.position) {
     const team = getTeam(item.teamId) || { color: '#555', accent: '#ddd' };
     return (
-      <button type="button" className={cls} onClick={onClick} disabled={locked} title={locked ? 'Untouchable' : ''}>
+      <button type="button" className={`${cls} card-ok`} onClick={onClick && !locked ? onClick : () => openPlayerCard(item)} title={locked ? 'Untouchable' : ''} aria-disabled={locked || undefined}>
         <Headshot player={item} team={team} size={big ? 46 : 34} />
         <span className="tasset-pos">{item.position}</span>
         <span className="tasset-name">{item.name}{tag}<small>{item.age ? `Age ${item.age}` : ''}{item.number != null ? ` · #${item.number}` : ''}</small></span>
         <StarRating value={item.stars} />
         <span className="tasset-pay">{capHitOf(item) ? money(capHitOf(item)) : '-'}</span>
         {locked && <span title="Untouchable">🔒</span>}
+        {onClick && !locked && <span className="tasset-card" role="button" title="Player card" onClick={(e) => { e.stopPropagation(); openPlayerCard(item); }}>ⓘ</span>}
         {selected && onClick && <span className="tasset-x" aria-hidden="true">×</span>}
       </button>
     );

@@ -2,6 +2,9 @@ import React from 'react';
 import { store } from '../data/store.js';
 import { faOpen, offerLimit } from '../data/freeAgency.js';
 import { money } from '../lib/format.js';
+import CapBar from './CapBar.jsx';
+import { teamCapUsed } from '../data/players.js';
+import { capLimit } from '../data/teams.js';
 
 // Side panel on the free agent market: how it works, plus this coach's offers (out now, signed, lost).
 const STATUS = { open: 'Out', won: 'He picked you', lost: 'Went elsewhere', withdrawn: 'Pulled', expired: 'Expired' };
@@ -13,6 +16,7 @@ export default function MyOffers({ team, offers, onOpen }) {
   const nameOf = (id) => store.league.players.find((p) => p.id === id)?.name || 'Unknown player';
   return (
     <section className="card fa-side">
+      {team && <CapBar used={teamCapUsed(team.id)} limit={capLimit()} />}
       <details className="fa-how-box">
       <summary>How free agency works</summary>
       <ul className="fa-rules">

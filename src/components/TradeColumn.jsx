@@ -19,14 +19,14 @@ export default function TradeColumn({ title, team, assets, chosen, max, onToggle
       </div>
       <div className="tcol-chosen">
         {chosen.length ? chosen.map((x) => <TradeAsset key={x.id} item={x} big selected onClick={() => onToggle(x)} />)
-          : <p className="dim">Tap players or picks below to add them (up to {max}).</p>}
+          : <p className="dim tcol-empty">➕ Tap to add</p>}
         {Array.from({ length: Math.max(0, max - chosen.length) }).map((_, i) => chosen.length > 0 && <div key={i} className="tslot" />)}
       </div>
       <div className="seg small">
-        <button className={tab === 'players' ? 'on' : ''} onClick={() => setTab('players')}>Players ({assets.players.length})</button>
-        <button className={tab === 'picks' ? 'on' : ''} onClick={() => setTab('picks')}>Picks ({assets.picks.length})</button>
+        <button className={tab === 'players' ? 'on' : ''} onClick={() => setTab('players')} title="Players">👤 {assets.players.length}</button>
+        <button className={tab === 'picks' ? 'on' : ''} onClick={() => setTab('picks')} title="Draft picks">🎟️ {assets.picks.length}</button>
       </div>
-      {tab === 'players' && <input className="search" placeholder="Search" value={q} onChange={(e) => setQ(e.target.value)} />}
+      {tab === 'players' && <input className="search" placeholder="🔍" value={q} onChange={(e) => setQ(e.target.value)} />}
       <div className="tcol-list">
         {(tab === 'players' ? players : assets.picks).filter((x) => !has(x)).map((x) => (
           <TradeAsset key={x.id} item={x} locked={lockUntouchables && untouchables.has(x.id)} tag={requests?.has(x.id) ? <span className="wants-out" title="He asked for a trade"> 📣 Wants out</span> : block.has(x.id) ? <span title="On the trade block"> 📣</span> : null}

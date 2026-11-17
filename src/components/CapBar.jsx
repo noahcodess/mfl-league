@@ -1,19 +1,22 @@
 import React from 'react';
 import { money } from '../lib/format.js';
 
-// Salary cap meter. Cap hit = contract total spread evenly over its years; this is the league's real cap.
-export default function CapBar({ used, limit }) {
-  const pct = Math.min(100, (used / limit) * 100);
+// Salary cap ring: a red circle that fills as the cap fills (almost closed = almost capped out). Cap hit = contract total spread evenly over its years.
+export default function CapBar({ used, limit, small }) {
+  const pct = limit ? Math.min(100, (used / limit) * 100) : 0;
+  const over = used > limit;
+  const r = 42, len = 2 * Math.PI * r;
   return (
-    <div className="cap">
-      <div className="cap-top">
-        <span>Salary cap</span>
-        <strong>{money(used)} / {money(limit)}</strong>
-      </div>
-      <div className="cap-track"><div className={`cap-fill ${pct > 95 ? 'hot' : ''}`} style={{ width: `${pct}%` }} /></div>
-      <div className="cap-foot">
-        <span className={used > limit ? 'warn' : ''}>{used > limit ? `${money(used - limit)} over` : `${money(limit - used)} room`}</span>
-        <span>{Math.round(pct)}% used</span>
+    <div className={`cap-ring${small ? ' small' : ''}${over ? ' over' : pct > 90 ? ' hot' : ''}`} title={`${money(used)} of ${money(limit)}`}>
+      <svg viewBox="0 0 100 100" aria-hidden="true">
+        <circle className="cap-ring-track" cx="50" cy="50" r={r} />
+        <circle className="cap-ring-fill" cx="50" cy="50" r={r} style={{ strokeDasharray: len, strokeDashoffset: len * (1 - pct / 100), '--len': len }} />
+      </svg>
+      <div className="cap-ring-mid"><b>{Math.round(pct)}%</b><small>cap</small></div>
+      <div className="cap-ring-side">
+        <span>💰 Salary cap</span>
+        <strong>{money(used)} <small>/ {money(limit)}</small></strong>
+        <em className={over ? 'warn' : ''}>{over ? `${money(used - limit)} over` : `${money(limit - used)} room`}</em>
       </div>
     </div>
   );

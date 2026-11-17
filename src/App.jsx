@@ -20,6 +20,7 @@ import DraftDeskPage from './pages/DraftDeskPage.jsx';
 import TradesPage from './pages/TradesPage.jsx';
 import InboxPage from './pages/InboxPage.jsx';
 import TradeLauncher from './components/TradeLauncher.jsx';
+import PlayerCardHost from './components/PlayerCardHost.jsx';
 import SandboxBanner from './components/SandboxBanner.jsx';
 import DraftAlert from './components/DraftAlert.jsx';
 import ScheduleNotice from './components/ScheduleNotice.jsx';
@@ -107,6 +108,7 @@ export default function App() {
       {myTeam && !route.stage && <DraftAlert teamId={myTeam.id} page={route.page} />}
       {!route.stage && <ScheduleNotice />}
       <TradeLauncher myTeamId={myTeam?.id} />
+      <PlayerCardHost viewer={step === 'ready' ? session.profile : null} />
       {step === 'ready' || session.status === 'out' ? <BirthdayShowGate page={route.page} viewer={step === 'ready' ? session.profile : null} version={version} /> : null}
       <main className="main"><div className="page" key={`${route.page}-${route.id || ''}-${route.tab || ''}-${step}`}><Screen route={route} session={session} step={step} reload={reload} /></div></main>
     </div>

@@ -15,6 +15,7 @@ import { tierOf } from '../lib/tiers.js';
 import { money, plural, heightLabel } from '../lib/format.js';
 import { getTeam } from '../data/teams.js';
 import { PERSONALITIES, LEFT_HOW } from '../lib/personalities.js';
+import { openPlayerCard } from '../lib/playerCard.js';
 
 // Make (or change, or pull) an offer to one free agent. He answers when the commissioner runs the next round.
 export const FA_JERSEY = { color: '#3a3f47', accent: '#9aa4b2' };
@@ -67,6 +68,7 @@ export default function FaOfferModal({ player, myTeam, canOffer, potential, scou
             {potential != null && <> · POT <StarRating value={potential} elite={potential === 5} /></>}</div>
           <div className={`tier tier-${tier.key}`} title={tier.note}>{tier.label}{player.nationality && player.nationality !== 'USA' ? ` · ${player.nationality}` : ''}</div>
         </div>
+        <button className="btn small ghost nego-card" onClick={() => openPlayerCard(player)} title="Full player card">🪪 Card</button>
       </div>
       <Tabs tabs={[
         { key: 'offer', label: 'Offer', render: () => (

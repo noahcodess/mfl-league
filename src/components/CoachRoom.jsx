@@ -24,7 +24,6 @@ export default function CoachRoom({ bc, game, home, away, me, coach, st, rec, on
           <b>{coach.name || 'Head coach'}</b>
           <span>{mine.name} · {recordText(rec?.[mine.id])}</span>
           <small className="dim">vs {opp.name} ({recordText(rec?.[opp.id])}) · {side === 'home' ? 'Home' : 'Away'}</small>
-          <span className="cr-headset">🎧 Headset on</span>
         </section>
         <KeyPlayPanel last={last} canTest={canTest} onTest={test} />
         <ClockTimeout st={st} side={side} onTimeout={onTimeout} />

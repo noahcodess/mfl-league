@@ -9,7 +9,9 @@ import { useCoachedTeams } from '../data/coached.js';
 import { store } from '../data/store.js';
 import { getTeam } from '../data/teams.js';
 
-// Trade center: offers to you, your offers, the league's trade block, done deals, and your untouchables / block.
+// Trade center: offers to you, your offers, the league's trade block, done deals, and your untouchables / block. Icons with hover tips, few words.
+const Num = ({ n }) => <span className={`tab-num${n ? ' on' : ''}`}>{n}</span>;
+const Tip = ({ text }) => <span className="tip-i" title={text} aria-label={text}>ⓘ</span>;
 export default function TradesPage({ viewer, canControl }) {
   const myTeam = viewer?.role === 'coach' ? viewer.team_id : null;
   const [version, setVersion] = useState(0);
@@ -32,40 +34,38 @@ export default function TradesPage({ viewer, canControl }) {
     <div className="trades-page">
       <div className="page-head">
         <h1>Trades</h1>
-        <span className={`trade-state ${marks.open ? 'open' : 'closed'}`}>{marks.open ? '🟢 Trading is open' : '🔴 Trading is closed'}</span>
-        {myTeam && <button className="btn" onClick={() => openTradeBuilder({})}>🔁 New trade</button>}
+        <span className={`trade-state ${marks.open ? 'open' : 'closed'}`} title={marks.open ? 'Trading is open' : 'Trading is closed'}>{marks.open ? '🟢 Open' : '🔴 Closed'}</span>
+        {myTeam && <button className="btn" onClick={() => openTradeBuilder({})}>🔁 New</button>}
       </div>
       <div className="two-col wide-left">
         <section className="card">
           <Tabs tabs={[
             ...(myTeam ? [
-              { key: 'in', label: `Offers to you (${all.filter((t) => t.to === myTeam && t.status === 'pending').length})`, render: () => list(all.filter((t) => t.to === myTeam), 'No offers yet.') },
-              { key: 'out', label: 'Your offers', render: () => list(all.filter((t) => t.from === myTeam), "You haven't sent any trades.") },
+              { key: 'in', title: 'Offers to you', label: <>📥 <Num n={all.filter((t) => t.to === myTeam && t.status === 'pending').length} /></>, render: () => list(all.filter((t) => t.to === myTeam), 'No offers yet.') },
+              { key: 'out', title: 'Your offers', label: <>📤 <Num n={all.filter((t) => t.from === myTeam && t.status === 'pending').length} /></>, render: () => list(all.filter((t) => t.from === myTeam), "You haven't sent any trades.") },
             ] : []),
-            { key: 'block', label: `Trade block (${blockPlayers.length})`, render: () => (
+            { key: 'block', title: 'Trade block', label: <>📣 <Num n={blockPlayers.length} /></>, render: () => (
               <div className="block-list">
                 {!blockPlayers.length && <p className="dim">Nobody is on the block right now.</p>}
                 {blockPlayers.map((p) => (
                   <div key={p.id} className="block-row">
                     <TeamBadge team={getTeam(p.teamId)} size="sm" />
                     <TradeAsset item={p} />
-                    {myTeam && p.teamId !== myTeam && <button className="btn small" onClick={() => openTradeBuilder({ teamId: p.teamId, player: p })}>Make an offer</button>}
+                    {myTeam && p.teamId !== myTeam && <button className="btn small" title="Make an offer" onClick={() => openTradeBuilder({ teamId: p.teamId, player: p })}>🔁</button>}
                   </div>
                 ))}
               </div>
             ) },
-            { key: 'done', label: 'League trades', render: () => list(all.filter((t) => t.status === 'accepted'), 'No trades have gone through yet.') },
-            ...(canControl ? [{ key: 'commish', label: '🎛️ Commissioner', render: () => <CommishTrades canControl={canControl} /> }] : []),
+            { key: 'done', title: 'League trades', label: <>🤝 <Num n={all.filter((t) => t.status === 'accepted').length} /></>, render: () => list(all.filter((t) => t.status === 'accepted'), 'No trades have gone through yet.') },
+            ...(canControl ? [{ key: 'commish', title: 'Commissioner', label: '🎛️', render: () => <CommishTrades canControl={canControl} /> }] : []),
           ]} />
         </section>
         {myTeam && (
           <aside className="card my-marks">
-            <h3>🔒 Untouchables <span className="count">{mine(marks.untouchables).length}/2</span></h3>
-            <p className="dim">Other teams can't ask for these players. Set them from a player's card.</p>
-            {mine(marks.untouchables).map((p) => <div key={p.id} className="mark-row"><TradeAsset item={p} /><button className="btn small ghost" onClick={async () => { await toggleUntouchable(p.id); bump(); }}>Remove</button></div>)}
-            <h3>📣 Your trade block</h3>
-            <p className="dim">Putting a 3.5★+ player here tells the whole league.</p>
-            {mine(marks.block).map((p) => <div key={p.id} className="mark-row"><TradeAsset item={p} /><button className="btn small ghost" onClick={async () => { await toggleTradeBlock(p.id); bump(); }}>Remove</button></div>)}
+            <h3 title="Other teams can't ask for these players. Set them from a player's card.">🔒 <span className="count">{mine(marks.untouchables).length}/2</span> <Tip text="Other teams can't ask for these players. Set them from a player's card." /></h3>
+            {mine(marks.untouchables).map((p) => <div key={p.id} className="mark-row"><TradeAsset item={p} /><button className="btn small ghost" title="Remove" onClick={async () => { await toggleUntouchable(p.id); bump(); }}>✕</button></div>)}
+            <h3 title="Your trade block">📣 <span className="count">{mine(marks.block).length}</span> <Tip text="Your trade block. Putting a 3.5★+ player here tells the whole league." /></h3>
+            {mine(marks.block).map((p) => <div key={p.id} className="mark-row"><TradeAsset item={p} /><button className="btn small ghost" title="Remove" onClick={async () => { await toggleTradeBlock(p.id); bump(); }}>✕</button></div>)}
           </aside>
         )}
       </div>

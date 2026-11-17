@@ -36,6 +36,7 @@
 .nego-head { display: flex; gap: 14px; align-items: center; margin-bottom: 12px; }
 .nego-head .headshot { border: 3px solid #000; box-shadow: 3px 3px 0 #000; }
 .nego-head h2 { margin: 0 0 2px; font-size: 20px; }
+.nego-card { margin-left: auto; align-self: flex-start; margin-right: 30px; white-space: nowrap; }
 .nego-sub { color: var(--dim); font-size: 13px; display: flex; align-items: center; gap: 6px; }
 .tier { display: inline-block; margin-top: 5px; font-family: var(--label); font-weight: 700; font-size: 12px; padding: 1px 7px; border: 1px solid #000; }
 .tier-star { background: #5a3d0a; color: var(--gold); } .tier-starter { background: #12324a; color: #9fd0ff; } .tier-depth { background: var(--panel2); color: var(--dim); }
