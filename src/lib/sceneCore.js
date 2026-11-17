@@ -24,10 +24,10 @@ export function stepTo(a, tx, ty, speed, dt) {
 const cutSkill = (p) => clamp(((p?.r?.agility ?? p?.r?.elusiveness ?? rating(p, 'speed')) - 40) / 59, 0, 1);
 // A ball carrier's step with momentum: he can only turn so fast, and a cut costs him speed (a sharp one more than a slight
 // one). The best cutters keep most of it, but everybody slows down some. Then he speeds back up at his Acceleration.
-export function runStep(a, tx, ty, want, dt) {
+export function runStep(a, tx, ty, want, dt, sk = null) {   // sk: his cutting skill 0-1 if it isn't the usual (a route runner's Route Running)
   const dx = tx - a.x, dy = ty - a.y, d = Math.hypot(dx, dy);
   if (d < 1e-4) return 0;
-  const ux = dx / d, uy = dy / d, cut = cutSkill(a.p);
+  const ux = dx / d, uy = dy / d, cut = sk ?? cutSkill(a.p);
   if (!a.hd) { const v = Math.hypot(a.vx || 0, a.vy || 0); a.hd = v > 0.5 ? [a.vx / v, a.vy / v] : [ux, uy]; a.sp = Math.min(v, a.max); }
   const ang = Math.acos(clamp(a.hd[0] * ux + a.hd[1] * uy, -1, 1)), turn = (4.2 + 6.5 * cut) * dt;
   if (ang <= turn || d < 0.6) a.hd = [ux, uy];
@@ -132,9 +132,10 @@ export class Scene {
     }
   }
   // The ball in the air from where it is now to (x1, y1) at height h1, taking `dur` seconds and peaking `apex` yards higher.
+  // opts: { wobble, kick, to (the player whose hands it goes into, so it's drawn arriving in them) }.
   throwBall(x1, y1, h1, dur, apex, land, opts = {}) {
     const b = this.ball; b.holder = null; b.loose = null; b.spin = true; b.wobble = !!opts.wobble; b.kick = !!opts.kick;
-    b.flight = { x0: b.x, y0: b.y, h0: b.h, x1, y1, h1, t0: this.t, t1: this.t + dur, apex, land };
+    b.flight = { x0: b.x, y0: b.y, h0: b.h, x1, y1, h1, t0: this.t, t1: this.t + dur, apex, land, to: opts.to || null };   // to: whose hands it ends up in
   }
   give(a) { const b = this.ball; b.holder = a; b.flight = null; b.loose = null; b.spin = false; b.wobble = false; }
   loose(vx, vy, vh) { const b = this.ball; b.holder = null; b.flight = null; b.spin = false; b.loose = { vx, vy, vh }; }

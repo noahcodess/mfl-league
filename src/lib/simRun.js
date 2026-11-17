@@ -40,13 +40,13 @@ export function runPlay(G, play, call, plan = {}, def = {}) {
   if (R.chance(0.4)) line.push({ p: D[R.pick(pairs)[1]], at: pre - 0.3 });           // sometimes the man being blocked still gets a hand on him
   if (R.chance(0.25)) line.push({ p: D.SS, at: pre + 0.5 });                         // the safety came down into the box
   line.push({ p: near, at: pre - read(near) + (m.fool || 0) }, { p: far, at: pre + 3 - read(far) + (m.fool || 0) }, { p: D.SS, at: pre + 6 }, { p: side === 'left' ? D.CB1 : D.CB2, at: pre + 11 });
-  const out = carry(G, play, rb, -0.5, sneak ? line.slice(0, 2) : line, toGoal, [D.CB1, D.CB2, D.SS], 0.9);
+  const out = carry(G, play, rb, -0.5, sneak ? line.slice(0, 2) : line, toGoal, [D.CB1, D.CB2, D.SS], 0.9, G.s.toGo);
   const gain = Math.round(out.end);
   stat(play, rb, 'ryds', gain); stat(play, rb, 'rlong', gain); if (out.td) stat(play, rb, 'rtd');
   if (gain < 0 && out.tackler) stat(play, out.tackler, 'tfl');
   play.kind = 'run'; play.carrier = rb.id;
   play.text = out.td ? `${rb.last} ${call === 'outside' ? 'around the edge' : 'up the middle'}... TOUCHDOWN!`
     : `${rb.last} ${sneak ? 'sneaks' : call === 'outside' ? `sweeps ${side}` : 'up the middle'} for ${gain > 0 ? `${gain} yard${gain === 1 ? '' : 's'}` : gain === 0 ? 'no gain' : `a loss of ${-gain}`}${out.tackler ? `. Tackle by ${out.tackler.last}` : ''}.`;
-  const ob = out.td || sneak ? { oob: false, gain } : outOfBounds(G, rb, call === 'outside' ? 0.05 : 0.01, gain);   // he knows what the clock needs
+  const ob = out.td || sneak || out.reach ? { oob: false, gain } : outOfBounds(G, rb, call === 'outside' ? 0.05 : 0.01, gain);   // he knows what the clock needs
   return { gain: ob.gain, td: out.td, fumble: out.fumble, time: out.time + 1.5, oob: ob.oob, forced: ob.oob && !!ob.forced };
 }

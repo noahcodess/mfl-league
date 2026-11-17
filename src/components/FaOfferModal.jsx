@@ -111,7 +111,7 @@ export default function FaOfferModal({ player, myTeam, canOffer, potential, scou
             <PlayerSkills player={player} potential={potential} />
           </>
         ) },
-        { key: 'past', label: 'Past teams', render: () => <PastTeams player={player} /> },
+        { key: 'past', label: 'History', render: () => <PastTeams player={player} /> },
       ]} />
     </Modal>
   );

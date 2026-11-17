@@ -39,11 +39,11 @@ export function postPlayFlag(G, play, res, call) {
 }
 
 // Called on every tackle. Maybe someone is hurt: he leaves the game and the best backup at his position comes in.
-export function maybeInjury(G, play, carrier, tackler, t) {
+export function maybeInjury(G, play, carrier, tackler, t, risk = 1) {   // risk: more than 1 when he exposed himself (a reach)
   const { R } = G, p = R.chance(0.65) ? carrier : tackler;
   if (!p || p.league) return null;
   const frail = ((100 - (p.durability ?? 67)) / 33) ** 2 * (1.5 - val(G, p, 'toughness', 60) / 120);
-  if (!R.chance(clamp(0.0075 * frail * (G.opts.rivalry ? 1.35 : 1), 0, 0.03))) return null;
+  if (!R.chance(clamp(0.0075 * frail * risk * (G.opts.rivalry ? 1.35 : 1), 0, 0.03 * risk))) return null;
   const weeks = Math.max(1, Math.round(R.int(1, 7) * (1.45 - (p.recovery ?? 60) / 100)));
   addEvent(play, 'injury', t, { id: p.id, weeks }); G.injuries.push({ id: p.id, name: p.name, side: p.side, weeks, n: G.plays.length + 1 });
   play.text += ` ${p.last} is hurt on the play.`;

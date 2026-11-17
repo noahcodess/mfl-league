@@ -26,7 +26,8 @@ export function drawScene(ctx, S, cam, looks) {
     const look = looks[a.id]; if (!look) continue;
     const L = lookAt(a, t, S, holder), img = sprite(look, L.view, L.pose, L.frame, L.face), X = Math.round(sx(a.x) - img.footX * sp), Y = Math.round(sy(a.y) - img.footY * sp);
     ctx.drawImage(img, X, Y, Math.round(img.width * sp), Math.round(img.height * sp));
-    a.handAt = [X + img.hand[0] * sp, Y + img.hand[1] * sp];   // where his hand is on screen, so a carried ball sits in it
+    a.handAt = [X + img.hand[0] * sp, Y + img.hand[1] * sp];   // where his hands are on screen, so a carried (or caught) ball sits in them
+    a.hand2At = [X + img.hand2[0] * sp, Y + img.hand2[1] * sp];
   }
   drawBall(ctx, S, { sx, sy, px, sp, yd: YD });
   if (S.flag && t >= S.flag.t) { ctx.fillStyle = '#ffd400'; ctx.fillRect(sx(S.flag.x) + 4 * px, sy(S.flag.y) - 2 * px, 4 * px, 3 * px); }

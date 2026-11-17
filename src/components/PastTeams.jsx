@@ -8,7 +8,7 @@ import { money } from '../lib/format.js';
 const LEFT = { let_go: 'Not re-signed: went to free agency', talks_failed: 'Contract talks fell apart', walked: 'Walked in free agency', released: 'Released' };
 const seasons = (a, b) => (a === b ? `Season ${a}` : `Seasons ${a}–${b}`);
 
-// "Past teams" tab: his draft pick, his college under it, every team he's played for and the deals he signed (newest first), then his trades.
+// "History" tab: his draft pick, his college under it, every team he's played for and the deals he signed (newest first), then his trades.
 export default function PastTeams({ player }) {
   const history = usePlayerHistory(player);
   if (!history) return <p className="dim">Loading his history...</p>;

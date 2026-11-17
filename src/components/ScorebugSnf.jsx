@@ -1,6 +1,7 @@
 import React from 'react';
 import ScoreNum from './ScoreNum.jsx';
 import ScorebugCard from './ScorebugCard.jsx';
+import DownText from './DownText.jsx';
 import { clockText } from '../data/gameState.js';
 import { recordText } from '../lib/seasonStats.js';
 
@@ -32,7 +33,7 @@ export default function ScorebugSnf({ home, away, st, rec = {}, pop, card, class
           <span>{pc}</span>
         </div>
         {side(home, 'home')}
-        <span className="snf-down">{down}</span>
+        <span className="snf-down"><DownText text={down} /></span>
       </div>
     </div>
   );

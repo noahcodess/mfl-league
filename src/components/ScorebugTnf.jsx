@@ -1,6 +1,7 @@
 import React from 'react';
 import ScoreNum from './ScoreNum.jsx';
 import ScorebugCard from './ScorebugCard.jsx';
+import DownText from './DownText.jsx';
 import { clockText } from '../data/gameState.js';
 import { recordText } from '../lib/seasonStats.js';
 
@@ -25,7 +26,7 @@ export default function ScorebugTnf({ home, away, st, rec, pop, card, className 
         {side(away, 'away')}
         <div className={`tnf-mid${st?.possession === away.id ? ' poss-away' : st?.possession === home.id ? ' poss-home' : ''}`}>
           <i className="tnf-arrow l" aria-hidden="true" /><i className="tnf-arrow r" aria-hidden="true" />
-          <span className="tnf-down">{down}</span>
+          <span className="tnf-down"><DownText text={down} /></span>
           <span className="tnf-time"><span>{quarter}</span><b>{clockText(left)}</b><em>{st?.play_clock ?? 40}</em></span>
         </div>
         {side(home, 'home')}

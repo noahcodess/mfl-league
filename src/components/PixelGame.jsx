@@ -85,9 +85,10 @@ export default function PixelGame({ game, teams, lineups, onClose, match = null,
   const b4 = play && { quarter: play.before.quarter, clock: play.before.clock, score: play.before.score, poss: play.kind === 'kickoff' ? play.def : play.off,
     down: ['kickoff', 'xp', 'two'].includes(play.kind) ? null : play.before.down, toGo: play.before.toGo, ballOn: play.before.ballOn };   // before the snap
   const a = done ? game.plays[game.plays.length - 1].after : beat.post ? play.after : b4;
+  const dn = !done && beat.post && bt < (S?.tEnd ?? 0) + 1 ? b4 : a;   // down and distance turn over about a second after the whistle
   const ticking = !done && beat.clock != null, clk = ticking ? beat.clock : a.clock;
   const st = { status: done ? 'final' : 'live', quarter: a.quarter, clock_left: Math.max(0, Math.ceil(clk)), clock_running: ticking && beat.running, home_score: a.score.home, away_score: a.score.away, home_timeouts: 3, away_timeouts: 3,
-    possession: teams[a.poss]?.id, try: !done && !beat.post && play?.kind === 'xp' ? 'PAT' : !done && !beat.post && play?.kind === 'two' ? '2-PT Try' : null, down: a.down, togo: a.toGo, ball_on: a.ballOn, play_clock: beat.playClock ?? 40 };
+    possession: teams[dn.poss]?.id, try: !done && dn === b4 && play?.kind === 'xp' ? 'PAT' : !done && dn === b4 && play?.kind === 'two' ? '2-PT Try' : null, down: dn.down, togo: dn.toGo, ball_on: dn.ballOn, play_clock: beat.playClock ?? 40 };
   return (
     <div className={`pg-wrap${full ? ' pg-full' : ''}`}>
       <div className="pg" data-kind={play?.kind}>
@@ -100,6 +101,7 @@ export default function PixelGame({ game, teams, lineups, onClose, match = null,
         {done && <div className="pg-headline final">FINAL</div>}
         {tdUp && <TouchdownShow key={`td${i}`} bug={bc.bug} td={g.td} team={teams[g.td.side]} player={playerOf(g.td.id)} />}
         <BroadcastSlot pre={g.pre} pace={pace} bt={bt} live={pre} play={play} teams={teams} bug={bc.bug} playerOf={playerOf} n={i} />
+        {bugUp && <div className="pg-shelf" />}
         {bugUp && <div className="pg-bug"><Scorebug bc={bc} home={teams.home} away={teams.away} st={st} card={card} className={i === 0 ? 'sb-enter' : ''} /></div>}
       </div>
       {(!full || beat.post || done || play?.call?.name) && <p className="pg-text">{done ? 'That’s the game.' : beat.post ? play.text : play?.call?.name ? `${teams[play.off].code} · ${play.call.name}` : ' '}</p>}

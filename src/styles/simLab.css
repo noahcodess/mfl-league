@@ -73,7 +73,9 @@
 .pg-wrap { display: grid; gap: 8px; margin-top: 10px; }
 .pg { position: relative; aspect-ratio: 16 / 9; container-type: inline-size; overflow: hidden; border-radius: 10px; background: #0b0c0f; }
 .pg .game-field, .pg .gf-screen { position: absolute; inset: 0; width: 100%; height: 100%; image-rendering: pixelated; }
-.pg-bug { position: absolute; left: 50%; bottom: 2.4cqw; transform: translateX(-50%); }
+.pg-bug { position: absolute; left: 50%; bottom: 2.4cqw; transform: translateX(-50%); z-index: 5; }   /* graphics rise out from behind it */
+.pg-shelf { position: absolute; left: 0; right: 0; bottom: 0; height: 15cqw; z-index: 3; pointer-events: none;   /* a soft dark band so the field fades under the bug */
+  background: linear-gradient(180deg, #0000 0%, #0000002e 45%, #00000075 100%); }
 .pg-bug .sb { font-size: 1.35cqw; }
 .pg-bug .sb.sb-tnf { font-size: 1.75cqw; }
 .pg-headline { position: absolute; left: 50%; top: 8cqw; transform: translateX(-50%); padding: .5cqw 2.4cqw; background: #111; color: #ffd83a; font: 900 3.4cqw/1.1 var(--font-display, system-ui); letter-spacing: .08em; border: .3cqw solid #ffd83a; animation: pg-pop .35s cubic-bezier(.2, 1.4, .4, 1) both; white-space: nowrap; }

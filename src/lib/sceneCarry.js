@@ -38,6 +38,6 @@ export function carryPath(S, c, from, t0, endAlong, endLat, play) {
     S.when(t - 0.3, (s) => s.setPose(c, MOVE[e.move] || 'juke', e.move === 'spin' ? 0.4 : 0.45));
     if (d) S.when(Math.max(S.T0, t - 1.4), (s) => { d.pose = null; d.brain = B.meet(p[0] + S.dir * 0.6, p[1] + (i % 2 ? -0.9 : 0.9), t, d.max * 1.05, (a, ss) => { ss.setPose(a, e.move === 'truck' || e.move === 'stiff arm' ? 'driven' : ss.rand() < 0.5 ? 'layout' : 'tackle', 0.35); ss.when(ss.t + 0.25, () => ss.knock(a, 1.3)); }); });   // he whiffs (or gets run over) and goes down
   });
-  finishCarry(S, c, end, tEnd, { tk: made && S.by[made.def], td: play.result.td, oob: play.result.oob, forced: play.result.forced, fumble: ev(play, 'fumble')[0] });
+  finishCarry(S, c, end, tEnd, { tk: made && S.by[made.def], td: play.result.td, oob: play.result.oob, forced: play.result.forced, fumble: ev(play, 'fumble')[0], reach: ev(play, 'reach').find((e) => e.by === c.id) });
   return tEnd;
 }

@@ -10,10 +10,11 @@ const moveOf = (G, c) => MOVES.map(([k, m]) => [c.r[k] ?? 0, m]).sort((a, b) => 
 
 // c: the carrier. start: yards past the line where he has the ball. tacklers: [{ p, at }] nearest first (at = yards past the
 // line where that man meets him). toGoal: yards from the line to the end zone. chasers: defenders who can run him down.
-// Returns { end, td, tackler, fumble: null | { lost, forcedBy, recoveredBy }, ran, time }.
-export function carry(G, play, c, start, tacklers, toGoal, chasers = [], t0 = 0) {
+// line: yards past the line of scrimmage for a first down (scrimmage plays only).
+// Returns { end, td, tackler, fumble: null | { lost, forcedBy, recoveredBy }, ran, time, reach }.
+export function carry(G, play, c, start, tacklers, toGoal, chasers = [], t0 = 0, line = null) {
   const { R } = G, elude = top(G, c, ['elusiveness', 'break_tackle', 'run_after_catch', 'break_sack'], 40) * 0.65 + val(G, c, 'speed', 50) * 0.35;
-  let y = start, ran = 0, t = t0, tackler = null, fumble = null, td = false;
+  let y = start, ran = 0, t = t0, tackler = null, fumble = null, td = false, reach = null;
   const move = (to) => { const d = Math.max(0, to - y); ran += d; t += d / 8.5; y = to; };
   for (const tk of tacklers) {
     if (!tk.p) continue;
@@ -23,9 +24,13 @@ export function carry(G, play, c, start, tacklers, toGoal, chasers = [], t0 = 0)
     if (R.chance(clamp(odds(skill - elude * (1 - tired(G, c, ran)) + 36, 16), 0.68, 0.975))) {
       tackler = tk.p;
       move(Math.min(toGoal - 0.5, y + (R.chance(0.35) ? 1 : 0)));
+      // going down just short of the goal line or the sticks: a heads-up runner stretches the ball out to get it. Only when
+      // it's worth it, because it leaves him exposed (a bit more injury risk) and the ball out away from his body (fumbles).
+      const mark = [line, toGoal].filter((m) => m != null && m > y).sort((a, b) => a - b)[0], iq = (val(G, c, 'vision', val(G, c, 'awareness', 60)) - 60) / 100;
+      if (mark != null && mark - y <= 1 && R.chance(clamp(0.38 + iq * 0.7, 0.22, 0.68))) { reach = mark === toGoal ? 'goal' : 'first'; y = mark === toGoal ? toGoal : mark + 0.3; addEvent(play, 'reach', t, { by: c.id, for: reach }); }
       addEvent(play, 'tackle', t, { def: tk.p.id, carrier: c.id, result: 'made', at: Math.round(y) });
-      stat(play, tk.p, 'tkl'); maybeInjury(G, play, c, tk.p, t);
-      const pFum = 0.011 * (1 + (val(G, tk.p, 'hit_power', 55) - 60) / 70) * (1 - (val(G, c, 'carrying', 62) - 60) / 80);
+      stat(play, tk.p, 'tkl'); maybeInjury(G, play, c, tk.p, t, reach ? 1.35 : 1);
+      const pFum = 0.011 * (reach ? 1.6 : 1) * (1 + (val(G, tk.p, 'hit_power', 55) - 60) / 70) * (1 - (val(G, c, 'carrying', 62) - 60) / 80);
       if (R.chance(clamp(pFum, 0.002, 0.04))) {
         const lost = R.chance(0.48), rec = lost ? R.pick(tacklers.filter((x) => x.p).map((x) => x.p)) : c;
         fumble = { lost, forcedBy: tk.p, recoveredBy: rec };
@@ -50,5 +55,5 @@ export function carry(G, play, c, start, tacklers, toGoal, chasers = [], t0 = 0)
   if (y >= toGoal) td = !fumble?.lost;
   if (ran >= 8) addEvent(play, 'speed', t, { id: c.id, mph: mph(val(G, c, 'speed', 50), tired(G, c, ran)), yards: Math.round(ran) });
   if (ran - (start < 0 ? 0 : 0) >= 20) swing(G, c.side, 0.08);
-  return { end: Math.min(y, toGoal), td, tackler, fumble, ran, time: t };
+  return { end: Math.min(y, toGoal), td, tackler, fumble, ran, time: t, reach };
 }

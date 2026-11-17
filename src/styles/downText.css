@@ -1,0 +1,11 @@
+/* Down and distance turning over (DownText): the old text slides up and out, the new one rolls in from below with a light
+   sweep across it. About 0.7 seconds, unhurried, so the change reads clearly. */
+.dt { position: relative; display: inline-grid; overflow: hidden; vertical-align: middle; line-height: inherit; }
+.dt > span { grid-area: 1 / 1; white-space: nowrap; }
+.dt.turning .dt-old { animation: dt-out .42s cubic-bezier(.5, 0, .75, .4) both; }
+.dt.turning .dt-new { animation: dt-in .7s cubic-bezier(.22, .9, .3, 1) .12s both; }
+.dt.turning::after { content: ''; position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(100deg, #fff0 30%, #ffffffb0 50%, #fff0 70%) no-repeat; background-size: 250% 100%; animation: dt-sweep .7s ease-in-out .25s both; mix-blend-mode: overlay; }
+@keyframes dt-out { to { transform: translateY(-110%); opacity: 0; filter: blur(.06em); } }
+@keyframes dt-in { from { transform: translateY(110%); opacity: 0; } 60% { opacity: 1; } }
+@keyframes dt-sweep { from { background-position: 160% 0; opacity: 1; } to { background-position: -60% 0; opacity: 0; } }

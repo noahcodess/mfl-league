@@ -3,6 +3,7 @@ import ScoreNum from './ScoreNum.jsx';
 import ScorebugTnf from './ScorebugTnf.jsx';
 import ScorebugSnf from './ScorebugSnf.jsx';
 import ScorebugCard from './ScorebugCard.jsx';
+import DownText from './DownText.jsx';
 import { useTicker, clockLeft, clockText, quarterText, downText } from '../data/gameState.js';
 import { recordText } from '../lib/seasonStats.js';
 
@@ -60,7 +61,7 @@ export default function Scorebug(props) {
           <span className="sb-clock">{clockText(parts.left)}</span>
           <span className="sb-play">{st?.play_clock ?? 40}</span>
         </div>
-        <div className="sb-down">{parts.down}</div>
+        <div className="sb-down"><DownText text={parts.down} /></div>
       </div>
     </div>
   );

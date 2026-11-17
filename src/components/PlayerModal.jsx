@@ -48,7 +48,7 @@ export default function PlayerModal({ player, team, canSeePotential, potential, 
         <PlayerFlags player={player} />
         <Tabs tabs={[
           { key: 'skills', label: 'Skills', render: () => <PlayerSkills player={player} potential={canSeePotential ? potential : null} /> },
-          ...(player.teamId ? [{ key: 'morale', label: 'Morale', render: () => <MoraleBox player={player} /> }, { key: 'drip', label: 'Drip', render: () => <DripTab player={player} /> }] : []),
+          ...(player.teamId ? [{ key: 'morale', label: 'Morale & Stats', render: () => <MoraleBox player={player} /> }, { key: 'drip', label: 'Drip', render: () => <DripTab player={player} /> }] : []),
           { key: 'contract', label: 'Contract & money', render: () => (
             <>
         <PlayerFlags player={player} contract />
@@ -65,7 +65,7 @@ export default function PlayerModal({ player, team, canSeePotential, potential, 
         {player.notes.length > 0 && <ul className="pcard-flags">{player.notes.map((n) => <li key={n}>{n}</li>)}</ul>}
             </>
           ) },
-          { key: 'past', label: 'Past teams', render: () => <PastTeams player={player} /> },
+          { key: 'past', label: 'History', render: () => <PastTeams player={player} /> },
         ]} />
     </Modal>
   );

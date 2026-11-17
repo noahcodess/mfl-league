@@ -3,7 +3,7 @@
   --g-bg: #111; --g-fg: #fff; --g-acc: #f4b800; --g-acc-fg: #111; --g-font: 'Barlow Condensed', sans-serif; --g-r: .3cqw; }
 
 /* the field goal bar rises out of the top of the scorebug, holds, and drops back in */
-.bg-fg { bottom: 8.3cqw; display: flex; align-items: stretch; font: 800 1.5cqw/1 var(--g-font); letter-spacing: .06em; border-radius: var(--g-r);
+.bg-fg { bottom: 6.5cqw; display: flex; align-items: stretch; font: 800 1.5cqw/1 var(--g-font); letter-spacing: .06em; border-radius: var(--g-r);
   background: var(--g-bg); color: var(--g-fg); overflow: hidden; box-shadow: 0 .4cqw .8cqw #0009;
   animation: bg-rise .5s cubic-bezier(.2, 1.2, .4, 1) both; transform-origin: 50% 100%; }
 .bg-fg b { padding: .55cqw 1.3cqw; background: var(--g-acc); color: var(--g-acc-fg); font-weight: 900; }
@@ -11,7 +11,7 @@
 @keyframes bg-rise { from { transform: translate(-50%, 2.6cqw) scaleY(.2); opacity: 0; } to { transform: translate(-50%, 0) scaleY(1); opacity: 1; } }
 
 /* "ball on": also rises out of the scorebug, with an arrow nudging the way the offense is going, then sinks back in */
-.bg-ballon { bottom: 8.3cqw; display: flex; align-items: center; gap: .8cqw; padding: .45cqw 1.1cqw; font-family: var(--g-font);
+.bg-ballon { bottom: 6.5cqw; display: flex; align-items: center; gap: .8cqw; padding: .45cqw 1.1cqw; font-family: var(--g-font);
   background: var(--g-bg); color: var(--g-fg); border-radius: var(--g-r); border-bottom: .3cqw solid var(--tc, var(--g-acc));
   box-shadow: 0 .4cqw 1cqw #000a; animation: bg-rise .5s cubic-bezier(.2, 1.2, .4, 1) both; transform-origin: 50% 100%; }
 .bg-fg.out, .bg-ballon.out { animation: bg-sink .4s ease-in both; }
@@ -45,3 +45,8 @@
 .bg-drive b img { width: 1.9cqw; height: 1.9cqw; margin: -.4cqw 0; object-fit: contain; image-rendering: pixelated; }
 .bg-drive span + span { box-shadow: inset .12cqw 0 0 #ffffff30; }
 .bgx-cbs.bg-drive span + span { box-shadow: inset .12cqw 0 0 #0b3a8240; }
+
+/* sitting right on top of each bug (they're different heights) */
+.bgx-fox.bg-fg, .bgx-fox.bg-ballon { bottom: 6.6cqw; }
+.bgx-tnf.bg-fg, .bgx-tnf.bg-ballon { bottom: 8.4cqw; }
+.bgx-snf.bg-fg, .bgx-snf.bg-ballon { bottom: 10.3cqw; }

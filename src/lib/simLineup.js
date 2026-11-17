@@ -20,6 +20,7 @@ export function simPlayer(p, attrs, inj) {
     id: p.id, name: p.name, last: p.name.split(' ').slice(1).join(' ') || p.name, pos: p.position, number: p.number, stars: p.stars, age: p.age,
     starter: p.depth === 'starter', slot: p.slot, r, style: attrs?.style || null, guessed: !attrs?.ratings,
     height: p.height || null, weight: p.weight || null, mood: p.mood || 'normal',
+    nationality: p.nationality || null, looks: p.looks || null,   // so his face on the field and in graphics is the one on his player page
     durability: inj?.durability ?? Math.round(tough * 0.55 + 30), recovery: inj?.recovery ?? 60,
   };
 }

@@ -10,9 +10,9 @@
 .tnf-side::before { content: ''; position: absolute; inset: 0 0 52% 0; background: linear-gradient(180deg, #ffffff45, #ffffff00); border-radius: inherit; pointer-events: none; }
 .tnf-side.away { border-radius: 1.15em 0 0 1.15em; }
 .tnf-side.home { border-radius: 0 1.15em 1.15em 0; flex-direction: row-reverse; padding: 0 4.05em 0 .55em; }
-.tnf-logo { position: absolute; left: -.35em; bottom: .15em; width: 4.2em; height: 4.2em; object-fit: contain; image-rendering: pixelated; z-index: 2;
+.tnf-logo { position: absolute; left: .15em; bottom: .3em; width: 3.8em; height: 3.8em; object-fit: contain; image-rendering: pixelated; z-index: 2;
   filter: drop-shadow(0 .16em .18em #000b); }
-.tnf-side.home .tnf-logo { left: auto; right: -.35em; }
+.tnf-side.home .tnf-logo { left: auto; right: .15em; }   /* inside the rounded border, breaking out only over the top */
 .tnf-id { position: relative; display: grid; gap: .2em; justify-items: center; }
 .tnf-id > span { font-family: 'Bungee', sans-serif; font-size: .8em; color: #fff; line-height: 1; text-shadow: 0 .1em 0 #0007; }
 .tnf-id small { font-size: .62em; color: #ffffffd9; line-height: 1; }

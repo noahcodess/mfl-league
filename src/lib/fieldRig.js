@@ -43,6 +43,15 @@ export const POSES = {
   layout: [P(20, 100, 95, 95, 92, -20, -30, -45, -40)],                     // a full-out dive (drawn tipped forward)
   stumble: [P(38, 125, 60, -45, -15, 65, 35, -50, -85), P(44, 140, 80, -30, -5, 55, 20, -60, -95)],   // tripped up, arms out for balance
   pump: [P(-6, -110, 185, 60, 75, 28, 0, -28, -30), P(8, 70, 110, 40, 60, 24, -5, -32, -40)],         // the pump fake: cocks it, starts forward, holds
+  // catches: the hands go where the ball is (sceneBall puts the ball between them)
+  hands: [P(8, 80, 130, 74, 124, 45, 5, -30, -75), P(10, 80, 130, 74, 124, -30, -75, 45, 5)],         // in stride, hands out in front of his face
+  shoulder: [P(14, 192, 212, 186, 206, 45, 5, -30, -75), P(14, 192, 212, 186, 206, -30, -75, 45, 5)], // over the shoulder: running away, hands up and back
+  highpoint: [P(-6, 132, 150, 126, 144, 60, -35, 20, -60, 5)],                                       // up in the air, both hands at the top of the jump
+  onehand: [P(-2, 118, 132, -20, 12, 50, -25, 10, -45, 3)],                                           // reaching up with one hand
+  scoop: [P(40, 32, 16, 26, 12, 62, -10, -35, -70)],                                                  // a low ball, scooped off his shoe tops
+  contest: [P(0, 138, 156, 70, 92, 45, -25, 5, -40, 3)],                                              // a defender going up with him, arm in
+  swat: [P(-2, 140, 162, 60, 80, 42, -25, 5, -40, 3), P(14, 92, 48, 60, 80, 42, -25, 5, -40, 2)],      // knocking it away: arm up, then chopping down through it
+  stretch: [P(55, 96, 92, 40, 70, 70, 20, -40, -70)],                                                 // going down, the ball stretched out over the line
 };
 const GROUND_HANDS = new Set(['olset', 'dlset']);
 const rad = (d) => (d * Math.PI) / 180;

@@ -35,7 +35,7 @@ function routes(G, call, def, plan) {
     const fixed = plan.depths?.[slot], p = O[slot], c = cover[slot], depth = fixed === 0 ? 0 : Math.max(1, Math.round((fixed ?? base) * (0.8 + R.r() * 0.4))), deep = depth >= 18;
     const get = mix(G, p, deep ? { route_running: 0.3, speed: 0.45, release: 0.25 } : { route_running: 0.45, speed: 0.2, release: 0.2, agility: 0.15 }, 50);
     const stick = zone ? mix(G, c, { zone_cover: 0.5, play_rec: 0.3, speed: 0.2 }, 45) : mix(G, c, deep ? { man_cover: 0.4, speed: 0.45, press: 0.15 } : { man_cover: 0.5, speed: 0.2, press: 0.15, agility: 0.15 }, 45);
-    let sep = 1.45 + (get - stick) / 12 + R.gauss(0, 1.5) + (zone ? (deep ? -0.5 : 0.5) : 0);
+    let sep = 1.45 + (get - stick) / 10 + R.gauss(0, 1.35) + (zone ? (deep ? -0.5 : 0.5) : 0);
     if (depth === 0) sep += 1.6;                                                  // screens: blockers out in front
     if (plan.pa && depth >= 9) sep += 0.6 + (md.pa || 0);                         // the linebackers bit on the fake
     // the formation and concept against this coverage: rubs and man-beaters vs man, zone-beaters vs zone, screens vs blitz,
@@ -99,10 +99,10 @@ export function passPlay(G, play, call, def, plan = {}) {
     if (!R.chance(slip)) { if (R.chance(clamp((tThrow - heat.t) / 1.35, 0.16, 0.7))) return sack(G, play, qb, heat.by, heat.t); pressured = true; }
     else if (R.chance(qb.style === 'scrambler' ? 0.6 : val(G, qb, 'speed', 50) > 76 ? 0.4 : 0.15)) { // he takes off
       addEvent(play, 'pocket', heat.t, { qb: qb.id, move: 'escape' }); stat(play, qb, 'car');
-      const out = carry(G, play, qb, -3, [{ p: D.LB1, at: 2 + R.int(0, 4) }, { p: D.SS, at: 8 }, { p: D.CB1, at: 13 }], toGoal, [D.CB1, D.CB2], heat.t), gain = Math.round(out.end);
+      const out = carry(G, play, qb, -3, [{ p: D.LB1, at: 2 + R.int(0, 4) }, { p: D.SS, at: 8 }, { p: D.CB1, at: 13 }], toGoal, [D.CB1, D.CB2], heat.t, G.s.toGo), gain = Math.round(out.end);
       stat(play, qb, 'ryds', gain); stat(play, qb, 'rlong', gain); if (out.td) stat(play, qb, 'rtd');
       play.kind = 'run'; play.scramble = true; play.carrier = qb.id; play.text = out.td ? `${qb.last} escapes and runs it in... TOUCHDOWN!` : `${qb.last} scrambles for ${gain}.`;
-      const ob = out.td ? { oob: false, gain } : outOfBounds(G, qb, 0.12, gain);
+      const ob = out.td || out.reach ? { oob: false, gain } : outOfBounds(G, qb, 0.12, gain);
       return { gain: ob.gain, td: out.td, fumble: out.fumble, time: out.time + 1.5, oob: ob.oob, forced: ob.oob && !!ob.forced };
     } else { addEvent(play, 'pocket', heat.t, { qb: qb.id, move: 'slide' }); pressured = true; onRun = true; tThrow = heat.t + 0.4; }
     addEvent(play, 'pressure', heat.t, { by: heat.by.id, kind: 'hurry' });
@@ -151,12 +151,12 @@ export function passPlay(G, play, call, def, plan = {}) {
   const type = tight ? (val(G, tgt.p, 'spectacular_catch', 0) > 82 && R.chance(0.4) ? 'one-handed' : 'contested') : d > 20 ? 'over the shoulder' : 'in stride';
   addEvent(play, 'catch', tCatch, { target: tgt.p.id, def: tgt.c.id, result: 'catch', catchType: type, sep: Math.round(tgt.sep * 10) / 10, contested: tight });
   const help = [D.SS, D.LB1, D.LB2, D.CB1, D.CB2].filter((p) => p !== tgt.c).sort(() => R.r() - 0.5);
-  const out = carry(G, play, tgt.p, d, [{ p: tgt.c, at: d + Math.max(0, tgt.sep - 0.6) * 1.3 }, { p: help[0], at: d + 4 + R.int(0, 3) }, { p: help[1], at: d + 9 + R.int(0, 4) }, { p: help[2], at: d + 17 }], toGoal, [D.CB1, D.CB2, D.SS], tCatch);
+  const out = carry(G, play, tgt.p, d, [{ p: tgt.c, at: d + Math.max(0, tgt.sep - 0.6) * 1.3 }, { p: help[0], at: d + 4 + R.int(0, 3) }, { p: help[1], at: d + 9 + R.int(0, 4) }, { p: help[2], at: d + 17 }], toGoal, [D.CB1, D.CB2, D.SS], tCatch, G.s.toGo);
   const gain = Math.round(out.end);
   stat(play, qb, 'cmp'); stat(play, qb, 'pyds', gain); stat(play, qb, 'plong', gain); stat(play, tgt.p, 'rec'); stat(play, tgt.p, 'recyds', gain); stat(play, tgt.p, 'reclong', gain); stat(play, tgt.p, 'yac', gain - d); stat(play, tgt.c, 'cmpd');
   if (out.td) { stat(play, qb, 'ptd'); stat(play, tgt.p, 'rectd'); }
   play.carrier = tgt.p.id; play.catchType = type;
   play.text = out.td ? `${qb.last} ${d > 20 ? 'deep ' : ''}to ${tgt.p.last}... TOUCHDOWN!` : `${qb.last} ${d > 20 ? 'deep to' : 'to'} ${tgt.p.last}${type === 'one-handed' ? ' with one hand' : ''} for ${gain}${out.tackler ? `. Tackle by ${out.tackler.last}` : ''}.`;
-  const ob = out.td ? { oob: false, gain } : outOfBounds(G, tgt.p, d >= 10 && (call === 'medium' || call === 'deep') ? 0.07 : 0.035, gain);   // sideline routes get out more
+  const ob = out.td || out.reach ? { oob: false, gain } : outOfBounds(G, tgt.p, d >= 10 && (call === 'medium' || call === 'deep') ? 0.07 : 0.035, gain);   // sideline routes get out more
   return { gain: ob.gain, td: out.td, fumble: out.fumble, time: out.time + 1.5, oob: ob.oob, forced: ob.oob && !!ob.forced };
 }

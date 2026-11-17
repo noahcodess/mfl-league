@@ -18,6 +18,10 @@ function turned(step, spin) {
   cache.set(k, c); return c;
 }
 const stepOf = (ang) => ((Math.round(ang / (Math.PI / 8)) % 16) + 16) % 16;
+const clamp01 = (v) => Math.max(0, Math.min(1, v));
+// Where the ball sits in his hands: between both hands for a two-handed catch, in his near hand otherwise.
+const TWO = new Set(['hands', 'shoulder', 'highpoint', 'scoop', 'catch']);
+const handsOf = (a) => (TWO.has(a.pose) && a.hand2At ? [(a.handAt[0] + a.hand2At[0]) / 2, (a.handAt[1] + a.hand2At[1]) / 2] : a.handAt);
 const along = (f, u) => [f.x0 + (f.x1 - f.x0) * u, f.y0 + (f.y1 - f.y0) * u, f.h0 + (f.h1 - f.h0) * u + f.apex * 4 * u * (1 - u)];
 
 // S: the live scene. v: { sx, sy (yards -> screen), px (world -> screen), sp (sprite pixel on screen), yd (pixels per yard) }.
@@ -26,8 +30,8 @@ export function drawBall(ctx, S, v) {
   const put = (img, cx, cy) => ctx.drawImage(img, Math.round(cx - 7.5 * size), Math.round(cy - 7.5 * size), Math.round(15 * size), Math.round(15 * size));
   if (b.holder) { // in his hand: points forward, cocked back by the ear for a quarterback
     const a = b.holder; if (!a.handAt || a.vis?.view === 'back') return;
-    const face = a.vis?.face || a.face, qb = a.qb && a.vis?.view === 'side' && !a.down;
-    put(turned(stepOf(face > 0 ? (qb ? -0.6 : 0) : Math.PI + (qb ? 0.6 : 0)), false), a.handAt[0], a.handAt[1]);
+    const face = a.vis?.face || a.face, qb = a.qb && a.vis?.view === 'side' && !a.down, [hx, hy] = handsOf(a);
+    put(turned(stepOf(face > 0 ? (qb ? -0.6 : 0) : Math.PI + (qb ? 0.6 : 0)), false), hx, hy);
     return;
   }
   const gx = v.sx(b.x), gy = v.sy(b.y), lift = (h) => h * v.yd * v.px, hy = gy - lift(b.h), f = b.flight;
@@ -41,11 +45,16 @@ export function drawBall(ctx, S, v) {
     }
     ctx.globalAlpha = 1;
   }
+  let bx = gx, by = hy;
+  if (f && f.to?.handAt && !f.to.down) { // the last stretch of a catchable ball: it goes right into his hands
+    const u = (t - f.t0) / (f.t1 - f.t0), k = clamp01((u - 0.78) / 0.22), e = k * k * (3 - 2 * k), [hx, hy2] = handsOf(f.to);
+    bx = gx + (hx - gx) * e; by = hy + (hy2 - hy) * e;
+  }
   let ang = 0;
   if (f && b.kick) ang = t * 14;                                                         // end over end
   else if (f && b.wobble) ang = t * 9 + Math.sin(t * 23) * 0.8;                          // a duck: tumbling, not a spiral
   else if (f) { const [nx, ny, nh] = along(f, Math.min(1, (t + 0.03 - f.t0) / (f.t1 - f.t0))); ang = Math.atan2(v.sy(ny) - lift(nh) - hy, v.sx(nx) - gx); }
   else if (b.loose) ang = b.loose.vh !== 0 ? t * 11 : Math.atan2(b.loose.vy, b.loose.vx || 0.01);   // tumbling while it bounces
   else if (S.tee && t < S.tee.t1 + 0.05) ang = Math.PI / 2;                              // standing up on the tee
-  put(turned(stepOf(ang), !!f && !b.kick && !b.wobble && Math.floor(t * 18) % 2 === 0), gx, hy);
+  put(turned(stepOf(ang), !!f && !b.kick && !b.wobble && Math.floor(t * 18) % 2 === 0), bx, by);
 }

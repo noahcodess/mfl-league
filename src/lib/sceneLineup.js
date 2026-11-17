@@ -1,6 +1,7 @@
 // Shared pieces of every scrimmage play: lining up (with a huddle break when there's time), the line battle, pursuit, and
 // the tackle. The tackle goes to the engine's tackler if he can actually get there at his own speed; if he can't, the
 // closest defender who can makes it, so nobody ever has to warp across the field.
+import { presses } from './sceneCover.js';
 import { B, clamp, dist, stepTo, getGoing } from './sceneCore.js';
 import { FORMATIONS } from './playbookFormations.js';   // a.pre: where a player jogs to before the snap (sceneCore runs it)
 
@@ -31,20 +32,25 @@ export function lineup(S, lineups, opts = {}) {
   const spots = FORMATIONS[play.call?.form]?.spots || {};
   Object.entries(OFF).forEach(([k, spot]) => { A[k] = place(O[k], play.off, opts.under && k === 'QB' ? [-2.2, 0] : opts.under && k === 'RB' ? [-6.5, 0] : spots[k] || spot, k); });
   const lat = (k, fb) => (A[k] ? (A[k].y - (S.at(0, 0)[1])) : fb);
-  const dspot = { ...DEF, CB1: [5.5, lat('WR1', -14)], CB2: [5.5, lat('WR2', 14)], SS: [11, clamp(lat('TE', 6) * 0.15, -3, 3)] };
+  const off = (k) => (presses(S, Dd[k]) ? 1.3 : 5.5);   // a corner in press walks up on his man
+  const dspot = { ...DEF, CB1: [off('CB1'), lat('WR1', -14)], CB2: [off('CB2'), lat('WR2', 14)], SS: [11, clamp(lat('TE', 6) * 0.15, -3, 3)] };
   if (Math.abs(lat('RB', 0)) > 6) dspot.LB1 = [4, lat('RB', 0) * 0.85];   // a back split out wide gets a linebacker over him
   Object.entries(DEF).forEach(([k]) => { D[k] = place(Dd[k], play.def, dspot[k], k); });
   if (A.QB) { A.QB.qb = true; if (opts.under) A.QB.idle = 'rbset'; }
   S.ball.x = S.los; S.ball.y = 0; S.ball.h = 0.12;
-  if (opts.huddle && S.T0 >= 3) { // break the huddle: everyone jogs to his spot and is set and still well before the snap
-    const ready = S.T0 - 1.3, breakAt = Math.max(0.4, ready - 2.4);   // huddle up, then a brisk 2-3 second walk to the line
-    for (const a of S.actors) {
-      const sx = a.x, sy = a.y, off = a.side === play.off, [hx, hy] = off ? S.at(-8 + S.rand() * 1.5, sy * 0.15) : S.at(S.along(a) + 3.5, sy * 0.55);
-      a.x = hx; a.y = hy; a.pre = { x: sx, y: sy, at: breakAt + S.rand() * 0.25, speed: Math.min(7.5, Math.max(3.2, dist(hx, hy, sx, sy) / Math.max(0.6, ready - breakAt))) };
-    }
-  }
+  if (opts.huddle && S.T0 >= 3) S.huddle = true;   // they break the huddle (huddleUp, once the play is built from the real spots)
   S.lines = { los: S.los, first: play.before.ballOn + play.before.toGo < 100 ? S.los + S.dir * play.before.toGo : null };
   return { A, D };
+}
+
+// Break the huddle: everyone starts in the huddle and jogs to his spot, set and still well before the snap. Runs after the
+// play is built, so routes, blocks and coverage are all worked out from where players really line up.
+export function huddleUp(S) {
+  const play = S.play, ready = S.T0 - 1.3, breakAt = Math.max(0.4, ready - 2.4);   // huddle up, then a brisk 2-3 second walk to the line
+  for (const a of S.actors) {
+    const sx = a.x, sy = a.y, off = a.side === play.off, [hx, hy] = off ? S.at(-8 + S.rand() * 1.5, sy * 0.15) : S.at(S.along(a) + 3.5, sy * 0.55);
+    a.x = hx; a.y = hy; a.pre = { x: sx, y: sy, at: breakAt + S.rand() * 0.25, speed: Math.min(7.5, Math.max(3.2, dist(hx, hy, sx, sy) / Math.max(0.6, ready - breakAt))) };
+  }
 }
 
 // The line. pass: true for pass protection. rush: { defId: seconds until he gets home } (only winners matter). aim: the QB actor.
@@ -120,9 +126,11 @@ export function pursueAll(S, carrier, t, except = []) {
 }
 
 // The end of a carry: the carrier reaches `end` at tEnd and is tackled (or scores, or steps out). tk: who the engine says made it.
-export function finishCarry(S, carrier, end, tEnd, { tk = null, td = false, oob = false, forced = false, fumble = null } = {}) {
-  const runDir = Math.sign(end[0] - carrier.x) || S.dir, hit = { done: false };
-  if (!td && (!oob || forced)) S.when(Math.max(S.T0, tEnd - 2.2), (s) => { // pick whoever can really get there (closing burst included)
+export function finishCarry(S, carrier, end, tEnd, { tk = null, td = false, oob = false, forced = false, fumble = null, reach = null } = {}) {
+  const runDir = Math.sign(end[0] - carrier.x) || S.dir;
+  const hit = !td || !!reach;   // he gets tackled (a reach for the goal line is a touchdown made while going down)
+  if (reach) S.when(tEnd - 0.32, (s) => s.setPose(carrier, 'stretch', 0.7));   // stretching the ball over the line as he goes down
+  if (hit && (!oob || forced)) S.when(Math.max(S.T0, tEnd - 2.2), (s) => { // pick whoever can really get there (closing burst included)
     const can = (a) => a && !a.down && dist(a.x, a.y, end[0], end[1]) <= a.max * 1.2 * (tEnd - s.t) + 2.5;
     const best = can(tk) ? tk : s.actors.filter((a) => a.side !== carrier.side && !a.down && a !== carrier).sort((m, n) => dist(m.x, m.y, end[0], end[1]) - dist(n.x, n.y, end[0], end[1]))[0] || tk;
     if (!best) return;
@@ -131,14 +139,16 @@ export function finishCarry(S, carrier, end, tEnd, { tk = null, td = false, oob 
   });
   // the last moment: a tackler on top of him wraps him up, one a few yards off lays out in a dive, and if nobody is close
   // enough the runner stumbles (tripped up, losing his feet) until someone actually gets a hand on him
-  if (!td && !oob) S.when(tEnd - 0.4, (s) => {
+  if (hit && !oob) S.when(tEnd - 0.4, (s) => {
     const tk2 = s.tackler; if (!tk2) return;
-    const reach = tk2.max * 1.25 * 0.4, d = dist(tk2.x, tk2.y, end[0] + runDir * 0.7, end[1] + 0.2);   // how far he still is from the meeting spot
-    if (d <= reach + 0.8) s.when(tEnd - 0.2, (ss) => ss.setPose(tk2, ss.rand() < 0.5 ? 'wrap' : 'tackle', 0.6));
+    const px = carrier.x + (carrier.vx || 0) * 0.4, py = carrier.y + (carrier.vy || 0) * 0.4;   // where the runner will be, not just the spot
+    const reach = tk2.max * 1.25 * 0.4, d = Math.min(dist(tk2.x, tk2.y, end[0] + runDir * 0.7, end[1] + 0.2), dist(tk2.x, tk2.y, px, py));
+    if (d <= reach + 0.8) { tk2.brain = B.pursue(carrier, tk2.max * 1.2, 0.5); s.when(tEnd - 0.2, (ss) => ss.setPose(tk2, ss.rand() < 0.5 ? 'wrap' : 'tackle', 0.6)); }   // he homes in on the man
     else if (d <= reach + 3.2) { s.when(tEnd - 0.25, (ss) => { ss.setPose(tk2, 'layout', 0.7); const dd = dist(tk2.x, tk2.y, carrier.x, carrier.y); tk2.brain = (a, dt) => stepTo(a, carrier.x, carrier.y, Math.min(dd / 0.25 + 2, a.max * 1.9), dt); }); }   // flying at him
     else { s.setPose(carrier, 'stumble', 0.9); tk2.brain = B.pursue(carrier, tk2.max * 1.15, 0.3); }
   });
   S.when(tEnd, (s) => {
+    if (td && reach) { s.knock(carrier, 1.1); if (s.tackler && dist(s.tackler.x, s.tackler.y, carrier.x, carrier.y) < 2.4) s.knock(s.tackler, 1.4); s.when(s.t + 1.15, (ss) => { carrier.celebrate = true; ss.setPose(carrier, 'cheer'); }); return; }   // in! he gets up celebrating
     if (td) { // he scores: celebrate, teammates come over, the defense jogs off
       carrier.brain = B.to(carrier.x + runDir * 1.5, carrier.y, 3); carrier.celebrate = true; s.setPose(carrier, 'cheer');
       for (const a of s.actors) if (a !== carrier && a.side === carrier.side && dist(a.x, a.y, carrier.x, carrier.y) < 22) { a.pose = null; a.brain = B.gather(s, carrier.x, carrier.y, 2); s.when(s.t + 1.2, () => s.setPose(a, 'cheer')); }
@@ -156,10 +166,10 @@ export function finishCarry(S, carrier, end, tEnd, { tk = null, td = false, oob 
       if (fumble) { ss.loose(runDir * 3, (ss.rand() - 0.5) * 4, 4); const rec = ss.by[fumble.recoveredBy]; if (rec) ss.when(ss.t + 0.5, () => { rec.down = false; rec.brain = B.meet(ss.ball.x, ss.ball.y, ss.t + 0.6, rec.max, (r, s3) => { ss.knock(r); s3.give(r); }); }); }
       for (const a of ss.actors) if (!a.down && a !== carrier && a !== ss.tackler) { a.pose = null; a.brain = dist(a.x, a.y, carrier.x, carrier.y) < 16 ? B.gather(ss, carrier.x, carrier.y, 2.2) : B.to(a.x + (carrier.x - a.x) * 0.25, a.y + (carrier.y - a.y) * 0.25, 2); }
     };
-    const close = () => s.actors.some((a) => a.side !== carrier.side && !a.down && dist(a.x, a.y, carrier.x, carrier.y) < 1.5);
+    const close = () => s.actors.some((a) => a.side !== carrier.side && !a.down && dist(a.x, a.y, carrier.x, carrier.y) < 1.6);
     if (close()) wrapUp(s);
     else {
-      s.setPose(carrier, 'stumble', 1.2); carrier.brain = B.to(carrier.x + runDir * 0.8, carrier.y, 1.2);
+      s.setPose(carrier, 'stumble', 1.2); carrier.brain = B.to(carrier.x + runDir * 0.8, carrier.y, 1.2);   // fighting for the last bit, no hand on him yet
       if (s.tackler) { s.setPose(s.tackler, 'layout', 0.7); s.tackler.brain = B.pursue(carrier, s.tackler.max * 1.25, 0.2); }
       for (let k = 1; k <= 10; k++) s.when(s.t + k * 0.1, (ss) => { if (carrier.down) return; if (close() || k === 10) wrapUp(ss); });
     }

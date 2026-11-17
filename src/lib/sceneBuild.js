@@ -2,7 +2,7 @@
 // (scenePass), kicks (sceneKicks), flags before the snap and two-point tries. Returns a live Scene (sceneCore) that the
 // broadcast steps forward frame by frame, plus rebuild() so a replay or the Back button can rewind it.
 import { Scene, B } from './sceneCore.js';
-import { frame, lineup, ev } from './sceneLineup.js';
+import { frame, lineup, ev, huddleUp } from './sceneLineup.js';
 import { buildRun, buildScramble, buildKneel, buildSpike } from './sceneRun.js';
 import { buildPass } from './scenePass.js';
 import { buildKickoff, buildPunt, buildKick } from './sceneKicks.js';
@@ -32,6 +32,7 @@ export function buildScene(play, lineups, pace = {}, seed = 1) {
   else if (play.kind === 'two') { frame(S, play, play.off === 'away' ? 98 : 2); if (thr) buildPass(S, lineups); else buildRun(S, lineups, play.headline === '2-PT GOOD' ? 3.5 : 1); }
   else if (play.kind === 'pass' || play.kind === 'sack' || thr) buildPass(S, lineups);
   else buildRun(S, lineups);
+  if (S.huddle) huddleUp(S);   // now that everything is set from the real spots, start them in the huddle
   if (play.flagged && !S.flag) S.flag = { t: S.tEnd - 0.4, x: S.los, y: 2 };
   S.dur = S.tEnd + 2.4;
   S.rebuild = () => buildScene(play, lineups, pace, seed);
