@@ -46,16 +46,19 @@ export const POSES = {
   // catches: the hands go where the ball is (sceneBall puts the ball between them)
   hands: [P(8, 80, 130, 74, 124, 45, 5, -30, -75), P(10, 80, 130, 74, 124, -30, -75, 45, 5)],         // in stride, hands out in front of his face
   shoulder: [P(14, 192, 212, 186, 206, 45, 5, -30, -75), P(14, 192, 212, 186, 206, -30, -75, 45, 5)], // over the shoulder: running away, hands up and back
-  highpoint: [P(-6, 132, 150, 126, 144, 60, -35, 20, -60, 5)],                                       // up in the air, both hands at the top of the jump
-  onehand: [P(-2, 118, 132, -20, 12, 50, -25, 10, -45, 3)],                                           // reaching up with one hand
+  highpoint: [P(-6, 132, 150, 126, 144, 60, -35, 20, -60)],                                       // up in the air, both hands up (the jump itself is sceneCatch's hop)
+  onehand: [P(-2, 118, 132, -20, 12, 50, -25, 10, -45)],                                           // reaching up with one hand
   scoop: [P(40, 32, 16, 26, 12, 62, -10, -35, -70)],                                                  // a low ball, scooped off his shoe tops
-  contest: [P(0, 138, 156, 70, 92, 45, -25, 5, -40, 3)],                                              // a defender going up with him, arm in
+  contest: [P(0, 138, 156, 70, 92, 45, -25, 5, -40)],                                              // a defender going up with him, arm in
   swat: [P(-2, 140, 162, 60, 80, 42, -25, 5, -40, 3), P(14, 92, 48, 60, 80, 42, -25, 5, -40, 2)],      // knocking it away: arm up, then chopping down through it
   stretch: [P(55, 96, 92, 40, 70, 70, 20, -40, -70)],
   // a cut: the near foot (frame 0) or the far foot (frame 1) planted wide out in front, body sunk and leaning into it
   plant: [P(26, -25, 15, 45, 85, 62, 30, -38, -62), P(26, 45, 85, -25, 15, -38, -62, 62, 30)],                                                 // going down, the ball stretched out over the line
 };
 POSES.plantc = POSES.plant.map(tuck);   // the same cut with the ball tucked
+POSES.breakdown = [P(34, 70, 100, 62, 95, 62, -40, 30, -55), P(36, 72, 102, 64, 96, 50, -45, 42, -50)];   // a tackler's ready stance: hips sunk, arms out, choppy feet
+POSES.stutter = [P(14, 0, 0, 30, 60, 40, -30, 20, -40), P(16, 0, 0, 30, 60, 20, -40, 40, -30)].map(tuck);   // the runner's stutter steps, ball tucked
+POSES.truck = [tuck(P(46, 0, 0, 78, 62, 55, 5, -30, -75))];                                              // lowering the shoulder into him
 const GROUND_HANDS = new Set(['olset', 'dlset']);
 const rad = (d) => (d * Math.PI) / 180;
 const rot = ([x, y], a) => [x * Math.cos(a) - y * Math.sin(a), x * Math.sin(a) + y * Math.cos(a)];

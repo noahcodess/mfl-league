@@ -1,19 +1,12 @@
-// Paints the field. Every stadium's field is the same (same grass, lines, numbers, MFL logos on both 25s); only the midfield
+// Paints the field. Every stadium's field is the same (same grass, lines, numbers, MFL logos painted on both 25s); only the midfield
 // logo and the two end zones change with the home team (left: the team's location, right: its nickname; see endZoneDraw.js).
 import { shade } from './pixels.js';
 import { drawPixelText } from './pixelFont.js';
 import { drawEndZone, endZoneWords } from './endZoneDraw.js';
+import { paintLogo } from './fieldPaint.js';
 import { YD, FX0, FY0, FX1, FY1, FW, FH, BORDER, MID_Y, HASH_TOP, HASH_BOTTOM, yardX, rng, brush } from './fieldLayout.js';
 
 const G1 = '#3c8a3a', G2 = '#347d33', LINE = '#f2f5ee', POST = '#f2d23c';
-
-function image(ctx, img, cx, cy, box, alpha = 1) {
-  if (!img) return;
-  const k = Math.min(box / img.width, box / img.height), w = Math.round(img.width * k), h = Math.round(img.height * k);
-  ctx.globalAlpha = alpha; ctx.imageSmoothingEnabled = false;
-  ctx.drawImage(img, Math.round(cx - w / 2), Math.round(cy - h / 2), w, h);
-  ctx.globalAlpha = 1;
-}
 
 function yardNumbers(r) {
   const put = (x, y, w, h) => r(x, y, w, h, LINE), s = 4;
@@ -65,8 +58,9 @@ export function drawField(ctx, team, art = {}, look = {}) {
   r(FX0, FY0, FW, 3, LINE); r(FX0, FY1 - 3, FW, 3, LINE); r(FX0, FY0, 3, FH, LINE); r(FX1 - 3, FY0, 3, FH, LINE);
   yardNumbers(r);
 
-  image(ctx, art.leagueLogo, yardX(25), MID_Y, 7 * YD); image(ctx, art.leagueLogo, yardX(75), MID_Y, 7 * YD);
-  image(ctx, art.teamLogo, yardX(50), MID_Y, 13 * YD);
+  // the logos are painted on the turf (fieldPaint): the MFL logo in white and black field paint, the team's in its colors
+  paintLogo(ctx, art.leagueLogo, yardX(25), MID_Y, 7 * YD, { mono: true, seed: 25 }); paintLogo(ctx, art.leagueLogo, yardX(75), MID_Y, 7 * YD, { mono: true, seed: 75 });
+  paintLogo(ctx, art.teamLogo, yardX(50), MID_Y, 13 * YD, { seed: 50 });
 
   [[yardX(0), FY0], [yardX(0), FY1], [FX0, FY0], [FX0, FY1], [yardX(100), FY0], [yardX(100), FY1], [FX1, FY0], [FX1, FY1]]
     .forEach(([x, y]) => { r(x - 3, y - 3, 6, 6, '#ff7a1a'); r(x - 3, y - 3, 3, 3, '#ffb066'); }); // pylons

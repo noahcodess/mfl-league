@@ -3,7 +3,7 @@ import TeamBadge from './TeamBadge.jsx';
 import { useStadiums, capacityText } from '../data/stadiums.js';
 import { getTeams } from '../data/teams.js';
 
-// League feed: every stadium in the league, biggest first. Tap one to open that team's page and see its field.
+// League feed: every stadium in the league, biggest first. Tap one to open that team's page.
 export default function StadiumsCard() {
   const stadiums = useStadiums();
   const rows = getTeams().filter((t) => stadiums[t.id]).sort((a, b) => stadiums[b.id].capacity - stadiums[a.id].capacity);

@@ -66,7 +66,8 @@ export const B = {
       a.now = S.t;
       if (Math.abs(pts[pts.length - 1][1]) >= 26) a.oobOK = true;   // this run is meant to end out of bounds
       let left = 0; for (let k = i; k < pts.length; k++) left += dist(k === i ? a.x : pts[k - 1][0], k === i ? a.y : pts[k - 1][1], pts[k][0], pts[k][1]);
-      const speed = Math.min(max, (left + 0.6) / Math.max(0.05, t1 - S.t));
+      const hesi = a.hesi && S.t >= a.hesi.from && S.t < a.hesi.to ? a.hesi.k : 1;   // a stutter step: he gears down for a beat
+      const speed = Math.min(max, (left + 0.6) / Math.max(0.05, t1 - S.t)) * hesi;
       let [tx, ty] = pts[i];
       const dx = tx - a.x, dy = ty - a.y, m = Math.hypot(dx, dy) || 1, ux = dx / m, uy = dy / m;
       if (S.t < t1 - 0.6) {

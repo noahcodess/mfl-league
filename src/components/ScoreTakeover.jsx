@@ -4,7 +4,8 @@ import DownText from './DownText.jsx';
 
 // The scoring play takes over the scorebug: the bug turns into a bar in the scoring team's colors, in the program's own
 // style (scoreTakeover.css): TOUCHDOWN or FIELD GOAL, the players who did it (the catcher and the passer, the runner, the
-// returner, or the kicker) and the team's score, which rolls up to the new number. When it's done the normal bug fades back.
+// returner, or the kicker) and the team's score, which rolls up to the new number. The whole bug grows a little for it. A
+// touchdown stays up until the replay; a field goal folds back down into the normal bug as it shrinks back to size.
 
 const nameOf = (p) => { const [first = '', ...rest] = (p?.name || '').split(' '); return `${first ? `${first[0]}. ` : ''}${p?.last || rest.join(' ') || first}`; };
 
@@ -18,11 +19,15 @@ function roleOf(score, k) {
 
 // score: from broadcastGfx. team: the scoring team. people: the players in score.ids. bug: the network.
 export default function ScoreTakeover({ score, team, people, bug }) {
-  const [up, setUp] = useState(false);
-  useEffect(() => { const t = setTimeout(() => setUp(true), 1300); return () => clearTimeout(t); }, []);   // the points go up once it's on screen
+  const [up, setUp] = useState(false), [closing, setClosing] = useState(false);
+  useEffect(() => {
+    const a = setTimeout(() => setUp(true), 1300);   // the points go up once it's on screen
+    const b = score.type === 'fg' ? setTimeout(() => setClosing(true), 2750) : null;   // a field goal folds back into the normal bug (a touchdown goes to the replay)
+    return () => { clearTimeout(a); clearTimeout(b); };
+  }, [score.type]);
   const word = score.type === 'fg' ? 'FIELD GOAL' : 'TOUCHDOWN';
   return (
-    <div className={`sbt bgx-${bug} sbt-${score.type}`} style={{ '--tc': team.color, '--ta': team.accent }}>
+    <div className={`sbt bgx-${bug} sbt-${score.type}${closing ? ' closing' : ''}`} style={{ '--tc': team.color, '--ta': team.accent }}>
       <i className="sbt-sparks" aria-hidden="true">{Array.from({ length: 12 }, (_, k) => <b key={k} style={{ '--k': k }} />)}</i>
       <img className="sbt-logo" src={team.logo} alt="" />
       <span className="sbt-word">{[...word].map((ch, k) => <span key={k} style={{ animationDelay: `${0.25 + k * 0.045}s` }}>{ch === ' ' ? ' ' : ch}</span>)}</span>

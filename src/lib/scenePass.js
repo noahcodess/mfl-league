@@ -7,6 +7,7 @@ import { lineup, lineFight, pursueAll, finishCarry, ev, COVER } from './sceneLin
 import { carryPath } from './sceneCarry.js';
 import { routeFor } from './sceneRoutes.js';
 import { routeTime, routeBrain, breakOf, routeSkill, coverBrain, presses } from './sceneCover.js';
+import { catchPlan, playCatch } from './sceneCatch.js';
 
 const DEPTH = { quick: { WR1: 5, WR2: 4, TE: 4, RB: 1 }, short: { WR1: 8, WR2: 7, TE: 6, RB: 2 }, medium: { WR1: 15, WR2: 12, TE: 9, RB: 3 }, deep: { WR1: 28, WR2: 22, TE: 14, RB: 3 } };
 // Chase the QB so he gets there right at tArrive, never faster than his own top speed.
@@ -39,7 +40,7 @@ export function buildPass(S, lineups) {
       catchAt = pts[pts.length - 1];
       const flight = dist(drop[0], drop[1], catchAt[0], catchAt[1]) / (thr.air > 20 ? 19 : 23) + 0.2;
       tCatch = Math.max(tThrow + flight, arrive); tThrow = Math.max(tDrop, tCatch - flight);   // never faster than his legs
-      r.brain = routeBrain(pts, go0, tCatch, r.max); tRoute = tCatch;
+      r.brain = routeBrain(pts, go0 + Math.min(0.6, Math.max(0, tCatch - arrive)), tCatch, r.max); tRoute = tCatch;   // a beat later off the line so he hits the ball in stride
     } else { // after his route he keeps working the way he was headed (or settles in a hole)
       const last = pts[pts.length - 1], prev = pts[pts.length - 2] || [r.x, r.y], ux = last[0] - prev[0], uy = last[1] - prev[1], m = Math.hypot(ux, uy) || 1;
       const settle = Math.abs(S.along({ x: last[0] }) - a0) < 7 && Math.abs(uy) < 2;
@@ -78,11 +79,10 @@ export function buildPass(S, lineups) {
 function outcome(S, play, tgt, cat, at, tThrow, tCatch, wob) {
   const dir = S.dir, res = cat?.result, d = play.events.find((e) => e.type === 'throw').air, arc = d <= 12 ? 0.9 + d * 0.07 : d <= 22 ? 1.4 + d * 0.1 : 2.4 + d * 0.15;
   const df = cat && S.by[cat.def], deepBall = d > 20 || cat?.catchType === 'over the shoulder';
-  // how he catches it (or tries to): the engine's catch type, then the throw itself
-  const how = res === 'catch' ? ({ 'one-handed': 'onehand', contested: 'highpoint', 'over the shoulder': 'shoulder' }[cat.catchType] || (d <= 3 && S.rand() < 0.3 ? 'scoop' : deepBall ? 'shoulder' : 'hands'))
-    : res === 'miss' ? ({ 'too high': 'highpoint', 'out of reach': 'hands', 'behind him': 'hands' }[cat.why] || (deepBall ? 'shoulder' : 'hands'))
-      : cat?.contested ? 'highpoint' : deepBall ? 'shoulder' : 'hands';
-  S.when(tCatch - 0.3, (s) => s.setPose(tgt, how, res === 'catch' ? 0.62 : 0.42));   // a catch he holds on to for a beat before he tucks it
+  // how he goes and gets it (sceneCatch): in stride, up high, low, or diving; a miss shows the way it missed
+  const plan = catchPlan(S, play, cat, d);
+  if (res === 'miss') { const how = { 'too high': 'highpoint', 'out of reach': 'hands', 'behind him': 'scoop' }[cat.why] || (deepBall ? 'shoulder' : 'hands'); S.when(tCatch - 0.3, (s) => s.setPose(tgt, how, 0.42)); }
+  else playCatch(S, tgt, df, plan, tCatch, res, at);
   if (df && (cat?.contested || res === 'breakup')) S.when(tCatch - 0.26, (s) => s.setPose(df, res === 'breakup' ? 'swat' : 'contest', 0.5));   // the defender goes up with him
   if (res === 'miss') { // off target, the way the call says
     const why = cat.why || 'overthrown', [dx, dy, h] = { overthrown: [dir * 5, 0, 0.5], 'too high': [dir * 3, 0, 2.8], 'behind him': [-dir * 2.5, 0, 0.4], 'out of reach': [dir * 0.8, (at[1] >= 0 ? 1 : -1) * 3.2, 0.4] }[why] || [dir * 4, 0, 0.5];
@@ -100,14 +100,15 @@ function outcome(S, play, tgt, cat, at, tThrow, tCatch, wob) {
     if (df) { S.when(tCatch + 0.05, () => { df.brain = B.path([end], tCatch, tEnd, df.max); }); pursueAll(S, df, tCatch + 0.1, []); finishCarry(S, df, end, tEnd, { tk: tgt, td: play.result.td }); }
     S.tEnd = tEnd; return;
   }
-  S.when(tThrow, (s) => s.throwBall(at[0], at[1], 0.62, tCatch - tThrow, arc, (ss) => {
+  S.when(tThrow, (s) => s.throwBall(at[0], at[1], plan.h, tCatch - tThrow, arc, (ss) => {
     if (res === 'catch') { ss.give(tgt); return; }
     if (res === 'breakup') { ss.loose(-dir * 2, (at[1] >= 0 ? 1 : -1) * 3, 4.5); return; }
     ss.loose(dir * 1.5, (ss.rand() - 0.5) * 2, 3.5);   // drop: it pops off his hands
   }, { ...wob, to: res === 'breakup' && df ? df : tgt }));   // into his hands (or the defender's, knocking it away)
   if (res === 'breakup' && df) { S.when(tCatch + 0.05, (s) => { s.star = { a: df, at: s.t + 0.1 }; }); S.when(tThrow, () => { df.brain = B.meet(at[0] + dir * 0.5, at[1] + (at[1] >= 0 ? 0.7 : -0.7), tCatch - 0.03, df.max * 1.15); }); }
   if (res !== 'catch') { S.when(tCatch + 0.15, (s) => { tgt.brain = B.to(tgt.x + dir * 1.2, tgt.y, 2); s.setPose(tgt, 'drop', 1.6); }); S.tEnd = tCatch + 0.6; return; }
-  S.tEnd = carryPath(S, tgt, at, tCatch, play.result.gain, clamp(at[1] + (S.rand() - 0.5) * 8, -25, 25), play);   // run after the catch, broken tackles and all
+  const tRun = tCatch + (plan.dive ? 1.4 : plan.slow < 1 ? 0.25 : 0);   // a diving catch gets up first; a ball he gathered, a beat to get going
+  S.tEnd = carryPath(S, tgt, at, tRun, play.result.gain, clamp(at[1] + (S.rand() - 0.5) * 8, -25, 25), play);   // run after the catch, broken tackles and all
   pursueAll(S, tgt, tCatch, []);
 }
 

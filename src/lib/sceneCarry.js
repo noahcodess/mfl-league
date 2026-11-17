@@ -5,8 +5,8 @@
 // and takes the hit in bounds, fighting for the yards, instead of a wide angle that walks him out.
 import { B, clamp, dist } from './sceneCore.js';
 import { finishCarry, ev } from './sceneLineup.js';
+import { stageJuke, moveCost } from './sceneJuke.js';
 
-const MOVE = { juke: 'juke', shake: 'juke', spin: 'spin', 'stiff arm': 'stiff', truck: 'stiff' };
 
 // Where an in-bounds run ends across the field: no more sideways than the yards he gains allow, and near a sideline never
 // farther out than where he started (he cuts up and a little inside instead).
@@ -31,12 +31,12 @@ export function carryPath(S, c, from, t0, endAlong, endLat, play) {
   }
   pts.push(end);
   let L = 0; const at = [0]; for (let i = 1; i < pts.length; i++) { L += dist(pts[i - 1][0], pts[i - 1][1], pts[i][0], pts[i][1]); at.push(L); }
-  const v = c.max * (L > 20 ? 0.97 : 0.9), tEnd = t0 + 0.1 + L / v;
+  const v = c.max * (L > 20 ? 0.97 : 0.9), tEnd = t0 + 0.1 + L / v + broken.reduce((sum, e) => sum + moveCost(e), 0);   // a stutter costs him a beat
   S.when(t0, () => { c.brain = B.carry(pts.slice(1), t0, tEnd, c.max); });
-  marks.forEach(({ e, p }, i) => { // each whiff
-    const t = t0 + 0.1 + at[i + 1] / v, d = S.by[e.def];
-    S.when(t - 0.3, (s) => s.setPose(c, MOVE[e.move] || 'juke', e.move === 'spin' ? 0.4 : 0.45));
-    if (d) S.when(Math.max(S.T0, t - 1.4), (s) => { d.pose = null; d.brain = B.meet(p[0] + S.dir * 0.6, p[1] + (i % 2 ? -0.9 : 0.9), t, d.max * 1.05, (a, ss) => { ss.setPose(a, e.move === 'truck' || e.move === 'stiff arm' ? 'driven' : ss.rand() < 0.5 ? 'layout' : 'tackle', 0.35); ss.when(ss.t + 0.25, () => ss.knock(a, 1.3)); }); });   // he whiffs (or gets run over) and goes down
+  const run = Math.sign(end[0] - from[0]) || S.dir;
+  marks.forEach(({ e, p }, i) => {   // each broken tackle: his move, the defender's bite (sceneJuke)
+    const t = t0 + 0.1 + at[i + 1] / v, prev = pts[pts.indexOf(p) - 1] || from, cut = Math.sign(p[1] - prev[1]) || (i % 2 ? 1 : -1);
+    stageJuke(S, c, S.by[e.def], p, t, e, cut, run);
   });
   finishCarry(S, c, end, tEnd, { tk: made && S.by[made.def], td: play.result.td, oob: play.result.oob, forced: play.result.forced, fumble: ev(play, 'fumble')[0], reach: ev(play, 'reach').find((e) => e.by === c.id) });
   return tEnd;

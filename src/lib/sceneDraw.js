@@ -6,6 +6,7 @@ import { sprite } from './fieldSprite.js';
 import { lookAt } from './scenePose.js';
 import { drawBall } from './sceneBall.js';
 import { drawRing } from './sceneRing.js';
+import { hopAt } from './sceneCatch.js';
 
 export const SPRITE_PX = 0.5; // world pixels per sprite pixel: a player stands about 2 yards tall, like the Drip tab art shrunk down
 
@@ -27,7 +28,7 @@ export function drawScene(ctx, S, cam, looks) {
   const tag = drawRing(ctx, S, { sx, sy, px, yd: YD }, looks);   // the ring around whoever has the ball (its name goes on top, below)
   for (const a of list) {
     const look = looks[a.id]; if (!look) continue;
-    const L = lookAt(a, t, S, holder), img = sprite(look, L.view, L.pose, L.frame, L.face), X = Math.round(sx(a.x) - img.footX * sp), Y = Math.round(sy(a.y) - img.footY * sp);
+    const L = lookAt(a, t, S, holder), img = sprite(look, L.view, L.pose, L.frame, L.face), X = Math.round(sx(a.x) - img.footX * sp), Y = Math.round(sy(a.y) - img.footY * sp - hopAt(a, t) * YD * px);   // off the ground when he jumps
     ctx.drawImage(img, X, Y, Math.round(img.width * sp), Math.round(img.height * sp));
     a.handAt = [X + img.hand[0] * sp, Y + img.hand[1] * sp];   // where his hands are on screen, so a carried (or caught) ball sits in them
     a.hand2At = [X + img.hand2[0] * sp, Y + img.hand2[1] * sp];

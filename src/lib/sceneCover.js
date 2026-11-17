@@ -26,7 +26,8 @@ export function routeBrain(pts, t0, t1, max) {
     if (fresh) { a.hd = null; fresh = false; }
     a.now = S.t;
     let left = 0; for (let k = i; k < pts.length; k++) left += dist(k === i ? a.x : pts[k - 1][0], k === i ? a.y : pts[k - 1][1], pts[k][0], pts[k][1]);
-    const want = Math.min(max, Math.max(0.5, left / Math.max(0.05, t1 - S.t)));
+    const slow = a.catchSlow && S.t >= a.catchSlow.from ? a.catchSlow.k : 1;   // gathering for a ball up high or down low (sceneCatch)
+    const want = Math.min(max * Math.min(1, slow), Math.max(0.5, left / Math.max(0.05, t1 - S.t))) * (slow > 1 ? slow : 1);
     if (runStep(a, pts[i][0], pts[i][1], want, dt, routeSkill(a.p)) < 0.35) { if (i < pts.length - 1) i++; else done = true; }
   };
 }

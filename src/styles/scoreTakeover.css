@@ -3,6 +3,14 @@
    look comes from the bgx-<bug> variables (--g-font, --g-acc, --g-r) plus the touches at the bottom. */
 .pg-bug .sb { transition: opacity .35s ease; }
 .pg-bug.taken .sb { opacity: 0; }
+/* the bug grows a little for the takeover, and shrinks back as a field goal folds away (snaps back under the replay's transition) */
+.pg-bug { transform-origin: 50% 100%; transition: transform .5s cubic-bezier(.22, .9, .3, 1); }
+.pg-bug.taken { transform: translateX(-50%) scale(1.16); }
+.pg-bug.taken:has(.sbt.closing) { transform: translateX(-50%) scale(1); transition-duration: .55s; }
+.pg-bug.taken:has(.sbt.closing) .sb { opacity: 1; transition-delay: .2s; }
+.pg-bug.snap { transition: none; }
+.sbt.closing { animation: sbt-close .5s cubic-bezier(.6, 0, .8, .4) forwards; }
+@keyframes sbt-close { from { clip-path: inset(-3em 0 0 0); opacity: 1; } to { clip-path: inset(-3em 46% 0 46%); opacity: 0; } }
 .sbt { --g-font: 'Barlow Condensed', sans-serif; --g-acc: #f4b800; --g-acc-fg: #111; --g-r: .3em;
   position: absolute; left: 50%; bottom: 0; z-index: 2; display: flex; align-items: center; gap: .9em; height: 3.4em; padding: 0 0 0 .6em;
   font-size: 1.35cqw; color: #fff; white-space: nowrap; transform: translateX(-50%); isolation: isolate;

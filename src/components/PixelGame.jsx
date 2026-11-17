@@ -103,7 +103,7 @@ export default function PixelGame({ game, teams, lineups, onClose, match = null,
         {done && <div className="pg-headline final">FINAL</div>}
         <BroadcastSlot pre={g.pre} pace={pace} bt={bt} live={pre} play={play} teams={teams} bug={bc.bug} playerOf={playerOf} n={i} />
         {bugUp && <div className="pg-shelf" />}
-        {bugUp && <div className={`pg-bug${scoreUp ? ' taken' : ''}`}><Scorebug bc={bc} home={teams.home} away={teams.away} st={st} card={card} className={i === 0 ? 'sb-enter' : ''} />{scoreUp && <ScoreTakeover key={`sc${i}`} score={g.score} team={teams[g.score.side]} people={g.score.ids.map(playerOf)} bug={bc.bug} />}</div>}
+        {bugUp && <div className={`pg-bug${scoreUp ? ' taken' : ''}${beat.phase === 'sting' || beat.phase === 'replay' ? ' snap' : ''}`}><Scorebug bc={bc} home={teams.home} away={teams.away} st={st} card={card} className={i === 0 ? 'sb-enter' : ''} />{scoreUp && <ScoreTakeover key={`sc${i}`} score={g.score} team={teams[g.score.side]} people={g.score.ids.map(playerOf)} bug={bc.bug} />}</div>}
       </div>
       {(!full || beat.post || done || play?.call?.name) && <p className="pg-text">{done ? 'That’s the game.' : beat.post ? play.text : play?.call?.name ? `${teams[play.off].code} · ${play.call.name}` : ' '}</p>}
       <div className="ct-row">

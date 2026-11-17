@@ -3,9 +3,9 @@
 // the motion. Linemen and anyone squared up to an opponent keep facing their man however they get shoved.
 const SIDE_ONLY = ['olset', 'dlset', 'qbset', 'rbset', 'wrset', 'cbset', 'lbset', 'qbready', 'qbdrop', 'throw', 'block', 'anchor', 'driven', 'drive', 'swim', 'rush',
   'reach', 'drop', 'cut', 'juke', 'stiff', 'kick', 'kneel', 'backpedal', 'tackle', 'wrap', 'layout', 'stumble', 'pump',
-  'catch', 'hands', 'shoulder', 'highpoint', 'onehand', 'scoop', 'contest', 'swat', 'stretch', 'plant', 'plantc'];
+  'catch', 'hands', 'shoulder', 'highpoint', 'onehand', 'scoop', 'contest', 'swat', 'stretch', 'plant', 'plantc', 'breakdown', 'stutter', 'truck'];
 const PREFER = { cheer: 'front', ...Object.fromEntries(SIDE_ONLY.map((k) => [k, 'side'])) };
-const SQUARE = new Set(['olset', 'dlset', 'qbset', 'rbset', 'wrset', 'cbset', 'lbset', 'block', 'anchor', 'driven', 'drive', 'swim', 'rush', 'throw', 'pump', 'kick', 'stiff', 'qbready', 'qbdrop', 'backpedal']);
+const SQUARE = new Set(['breakdown', 'olset', 'dlset', 'qbset', 'rbset', 'wrset', 'cbset', 'lbset', 'block', 'anchor', 'driven', 'drive', 'swim', 'rush', 'throw', 'pump', 'kick', 'stiff', 'qbready', 'qbdrop', 'backpedal']);
 const SPIN = [['side', 1], ['front', 1], ['side', -1], ['back', 1]];
 const beat = (a) => { if (a.beat) return a.beat; let h = 7; for (const ch of String(a.id)) h = (h * 31 + ch.charCodeAt(0)) >>> 0; return (a.beat = { per: 0.22 + (h % 7) * 0.035, off: (h % 97) / 97 }); };
 
@@ -37,6 +37,7 @@ export function lookAt(a, t, S, holder) {
   else if (pose === 'pump') frame = t - a.poseAt > 0.18 ? 1 : 0;
   else if (pose === 'hands' || pose === 'shoulder') frame = moving ? Math.floor(t * (4 + speed * 0.6) + b.off * 2) & 1 : 0;   // legs still running through the catch
   else if (pose === 'swat') frame = t - a.poseAt > 0.14 ? 1 : 0;
+  else if (pose === 'breakdown' || pose === 'stutter') frame = Math.floor(t * 12 + b.off * 2) & 1;   // quick choppy feet
   else if (pose === 'plant' || pose === 'plantc') frame = a.plantFoot > 0 ? 1 : 0;   // cutting toward the camera plants the far foot
   else if (pose === 'throw') { const u = (t - a.poseAt) / 0.6; frame = u < 0.45 ? 0 : u < 0.7 ? 1 : 2; }
   else if (pose === 'kick' || pose === 'drop') frame = t - a.poseAt > (pose === 'kick' ? 0.15 : 0.5) ? 1 : 0;
