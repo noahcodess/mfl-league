@@ -3,7 +3,7 @@
 // Sim Lab). The same seed always plays the exact same game. Nothing here draws anything.
 import { dice, other, val, mix } from './simCore.js';
 import { scrimmage, doKickoff, doPat } from './simDrive.js';
-import { tempo, clockStop } from './simClock.js';
+import { tempo, clockStop, PLAY_CLOCK } from './simClock.js';
 import { makePlan } from './coachPlan.js';
 import { overtime } from './simOvertime.js';
 import { tally } from './simStats.js';
@@ -39,13 +39,13 @@ export function stepGame(G) {
   if (s.phase === 'pat') return doPat(G);
   if (s.running) { // the clock runs between plays; the team that's behind burns timeouts late to stop it
     const stop = clockStop(G);
-    if (stop?.kind === 'timeout') { s.to[stop.side] -= 1; s.snapClock = 40; G.timeouts.push({ n: G.plays.length + 1, side: stop.side, quarter: s.quarter, clock: s.clock }); }
-    else if (stop?.kind === 'spike') { const run = Math.min(s.clock - 1, G.R.int(4, 7)); s.clock -= run; s.snapClock = 40 - run; G.spikeNow = true; }   // hurry to the line and spike it
+    if (stop?.kind === 'timeout') { s.to[stop.side] -= 1; s.snapClock = G.R.int(10, 16); G.timeouts.push({ n: G.plays.length + 1, side: stop.side, quarter: s.quarter, clock: s.clock }); }
+    else if (stop?.kind === 'spike') { const run = Math.min(s.clock - 1, G.R.int(4, 7)); s.clock -= run; s.snapClock = PLAY_CLOCK - run; G.spikeNow = true; }   // hurry to the line and spike it
     else {
       let run = tempo(G); if ((s.quarter === 2 || s.quarter === 4) && s.clock > 120 && s.clock - run < 120) run = s.clock - 120;   // stops at the two-minute warning
-      s.snapClock = Math.max(1, 40 - run); if (run >= s.clock) { s.clock = 0; return endQuarter(G); } s.clock -= run;
+      s.snapClock = Math.max(1, PLAY_CLOCK - run); if (run >= s.clock) { s.clock = 0; return endQuarter(G); } s.clock -= run;
     }
-  } else s.snapClock = G.R.int(8, 18);
+  } else s.snapClock = G.R.int(8, 13);   // after a stoppage the 25 starts fresh and most snaps come with about 10 left
   return scrimmage(G);
 }
 

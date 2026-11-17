@@ -22,7 +22,7 @@ const MOOD = { unhappy: 1.5, angry: 3 };
 function ease(G, side) {
   const s = G.s; if (!s || s.quarter < 2) return 0;
   const d = s.score[side] - s.score[side === 'home' ? 'away' : 'home'];
-  return d >= 24 ? -7 : d >= 17 ? -5 : d >= 10 ? -3 : d <= -24 ? 3 : d <= -17 ? 2.5 : d <= -10 ? 1.5 : 0;
+  return d >= 24 ? -8 : d >= 17 ? -6 : d >= 10 ? -4 : d <= -24 ? 3.5 : d <= -17 ? 3 : d <= -10 ? 2 : 0;
 }
 const SPREAD = 0.66;
 export function val(G, p, key, floor = 35) {

@@ -1,12 +1,13 @@
 // The pacing director: decides how each play is shown. Blowouts move fast (short huddles, quick whistles, no replays).
 // Close games late are cinematic: longer build-up before the snap, slow motion on the big catch or the score, an instant
 // replay from the same angle zoomed in, and about 15 to 20 seconds from one snap to the next (more only for a key play).
+// Tuned so a full game runs about 30 minutes.
 // Flags get a close-up with the call. It only changes how the game is shown, never what happens.
 
 const MODES = {
-  fast: { T0: 2.4, dead: 1.3, replayFor: () => false, slow: false, gap: 9 },
-  normal: { T0: 3.2, dead: 2.4, replayFor: (p) => p.result.td || p.result.turnover || p.result.safety || p.result.gain >= 25 || p.onside, slow: false, gap: 16 },
-  cinematic: { T0: 5.6, dead: 4.2, replayFor: big, slow: true, gap: 20 },
+  fast: { T0: 3.8, dead: 2.2, replayFor: () => false, slow: false, gap: 11 },
+  normal: { T0: 6.4, dead: 4.3, replayFor: (p) => p.result.td || p.result.turnover || p.result.safety || p.result.gain >= 25 || p.onside, slow: false, gap: 18 },
+  cinematic: { T0: 7.4, dead: 5, replayFor: big, slow: true, gap: 20 },
 };
 function big(p) {
   const kick = p.events.find((e) => e.type === 'kick');

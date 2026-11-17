@@ -89,7 +89,7 @@ export function passPlay(G, play, call, def, plan = {}) {
   }
   play.targetSlot = tgt.slot;
   addEvent(play, 'read', tgt.at, { qb: qb.id, target: tgt.p.id, open: open.map((o) => ({ id: o.p.id, sep: Math.round(o.sep * 10) / 10, depth: o.depth })) });
-  let tThrow = tgt.at + (1 - val(G, qb, 'vision', 55) / 100) * 0.5, pressured = false, onRun = false;
+  let tThrow = tgt.at + (1 - val(G, qb, 'vision', 55) / 100) * 0.25, pressured = false, onRun = false;   // a quick decision once he sees it
   if (heat.by) addEvent(play, 'block', Math.min(heat.t, tThrow), { off: heat.blocker.id, def: heat.by.id, win: heat.t < tThrow ? 'def' : 'off', move: heat.t < tThrow ? rushMove(heat.by) : 'anchor', margin: Math.round((heat.t - tThrow) * 10) });
   const hot = heat.t < tThrow && ranked.find((o) => o.at + 0.25 <= heat.t && o.seen > 0.6);
   if (hot && R.chance(0.35 + val(G, qb, 'vision', 55) / 200)) { tgt = hot; tThrow = hot.at + 0.2; addEvent(play, 'pocket', tThrow, { qb: qb.id, move: 'quick release' }); } // he feels it and gets the ball out

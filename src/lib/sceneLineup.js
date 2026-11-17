@@ -49,34 +49,70 @@ export function lineup(S, lineups, opts = {}) {
 
 // The line. pass: true for pass protection. rush: { defId: seconds until he gets home } (only winners matter). aim: the QB actor.
 // blocks: { defId: 'pancake' | 'drive' | 'shed' } for runs. Each pair keeps its own rhythm so nobody moves in sync.
-export function lineFight(S, A, D, pass, { rush = {}, blocks = {}, qb = null, carrier = null } = {}) {
-  const dir = S.dir;
+// The trenches. Pass plays: at the snap the line kicks back about a yard into its pass set (tackles a bit deeper and
+// wider) and holds a pocket that slowly gives ground, faster for a lineman who's losing. Rushers fight in front of their
+// man; one who wins breaks free just in time to reach the QB at the moment the engine says (the sack, the hit as he
+// throws, or right after the release), never early to stand in front of him. Run plays: the line fires out a yard and
+// drives its man; a lineman whose man is out of the play (or who wins fast) climbs to block a linebacker or the safety
+// in the runner's way. contact: { [rusher id]: time he reaches the QB }. throwAt: when the ball comes out.
+export function lineFight(S, A, D, pass, { rush = {}, blocks = {}, qb = null, carrier = null, contact = {}, throwAt = null } = {}) {
+  const dir = S.dir, taken = new Set();
   Object.entries(MATCH).forEach(([ok, dk]) => {
     const ol = A[ok], dl = D[dk]; if (!ol || !dl) return;
-    const ph = S.rand() * 6.28, per = 2.6 + S.rand() * 2.2, gap = 1.7, win = rush[dl.id], move = blocks[dl.id];
-    let shed = false;
+    const ph = S.rand() * 6.28, per = 2.6 + S.rand() * 2.2, win = rush[dl.id], move = blocks[dl.id], tackle = ok === 'OT1' || ok === 'OT2';
+    const home = ol.y, setBack = tackle ? 1.6 : 1.1, wide = tackle ? Math.sign(home || 1) * 0.6 : 0;
+    const giveRate = pass ? (win != null && win < 4 ? 0.34 : 0.1) : 0;   // yards per second the pocket gives on his side
+    let shed = false, climb = null;
     ol.brain = (a, dt, s) => {
-      if (s.t < s.T0 + getGoing(a.p)) return;
-      if (shed) { if (!pass && carrier) stepTo(a, carrier.x, carrier.y, a.max * 0.55, dt); return; }
-      s.setPose(a, pass ? (Math.sin(s.t * 1.3 + ph) > 0 ? 'anchor' : 'block') : move === 'shed' ? 'driven' : 'drive');
-      const settle = pass ? -1.4 : 0.4, base = s.los + dir * settle;
-      const tx = Math.abs(a.x - s.los) < 1.6 && s.t < s.T0 + 0.5 ? base : dl.x - dir * gap;
-      stepTo(a, tx, dl.y + Math.sin(s.t * per + ph) * 0.12, pass ? 3.2 : 4, dt);
+      if (s.t < s.T0 + getGoing(a.p) * 0.6) return;
+      const el = s.t - s.T0;
+      if (pass) {
+        if (shed) { s.setPose(a, 'driven'); stepTo(a, a.x - dir * 0.5, a.y, 1.2, dt); return; }
+        s.setPose(a, Math.sin(s.t * 1.3 + ph) > 0 ? 'anchor' : 'block');
+        const back = Math.min(setBack + Math.max(0, el - 0.5) * giveRate, 4.6);   // the pass set, then the pocket slowly gives
+        stepTo(a, s.los - dir * back, home + wide + (dl.y - home) * 0.25 + Math.sin(s.t * per + ph) * 0.1, el < 0.5 ? 4 : 2.2, dt);
+        return;
+      }
+      if (climb) { // second level: get between the linebacker and the runner and stay on him
+        const c = carrier || qb, tx = climb.x - dir * 0.9, ty = climb.y + (c ? Math.sign(c.y - climb.y) * 0.5 : 0);
+        s.setPose(a, 'drive'); stepTo(a, tx, ty, a.max * 0.8, dt);
+        if (dist(a.x, a.y, climb.x, climb.y) < 1.4 && climb !== s.tackler) climb.blockedUntil = s.t + 0.12;
+        return;
+      }
+      if (shed) { if (carrier) stepTo(a, carrier.x, carrier.y, a.max * 0.55, dt); return; }
+      s.setPose(a, move === 'shed' ? 'driven' : 'drive');
+      const fire = el < 0.45 ? s.los + dir * 0.9 : dl.x - dir * 1.2;   // fire out off the ball, then stay on his man
+      stepTo(a, fire, dl.y + Math.sin(s.t * per + ph) * 0.12, 4.5, dt);
+      // his man is out of the play (or on the ground): go find someone in the runner's way
+      if (el > 0.6 && carrier && (dl.down || Math.abs(dl.y - carrier.y) > 5)) {
+        const lb = ['LB1', 'LB2', 'SS'].map((k) => D[k]).filter((d) => d && !d.down && !taken.has(d) && (d.x - carrier.x) * dir > -1)
+          .sort((m, n) => dist(m.x, m.y, a.x, a.y) - dist(n.x, n.y, a.x, a.y))[0];
+        if (lb) { climb = lb; taken.add(lb); }
+      }
     };
     dl.brain = (a, dt, s) => {
       if (s.t < s.T0) return;
       if (shed) return;
-      s.setPose(a, pass ? (win ? (Math.sin(s.t * per + ph) > 0 ? 'swim' : 'rush') : 'rush') : move === 'shed' ? 'swim' : move ? 'driven' : 'block');
-      const push = pass ? (win ? 0.55 : 0.2) : move === 'pancake' || move === 'drive' ? -1.1 : 0.15;   // yards per second he gains (negative: driven back)
+      if (pass) { // fight in front of his man, a yard off him, hands on
+        s.setPose(a, win != null && win < 4 ? (Math.sin(s.t * per + ph) > 0 ? 'swim' : 'rush') : 'rush');
+        stepTo(a, ol.x + dir * 1.0, ol.y + Math.sin(s.t * per + ph) * 0.35, 4, dt);
+        return;
+      }
+      s.setPose(a, move === 'shed' ? 'swim' : move ? 'driven' : 'block');
+      const push = move === 'pancake' || move === 'drive' ? -1.1 : 0.15;   // yards per second he gains (negative: driven back)
       stepTo(a, a.x - dir * push * 3, a.y + Math.sin(s.t * per + ph) * 0.3, Math.abs(push), dt);
     };
-    if (pass && win != null && qb) { // he beats his man and goes to get the quarterback, at his own speed
-      S.when(S.T0 + Math.max(0.4, win - 1.1), (s) => { shed = true; s.setPose(ol, 'driven', 0.9); dl.pose = null; dl.brain = B.pursue(qb, dl.max * 0.95, 0.6); });
+    if (pass && win != null && qb) { // he beats his man: break free just in time to get there when the engine says
+      const arrive = contact[dl.id] ?? Math.max(S.T0 + win, (throwAt ?? S.T0 + win) + 0.2);
+      const leave = Math.max(S.T0 + 0.5, arrive - 1.3);
+      S.when(leave, (s) => { shed = true; s.setPose(ol, 'driven', 0.9); dl.pose = null; dl.brain = timed(qb, arrive); });
     }
     if (!pass && move === 'pancake') S.when(S.T0 + 0.9, (s) => { s.knock(dl, 1.6); });
     if (!pass && move === 'shed' && carrier) S.when(S.T0 + 0.7, () => { shed = true; dl.pose = null; dl.brain = B.pursue(carrier, dl.max * 0.9, 1); });
   });
 }
+// Runs at whatever speed gets him to the QB exactly at tArrive (never faster than his legs), then keeps going after him.
+const timed = (qb, tArrive) => (a, dt, s) => stepTo(a, qb.x, qb.y, Math.min(a.max, dist(a.x, a.y, qb.x, qb.y) / Math.max(0.05, tArrive - s.t)), dt);
 
 // Everyone on the other side (but `except`) chases the carrier from time t.
 export function pursueAll(S, carrier, t, except = []) {

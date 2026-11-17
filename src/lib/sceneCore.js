@@ -94,6 +94,7 @@ export class Scene {
     for (const a of this.actors) {
       const ox = a.x, oy = a.y;
       if (a.pre && this.t < this.T0) { if (this.t > 0.4) stepTo(a, a.pre.x, a.pre.y, a.pre.speed, dt); }   // jogging to his spot from the huddle
+      else if (a.blockedUntil > this.t && !a.down) { this.setPose(a, 'block'); }   // engaged with a blocker: he's going nowhere for now
       else if (a.brain && !a.down) a.brain(a, dt, this);
       const edge = a.oobOK || this.t > (this.tEnd ?? 99) ? 29 : 26.4; a.y = clamp(a.y, -edge, edge);   // nobody leaves the field mid-play unless the play goes out
       a.vx = (a.x - ox) / dt; a.vy = (a.y - oy) / dt;

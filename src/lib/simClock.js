@@ -15,10 +15,13 @@ export function clockGoal(G) {
   return null;
 }
 
-// How many seconds run off before the next snap when the clock is moving.
+// The play clock is 25 seconds and starts at the whistle.
+export const PLAY_CLOCK = 25;
+// How many seconds run off before the next snap when the clock is moving: most snaps come with about 10 left on the play
+// clock (15 used), a hurry-up snaps with 15-18 left, a team killing the clock lets it run down to 1 or 2.
 export function tempo(G) {
   const goal = clockGoal(G), { R } = G;
-  return goal === 'stop' ? R.int(9, 14) : goal === 'run' ? R.int(36, 39) : R.int(24, 32);
+  return goal === 'stop' ? R.int(7, 10) : goal === 'run' ? R.int(23, 24) : R.int(13, 17);
 }
 
 // Does the ball carrier end up out of bounds? base: how often this kind of play ends there in normal football (rare:

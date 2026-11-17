@@ -54,7 +54,10 @@ export function buildPass(S, lineups) {
     cv.brain = (a, dt, s) => { if (s.t < T0 + 0.08) return; if (s.t < T0 + 0.7 && rk !== 'RB') { stepTo(a, a.x + dir * 2, a.y, a.max * 0.55, dt); return; } B.shadow(r, trail, side, a.max * 1.02)(a, dt); };
   }
   if (D.LB2) D.LB2.brain = rush[D.LB2.id] != null ? B.pursue(qb, D.LB2.max * 0.9, 0.6) : B.path([S.at(7, D.LB2.y * 0.6)], T0 + 0.1, T0 + 1.6, D.LB2.max);
-  lineFight(S, A, D, true, { rush, qb });
+  const contact = {};   // who reaches the QB, and when: the sack, or the hit as he lets it go
+  if (sackEv) contact[sackEv.by] = T0 + clamp(sackEv.t, 1.2, 6.2);
+  if (hurry && thr?.pressured) contact[hurry.by] = tThrow + 0.1;
+  lineFight(S, A, D, true, { rush, qb, contact, throwAt: thr ? tThrow : null });
   S.tThrow = tThrow; S.tCatch = tCatch; S.catchAt = catchAt;
   if (sackEv) return sack(S, play, qb, sackEv);
   const pk = ev(play, 'pocket')[0];   // the pocket moves: climb, slide, or roll out when it takes too long
