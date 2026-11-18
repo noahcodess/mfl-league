@@ -5,16 +5,17 @@ import WeekStars from './WeekStars.jsx';
 import TeamRanks from './TeamRanks.jsx';
 import PositionLeaders from './PositionLeaders.jsx';
 import ConfStandings from './ConfStandings.jsx';
+import PlayoffBracket from './PlayoffBracket.jsx';
+import { PLAYOFFS_FROM, seasonSettled } from './PlayoffPicture.jsx';
 import { useLiveSeason } from '../data/liveSeason.js';
 import { records, seasonTotals } from '../lib/seasonStats.js';
 import { teamStats } from '../lib/teamRanks.js';
 import { links } from '../lib/router.js';
 
-const PLAYOFFS_FROM = 6;
 
 // Live during the regular season: the week as the big heading (arrows to move), that week's games two across, then players of
 // the week, top offenses and defenses, top players at each position, and the standings (all counted through the week shown).
-// From Week 6 a Playoffs button appears (the bracket comes later).
+// From Week 7 (once Week 6 is done) a Playoffs button shows the bracket, counted through every final game.
 export default function LiveSeason({ preview, canControl, teamId }) {
   const season = useLiveSeason(preview);
   const [sel, setSel] = useState(null);
@@ -36,11 +37,11 @@ export default function LiveSeason({ preview, canControl, teamId }) {
           {teamId && n === season.current && week.games.some((g) => g.home === teamId || g.away === teamId) && (
             <a className="ls-coach" href={season.sample ? links.coaching(week.games.find((g) => g.home === teamId || g.away === teamId).id) : links.coaching()}>🎧 Coaching room</a>
           )}
-          {season.current >= PLAYOFFS_FROM && <button className={`ls-playoffs${playoffs ? ' on' : ''}`} onClick={() => setSel(playoffs ? season.current : 'playoffs')}>🏆 Playoffs</button>}
+          {!season.sample && season.current >= PLAYOFFS_FROM && <button className={`ls-playoffs${playoffs ? ' on' : ''}`} onClick={() => setSel(playoffs ? season.current : 'playoffs')}>🏆 Playoffs</button>}
         </div>
       </header>
       {playoffs ? (
-        <section className="lv-card ls-soon"><h2>🏆 Playoffs</h2><p className="dim">The playoff picture and bracket will show here. Coming soon.</p></section>
+        <PlayoffBracket rec={records(season.weeks)} settled={seasonSettled(season)} />
       ) : (
         <>
           <LiveWeekGames week={week} rec={rec} teamId={teamId} />

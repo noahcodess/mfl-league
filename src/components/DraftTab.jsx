@@ -5,9 +5,9 @@ import PlayerTable from './PlayerTable.jsx';
 import ProspectModal from './ProspectModal.jsx';
 import PlayerModal from './PlayerModal.jsx';
 import { FA_JERSEY } from './FaOfferModal.jsx';
-import { getPicks } from '../data/picks.js';
+import { getPicks, nextDraftSeason } from '../data/picks.js';
 import { getAllPlayers } from '../data/players.js';
-import { currentSeason, currentPhase, offseasonStep, getTeam } from '../data/teams.js';
+import { getTeam } from '../data/teams.js';
 import { useDraftClass } from '../data/draft.js';
 import { useDraftFlags } from '../data/draftFlags.js';
 import { useMyScouts } from '../data/scouting.js';
@@ -16,7 +16,6 @@ import { useLeagueNumbers } from '../data/schedule.js';
 
 // My Team → Draft: your picks, the next draft class (out once the regular season reaches the commissioner's reveal week),
 // your scouts, and your watch list (any player in the league, not just prospects).
-const nextDraftSeason = () => (currentPhase() === 'offseason' && offseasonStep() <= 3 ? currentSeason() : currentSeason() + 1);
 
 export default function DraftTab({ viewer }) {
   const season = nextDraftSeason(), myTeam = viewer.team_id;
@@ -27,7 +26,7 @@ export default function DraftTab({ viewer }) {
   const potentials = usePotentials(viewerKey);
   const scouts = useMyScouts(viewerKey, version);
   const { flags, toggle } = useDraftFlags(myTeam);
-  const nums = useLeagueNumbers(['prospect_reveal_week', 'draft_scouts_r1', 'draft_scouts_later', 'fa_scouts']);
+  const nums = useLeagueNumbers(['prospect_reveal_week', 'draft_scouts_r1', 'draft_scouts_later']);
   const scouted = new Set(scouts?.scouted || []);
   const watched = [...getAllPlayers().filter((p) => p.teamId !== myTeam), ...(prospects || [])].filter((p) => flags.has(p.id));
   const tags = (p) => (
@@ -43,11 +42,10 @@ export default function DraftTab({ viewer }) {
         <h3>🎓 The Season {season} draft</h3>
         <div className="scout-counts">
           <div><span>🔭 Draft scouts left</span><b>{scouts?.draft ?? '-'}</b></div>
-          <div><span>🔭 Free agency scouts left</span><b>{scouts?.fa ?? '-'}</b></div>
         </div>
         <small className="dim">
           Draft scouts: {nums?.draft_scouts_r1 ?? 2} per 1st-round pick, {nums?.draft_scouts_later ?? 1} per 2nd or 3rd. They're for this draft only and reset after it.
-          {' '}Free agency scouts: {nums?.fa_scouts ?? 5} a season, reset when the new season starts. A scout shows a player's potential and bar outlines, to your team only.
+          {' '}A scout shows a player's potential and bar outlines, to your team only.
         </small>
       </section>
       <PickList picks={getPicks(myTeam)} currentSeason={season} title="Your draft picks" />

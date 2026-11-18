@@ -1,6 +1,7 @@
 // Trades: the offers a coach can see (the commissioner sees all), untouchables, the trade block, and every trade button.
 import { useEffect, useState } from 'react';
 import { db } from './supabase.js';
+import { nextDraftSeason } from './picks.js';
 import { DEMO } from './demo.js';
 import { store } from './store.js';
 import { toPlayer } from './loadLeague.js';
@@ -59,7 +60,7 @@ export function useTradeMarks(version = 0) {
 // A team's players and still-usable picks (this season's draft or later), for the trade builder.
 export const teamAssets = (teamId) => ({
   players: store.league.players.filter((p) => p.teamId === teamId && (p.status ?? 'active') === 'active').sort((a, b) => b.stars - a.stars),
-  picks: store.league.picks.filter((k) => k.ownerId === teamId && k.season >= currentSeason()).map((k) => ({ ...k, id: k.id ?? `${k.originalCode}-${k.season}-${k.round}` })).sort((a, b) => a.season - b.season || a.round - b.round),
+  picks: store.league.picks.filter((k) => k.ownerId === teamId && k.season >= nextDraftSeason()).map((k) => ({ ...k, id: k.id ?? `${k.originalCode}-${k.season}-${k.round}` })).sort((a, b) => a.season - b.season || a.round - b.round),
 });
 
 const asItem = (x) => (x.position ? { player: x.id } : { pick: x.id });

@@ -26,8 +26,9 @@ const PRIME = [['sting'], ['open', 5500], ['matchup', 8800], ['player', 6800], [
 const FADE = 450;
 
 // The full-screen broadcast: the intro, then straight into the game from the opening kickoff (Skip intro jumps there).
+// resume: a paused game's play number; skips the intro and picks up on that play.
 // kick: { receiving, home_dir } from the kickoff coin flip. st: the live game state (for the scorebug).
-export default function GameIntro({ game, season, kick, st, onClose, onReplay }) {
+export default function GameIntro({ game, season, kick, st, resume = null, onClose, onReplay }) {
   const home = getTeam(game.home), away = getTeam(game.away), bc = broadcastFor(game, home);
   const kits = useGameKits(home, away, game), stadium = useStadiums()[home.id];
   const before = useMemo(() => season.weeks.slice(0, game.week - 1), [season, game.week]);
@@ -36,7 +37,7 @@ export default function GameIntro({ game, season, kick, st, onClose, onReplay })
   const spot = useMemo(() => playerSpotlight(game, season, getPlayers), [game, season]);
   const weather = useMemo(() => gameWeather(game, bc.prime), [game, bc.prime]);
   useEffect(() => { loadLineups([home.id, away.id]).catch(() => {}); }, [home.id, away.id]);   // get the starters ready during the intro
-  const steps = useMemo(() => (bc.prime ? PRIME : DAY).filter(([s]) => s !== 'player' || spot), [bc.prime, spot]);
+  const steps = useMemo(() => (resume != null ? [['game']] : (bc.prime ? PRIME : DAY).filter(([s]) => s !== 'player' || spot)), [bc.prime, spot, resume]);
   const [i, setI] = useState(0), [scene, setScene] = useState(null), [leaving, setLeaving] = useState(false), [sting, setSting] = useState(0);
   useEffect(() => {
     const [s, dur] = steps[i] || [];
@@ -59,7 +60,7 @@ export default function GameIntro({ game, season, kick, st, onClose, onReplay })
           {scene === 'player' && spot && <IntroPlayer bc={bc} spot={spot} team={spotTeam} kit={spotTeam.id === home.id ? kits?.home : kits?.away} />}
           {scene === 'tape' && <IntroTape home={home} away={away} rec={rec} stats={stats} />}
           {scene === 'crowd' && <IntroCrowd bc={bc} home={home} stadium={stadium} weather={weather} gameId={game.id} dress={kits?.fans} theme={kits?.fans ? kits.home.name : ''} />}
-          {scene === 'game' && <LiveGame game={game} home={home} away={away} kick={kick} />}
+          {scene === 'game' && <LiveGame game={game} home={home} away={away} kick={kick} resume={resume || 0} />}
         </div>
         {sting > 0 && <NetStinger key={sting} net={bc.net} onDone={() => setSting(0)} />}
         {scene !== 'game' && <button className="intro-skip" onClick={() => setI(steps.length - 1)}>Skip intro ⏭</button>}

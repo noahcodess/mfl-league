@@ -42,16 +42,28 @@ export async function finalizeGame(gameId, result, lineups, kick, method) {
   const teams = teamOf(lineups);
   const stats = Object.entries(result.players || {}).filter(([id]) => teams[id]).map(([id, s]) => ({ player_id: id, team_id: teams[id], stats: s }));
   const out = await rpc('game_finalize', { p_game: Number(gameId), p_home: result.score.home, p_away: result.score.away, p_ot: result.overtimes || 0,
-    p_seed: Number(kick.seed), p_receiver: kick.receiving, p_method: method, p_teams: result.teams, p_scoring: result.scoring, p_stats: stats });
+    p_seed: Number(kick.seed), p_receiver: kick.receiving, p_method: method, p_teams: result.teams, p_scoring: result.scoring.map((x) => ({ ...x, text: result.plays[x.n - 1]?.text })), p_stats: stats });
   gamesChanged();
   return out;
 }
 
-// Quick sim: kickoff (coin flip + seed), the full engine run, saved as final. Takes a second or two.
+// Pause and resume: the whole engine run is kept the first time a game is shown (commissioner only), then the broadcast saves
+// which play it's on, the score and the clock as it goes. A resumed game is that saved run, so it can't change.
+export async function loadReplay(gameId, seed) {
+  const { data } = await db.from('game_replays').select('seed, result').eq('game_id', Number(gameId)).maybeSingle();
+  return data && Number(data.seed) === Number(seed) ? data.result : null;
+}
+export const saveReplay = (gameId, seed, result) => rpc('game_save_replay', { p_game: Number(gameId), p_seed: Number(seed), p_result: result }).catch(() => null);
+export function saveProgress(gameId, i, play) {
+  const b = play?.before; if (!b) return null;
+  return rpc('game_progress', { p_game: Number(gameId), p_play: i, p_home: b.score.home, p_away: b.score.away, p_quarter: b.quarter, p_clock: Math.round(b.clock ?? 0) }).catch(() => null);
+}
+
+// Quick sim: kickoff (coin flip + seed), the full engine run (or the saved one, if the game was paused), saved as final.
 export async function simGameNow(gameId, homeId, awayId, method = 'quick') {
   const kick = await startGame(gameId);
-  const [[home, away], rivalry] = await Promise.all([loadLineups([homeId, awayId]), isRivalGame(homeId, awayId)]);
-  const lineups = { home, away }, result = playOfficial(lineups, homeId, awayId, kick, rivalry);
+  const [[home, away], rivalry, kept] = await Promise.all([loadLineups([homeId, awayId]), isRivalGame(homeId, awayId), kick.already ? loadReplay(gameId, kick.seed) : null]);
+  const lineups = { home, away }, result = kept || playOfficial(lineups, homeId, awayId, kick, rivalry);
   const saved = await finalizeGame(gameId, result, lineups, kick, method);
   return { result, lineups, saved };
 }

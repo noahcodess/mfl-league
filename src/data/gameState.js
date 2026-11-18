@@ -57,8 +57,6 @@ export function useTicker(on) {
   useEffect(() => { if (!on) return undefined; const id = setInterval(() => setN((n) => n + 1), 250); return () => clearInterval(id); }, [on]);
 }
 
-export const testScore = (id, side, points) => rpc('game_test_score', { p_game: Number(id), p_side: side, p_points: points });
-
 const ORD = ['1st', '2nd', '3rd', '4th'];
 // "3rd & 7", "4th & Goal", or what's happening when there's no down yet.
 export function downText(st) {

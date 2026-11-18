@@ -3,11 +3,11 @@ import GameIntro from '../components/GameIntro.jsx';
 import KickoffClock, { useNow } from '../components/KickoffClock.jsx';
 import StartGameButton from '../components/StartGameButton.jsx';
 import QuickSimButton from '../components/QuickSimButton.jsx';
-import GameTestControls from '../components/GameTestControls.jsx';
+import GameFinal from '../components/GameFinal.jsx';
 import { useWeekGate } from '../components/WeekGate.jsx';
 import { unfinalizeGame } from '../data/gameResults.js';
 import { useGame, useRivals, isRivalry } from '../data/liveSeason.js';
-import { useGameState, isRealGame, startGame, flipKickoff, PREGAME } from '../data/gameState.js';
+import { useGameState, isRealGame, startGame, flipKickoff, PREGAME, clockText, quarterText } from '../data/gameState.js';
 import { useStadiums } from '../data/stadiums.js';
 import { getTeam, isTestMode } from '../data/teams.js';
 import { broadcastFor } from '../data/broadcast.js';
@@ -21,11 +21,13 @@ const mmss = (ms) => { const s = Math.max(0, Math.ceil(ms / 1000)); return s >= 
 // A game's screen, for everyone: the program's logo on top, the two teams side by side, when it is (a ticking countdown inside
 // 2 hours), and one button that depends on who's looking. Commissioner: Start game (plays the intro). A coach in the game:
 // Enter coaching room (counts down until it opens 5 minutes before kickoff). Everyone else: watch on Discord.
+// A started game that was closed is paused: its score and clock show, and the commissioner gets Resume. A final game just
+// says FINAL, with the Player of the Game and the stat sheet underneath.
 export default function GamePage({ id, canControl, teamId }) {
   const found = useGame(id), rivals = useRivals(), stadiums = useStadiums(), now = useNow();
   const [version, setVersion] = useState(0);
   const live = useGameState(id, version);
-  const [local, setLocal] = useState(null), [run, setRun] = useState(0), [kick, setKick] = useState(null);
+  const [local, setLocal] = useState(null), [run, setRun] = useState(0), [kick, setKick] = useState(null), [resumeAt, setResumeAt] = useState(null);
   const gate = useWeekGate(found?.game || { week: 0 }, found?.season);
   if (!found) return <p className="dim">Looking for that game...</p>;
   const { game, season } = found, home = getTeam(game.home), away = getTeam(game.away), bc = broadcastFor(game, home);
@@ -33,8 +35,10 @@ export default function GamePage({ id, canControl, teamId }) {
   const mine = [home.id, away.id].includes(teamId), at = game.startsAt ? Date.parse(game.startsAt) : null;
   const roomOpen = !real || (at && now >= at - ROOM_OPENS) || st?.status === 'live';
   const final = game.status === 'final', score = (side) => (final ? game[`${side}Score`] : st?.[`${side}_score`]);
+  const paused = real && !final && st?.status === 'live';
+  const resume = async () => { const k = await startGame(id); setKick(k); setResumeAt(st?.play_index || 0); setRun((n) => n + 1); };
   const start = async () => {
-    let k;
+    let k; setResumeAt(null);
     if (real) { k = await startGame(id); setVersion((v) => v + 1); } else { k = flipKickoff(game); setLocal({ ...PREGAME, status: 'live', ...k, possession: k.receiving, down: 1, togo: 10, ball_on: 25 }); }
     setKick(k); setRun((n) => n + 1);
   };
@@ -52,19 +56,22 @@ export default function GamePage({ id, canControl, teamId }) {
         <img className="gp-net" src={bc.logo} alt={bc.title} />
         <div className="gp-match">{team(away, 'away')}<span className="gp-at">at</span>{team(home, 'home')}</div>
         <p className="gp-where">🏟️ {stadiums[home.id]?.name || home.name} · Week {game.week} · {bc.title}{isRivalry(game, rivals) && <span className="rival-badge">⚔️ Rivalry</span>}</p>
-        {final ? <p className="gp-final">FINAL</p> : <KickoffClock startsAt={game.startsAt} status={st?.status} />}
+        {final ? <p className="gp-final">FINAL</p> : paused ? (
+          <p className="gp-paused"><b>⏸ PAUSED</b><span>{quarterText(st.quarter)} · {clockText(st.clock_left ?? 0)} left</span></p>
+        ) : <KickoffClock startsAt={game.startsAt} status={st?.status} />}
         <div className="gp-actions">
-          {canControl && !final && <StartGameButton startsAt={game.startsAt} now={now} onStart={start} gate={gate.run} />}
+          {canControl && paused && <button className="btn gp-start ready" onClick={() => gate.run(resume)}>▶ Resume</button>}
+          {canControl && !final && !paused && <StartGameButton startsAt={game.startsAt} now={now} onStart={start} gate={gate.run} />}
           {canControl && !final && <QuickSimButton game={game} home={home} away={away} gate={gate.run} />}
           {canControl && final && real && isTestMode() && <button className="btn ghost small" title="Test mode only" onClick={() => unfinalizeGame(id).then(() => setVersion((v) => v + 1))}>↩ Unplay (test)</button>}
-          {mine && (roomOpen ? <a className="btn gp-room" href={links.coaching(game.id)}>🎧 Enter coaching room</a>
+          {mine && !final && (roomOpen ? <a className="btn gp-room" href={links.coaching(game.id)}>🎧 Enter coaching room</a>
             : <button className="btn gp-room" disabled>🎧 Coaching room {at ? `opens in ${mmss(at - ROOM_OPENS - now)}` : 'opens 5 min before kickoff'}</button>)}
-          {!canControl && !mine && <span className="gp-discord">🎧 Watch the game on Discord</span>}
+          {!canControl && !mine && !final && <span className="gp-discord">🎧 Watch the game on Discord</span>}
         </div>
-        {canControl && real && st?.status === 'live' && <GameTestControls id={id} st={st} home={home} away={away} onChange={() => setVersion((v) => v + 1)} />}
       </section>
+      {final && real && <GameFinal game={game} home={home} away={away} />}
       {gate.ui}
-      {run > 0 && <GameIntro key={run} game={game} season={season} kick={kick} st={st} onClose={() => setRun(0)} onReplay={() => setRun((n) => n + 1)} />}
+      {run > 0 && <GameIntro key={run} game={game} season={season} kick={kick} st={st} resume={resumeAt} onClose={() => { setRun(0); setVersion((v) => v + 1); }} onReplay={() => setRun((n) => n + 1)} />}
     </div>
   );
 }

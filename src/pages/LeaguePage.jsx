@@ -6,13 +6,14 @@ import FeedTradesCard from '../components/FeedTradesCard.jsx';
 import LeagueLog from '../components/LeagueLog.jsx';
 import FeedRequestsCard from '../components/FeedRequestsCard.jsx';
 import CraftBowlCard from '../components/CraftBowlCard.jsx';
+import PlayoffPicture from '../components/PlayoffPicture.jsx';
 import StadiumsCard from '../components/StadiumsCard.jsx';
 import PlayerModal from '../components/PlayerModal.jsx';
 import { useLeagueNews } from '../data/leagueNews.js';
 import { getTeams, getTeam, currentSeason, PHASE_NAMES, currentPhase, leagueEvents } from '../data/teams.js';
 import { getAllPlayers, getFreeAgents } from '../data/players.js';
 
-// League: a news feed. Standings, recent trades, trade requests, records, Craft Bowl champions, stadiums, the trade block, the best players and league news.
+// League: the playoff bracket (from Week 7), then a news feed. Standings, recent trades, trade requests, records, Craft Bowl champions, stadiums, the trade block, the best players and league news.
 // One scrolling column on phones (like a feed), two or three columns on bigger screens.
 export default function LeaguePage() {
   const news = useLeagueNews();
@@ -23,6 +24,7 @@ export default function LeaguePage() {
         <h1>League</h1>
         <p className="dim">Season {currentSeason()} · {PHASE_NAMES[currentPhase()]} · {getTeams().length} teams · {getAllPlayers().filter((p) => p.teamId).length} players · {getFreeAgents().length} free agents</p>
       </div>
+      <PlayoffPicture />
       {!news ? <p className="dim">Loading the latest...</p> : (
         <div className="feed">
           <StandingsCard results={news.results} season={news.season} />

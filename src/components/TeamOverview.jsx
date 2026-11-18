@@ -11,7 +11,7 @@ import CoachCard from './CoachCard.jsx';
 import LockerRoom from './LockerRoom.jsx';
 import { getTeam, getTeams, capLimit, currentSeason, offseasonStep, resignOpen } from '../data/teams.js';
 import { getPlayers, teamCapUsed } from '../data/players.js';
-import { getPicks } from '../data/picks.js';
+import { getPicks, nextDraftSeason } from '../data/picks.js';
 import { usePotentials } from '../data/potentials.js';
 import { usePlayerTraits } from '../data/traits.js';
 import { useNegotiations } from '../data/negotiations.js';
@@ -30,7 +30,7 @@ export default function TeamOverview({ viewer, reload }) {
   const negotiations = useNegotiations(key, version);
   if (!team) return <div className="notice">You don't have a team yet. The commissioner will assign you one.</div>;
   const players = getPlayers(team.id);
-  const draftPicks = getPicks(team.id).filter((p) => p.season === currentSeason());
+  const draftPicks = getPicks(team.id).filter((p) => p.season === nextDraftSeason());
   return (
     <div className="team-page dashboard" style={{ '--team': team.color, '--team-accent': team.accent }}>
       <DashHero team={team} capUsed={teamCapUsed(team.id)} capLimit={capLimit()} coachName={viewer.display_name || viewer.username} />
@@ -38,7 +38,7 @@ export default function TeamOverview({ viewer, reload }) {
       <ComingUp />
       <div className="two-col wide-left">
         <OffseasonSteps current={offseasonStep()} compact />
-        <PickList picks={draftPicks} currentSeason={currentSeason()} title={`Season ${currentSeason()} draft`} />
+        <PickList picks={draftPicks} currentSeason={nextDraftSeason()} title={`Season ${nextDraftSeason()} draft`} />
       </div>
       <LockerRoom team={team} players={players} onOpen={setOpen} />
       <ContractWatch players={players} team={team} potentials={potentials.map} traits={traits} negotiations={negotiations} onOpen={setOpen} onNegotiate={setTalk} />

@@ -17,12 +17,14 @@ import { contractOf, yearsLeft, contractLabel } from '../data/contracts.js';
 import { POSITION_NAMES } from '../data/positions.js';
 import { money, heightLabel } from '../lib/format.js';
 import { flagFor } from '../lib/flags.js';
+import { viewerTeam, viewerIsBoss } from '../data/viewer.js';
 
-// Full player card: bio up top, then tabs for skills (archetype, bars), morale, drip (uniform and gear), contract & money, and past teams. Potential only shows to
-// the player's own team, the commissioner and scouts.
-export default function PlayerModal({ player, team, canSeePotential, potential, traits, onClose, myTeamId }) {
+// Full player card: bio up top, then tabs for skills (archetype, bars), morale & stats, drip (uniform and gear), contract & money,
+// and past teams. Anyone can open anyone's card. Potential only shows to his own team, the commissioner and scouts; the Drip tab
+// only to his own team and the commissioner. extra: buttons for this screen (free agency: scout, make an offer).
+export default function PlayerModal({ player, team, canSeePotential, potential, traits, onClose, myTeamId, extra }) {
   if (!player) return null;
-  const c = contractOf(player);
+  const c = contractOf(player), drip = viewerIsBoss() || (player.teamId && viewerTeam() === player.teamId);
   return (
     <Modal onClose={onClose} className="pcard" style={{ '--team': team.color, '--team-accent': team.accent }}>
         <button className="modal-x" onClick={onClose} aria-label="Close">×</button>
@@ -37,19 +39,20 @@ export default function PlayerModal({ player, team, canSeePotential, potential, 
         </div>
         <TradeActions player={player} myTeamId={myTeamId} onDone={onClose} />
         <WatchButton player={player} myTeamId={myTeamId} />
+        {extra}
         <div className="pcard-grid">
           <div><span>Age</span><b>{player.age ?? '-'}</b></div>
           <div><span>Height</span><b>{heightLabel(player.height)}</b></div>
           <div><span>Weight</span><b>{player.weight ? `${player.weight} lbs` : '-'}</b></div>
           <div><span>Country</span><b>{flagFor(player.nationality || 'USA')} {player.nationality || 'USA'}</b></div>
           <div><span>Mood</span><b><MoodTag mood={player.mood} /></b></div>
-          <div className="pot"><span>Potential</span><b>{!canSeePotential ? '🔒 Hidden' : potential === undefined ? <span className="dim">Loading...</span> : potential === null ? <span className="dim">Not rated</span>
+          <div className={`pot${canSeePotential ? '' : ' locked'}`} title={canSeePotential ? '' : 'Scout him to unlock'}><span>Potential</span><b>{!canSeePotential ? '🔒 Hidden' : potential === undefined ? <span className="dim">Loading...</span> : potential === null ? <span className="dim">Not rated</span>
             : <><StarRating value={potential} elite={potential === 5} />{potential <= player.stars && <small className="dim"> Maxed</small>}</>}</b></div>
         </div>
         <PlayerFlags player={player} />
         <Tabs tabs={[
           { key: 'skills', label: 'Skills', render: () => <PlayerSkills player={player} potential={canSeePotential ? potential : null} /> },
-          ...(player.teamId ? [{ key: 'morale', label: 'Morale & Stats', render: () => <><PlayerStats player={player} /><MoraleBox player={player} /></> }, { key: 'drip', label: 'Drip', render: () => <DripTab player={player} /> }] : []),
+          ...(player.teamId ? [{ key: 'morale', label: 'Morale & Stats', render: () => <><PlayerStats player={player} /><MoraleBox player={player} /></> }, ...(drip ? [{ key: 'drip', label: 'Drip', render: () => <DripTab player={player} /> }] : [])] : []),
           { key: 'contract', label: 'Contract & money', render: () => (
             <>
         <PlayerFlags player={player} contract />

@@ -1,0 +1,41 @@
+/* Craft Bowl: the desk tab (tiles, dice, editor) and the playoff bracket that wears the Craft Bowl's colors. */
+.cb-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; margin: 12px 0 16px; }
+.cb-tile { position: relative; display: flex; flex-direction: column; align-items: stretch; gap: 6px; padding: 10px; border: 3px solid #000; cursor: pointer; color: #fff; text-align: left;
+  background: linear-gradient(150deg, var(--cb1), var(--cb2)); box-shadow: 4px 4px 0 #000; transition: transform .15s, box-shadow .15s; overflow: hidden; }
+.cb-tile::after { content: ''; position: absolute; inset: 0; background: linear-gradient(115deg, transparent 30%, #ffffff30 45%, transparent 60%); transform: translateX(-120%); pointer-events: none; }
+.cb-tile:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0 #000; } .cb-tile.on { outline: 3px solid var(--gold); outline-offset: 2px; }
+.cb-tile.rolling { animation: cb-shake .12s linear infinite; } .cb-tile.rolling::after { animation: cb-shine .5s linear infinite; }
+.cb-season { display: block; white-space: nowrap; font-family: var(--label); font-weight: 800; font-size: 11px; letter-spacing: .12em; text-transform: uppercase; text-shadow: 1px 1px 0 #000; }
+.cb-art { aspect-ratio: 1; display: grid; place-items: center; background: #0003; border: 2px solid #0006; }
+.cb-art img { width: 100%; height: 100%; object-fit: contain; image-rendering: auto; }
+.cb-roman { display: grid; place-items: center; line-height: 1; text-shadow: 3px 3px 0 #000; } .cb-roman b { font-family: var(--pixel); font-size: 54px; }
+.cb-roman em { font-style: normal; font-family: var(--label); font-weight: 800; letter-spacing: .14em; text-transform: uppercase; font-size: 12px; margin-top: 4px; }
+.cb-where { display: flex; align-items: center; gap: 6px; min-height: 26px; padding: 3px 6px; background: #000a; font-family: var(--label); font-weight: 700; font-size: 13px; }
+.cb-where img { width: 20px; height: 20px; object-fit: contain; } .cb-tile.rolling .cb-where { color: var(--gold); }
+@keyframes cb-shake { 0% { transform: translate(0, 0) rotate(0); } 25% { transform: translate(-1px, 1px) rotate(-.6deg); } 75% { transform: translate(1px, -1px) rotate(.6deg); } }
+@keyframes cb-shine { to { transform: translateX(120%); } }
+.cb-edit { border-top: 6px solid var(--cb1); } .cb-edit h3 small { font-weight: 400; margin-left: 6px; }
+.cb-fields { display: grid; gap: 10px; margin: 10px 0; } .cb-field { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.cb-field > span { min-width: 104px; font-family: var(--label); font-weight: 800; } .cb-field input[type=color] { width: 48px; height: 32px; padding: 0; border: 2px solid #000; background: none; }
+.cb-field select { flex: 1; min-width: 220px; } .cb-dice.spin { animation: cb-dice .4s linear infinite; }
+@keyframes cb-dice { to { transform: rotate(360deg); } }
+.cb-save { display: flex; align-items: center; gap: 10px; } .cb-save .good { color: var(--good); } .cb-save .warn { color: var(--bad); }
+
+/* The bracket: Overworld on the left, Nether on the right, the Craft Bowl in the middle. */
+.pb { position: relative; padding: 16px; border: 3px solid #000; background: radial-gradient(circle at 50% 45%, color-mix(in srgb, var(--cb1) 30%, #0000) 0, #0000 55%), linear-gradient(160deg, #0d1512, #07100c); overflow-x: auto; }
+.pb-head { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin-bottom: 12px; } .pb-head h2 { margin: 0; }
+.pb-grid { display: grid; grid-template-columns: 1fr 1fr minmax(170px, 1.1fr) 1fr 1fr; align-items: center; gap: 10px; min-width: 760px; }
+.pb-col { display: grid; gap: 22px; } .pb-col h4 { margin: 0; text-align: center; font-family: var(--label); font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--dim); }
+.pb-game { display: grid; gap: 4px; position: relative; } .pb-game small { font-size: 10px; color: var(--dim); text-align: center; }
+.pb-team { position: relative; display: flex; align-items: center; gap: 8px; height: 46px; padding: 0 30px 0 8px; border: 2px solid #000; color: #fff;
+  background: linear-gradient(120deg, var(--cb1), var(--cb2)); box-shadow: 3px 3px 0 #000; font-family: var(--label); font-weight: 800; animation: pb-in .4s ease-out both; }
+.pb-team img { width: 34px; height: 34px; object-fit: contain; filter: drop-shadow(1px 1px 0 #000); } .pb-team .pb-code { text-shadow: 1px 1px 0 #000; }
+.pb-seed { position: absolute; top: 2px; right: 4px; min-width: 20px; padding: 0 4px; background: #000c; color: var(--gold); font-size: 12px; text-align: center; }
+.pb-team.home::before { content: '🏠'; position: absolute; bottom: 1px; right: 5px; font-size: 10px; }
+.pb-team.tbd { background: #ffffff10; color: var(--dim); box-shadow: none; } .pb-team.lost { opacity: .45; filter: grayscale(.6); }
+.pb-mid { display: grid; justify-items: center; gap: 6px; text-align: center; }
+.pb-mid img { width: min(180px, 100%); filter: drop-shadow(0 0 18px color-mix(in srgb, var(--cb1) 60%, #0000)); animation: pb-glow 3s ease-in-out infinite; }
+.pb-mid b { font-family: var(--label); font-size: 14px; } .pb-mid small { color: var(--dim); font-size: 12px; }
+.pb-note { margin: 10px 0 0; font-size: 12px; color: var(--dim); text-align: center; }
+@keyframes pb-in { from { opacity: 0; transform: translateY(6px); } }
+@keyframes pb-glow { 50% { filter: drop-shadow(0 0 28px color-mix(in srgb, var(--cb1) 85%, #0000)); } }

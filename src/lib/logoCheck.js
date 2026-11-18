@@ -1,8 +1,9 @@
 // Checks a team logo upload: must be a PNG with a see-through background. Shrinks it to fit 512x512 and returns
-// { blob, preview } ready to upload, or throws a plain-English reason.
-export async function prepareLogo(file) {
+// { blob, preview } ready to upload (always a PNG), or throws a plain-English reason.
+// solid: any image is fine, background and all (Craft Bowl logos are square art).
+export async function prepareLogo(file, { solid = false } = {}) {
   if (!file) throw new Error('Pick a file first');
-  if (file.type !== 'image/png') throw new Error('The logo has to be a PNG file');
+  if (solid ? !file.type.startsWith('image/') : file.type !== 'image/png') throw new Error(solid ? 'That has to be an image' : 'The logo has to be a PNG file');
   if (file.size > 8 * 1024 * 1024) throw new Error('That file is too big (8 MB max)');
   const img = await new Promise((resolve, reject) => {
     const i = new Image();
@@ -23,7 +24,7 @@ export async function prepareLogo(file) {
   for (let i = 3; i < data.length; i += 4) if (data[i] < 16) clear += 1;
   const alpha = (x, y) => data[(y * w + x) * 4 + 3];
   const clearCorners = [alpha(0, 0), alpha(w - 1, 0), alpha(0, h - 1), alpha(w - 1, h - 1)].filter((a) => a < 16).length;
-  if (clear / (w * h) < 0.03 || clearCorners < 2) {
+  if (!solid && (clear / (w * h) < 0.03 || clearCorners < 2)) {
     throw new Error('The logo needs a see-through (transparent) background. Remove the background and save it as a PNG.');
   }
   const blob = await new Promise((resolve) => canvas.toBlob(resolve, 'image/png'));

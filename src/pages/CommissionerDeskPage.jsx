@@ -9,11 +9,12 @@ import AccountsPanel from '../components/AccountsPanel.jsx';
 import TeamEditList from '../components/TeamEditList.jsx';
 import PlayerEditList from '../components/PlayerEditList.jsx';
 import TestTab from '../components/TestTab.jsx';
+import CraftBowlTab from '../components/CraftBowlTab.jsx';
 import { currentSeason, currentPhase, PHASE_NAMES } from '../data/teams.js';
 import { inSandbox } from '../data/sandbox.js';
 
 // The Commissioner's Desk: every league office tool in one place, by tab. Offseason (steps, draft settings, league rules),
-// Season (game weeks), Schedule, Teams (names, logos), Players (edit anyone), Trades, Coaches, Accounts, Test (the only TEST mode switch).
+// Season (game weeks), Schedule, Teams (names, logos), Players (edit anyone), Trades, Coaches, Accounts, Test (the only TEST mode switch), Craft Bowl (logos, colors, stadiums).
 export default function CommissionerDeskPage({ canControl, reload, viewerKey, accountsReadOnly, testMode, initialTab }) {
   return (
     <div className="desk">
@@ -32,6 +33,7 @@ export default function CommissionerDeskPage({ canControl, reload, viewerKey, ac
         { key: 'coaches', label: '🧢 Coaches', render: () => <CoachList canControl={canControl} /> },
         { key: 'accounts', label: '👥 Accounts', render: () => <AccountsPanel readOnly={accountsReadOnly} testMode={testMode} /> },
         { key: 'test', label: inSandbox() ? '🧪 Test (on)' : '🧪 Test', render: () => <TestTab canControl={canControl} reload={reload} /> },
+        { key: 'craftbowl', label: '🏆 Craft Bowl', render: () => <CraftBowlTab canControl={canControl} /> },
       ]} />
     </div>
   );

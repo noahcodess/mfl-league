@@ -21,6 +21,7 @@ import TradesPage from './pages/TradesPage.jsx';
 import InboxPage from './pages/InboxPage.jsx';
 import TradeLauncher from './components/TradeLauncher.jsx';
 import PlayerCardHost from './components/PlayerCardHost.jsx';
+import { setViewer } from './data/viewer.js';
 import SandboxBanner from './components/SandboxBanner.jsx';
 import DraftAlert from './components/DraftAlert.jsx';
 import ScheduleNotice from './components/ScheduleNotice.jsx';
@@ -99,6 +100,7 @@ export default function App() {
   const reload = async () => { setLive(await loadLeague()); setVersion((v) => v + 1); };
   useEffect(() => { loadLeague().then(setLive); }, []);
   const myTeam = step === 'ready' && session.profile?.role === 'coach' ? getTeam(session.profile.team_id) : null;
+  setViewer(step === 'ready' ? session.profile : null);   // before any screen renders, so cards know who's looking
   usePresenceHeartbeat(step === 'ready');
   useLeagueTick(reload);
   return (

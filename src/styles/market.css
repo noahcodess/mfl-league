@@ -69,3 +69,6 @@
 .fa-how-box summary { cursor: pointer; font-weight: 700; color: var(--gold); margin-bottom: 8px; }
 .pos-chips { margin-bottom: 10px; }
 .college-head { font-weight: 700; font-size: 13px; color: var(--gold); margin-bottom: 8px; }
+.fa-scouts { margin-left: 12px; padding: 3px 10px; font-size: 14px; font-family: var(--label); font-weight: 800; background: #0007; border: 2px solid #000; color: var(--gold); vertical-align: middle; cursor: help; }
+.fa-card-acts { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 8px; margin: 8px 0; } .fa-card-acts .scout-box { flex: 1; min-width: 220px; }
+.pcard-grid .pot.locked b { color: var(--dim); cursor: help; }
