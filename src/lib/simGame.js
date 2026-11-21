@@ -7,6 +7,7 @@ import { tempo, clockStop, PLAY_CLOCK } from './simClock.js';
 import { makePlan } from './coachPlan.js';
 import { overtime } from './simOvertime.js';
 import { tally } from './simStats.js';
+import { applyInputs } from './simInputs.js';
 
 export const QUARTER_SECONDS = 360;
 const dummy = (side, key) => ({ id: `${side}-sub-${key}`, name: 'Emergency Sub', last: 'Sub', pos: key.replace(/\d/, ''), r: {}, mood: 'normal', side, stars: 1 });
@@ -34,7 +35,8 @@ function endQuarter(G) {
 export function stepGame(G) {
   const s = G.s;
   if (s.over) return null;
-  if (s.clock <= 0 && s.phase !== 'pat') return endQuarter(G);
+  const forced = applyInputs(G) && s.clock <= 0;   // a timeout someone called, or a test tool
+  if (s.clock <= 0 && (s.phase !== 'pat' || forced)) return endQuarter(G);
   if (s.phase === 'kickoff') return doKickoff(G);
   if (s.phase === 'pat') return doPat(G);
   if (s.running) { // the clock runs between plays; the team that's behind burns timeouts late to stop it
@@ -50,7 +52,8 @@ export function stepGame(G) {
 }
 
 // home, away: lineups from loadLineups. seed: any whole number.
-// opts: { quarterSeconds, rivalry, receiver ('home' | 'away', from the real coin flip), coachCall(G, side) -> a call for a key play, or nothing to let the AI pick }.
+// opts: { quarterSeconds, rivalry, receiver ('home' | 'away', from the real coin flip), coachCall(G, side) -> a call for a key play, or nothing to let the AI pick,
+//   inputs: [{ n, kind, ... }] things people did live (simInputs) }.
 // A team's day: usually close to normal, but about 1 game in 9 a team comes out flat or plays out of its mind.
 const teamDay = (R) => R.gauss(0, 2.4) + (R.chance(0.11) ? (R.chance(0.5) ? 1 : -1) * (4 + R.r() * 3) : 0);
 

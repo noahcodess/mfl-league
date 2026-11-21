@@ -5,6 +5,7 @@ import { startGame } from './gameState.js';
 import { loadLineups } from './gameLineups.js';
 import { rivalPairs } from './games.js';
 import { playGame } from '../lib/simGame.js';
+import { isTestInput } from '../lib/simInputs.js';
 
 const clean = (msg = '') => (msg.includes('not allowed') ? 'Only the commissioner can do this.' : msg.replace(/^.*?ERROR:\s*/, ''));
 async function rpc(fn, args) {
@@ -20,11 +21,14 @@ export async function isRivalGame(homeId, awayId) {
   return (await rivals).has(`${homeId}|${awayId}`);
 }
 
-// The one way a game is played. kick: { receiving, seed } from game_start.
-export function playOfficial(lineups, homeId, awayId, kick, rivalry) {
+// The one way a game is played. kick: { receiving, seed } from game_start. inputs: what people did live (timeouts, test tools).
+export function playOfficial(lineups, homeId, awayId, kick, rivalry, inputs = []) {
   const receiver = kick?.receiving === homeId ? 'home' : kick?.receiving === awayId ? 'away' : undefined;
-  return playGame(lineups.home, lineups.away, Number(kick?.seed) || 1, { receiver, rivalry: !!rivalry });
+  const out = playGame(lineups.home, lineups.away, Number(kick?.seed) || 1, { receiver, rivalry: !!rivalry, inputs });
+  return inputs.some(isTestInput) ? { ...out, testForced: true } : out;   // a test tool was used: this game is never saved as final
 }
+// Saves one live input with the game (commissioner). { n, kind, side?, ... }: see simInputs.
+export const addGameInput = (gameId, input) => rpc('game_add_input', { p_game: Number(gameId), p_input: input });
 
 // Which team every player in the game played for (starters, backups and the kick teams).
 function teamOf(lineups) {
@@ -37,8 +41,9 @@ function teamOf(lineups) {
   return out;
 }
 
-// Saves a finished game. Safe to call twice: a final game never changes.
+// Saves a finished game. Safe to call twice: a final game never changes. A game bent by a test tool is never saved.
 export async function finalizeGame(gameId, result, lineups, kick, method) {
+  if (result.testForced) return { test: true };
   const teams = teamOf(lineups);
   const stats = Object.entries(result.players || {}).filter(([id]) => teams[id]).map(([id, s]) => ({ player_id: id, team_id: teams[id], stats: s }));
   const out = await rpc('game_finalize', { p_game: Number(gameId), p_home: result.score.home, p_away: result.score.away, p_ot: result.overtimes || 0,
@@ -56,14 +61,14 @@ export async function loadReplay(gameId, seed) {
 export const saveReplay = (gameId, seed, result) => rpc('game_save_replay', { p_game: Number(gameId), p_seed: Number(seed), p_result: result }).catch(() => null);
 export function saveProgress(gameId, i, play) {
   const b = play?.before; if (!b) return null;
-  return rpc('game_progress', { p_game: Number(gameId), p_play: i, p_home: b.score.home, p_away: b.score.away, p_quarter: b.quarter, p_clock: Math.round(b.clock ?? 0) }).catch(() => null);
+  return rpc('game_progress', { p_game: Number(gameId), p_play: i, p_home: b.score.home, p_away: b.score.away, p_quarter: b.quarter, p_clock: Math.round(b.clock ?? 0), p_to_home: b.to?.home ?? null, p_to_away: b.to?.away ?? null }).catch(() => null);
 }
 
 // Quick sim: kickoff (coin flip + seed), the full engine run (or the saved one, if the game was paused), saved as final.
 export async function simGameNow(gameId, homeId, awayId, method = 'quick') {
   const kick = await startGame(gameId);
   const [[home, away], rivalry, kept] = await Promise.all([loadLineups([homeId, awayId]), isRivalGame(homeId, awayId), kick.already ? loadReplay(gameId, kick.seed) : null]);
-  const lineups = { home, away }, result = kept || playOfficial(lineups, homeId, awayId, kick, rivalry);
+  const lineups = { home, away }, result = kept || playOfficial(lineups, homeId, awayId, kick, rivalry, kick.inputs || []);
   const saved = await finalizeGame(gameId, result, lineups, kick, method);
   return { result, lineups, saved };
 }

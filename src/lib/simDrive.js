@@ -20,7 +20,7 @@ function log(G, play, secs) {
   play.after = { score: { ...s.score }, poss: s.poss, ballOn: s.ballOn, down: s.down, toGo: s.toGo, quarter: s.quarter, clock: s.clock, mom: Math.round(G.mom * 100) / 100 };
   G.mom *= 0.97; G.plays.push(play);
   const lead = s.score.home - s.score.away;   // a one-score game late: the trailing side finds a little extra (the rally)
-  if (s.quarter === 4 && !s.ot && s.clock < (s.qlen || 360) * 0.5 && lead !== 0 && Math.abs(lead) <= 8) swing(G, lead > 0 ? 'away' : 'home', 0.012);
+  if (s.quarter === 4 && !s.ot && s.clock < (s.qlen || 360) * 0.5 && lead !== 0 && Math.abs(lead) <= 8) swing(G, lead > 0 ? 'away' : 'home', 0.02);
   return play;
 }
 export function score(G, play, side, pts, how) {

@@ -60,7 +60,7 @@ export default function GameIntro({ game, season, kick, st, resume = null, onClo
           {scene === 'player' && spot && <IntroPlayer bc={bc} spot={spot} team={spotTeam} kit={spotTeam.id === home.id ? kits?.home : kits?.away} />}
           {scene === 'tape' && <IntroTape home={home} away={away} rec={rec} stats={stats} />}
           {scene === 'crowd' && <IntroCrowd bc={bc} home={home} stadium={stadium} weather={weather} gameId={game.id} dress={kits?.fans} theme={kits?.fans ? kits.home.name : ''} />}
-          {scene === 'game' && <LiveGame game={game} home={home} away={away} kick={kick} resume={resume || 0} />}
+          {scene === 'game' && <LiveGame game={game} home={home} away={away} kick={kick} resume={resume || 0} st={st} rec={rec} />}
         </div>
         {sting > 0 && <NetStinger key={sting} net={bc.net} onDone={() => setSting(0)} />}
         {scene !== 'game' && <button className="intro-skip" onClick={() => setI(steps.length - 1)}>Skip intro ⏭</button>}

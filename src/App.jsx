@@ -17,6 +17,7 @@ import CommissionerDeskPage from './pages/CommissionerDeskPage.jsx';
 import FreeAgentsPage from './pages/FreeAgentsPage.jsx';
 import DraftPage from './pages/DraftPage.jsx';
 import DraftDeskPage from './pages/DraftDeskPage.jsx';
+import GameBoothPage from './pages/GameBoothPage.jsx';
 import TradesPage from './pages/TradesPage.jsx';
 import InboxPage from './pages/InboxPage.jsx';
 import TradeLauncher from './components/TradeLauncher.jsx';
@@ -74,6 +75,11 @@ function Screen({ route, session, step, reload }) {
     if (step !== 'ready') return null;
     // TEMPORARY (testing): the site owner can open the desk too. The server still checks every action and every secret.
     return session.profile.role === 'commissioner' || session.profile.site_owner ? <DraftDeskPage viewer={session.profile} /> : <div className="notice bad">Commissioner only.</div>;
+  }
+  if (route.page === 'gameBooth') {
+    if (step === 'login') return <LoginPage />;
+    if (step !== 'ready') return null;
+    return session.profile.role === 'commissioner' || session.profile.site_owner ? <GameBoothPage id={route.id} /> : <div className="notice bad">Commissioner only.</div>;
   }
   if (route.page === 'freeAgents') return <FreeAgentsPage viewer={step === 'ready' ? session.profile : null} />;
   if (route.page === 'game') {

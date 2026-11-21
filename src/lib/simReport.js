@@ -28,7 +28,7 @@ export const EVENTS = {
 export function newPlay(sit, n) {
   return {
     n, kind: null, call: null, defCall: null, off: sit.poss, def: sit.poss === 'home' ? 'away' : 'home',
-    before: { quarter: sit.quarter, clock: sit.clock, down: sit.down, toGo: sit.toGo, ballOn: sit.ballOn, hash: sit.hash, score: { ...sit.score } },
+    before: { quarter: sit.quarter, clock: sit.clock, down: sit.down, toGo: sit.toGo, ballOn: sit.ballOn, hash: sit.hash, score: { ...sit.score }, to: sit.to ? { ...sit.to } : null },   // to: timeouts left (scorebugs)
     events: [],
     result: { gain: 0, endOn: sit.ballOn, firstDown: false, td: false, safety: false, turnover: null, oob: false, points: null },
     clock: { playClockAtSnap: null, seconds: 0, stopped: false },

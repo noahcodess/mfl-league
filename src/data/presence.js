@@ -14,7 +14,7 @@ export function usePresenceHeartbeat(signedIn) {
   }, [signedIn]);
 }
 
-// Returns teamId -> { username, online } for the commissioner (empty for everyone else).
+// Returns teamId -> { username, online, lastSeen } for the commissioner (empty for everyone else).
 export function useCoachPresence(enabled) {
   const [map, setMap] = useState({});
   useEffect(() => {
@@ -22,7 +22,7 @@ export function useCoachPresence(enabled) {
     if (DEMO) { setMap({ snm: { username: 'noah', online: true }, crf: { username: 'blaze_gm', online: false } }); return undefined; }
     let live = true;
     const load = () => db.rpc('coach_presence').then(({ data }) => {
-      if (live && data) setMap(Object.fromEntries(data.map((r) => [r.team_id, { username: r.username, online: r.online }])));
+      if (live && data) setMap(Object.fromEntries(data.map((r) => [r.team_id, { username: r.username, online: r.online, lastSeen: r.last_seen }])));
     });
     load();
     const t = setInterval(load, 15000);

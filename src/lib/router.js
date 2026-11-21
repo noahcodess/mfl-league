@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 export function parseHash(hash) {
   const h = (hash || '').replace(/^#/, '');
   if (h.startsWith('team-')) return { page: 'team', id: h.slice(5) };
+  if (h.startsWith('game-booth-')) return { page: 'gameBooth', id: h.slice(11), stage: true };   // the commissioner's Broadcast Booth window
   if (h.startsWith('game-')) return { page: 'game', id: h.slice(5) };
   if (h === 'coaching') return { page: 'coaching' };
   if (h.startsWith('coaching-')) return { page: 'coaching', id: h.slice(9) };

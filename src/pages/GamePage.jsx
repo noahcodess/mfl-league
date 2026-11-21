@@ -6,6 +6,7 @@ import QuickSimButton from '../components/QuickSimButton.jsx';
 import GameFinal from '../components/GameFinal.jsx';
 import { useWeekGate } from '../components/WeekGate.jsx';
 import { unfinalizeGame } from '../data/gameResults.js';
+import { openGameBooth } from '../lib/windows.js';
 import { useGame, useRivals, isRivalry } from '../data/liveSeason.js';
 import { useGameState, isRealGame, startGame, flipKickoff, PREGAME, clockText, quarterText } from '../data/gameState.js';
 import { useStadiums } from '../data/stadiums.js';
@@ -62,6 +63,7 @@ export default function GamePage({ id, canControl, teamId }) {
         <div className="gp-actions">
           {canControl && paused && <button className="btn gp-start ready" onClick={() => gate.run(resume)}>▶ Resume</button>}
           {canControl && !final && !paused && <StartGameButton startsAt={game.startsAt} now={now} onStart={start} gate={gate.run} />}
+          {canControl && !final && <button className="btn ghost gp-booth" onClick={() => openGameBooth(id)} title="Your private window: controls, coaches, key plays, graphics, stats, test tools">🎛️ Open broadcast booth</button>}
           {canControl && !final && <QuickSimButton game={game} home={home} away={away} gate={gate.run} />}
           {canControl && final && real && isTestMode() && <button className="btn ghost small" title="Test mode only" onClick={() => unfinalizeGame(id).then(() => setVersion((v) => v + 1))}>↩ Unplay (test)</button>}
           {mine && !final && (roomOpen ? <a className="btn gp-room" href={links.coaching(game.id)}>🎧 Enter coaching room</a>

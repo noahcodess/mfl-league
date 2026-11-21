@@ -59,7 +59,8 @@ function play(G, must) {
   if (up >= 24) pass = Math.min(pass, 0.25);                                      // way ahead: run it and get out of here
   if (must && s.toGo >= 4) pass = Math.max(pass, 0.8);
   if (pass >= 1) return pickPlay(G, 'pass', depth(G, plan, ctx, must, up, t), ctx);
-  if (ctx.short && !hurry && s.toGo <= 1 && R.chance(0.16)) return pickPlay(G, 'run', 'sneak', ctx);
+  if (s.down === 4 && s.toGo <= 1 && !needTd && !hurry) pass = Math.min(pass, 0.18);   // 4th and inches: the low-risk call is a push up the middle
+  if (ctx.short && !hurry && s.toGo <= 1 && R.chance(s.down === 4 ? 0.4 : 0.16)) return pickPlay(G, 'run', 'sneak', ctx);
   if (!R.chance(Math.max(0.08, Math.min(0.95, pass)))) return pickPlay(G, 'run', 'any', ctx);
   return pickPlay(G, 'pass', depth(G, plan, ctx, must, up, t), ctx);
 }
