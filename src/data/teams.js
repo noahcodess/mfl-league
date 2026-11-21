@@ -38,7 +38,7 @@ export function currentPhase() {
 
 // Game week of the regular season (0 before Week 1).
 export const currentWeek = () => store.league.meta.currentWeek ?? 0;
-// Test mode: every team is run by a bot coach and human coaches can't make moves.
+// Test mode (the sandbox, green banner): every team is run by a bot coach and human coaches can't make moves. Leaving it ends that.
 export const isTestMode = () => !!store.league.meta.testMode;
 
 export const PHASE_NAMES = { offseason: 'Offseason', regular_season: 'Regular Season', playoffs: 'Playoffs' };

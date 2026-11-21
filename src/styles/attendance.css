@@ -68,3 +68,8 @@
 .att-espn .att-num { font-size: 4cqw; text-shadow: 0 0 1cqw #ff2a2a99; }
 .att-espn .att-meter { display: block; position: absolute; left: 1.4cqw; right: 3.4cqw; bottom: .55cqw; height: .4cqw; background: linear-gradient(90deg, #e3261b calc(var(--fill) * 100%), #ffffff22 0); }
 .att-espn .att-full { background: #e3261b; color: #fff; padding: .45cqw 1cqw; font-family: var(--hf); font-size: 1.25cqw; }
+/* the "72% full" chip pops in once the count lands, with a light running across it */
+.att-full { position: relative; overflow: hidden; }
+.att-full::after { content: ''; position: absolute; top: 0; bottom: 0; left: -60%; width: 40%; background: linear-gradient(90deg, transparent, #ffffffaa, transparent); transform: skewX(-20deg); animation: att-shine .9s ease-out .35s both; pointer-events: none; }
+@keyframes att-shine { to { left: 130%; } }
+.att-pct { text-transform: uppercase; }

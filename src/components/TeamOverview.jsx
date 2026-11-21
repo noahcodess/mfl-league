@@ -8,6 +8,7 @@ import PlayerModal from './PlayerModal.jsx';
 import NegotiationModal from './NegotiationModal.jsx';
 import ComingUp from './ComingUp.jsx';
 import CoachCard from './CoachCard.jsx';
+import FanSupportCard from './FanSupportCard.jsx';
 import LockerRoom from './LockerRoom.jsx';
 import { getTeam, getTeams, capLimit, currentSeason, offseasonStep, resignOpen } from '../data/teams.js';
 import { getPlayers, teamCapUsed } from '../data/players.js';
@@ -17,7 +18,7 @@ import { usePlayerTraits } from '../data/traits.js';
 import { useNegotiations } from '../data/negotiations.js';
 import { currentPhase } from '../data/teams.js';
 
-// My Team → Overview: his team in its colors, countdowns to the next league events, the offseason road map, the locker room, contracts to deal with,
+// My Team → Overview: his team in its colors, his coach, fan support, countdowns to the next league events, the offseason road map, the locker room, contracts to deal with,
 // next draft and his conference.
 export default function TeamOverview({ viewer, reload }) {
   const [open, setOpen] = useState(null);
@@ -35,6 +36,7 @@ export default function TeamOverview({ viewer, reload }) {
     <div className="team-page dashboard" style={{ '--team': team.color, '--team-accent': team.accent }}>
       <DashHero team={team} capUsed={teamCapUsed(team.id)} capLimit={capLimit()} coachName={viewer.display_name || viewer.username} />
       <CoachCard team={team} mine />
+      <FanSupportCard team={team} />
       <ComingUp />
       <div className="two-col wide-left">
         <OffseasonSteps current={offseasonStep()} compact />

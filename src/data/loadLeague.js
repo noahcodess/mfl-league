@@ -43,7 +43,7 @@ export async function loadLeague() {
     const meta = Object.fromEntries(settings.data.map((s) => [s.key, s.value]));
     const byPlayer = Object.fromEntries(contracts.data.map((c) => [c.player_id, toContract(c)]));
     store.league = {
-      meta: { capLimit: meta.cap_limit, currentSeason: meta.current_season, phase: meta.phase, maxAge: meta.max_age ?? 27, agedForSeason: meta.aged_for_season ?? 0, testMode: meta.test_mode === true, offseasonStep: meta.offseason_step ?? 0,
+      meta: { capLimit: meta.cap_limit, currentSeason: meta.current_season, phase: meta.phase, maxAge: meta.max_age ?? 27, agedForSeason: meta.aged_for_season ?? 0, testMode: meta.sandbox === true, offseasonStep: meta.offseason_step ?? 0,
         sandbox: meta.sandbox === true, faRound: meta.fa_round ?? 0, faRounds: meta.fa_rounds ?? 4, maxRoster: meta.max_roster ?? 45, currentWeek: meta.current_week ?? 0 },
       teams: teams.data.map(toTeam),
       players: players.data.map((p) => ({ ...toPlayer(p), contract: byPlayer[p.id] || null })),
