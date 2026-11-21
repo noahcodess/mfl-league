@@ -49,7 +49,10 @@ export function clockLeft(st, now = Date.now()) {
   return Math.max(0, st.clock_left - Math.floor((now - Date.parse(st.clock_since)) / 1000));
 }
 export const clockText = (s) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
-export const quarterText = (q) => (q >= 5 ? 'OT' : ['1st', '2nd', '3rd', '4th'][q - 1] || '1st');
+export const quarterText = (q) => (q >= 6 ? `OT${q - 4}` : q === 5 ? 'OT' : ['1st', '2nd', '3rd', '4th'][q - 1] || '1st');   // 5 = OT, 6 = OT2 ...
+export const finalText = (q) => (q >= 5 ? `Final/${quarterText(q)}` : 'Final');   // a game that went to overtime: Final/OT, Final/OT2 ...
+export const toSlots = (q) => (q >= 5 ? [0] : [0, 1, 2]);   // timeout pips: three a half, one per overtime
+export const gameClockText = (q, s) => (q >= 5 ? '--:--' : clockText(s));   // overtime has no game clock
 
 // Re-renders every quarter second while the clock runs, so it counts down smoothly between reads.
 export function useTicker(on) {

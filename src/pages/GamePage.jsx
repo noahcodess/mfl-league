@@ -8,7 +8,7 @@ import { useWeekGate } from '../components/WeekGate.jsx';
 import { unfinalizeGame } from '../data/gameResults.js';
 import { openGameBooth } from '../lib/windows.js';
 import { useGame, useRivals, isRivalry } from '../data/liveSeason.js';
-import { useGameState, isRealGame, startGame, flipKickoff, PREGAME, clockText, quarterText } from '../data/gameState.js';
+import { useGameState, isRealGame, startGame, flipKickoff, PREGAME, clockText, quarterText, finalText } from '../data/gameState.js';
 import { useStadiums } from '../data/stadiums.js';
 import { getTeam, isTestMode } from '../data/teams.js';
 import { broadcastFor } from '../data/broadcast.js';
@@ -57,8 +57,8 @@ export default function GamePage({ id, canControl, teamId }) {
         <img className="gp-net" src={bc.logo} alt={bc.title} />
         <div className="gp-match">{team(away, 'away')}<span className="gp-at">at</span>{team(home, 'home')}</div>
         <p className="gp-where">🏟️ {stadiums[home.id]?.name || home.name} · Week {game.week} · {bc.title}{isRivalry(game, rivals) && <span className="rival-badge">⚔️ Rivalry</span>}</p>
-        {final ? <p className="gp-final">FINAL</p> : paused ? (
-          <p className="gp-paused"><b>⏸ PAUSED</b><span>{quarterText(st.quarter)} · {clockText(st.clock_left ?? 0)} left</span></p>
+        {final ? <p className="gp-final">{finalText(st?.quarter).toUpperCase()}</p> : paused ? (
+          <p className="gp-paused"><b>⏸ PAUSED</b><span>{quarterText(st.quarter)}{st.quarter >= 5 ? '' : ` · ${clockText(st.clock_left ?? 0)} left`}</span></p>
         ) : <KickoffClock startsAt={game.startsAt} status={st?.status} />}
         <div className="gp-actions">
           {canControl && paused && <button className="btn gp-start ready" onClick={() => gate.run(resume)}>▶ Resume</button>}

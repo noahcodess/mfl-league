@@ -47,7 +47,7 @@ export function stepGame(G) {
       let run = tempo(G); if ((s.quarter === 2 || s.quarter === 4) && s.clock > 120 && s.clock - run < 120) run = s.clock - 120;   // stops at the two-minute warning
       s.snapClock = Math.max(1, PLAY_CLOCK - run); if (run >= s.clock) { s.clock = 0; return endQuarter(G); } s.clock -= run;
     }
-  } else s.snapClock = G.R.int(8, 13);   // after a stoppage the 25 starts fresh and most snaps come with about 10 left
+  } else s.snapClock = G.R.int(8, 13);   // after a stoppage the 24 starts fresh and most snaps come with about 10 left
   return scrimmage(G);
 }
 

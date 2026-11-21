@@ -1,9 +1,10 @@
 // The scorebug clocks during the broadcast: the game clock ticks down through the play, keeps running through the dead
 // time and the next pre-snap when the clock didn't stop (that runoff is squeezed into the few seconds we show), and the
-// play clock counts down from 25 (it starts at the whistle) to the snap.
+// play clock counts down from 24 (it starts at the whistle) to the snap.
 import { paceFor } from './pacing.js';
+import { PLAY_CLOCK } from './simClock.js';
 
-const lerp = (a, b, k) => a + (b - a) * Math.max(0, Math.min(1, k)), PC = 25;   // the play clock
+const lerp = (a, b, k) => a + (b - a) * Math.max(0, Math.min(1, k)), PC = PLAY_CLOCK;   // the play clock
 
 // game: the playGame result. i: play index. t: seconds into this play's scene. S: the scene. phase: live | flag | replay.
 // Returns { clock (seconds left in the quarter), playClock, running }.

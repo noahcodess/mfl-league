@@ -23,6 +23,7 @@ import { planGraphics } from '../lib/broadcastGfx.js';
 import HalftimeReport from './HalftimeReport.jsx';
 import OvertimeRules from './OvertimeRules.jsx';
 import useBoothRemote from './useBoothRemote.js';
+import { finalText } from '../data/gameState.js';
 
 const SPEEDS = [1, 2, 4];
 const everyone = (lineups, side) => [...lineups[side].all, ...Object.values(lineups[side].kickTeams).flatMap((u) => u.players)].filter(Boolean);
@@ -84,6 +85,7 @@ export default function PixelGame({ game, teams, lineups, onClose, onDone, onPla
       c.last = now; if (!s || !sh) return;
       const next = () => { c.t = 0; setI((n) => (n === ctl.current.i ? n + 1 : n)); };
       if (!p && !(ctl.current.hold && c.phase === 'live' && c.t >= s.T0 - 0.5 && c.t < s.T0)) {   // the booth can hold the snap (the play clock stops)
+        if ((c.phase === 'sting' || c.phase === 'replay') && !sh.replay) c.phase = 'live';   // jumped to a new play mid-replay (booth skip): pick the new one up live
         const toReplay = () => { c.phase = 'sting'; c.hold = 0; setSting((n) => n + 1); };   // the network transition covers the cut to the replay
         if (c.phase === 'live') { c.t += dt * slowAt(sh, c.t); if (c.t > s.tEnd + pc.dead && (c.tdAt == null || (c.tdReal && now - c.tdReal > (sc?.type === 'fg' ? 3300 : 3700)))) {   // the scoring takeover runs its full length at any speed
           if (sh.flag) { c.phase = 'flag'; c.hold = 0; } else if (sh.replay) toReplay(); else next(); } }
@@ -109,11 +111,12 @@ export default function PixelGame({ game, teams, lineups, onClose, onDone, onPla
   const bugUp = !brk?.live && (!fresh || done || bt >= (S?.T0 ?? 0));   // the scorebug builds in as the opening (and second-half, and overtime) kickoff is struck
   const b4 = play && { quarter: play.before.quarter, clock: play.before.clock, score: play.before.score, poss: play.kind === 'kickoff' ? play.def : play.off,
     down: ['kickoff', 'xp', 'two'].includes(play.kind) ? null : play.before.down, toGo: play.before.toGo, ballOn: play.before.ballOn };   // before the snap
-  const a = done ? game.plays[game.plays.length - 1].after : beat.post ? play.after : b4;
+  const aft = (p) => ({ quarter: p.before.quarter, clock: p.before.clock, ...p.after });   // a try's after holds only the score: keep its quarter and clock
+  const a = done ? aft(game.plays[game.plays.length - 1]) : beat.post ? aft(play) : b4;
   const dn = !done && beat.post && bt < (S?.tEnd ?? 0) + 1 ? b4 : a;   // down and distance turn over about a second after the whistle
   const ticking = !done && beat.clock != null, clk = ticking ? beat.clock : a.clock;
   const st = { status: done ? 'final' : 'live', quarter: a.quarter, clock_left: Math.max(0, Math.ceil(clk)), clock_running: ticking && beat.running, home_score: a.score.home, away_score: a.score.away, home_timeouts: tos('home'), away_timeouts: tos('away'),
-    possession: teams[dn.poss]?.id, try: !done && dn === b4 && play?.kind === 'xp' ? 'PAT' : !done && dn === b4 && play?.kind === 'two' ? '2-PT Try' : null, down: dn.down, togo: dn.toGo, ball_on: dn.ballOn, play_clock: booth.hold && booth.pc != null ? booth.pc : beat.playClock ?? 40 };
+    possession: done ? null : teams[dn.poss]?.id, try: !done && dn === b4 && play?.kind === 'xp' ? 'PAT' : !done && dn === b4 && play?.kind === 'two' ? '2-PT Try' : null, down: dn.down, togo: dn.toGo, ball_on: dn.ballOn, play_clock: booth.hold && booth.pc != null ? booth.pc : beat.playClock ?? 24 };
   return (
     <div className={`pg-wrap${full ? ' pg-full' : ''}`}>
       <div className="pg" data-kind={play?.kind}>
@@ -123,7 +126,7 @@ export default function PixelGame({ game, teams, lineups, onClose, onDone, onPla
         {sting > 0 && <NetStinger key={sting} net={bc.net} onDone={() => setSting(0)} />}
         {beat.phase === 'flag' && shots?.flag && <div className="pg-flag"><span>🚩</span>{shots.flag.text}</div>}
         {!beat.post && pace?.keyPlay && !busy && <div className="pg-key">KEY PLAY</div>}
-        {done && <div className="pg-headline final">FINAL</div>}
+        {done && <div className="pg-headline final">{finalText(4 + (game.overtimes || 0)).toUpperCase()}</div>}
         {toutUp && <div className={`pg-timeout net-${bc.net.key}`} key={`to${i}`} style={{ '--tc': teams[tout.side].color }}><img src={teams[tout.side].logo} alt="" /><b>TIMEOUT</b><span>{teams[tout.side].name}</span></div>}
         <BroadcastSlot pre={gpre} pace={pace} bt={bt} live={pre} play={play} teams={teams} bug={bc.bug} playerOf={playerOf} n={i} />
         {bugUp && <div className="pg-shelf" />}

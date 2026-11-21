@@ -6,7 +6,7 @@ import { recordText } from '../lib/seasonStats.js';
 import { useStadiums } from '../data/stadiums.js';
 import { links } from '../lib/router.js';
 import { useRivals, isRivalry } from '../data/liveSeason.js';
-import { useGameStates, clockLeft, clockText, quarterText } from '../data/gameState.js';
+import { useGameStates, clockLeft, gameClockText, quarterText, finalText } from '../data/gameState.js';
 
 function Side({ id, score, won, rec, done, tag }) {
   const t = getTeam(id);
@@ -37,7 +37,7 @@ export default function LiveWeekGames({ week, rec, teamId }) {
             onClick={() => { window.location.hash = links.game(g.id); }}>
             <div className="lw-top">
               <span>{g.time}{net ? ` · ${net}` : ''}</span>
-              <span className="lw-status">{done ? 'Final' : isLive ? <span className="lw-live"><i className="live-pulse" />Live{st ? ` · ${quarterText(st.quarter)} ${clockText(clockLeft(st))}` : ''}</span>
+              <span className="lw-status">{done ? finalText(st?.quarter) : isLive ? <span className="lw-live"><i className="live-pulse" />Live{st ? ` · ${quarterText(st.quarter)} ${gameClockText(st.quarter, clockLeft(st))}` : ''}</span>
                 : prime ? `⭐ ${windowLabel(g.window)}` : windowLabel(g.window)}</span>
             </div>
             <Side id={g.away} score={started ? as : null} won={as > hs} rec={rec} done={done} tag="Away" />

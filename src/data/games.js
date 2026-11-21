@@ -14,12 +14,13 @@ async function rpc(fn, args) {
   return data;
 }
 
+const DEMO_WIN = import.meta.env.DEV ? new URLSearchParams(window.location.search).get('win') : null;   // dev only: preview any broadcast window
 const demoGames = () => makeSchedule(getTeams(), {}, (() => { let s = 7; return () => { s = (s * 9301 + 49297) % 233280; return s / 233280; }; })())
   .map((g, i) => {
     const p = 0.2 + ((i * 37) % 60) / 100;
     const lop = Math.abs(p - 0.5);
     const rival = [['snm', 'void'], ['edc', 'snm'], ['edc', 'void']].some(([x, y]) => (g.home === x && g.away === y) || (g.home === y && g.away === x));
-    return { id: i + 1, ...g, kind: 'regular', rivalry: rival, slot: null, status: 'scheduled', starts_at: null, prime: i % 8 === 7 ? 'sun_night' : null,
+    return { id: i + 1, ...g, kind: 'regular', rivalry: rival, slot: null, status: 'scheduled', starts_at: null, prime: DEMO_WIN || (i % 8 === 7 ? 'sun_night' : null),
       odds: { home_win: p, away_win: 1 - p, rating: lop >= 0.32 ? 'blowout' : lop <= 0.1 ? 'great' : lop <= 0.15 ? 'good' : lop <= 0.25 ? 'okay' : 'bad', keys: [] } };
   });
 

@@ -44,7 +44,7 @@
 .booth-test .booth-row > span { min-width: 92px; color: var(--dim); }
 
 /* the TIMEOUT banner on the broadcast: slides out of the top, in the calling team's color */
-.pg-timeout { position: absolute; left: 50%; top: 4cqw; z-index: 22; display: flex; align-items: center; gap: 1cqw; padding: .6cqw 1.8cqw .6cqw .8cqw; transform: translateX(-50%);
+.pg-timeout { position: absolute; left: 50%; top: 4cqw; z-index: 8; display: flex; align-items: center; gap: 1cqw; padding: .6cqw 1.8cqw .6cqw .8cqw; transform: translateX(-50%);
   background: linear-gradient(90deg, var(--tc), color-mix(in srgb, var(--tc) 40%, #000)); border: .2cqw solid #000; box-shadow: .3cqw .3cqw 0 #000; color: #fff;
   font-family: var(--hf, 'Barlow Condensed'), sans-serif; animation: pg-to 3.4s cubic-bezier(.2, .9, .3, 1) both; }
 .pg-timeout img { width: 3.2cqw; height: 3.2cqw; object-fit: contain; filter: drop-shadow(.15cqw .15cqw 0 #000); }

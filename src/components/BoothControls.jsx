@@ -1,5 +1,5 @@
 import React from 'react';
-import { clockText, quarterText } from '../data/gameState.js';
+import { gameClockText, quarterText } from '../data/gameState.js';
 
 // Broadcast Booth: the playback controls (pause, speed, back, next, jumps), holding the snap (the play clock), and the
 // time until the next play. Jumps only move the broadcast through the game the engine already played.
@@ -26,7 +26,7 @@ export default function BoothControls({ s, send }) {
       </div>
       <div className="booth-stats">
         <div><small>Play</small><b>{Math.min(s.i + 1, s.total)} / {s.total}</b></div>
-        <div><small>Clock</small><b>{!s.play ? 'Final' : s.play.before.quarter >= 5 ? 'OT' : `${quarterText(s.play.before.quarter)} ${clockText(Math.max(0, Math.ceil(s.clock ?? s.play.before.clock)))}`}</b></div>
+        <div><small>Clock</small><b>{!s.play ? 'Final' : `${quarterText(s.play.before.quarter)} ${gameClockText(s.play.before.quarter, Math.max(0, Math.ceil(s.clock ?? s.play.before.clock)))}`}</b></div>
         <div><small>Play clock</small><b className={left != null && s.playClock <= 5 ? 'hot' : ''}>{s.playClock ?? '-'}</b></div>
         <div><small>Snap in</small><b>{left != null ? `${(left / spd).toFixed(1)}s` : 'live'}</b></div>
         <div><small>Next play in</small><b>{toNext.toFixed(1)}s</b></div>

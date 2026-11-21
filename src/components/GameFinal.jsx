@@ -10,7 +10,7 @@ import { playerOfGame } from '../lib/playerOfGame.js';
 
 // Below a final game: the Player of the Game (his card, the big thing he did, his line; tap for the full card), the score by
 // quarter, the scoring plays, then the box score for both teams.
-const qName = (q) => (q > 4 ? (q === 5 ? 'OT' : `${q - 4}OT`) : `Q${q}`);
+const qName = (q) => (q > 4 ? (q === 5 ? 'OT' : `OT${q - 4}`) : `Q${q}`);
 const clock = (c) => `${Math.floor(c / 60)}:${String(Math.round(c) % 60).padStart(2, '0')}`;
 
 export default function GameFinal({ game, home, away }) {

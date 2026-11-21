@@ -35,3 +35,10 @@
 .sb-num.bump { animation: sb-bump .8s cubic-bezier(.2, 1.4, .4, 1); }
 @keyframes sb-bump { 0% { transform: scale(1.9); filter: brightness(2) drop-shadow(0 0 .3em #fff); } 60% { transform: scale(.92); } 100% { transform: scale(1); filter: none; } }
 .tnf-id small, .snf-id small { white-space: nowrap; font-variant-numeric: tabular-nums; }   /* a record like 10-6 always stays on one line */
+/* a new quarter (or OT, OT2 ...) flips in; in overtime the empty game clock dims so the play clock is what you read */
+.sb-q, .sb-qx { display: inline-block; animation: sb-qflip .6s cubic-bezier(.2, .8, .2, 1) both; }
+@keyframes sb-qflip { from { opacity: 0; transform: rotateX(90deg); } }
+.sb-ot .sb-clock, .sb-ot .tnf-time b, .sb-ot .snf-circle b { opacity: .55; letter-spacing: .04em; }
+.sb-ot .sb-q, .sb-ot .sb-qx { color: var(--ot-c, #ffd84a); }
+.sb-fox { --ot-c: #b30000; } .sb-cbs { --ot-c: #ffd84a; }   /* FOX's clock box is gold, so its OT goes deep red */
+.sb-final .sb-clock { display: none; } .sb-final .sb-q { font-size: 1.25em; white-space: nowrap; }   /* final: the quarter slot carries Final or Final/OT2 */

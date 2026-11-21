@@ -1,8 +1,9 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import BoxScore from './BoxScore.jsx';
+import { finalText } from '../data/gameState.js';
 
 const clock = (c) => `${Math.floor(c / 60)}:${String(c % 60).padStart(2, '0')}`;
-const ORD = ['', '1st', '2nd', '3rd', '4th'], qName = (q) => (q > 4 ? (q === 5 ? 'OT' : `${q - 4}OT`) : `Q${q}`);
+const ORD = ['', '1st', '2nd', '3rd', '4th'], qName = (q) => (q > 4 ? (q === 5 ? 'OT' : `OT${q - 4}`) : `Q${q}`);
 const spot = (on) => (on === 50 ? '50' : on < 50 ? `own ${on}` : `opp ${100 - on}`);
 
 // Watch a simmed game one play at a time: score, clock, down and distance, the ball moving on a field strip, the hidden
@@ -30,8 +31,8 @@ export default function Gamecast({ game, teams, names, finished = false }) {
   );
   return (
     <div className="gc">
-      <div className="gc-top">{team('away')}<div className="gc-mid"><b>{done ? 'FINAL' : `${qName(a.quarter || play.before.quarter)} ${a.quarter > 4 ? '' : clock(a.clock ?? play.before.clock)}`}</b>
-        <small>{done ? (game.overtimes ? `${game.overtimes} overtime${game.overtimes > 1 ? 's' : ''}` : '') : a.poss ? `${ORD[a.down] || ''} & ${a.toGo} · ${spot(a.ballOn)}` : ''}</small></div>{team('home')}</div>
+      <div className="gc-top">{team('away')}<div className="gc-mid"><b>{done ? finalText(4 + (game.overtimes || 0)).toUpperCase() : `${qName(a.quarter || play.before.quarter)} ${a.quarter > 4 ? '' : clock(a.clock ?? play.before.clock)}`}</b>
+        <small>{done ? '' : a.poss ? `${ORD[a.down] || ''} & ${a.toGo} · ${spot(a.ballOn)}` : ''}</small></div>{team('home')}</div>
       <div className="gc-field" style={{ '--away': teams.away.color, '--home': teams.home.color }}>
         <i className="gc-ez away">{teams.away.id.toUpperCase()}</i><i className="gc-ez home">{teams.home.id.toUpperCase()}</i>
         {[10, 20, 30, 40, 50, 60, 70, 80, 90].map((y) => <i key={y} className="gc-yard" style={{ left: `${8 + y * 0.84}%` }}><em>{y <= 50 ? y : 100 - y}</em></i>)}

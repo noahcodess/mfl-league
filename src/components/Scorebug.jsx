@@ -4,7 +4,7 @@ import ScorebugTnf from './ScorebugTnf.jsx';
 import ScorebugSnf from './ScorebugSnf.jsx';
 import ScorebugCard from './ScorebugCard.jsx';
 import DownText from './DownText.jsx';
-import { useTicker, clockLeft, clockText, quarterText, downText } from '../data/gameState.js';
+import { useTicker, clockLeft, gameClockText, quarterText, finalText, downText, toSlots } from '../data/gameState.js';
 import { recordText } from '../lib/seasonStats.js';
 
 // Who has the ball, in each program's own way: FOX a gold arrow, CBS a thin navy arrow, ESPN a detailed football.
@@ -23,14 +23,14 @@ function Possession({ bug }) {
   }
   return <span className={`sb-arrow ${bug}`} aria-label="Has the ball" />;
 }
-export const Pips = ({ n = 3 }) => <span className="sb-tos" title={`${n} timeouts left`}>{[0, 1, 2].map((i) => <i key={i} className={i < n ? 'on' : ''} />)}</span>;
+export const Pips = ({ n = 3, q = 1 }) => <span className="sb-tos" title={`${n} timeouts left`}>{toSlots(q).map((i) => <i key={i} className={i < n ? 'on' : ''} />)}</span>;
 
 function Team({ t, side, st, rec, bug, card }) {
   return (
     <div className={`sb-team ${side}${st?.possession === t.id ? ' ball' : ''}`} style={{ '--tc': t.color, '--ta': t.accent }}>
       <img className="sb-logo" src={t.logo} alt="" />
       <div className="sb-id"><span className="sb-line"><span className="sb-code">{t.code}</span>{st?.possession === t.id && <Possession bug={bug} />}</span>
-        <span className="sb-line"><small className="sb-rec">{recordText(rec?.[t.id])}</small><Pips n={st?.[`${side}_timeouts`] ?? 3} /></span></div>
+        <span className="sb-line"><small className="sb-rec">{recordText(rec?.[t.id])}</small><Pips n={st?.[`${side}_timeouts`] ?? 3} q={st?.quarter} /></span></div>
       <ScoreNum className="sb-score" value={st?.[`${side}_score`] ?? 0} />
       {card?.side === side && <ScorebugCard card={card} />}
     </div>
@@ -46,20 +46,23 @@ function Team({ t, side, st, rec, bug, card }) {
 export default function Scorebug(props) {
   const { bc, home, away, st, pop = null, className = '' } = props;
   useTicker(st?.clock_running);
-  const parts = { left: clockLeft(st), status: st?.status || 'pregame', down: downText(st), quarter: st?.status === 'final' ? 'Final' : quarterText(st?.quarter || 1) };
+  const parts = { left: clockLeft(st), status: st?.status || 'pregame', down: downText(st), quarter: st?.status === 'final' ? finalText(st?.quarter) : quarterText(st?.quarter || 1) };
+  const fin = parts.status === 'final', won = (st?.home_score ?? 0) > (st?.away_score ?? 0) ? home : away;
+  parts.clock = fin ? '' : gameClockText(st?.quarter || 1, parts.left);   // a final shows Final (or Final/OT2) and who won, no clocks
+  if (fin) { parts.down = `${won.code} win`; parts.pc = ''; } else parts.pc = st?.play_clock ?? 24;
   if (bc.bug === 'tnf') return <ScorebugTnf {...props} {...parts} />;
   if (bc.bug === 'snf') return <ScorebugSnf {...props} {...parts} />;
   return (
-    <div className={`sb sb-${bc.bug} ${className}`}>
+    <div className={`sb sb-${bc.bug}${st?.quarter >= 5 ? ' sb-ot' : ''}${fin ? ' sb-final' : ''} ${className}`}>
       <div className="sb-pop">{pop}</div>
       <div className="sb-bar">
         <span className="sb-net"><img src={bc.prime ? bc.logo : bc.net.logo} alt="" /></span>
         <Team t={away} side="away" st={st} rec={props.rec} bug={bc.bug} card={props.card} />
         <Team t={home} side="home" st={st} rec={props.rec} bug={bc.bug} card={props.card} />
         <div className="sb-time">
-          <span className="sb-q">{parts.quarter}</span>
-          <span className="sb-clock">{clockText(parts.left)}</span>
-          <span className="sb-play">{st?.play_clock ?? 40}</span>
+          <span className="sb-q" key={parts.quarter}>{parts.quarter}</span>
+          <span className="sb-clock">{parts.clock}</span>
+          {parts.pc !== '' && <span className="sb-play">{parts.pc}</span>}
         </div>
         <div className="sb-down"><DownText text={parts.down} /></div>
       </div>

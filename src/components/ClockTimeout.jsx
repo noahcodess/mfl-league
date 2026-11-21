@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Modal from './Modal.jsx';
 import { getTeam } from '../data/teams.js';
+import { toSlots } from '../data/gameState.js';
 
 const PREF = 'mfl-timeout-ask';
 const readAsk = () => { try { return localStorage.getItem(PREF) !== 'no'; } catch { return true; } };
@@ -14,7 +15,7 @@ export default function ClockTimeout({ st, side, onTimeout }) {
   const [called, setCalled] = useState(0), [err, setErr] = useState('');
   const left = st?.[`${side}_timeouts`] ?? 3, live = st?.status === 'live';
   const recent = st?.last_timeout && st.last_timeout_at && Date.now() - Date.parse(st.last_timeout_at) < 8000;
-  const why = !live ? 'Available once the game starts.' : left <= 0 ? 'No timeouts left this half.' : '';
+  const why = !live ? 'Available once the game starts.' : left <= 0 ? `No timeouts left this ${st?.quarter >= 5 ? 'overtime' : 'half'}.` : '';
   const fire = async () => {
     setErr('');
     try { await onTimeout(); setCalled((n) => n + 1); setTimeout(() => setCalled(0), 2000); } catch (e) { setErr(e.message); }
@@ -23,11 +24,11 @@ export default function ClockTimeout({ st, side, onTimeout }) {
   const yes = () => { if (dontAsk) { saveAsk(false); setAsk(false); } setConfirm(false); fire(); };
   return (
     <section className="cr-card cr-timeout">
-      <header><b>⏱ Timeouts</b><span className="cr-pips">{[0, 1, 2].map((i) => <i key={i} className={i < left ? 'on' : ''} />)}</span></header>
+      <header><b>⏱ Timeouts</b><span className="cr-pips">{toSlots(st?.quarter).map((i) => <i key={i} className={i < left ? 'on' : ''} />)}</span></header>
       <button key={called} className={`sw${called ? ' called' : ''}${st?.clock_running ? ' run' : ''}`} disabled={!!why} onClick={tap} aria-label="Call timeout">
         <span className="sw-crown" /><span className="sw-face"><i className="sw-hand" /><b className="sw-t">T</b><b className="sw-word">Timeout</b></span>
       </button>
-      <p className="ct-left">{left} left this half</p>
+      <p className="ct-left">{left} left this {st?.quarter >= 5 ? 'overtime' : 'half'}</p>
       {why && <p className="dim">{why}</p>}
       {!ask && <button className="link-btn" onClick={() => { saveAsk(true); setAsk(true); }}>Ask before timeouts again</button>}
       {recent && <p className="cr-to-flash">⏸ Timeout, {getTeam(st.last_timeout)?.name}. Clock stopped.</p>}

@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom';
 import Modal from './Modal.jsx';
 import Gamecast from './Gamecast.jsx';
 import { simGameNow, playOfficial } from '../data/gameResults.js';
-import { isRealGame, flipKickoff } from '../data/gameState.js';
+import { isRealGame, flipKickoff, finalText } from '../data/gameState.js';
 import { loadLineups } from '../data/gameLineups.js';
 
 // Commissioner: Quick sim, under Start game. Warns first, then the exact same engine run a watched game uses (kickoff seed,
@@ -44,7 +44,7 @@ export default function QuickSimButton({ game, home, away, gate }) {
             <button className="intro-close" onClick={() => { setStep(0); setResult(null); }} aria-label="Close">✕</button>
             <div className="qs-final">
               <div className={`qs-side${won === away ? ' won' : ''}`} style={{ '--tc': away.color }}><img src={away.logo} alt="" /><span>{away.name}</span><b>{g.score.away}</b></div>
-              <em>FINAL{g.overtimes ? ` · ${g.overtimes}OT` : ''}</em>
+              <em>{finalText(4 + (g.overtimes || 0)).toUpperCase()}</em>
               <div className={`qs-side${won === home ? ' won' : ''}`} style={{ '--tc': home.color }}><img src={home.logo} alt="" /><span>{home.name}</span><b>{g.score.home}</b></div>
             </div>
             <Gamecast game={g} teams={{ home, away }} names={names} finished />

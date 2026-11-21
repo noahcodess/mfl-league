@@ -16,7 +16,7 @@ export function clockGoal(G) {
 }
 
 // The play clock is 25 seconds and starts at the whistle.
-export const PLAY_CLOCK = 25;
+export const PLAY_CLOCK = 24;
 // How many seconds run off before the next snap when the clock is moving: most snaps come with about 10 left on the play
 // clock (15 used), a hurry-up snaps with 15-18 left, a team killing the clock lets it run down to 1 or 2.
 export function tempo(G) {

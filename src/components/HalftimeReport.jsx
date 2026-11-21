@@ -29,7 +29,7 @@ export default function HalftimeReport({ plays, score, teams, people, sideOf, bc
       <div className="ht-heads">{['away', 'home'].map((k) => <span key={k}><img src={teams[k].logo} alt="" />{teams[k].code}</span>)}</div>
       {lines.map(([label, a, h, share], n) => (
         <div className="ht-line" key={label} style={{ animationDelay: `${0.25 + n * 0.35}s`, '--a': teams.away.color, '--h': teams.home.color, '--share': share }}>
-          <b>{a}</b><div className="ht-bar"><i /><span>{label}</span></div><b>{h}</b>
+          <b>{a}</b><div className="ht-bar"><i /><span><em>{label}</em></span></div><b>{h}</b>
         </div>
       ))}
     </div>

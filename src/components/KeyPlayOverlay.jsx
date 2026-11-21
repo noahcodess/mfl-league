@@ -4,7 +4,7 @@ import PlayArt from './PlayArt.jsx';
 import { keyPlayOptions, momentText, KEY_PLAY_SLOTS } from '../lib/keyPlays.js';
 
 const KEY = ['..####..........', '.######.........', '###..############', '###..############', '.######.....##.##', '..####......##.##'];
-const PICK_SECONDS = 25;
+const PICK_SECONDS = 24;   // the play clock
 const ORD = ['1st', '2nd', '3rd', '4th'];
 
 export function PixelKey({ className = 'kp-key' }) {

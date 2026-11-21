@@ -55,6 +55,8 @@ import './styles/keyPlay.css';
 import './styles/gamePage.css';
 import './styles/craftBowl.css';
 import './styles/breaks.css';
+import './styles/breakNets.css';
+import './styles/overtime.css';
 import './styles/booth.css';
 
 createRoot(document.getElementById('root')).render(<App />);

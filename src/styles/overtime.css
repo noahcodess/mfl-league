@@ -1,0 +1,57 @@
+/* The overtime rules break: the rule cards and their little demos (coin, turn timeline, field, clock, shootout). */
+
+.ot-card { width: min(74cqw, 100%); display: grid; justify-items: center; gap: 1.1cqw; text-align: center; }
+.ot-n { padding: .3cqw 1.6cqw; font-size: 1.5cqw; letter-spacing: .2em; text-transform: uppercase; background: var(--accent); color: var(--on-accent, #111); animation: brk-up .4s both; }
+.ot-title { font-size: 5cqw; line-height: 1; text-transform: uppercase; text-shadow: .35cqw .35cqw 0 #000; animation: brk-up .45s both .12s; }
+.ot-demo { width: 100%; display: grid; place-items: center; min-height: 16cqw; padding: 1cqw 0; animation: brk-pop .5s both .25s; }
+.ot-card p { margin: 0; padding: .6cqw 1.6cqw; font-size: 2.1cqw; font-weight: 700; line-height: 1.25; max-width: 62cqw; background: #0008; border-left: .4cqw solid var(--accent); animation: brk-up .5s both .5s; }
+
+/* one coin toss */
+.ot-coin { perspective: 40cqw; padding-top: 3.5cqw; }
+.ot-coin-in { position: relative; display: block; width: 12cqw; height: 12cqw; transform-style: preserve-3d; animation: ot-flip 2.2s cubic-bezier(.3, .1, .2, 1) both .5s; }
+.ot-coin-in img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; padding: 1.4cqw; border-radius: 50%; background: radial-gradient(circle, #ffe58a, #c99a1a); border: .5cqw solid #8a6a10; backface-visibility: hidden; }
+.ot-coin-in img + img { transform: rotateY(180deg); }
+@keyframes ot-flip { 0% { transform: translateY(0) rotateY(0); } 45% { transform: translateY(-3.5cqw) rotateY(1260deg); } 100% { transform: translateY(0) rotateY(1980deg); } }
+
+/* then take turns: OT, OT2, OT3, OT4 ... */
+.ott { display: flex; align-items: stretch; gap: 1.2cqw; }
+.ott-ot { display: grid; justify-items: center; gap: .6cqw; padding: .8cqw 1cqw 1cqw; background: #000a; border: .2cqw solid #fff3; border-top: .45cqw solid var(--accent); animation: brk-up .45s both; }
+.ott-ot > b { font-size: 2.4cqw; line-height: 1; color: var(--accent); }
+.ott-pair { display: flex; gap: .5cqw; }
+.ott-t { display: grid; justify-items: center; gap: .2cqw; padding: .4cqw; background: linear-gradient(160deg, var(--tc), #000c); border: .15cqw solid #fff3; }
+.ott-t img { width: 5cqw; height: 5cqw; object-fit: contain; filter: drop-shadow(.15cqw .15cqw 0 #000); }
+.ott-t small { font-size: 1cqw; font-weight: 800; letter-spacing: .1em; opacity: .75; }
+.ott-t.first { border-color: #fff; box-shadow: 0 0 1cqw #fff6; } .ott-t.first small { opacity: 1; color: var(--accent); }
+.ott-more { align-self: center; font-size: 4cqw; color: var(--accent); animation: brk-up .45s both; }
+
+/* the strip of field: the ball starts on the other team's 30 and drives in */
+.otf { position: relative; width: 62cqw; height: 13cqw; background: repeating-linear-gradient(90deg, #2f7d32 0 4.165%, #2a7330 4.165% 8.33%); border: .3cqw solid #fff; overflow: hidden; }
+.otf-ez { position: absolute; top: 0; bottom: 0; width: 8.33%; } .otf-ez.left { left: 0; background: var(--tc); } .otf-ez.right { right: 0; background: var(--oc); display: grid; place-items: center; }
+.otf-ez img { width: 80%; opacity: .85; }
+.otf-yd { position: absolute; top: 0; bottom: 0; width: .15cqw; background: #fff9; font-style: normal; font-size: 1.1cqw; color: #fff; text-indent: .3cqw; }
+.otf-yd.on { color: #ffd400; font-weight: 800; }
+.otf-start { position: absolute; top: 0; bottom: 0; left: var(--start); width: .5cqw; margin-left: -.25cqw; background: #ffd400; box-shadow: 0 0 1cqw #ffd400; }
+.otf-tag { position: absolute; bottom: .4cqw; left: var(--start); transform: translateX(-50%); padding: .1cqw .7cqw; font-size: 1.1cqw; white-space: nowrap; color: #111; background: #ffd400; animation: brk-up .4s both .6s; }
+.otf-ball { position: absolute; top: 42%; left: var(--start); width: 5cqw; height: 5cqw; margin: -2.5cqw 0 0 -2.5cqw; animation: otf-drive 3s cubic-bezier(.45, 0, .25, 1) both 1.1s; }
+.otf-ball img { width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(.2cqw .2cqw 0 #000); }
+@keyframes otf-drive { to { left: 95.8%; } }
+.otf-go2 { position: absolute; right: 10%; top: .6cqw; font-size: 2.4cqw; color: #ffd400; text-shadow: .2cqw .2cqw 0 #000; animation: brk-pop .5s both 3.6s; }
+
+/* no game clock */
+.ot-clock { display: flex; align-items: center; gap: 2.4cqw; }
+.ot-face, .ot-pc { display: grid; justify-items: center; gap: .4cqw; }
+.ot-face small, .ot-pc small, .ot-to small { font-size: 1.3cqw; letter-spacing: .14em; text-transform: uppercase; opacity: .85; }
+.ot-face b { font-size: 8cqw; line-height: 1; padding: .4cqw 1.8cqw; background: #000; border: .4cqw solid #fff4; color: #fff8; }
+.ot-pc b { font-size: 8cqw; line-height: 1; padding: .4cqw 1.6cqw; background: #000; border: .4cqw solid var(--accent); color: var(--accent); animation: ot-tick 1s steps(1) infinite 1s; }
+.ot-to { display: grid; justify-items: center; gap: .6cqw; } .ot-to i { width: 6cqw; height: 1.3cqw; background: var(--accent); box-shadow: 0 0 1.4cqw var(--accent); }
+@keyframes ot-tick { 50% { box-shadow: 0 0 1.6cqw var(--accent); } }
+
+/* OT3+: the two-point shootout, one overtime per round */
+.ots { display: grid; gap: 1cqw; }
+.ots-round { display: flex; align-items: center; gap: 1.4cqw; padding: .6cqw 1.4cqw; background: #000a; border-left: .45cqw solid var(--accent); animation: brk-up .45s both; }
+.ots-round > b { width: 6cqw; font-size: 2.6cqw; color: var(--accent); }
+.ots-try { display: flex; align-items: center; gap: .5cqw; padding: .3cqw .8cqw .3cqw .3cqw; background: linear-gradient(120deg, var(--tc), #000c); animation: brk-pop .4s both; }
+.ots-try img { width: 4.4cqw; height: 4.4cqw; object-fit: contain; } .ots-try i { font-style: normal; font-size: 2.6cqw; }
+.ots-try.ok i { color: #6dff8a; } .ots-try.no i { color: #ff5a4d; } .ots-try.no img { filter: grayscale(.7); }
+.ots-round em { min-width: 11cqw; font-style: normal; font-size: 1.8cqw; font-weight: 800; text-transform: uppercase; letter-spacing: .08em; animation: brk-up .4s both; }
+.ots-round:last-child em { color: #ffd400; }

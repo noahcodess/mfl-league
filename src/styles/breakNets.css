@@ -1,0 +1,37 @@
+/* Each network's own look for the full-screen breaks (halftime, overtime rules): colors, shapes and a signature moving mark. */
+.net-fox .brk { --brk-bg: radial-gradient(circle at 50% 30%, #4d3a00, #000 72%); --brk-tex: repeating-linear-gradient(115deg, #f4b80010 0 1cqw, transparent 1cqw 4cqw); }
+.net-fox .htc-kick, .net-fox .ht-stats h3, .net-fox .ot-n, .net-fox .ht-leaders h3 { clip-path: polygon(0 0, 100% 0, 96% 100%, 4% 100%); }
+.net-fox .ht-team, .net-fox .htc-card { clip-path: polygon(0 0, 100% 0, 94% 100%, 0 100%); border-radius: 0; }
+.net-cbs .brk { --accent: #fff; --on-accent: #0b3a82; --brk-bg: linear-gradient(180deg, #0b3a82, #041a3d); --brk-tex: repeating-radial-gradient(circle at 50% 50%, #ffffff0a 0 1cqw, transparent 1cqw 3.5cqw); }
+.net-cbs .ht-line > b, .net-cbs .htc-num { background: #fff; color: #0b3a82; } .net-cbs .ht-line > b { padding: .3cqw 0; border-radius: .3cqw; }
+.net-cbs .htc-kick, .net-cbs .ht-stats h3, .net-cbs .ht-leaders h3, .net-cbs .ot-n { background: #fff; color: #0b3a82; border-radius: 10cqw; }
+.show-tnf .brk { --brk-bg: radial-gradient(circle at 50% 35%, #3d93ff, #0b46a8 55%, #041d4d 90%); --brk-tex: repeating-linear-gradient(45deg, #ffffff10 0 2cqw, transparent 2cqw 6cqw); }
+.show-tnf .ht-title h2, .show-tnf .ot-head h2 { text-shadow: .3cqw .3cqw 0 #0a3d91, .6cqw .6cqw 0 #041d4d; }
+.show-stnf .brk, .show-mnf .brk { --brk-bg: radial-gradient(circle at 50% 35%, #47515c, #1d2328 60%, #0c0f12 90%); --brk-tex: repeating-linear-gradient(0deg, #e3261b0c 0 .3cqw, transparent .3cqw 1cqw); }
+.show-stnf .htc-num, .show-mnf .htc-num, .show-stnf .ht-team, .show-mnf .ht-team { clip-path: polygon(8% 0, 92% 0, 100% 50%, 92% 100%, 8% 100%, 0 50%); border-radius: 0; }
+.show-mnf .brk { --brk-bg: radial-gradient(circle at 50% 30%, #2a0606, #050506 70%); }
+.show-snf .brk { --brk-bg: radial-gradient(circle at 50% 30%, #1a2a5a, #050a1c 75%); --brk-tex: repeating-linear-gradient(100deg, #f5c84a0c 0 .5cqw, transparent .5cqw 3cqw); }
+.show-snf .ht-title h2, .show-snf .ot-head h2 { color: #f5c84a; } .show-snf .htc-num, .show-snf .ht-team { border-radius: 2cqw; }
+
+/* the signature mark behind every scene (it stays put while scenes change) */
+.brk-mark { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+.brk-mark::before, .brk-mark::after { content: ''; position: absolute; }
+@keyframes bm-slide-r { from { transform: translateX(-120%) skewX(-30deg); } to { transform: translateX(0) skewX(-30deg); } }
+@keyframes bm-slide-l { from { transform: translateX(120%) skewX(-30deg); } to { transform: translateX(0) skewX(-30deg); } }
+@keyframes bm-ring { from { transform: translate(-50%, -50%) scale(.4); opacity: .5; } to { transform: translate(-50%, -50%) scale(2.4); opacity: 0; } }
+@keyframes bm-drift { from { transform: translate(-30%, -50%); } to { transform: translate(0, -50%); } }
+@keyframes bm-shine { from { left: -20%; } to { left: 110%; } }
+@keyframes bm-hue { to { background-position: 200% 0; } }
+/* FOX: gold slashes slide in from the corners */
+.net-fox .brk-mark::before { left: -4%; bottom: 7%; width: 42%; height: 1.1cqw; background: linear-gradient(90deg, transparent, #f4b800); animation: bm-slide-r .8s cubic-bezier(.2, .8, .2, 1) both .2s; }
+.net-fox .brk-mark::after { right: -4%; top: 7%; width: 42%; height: 1.1cqw; background: linear-gradient(270deg, transparent, #f4b800); animation: bm-slide-l .8s cubic-bezier(.2, .8, .2, 1) both .35s; }
+/* CBS: the eye's rings pulse out from the middle */
+.net-cbs .brk-mark::before, .net-cbs .brk-mark::after { left: 50%; top: 50%; width: 40cqw; height: 40cqw; border: .3cqw solid #ffffff22; border-radius: 50%; transform: translate(-50%, -50%) scale(.4); opacity: 0; animation: bm-ring 4.8s ease-out infinite both; }
+.net-cbs .brk-mark::after { animation-delay: 2.4s; }
+/* TNF: big arrows drift across behind everything */
+.show-tnf .brk-mark::before { left: 0; top: 50%; content: '›››››'; font: 900 34cqw/1 sans-serif; letter-spacing: -6cqw; color: #ffffff0b; white-space: nowrap; animation: bm-drift 9s linear infinite; }
+/* SNF: the peacock stripe along the bottom, slowly cycling */
+.show-snf .brk-mark::after { left: 0; right: 0; bottom: 0; height: .6cqw; background: linear-gradient(90deg, #fcb711, #f37021, #cc004c, #6460aa, #0089d0, #0db14b, #fcb711) 0 0 / 200% 100%; animation: bm-hue 6s linear infinite; }
+/* ESPN (Saturday and Monday night): a glowing red rail at the bottom with a light running along it */
+.show-stnf .brk-mark::after, .show-mnf .brk-mark::after { left: 0; right: 0; bottom: 0; height: .5cqw; background: #d10f0f; box-shadow: 0 0 1.4cqw #d10f0f; }
+.show-stnf .brk-mark::before, .show-mnf .brk-mark::before { bottom: 0; width: 18%; height: .5cqw; z-index: 1; background: linear-gradient(90deg, transparent, #fff, transparent); animation: bm-shine 2.6s ease-in-out infinite; }
