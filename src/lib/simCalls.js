@@ -18,7 +18,7 @@ export function offenseCall(G) {
   // victory formation: up late and the other side can't stop the clock enough to get it back
   if (late && up > 0 && s.down < 4 && s.clock < 40 * (4 - s.down) - 10 * to) return { type: 'kneel' };
   if (s.quarter === 2 && up >= 0 && s.clock < 30 && s.ballOn < 40 && s.down < 4) return { type: 'kneel' };   // nothing to gain before half
-  if (late && up === 0 && s.clock < 25 && s.ballOn < 35 && s.down < 4 && !s.ot) return { type: 'kneel' };      // tied, deep in his own end: take it to overtime
+  if (late && up === 0 && s.clock < 40 && s.ballOn < 40 && s.down < 4 && !s.ot) return { type: 'kneel' };      // tied, deep in his own end: take it to overtime
   if (G.spikeNow) { G.spikeNow = false; return { type: 'spike' }; }
   if (s.down === 4) {
     const d = fourthDown(G);
@@ -84,5 +84,5 @@ export function goForTwo(G, diff) {
   const s = G.s, plan = G.teams[s.patSide || s.poss]?.plan || {};
   if (s.ot >= 2) return true;
   if (s.quarter < 4) return (plan.aggression || 0) > 0.2 && G.R.chance(0.05);
-  return [-2, -5, -10, 1, 5, 12].includes(diff) || (diff === -8 && s.clock < 120) || ((plan.aggression || 0) > 0.15 && diff === -1 && s.clock < 60);
+  return [-2, -5, -10, 1, 5, 12].includes(diff) || (diff === -8 && s.clock < 120) || ((plan.aggression || 0) > 0.25 && diff === -1 && s.clock < 60);
 }

@@ -3,6 +3,7 @@
 // replay from the same angle zoomed in, and about 15 to 20 seconds from one snap to the next (more only for a key play).
 // Tuned so a full game runs about 30 minutes.
 // Flags get a close-up with the call. It only changes how the game is shown, never what happens.
+import { replayAngle } from './replayAngle.js';
 
 const MODES = {
   fast: { T0: 3.8, dead: 2.2, replayFor: () => false, slow: false, gap: 11 },
@@ -50,12 +51,15 @@ export function shotsFor(S, pace, names = {}) {
     out.flag = { x: S.flag?.x ?? S.los, y: S.flag?.y ?? 0, text: `FLAG: ${flag.name}${who ? `, #${who.number ?? ''} ${who.last || who.name || ''}` : ''} · ${flag.yards} yards` };
   }
   let live = S.tEnd + pace.dead;
-  if (m.replayFor(play)) { // the instant replay: the moment that mattered, from the same angle, zoomed in and slowed down
-    const speed = replaySpeed(play, pace.mode), from = Math.max(S.T0 - 0.2, key - 2.2), to = Math.min(S.tEnd + 0.5, key + 1.4);
+  if (m.replayFor(play)) { // the instant replay: the moment that mattered, slowed down, following whatever made the play (replayAngle)
+    const speed = replaySpeed(play, pace.mode), to = Math.min(S.tEnd + 0.5, key + 1.4);
     const slowExtra = out.slow.reduce((x, [a, b, k]) => x + (b - a) * (1 / k - 1), 0);
-    const budget = m.gap + 4 - (pace.T0 + (S.tEnd - S.T0) + pace.dead + slowExtra + (out.flag ? 2.4 : 0)) + (pace.keyPlay ? 8 : 0);   // keep snap to snap near the limit
+    let ang = replayAngle(S, play, key);
+    const budget = m.gap + 4 - (pace.T0 + (S.tEnd - S.T0) + pace.dead + slowExtra + (out.flag ? 2.4 : 0)) + (pace.keyPlay ? 8 : 0) + (ang.focus === 'route' ? 3 : 0);   // keep snap to snap near the limit
+    let from = Math.max(S.T0 - 0.2, ang.from ?? key - 2.2);
+    if (ang.focus === 'route' && (to - from) / speed > Math.max(0, budget)) { ang = { focus: 'ball', who: null, zoom: 1.6 }; from = Math.max(S.T0 - 0.2, key - 2.2); }   // no time to show the whole route
     const len = Math.min(to - from, Math.max(0, budget) * speed);
-    if (len >= 1.2) out.replay = { from: to - len, to, speed };
+    if (len >= 1.2) out.replay = { from: to - len, to, speed, focus: ang.focus, who: ang.who, zoom: ang.zoom };
   }
   out.dur = live + (out.flag ? 2.4 : 0);
   return out;

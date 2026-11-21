@@ -31,7 +31,8 @@ export function carryPath(S, c, from, t0, endAlong, endLat, play) {
   }
   pts.push(end);
   let L = 0; const at = [0]; for (let i = 1; i < pts.length; i++) { L += dist(pts[i - 1][0], pts[i - 1][1], pts[i][0], pts[i][1]); at.push(L); }
-  const v = c.max * (L > 20 ? 0.97 : 0.9), tEnd = t0 + 0.1 + L / v + broken.reduce((sum, e) => sum + moveCost(e), 0);   // a stutter costs him a beat
+  const v = c.max * (L > 20 ? 0.97 : 0.9), tEnd = t0 + 0.1 + L / v + broken.reduce((sum, e) => sum + moveCost(e), 0) + (S.slack || 0);   // a stutter costs him a beat; slack: extra time sceneBuild found he needs
+  if (!play.result.td) S.carry = { c, endAlong, tEnd };   // sceneBuild checks he really gets to this spot
   S.when(t0, () => { c.brain = B.carry(pts.slice(1), t0, tEnd, c.max); });
   const run = Math.sign(end[0] - from[0]) || S.dir;
   marks.forEach(({ e, p }, i) => {   // each broken tackle: his move, the defender's bite (sceneJuke)

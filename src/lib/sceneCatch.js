@@ -7,7 +7,7 @@ import { stepTo } from './sceneCore.js';
 
 // cat: the catch event. d: air yards. Returns { place, how, h, slow, hop, dive }.
 export function catchPlan(S, play, cat, d) {
-  const res = cat?.result, yac = (play.result.gain || 0) - d, roll = S.rand();
+  const res = cat?.result, yac = ((play.result.played ?? play.result.gain) || 0) - d, roll = S.rand();
   let place = 'stride';
   if (res === 'catch' && (cat.catchType === 'contested' || cat.catchType === 'one-handed')) place = 'high';
   else if (res === 'catch' && cat.catchType === 'over the shoulder') place = 'stride';

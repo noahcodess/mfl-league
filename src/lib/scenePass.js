@@ -108,13 +108,13 @@ function outcome(S, play, tgt, cat, at, tThrow, tCatch, wob) {
   if (res === 'breakup' && df) { S.when(tCatch + 0.05, (s) => { s.star = { a: df, at: s.t + 0.1 }; }); S.when(tThrow, () => { df.brain = B.meet(at[0] + dir * 0.5, at[1] + (at[1] >= 0 ? 0.7 : -0.7), tCatch - 0.03, df.max * 1.15); }); }
   if (res !== 'catch') { S.when(tCatch + 0.15, (s) => { tgt.brain = B.to(tgt.x + dir * 1.2, tgt.y, 2); s.setPose(tgt, 'drop', 1.6); }); S.tEnd = tCatch + 0.6; return; }
   const tRun = tCatch + (plan.dive ? 1.4 : plan.slow < 1 ? 0.25 : 0);   // a diving catch gets up first; a ball he gathered, a beat to get going
-  S.tEnd = carryPath(S, tgt, at, tRun, play.result.gain, clamp(at[1] + (S.rand() - 0.5) * 8, -25, 25), play);   // run after the catch, broken tackles and all
+  S.tEnd = carryPath(S, tgt, at, tRun, (play.result.played ?? play.result.gain), clamp(at[1] + (S.rand() - 0.5) * 8, -25, 25), play);   // run after the catch, broken tackles and all
   pursueAll(S, tgt, tCatch, []);
 }
 
 // The rusher (or blitzer) who got home runs the QB down on his own legs; the QB drifts to where it happens.
 function sack(S, play, qb, e) {
-  const tS = S.T0 + clamp(e.t, 1.2, 6.2), by = S.by[e.by], spot = S.at(play.result.gain - 0.5, (S.rand() - 0.5) * 3);
+  const tS = S.T0 + clamp(e.t, 1.2, 6.2), by = S.by[e.by], spot = S.at((play.result.played ?? play.result.gain) - 0.5, (S.rand() - 0.5) * 3);
   S.when(Math.max(S.T0 + 1, tS - 1), () => { qb.brain = B.to(spot[0], spot[1], 3); });
   if (by) S.when(Math.max(S.T0 + 0.4, tS - 1.6), () => { by.pose = null; by.brain = timedChase(qb, tS); });
   S.when(tS - 0.2, (s) => s.setPose(by, 'tackle', 0.3));

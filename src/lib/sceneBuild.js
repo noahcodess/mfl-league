@@ -17,10 +17,31 @@ function buildPenalty(S, lineups) {
   S.tEnd = t + 0.8;
 }
 
+// How far short of the engine's spot the ball carrier is when the tackle lands (cuts, jukes and dodging defenders all cost
+// him time on the way). Plays the scene forward to that moment.
+function shortBy(S) {
+  const { c, endAlong, tEnd } = S.carry;
+  while (S.t + 1 / 60 <= tEnd) S.update(1 / 60);
+  return endAlong - S.along(S.by[c.id] || c);
+}
+
 // play: one play report. lineups: { home, away }. pace: { T0 } from the pacing director. seed: so a rewind plays the same.
-export function buildScene(play, lineups, pace = {}, seed = 1) {
+// The ball always ends where the report says: if a dry run shows the carrier would go down short of the spot, the scene is
+// rebuilt giving his run more time (up to 4 tries), so the tackle happens on the right yard line.
+export function buildScene(play, lineups, pace = {}, seed = 1, slack = null) {
+  if (slack == null) {
+    let sl = 0;
+    for (let k = 0; k < 4; k++) {
+      const D = buildScene(play, lineups, pace, seed, sl);
+      if (!D.carry) return D;
+      const short = shortBy(D);
+      if (Math.abs(short) < 0.6) return buildScene(play, lineups, pace, seed, sl);
+      sl = Math.max(0, sl + short / Math.max(3, D.carry.c.max * 0.8));
+    }
+    return buildScene(play, lineups, pace, seed, sl);
+  }
   const S = new Scene(play, (seed * 7919 + play.n * 104729) >>> 0);
-  S.T0 = pace.T0 || 2.8; frame(S, play);
+  S.slack = slack; S.T0 = pace.T0 || 2.8; frame(S, play);
   const thr = ev(play, 'throw')[0];
   if (play.kind === 'kickoff') buildKickoff(S, lineups);
   else if (play.kind === 'punt') buildPunt(S, lineups);
@@ -35,7 +56,7 @@ export function buildScene(play, lineups, pace = {}, seed = 1) {
   if (S.huddle) huddleUp(S);   // now that everything is set from the real spots, start them in the huddle
   if (play.flagged && !S.flag) S.flag = { t: S.tEnd - 0.4, x: S.los, y: 2 };
   S.dur = S.tEnd + 2.4;
-  S.rebuild = () => buildScene(play, lineups, pace, seed);
+  S.rebuild = () => buildScene(play, lineups, pace, seed, slack);
   return S;
 }
 

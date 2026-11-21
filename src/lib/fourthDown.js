@@ -23,6 +23,7 @@ export function fourthDown(G) {
   if (halfEnds) return canKick && pk > 0.12 && (!late || (up >= -3 && up <= 0) || up > 0) ? 'fg' : late && up < 0 ? 'go' : canKick ? 'fg' : 'punt';
   // must score: late and down more than a field goal, or down at all with almost no time
   const k = (s.qlen || 360) / 900;   // time windows are NFL minutes scaled to this league's quarter length
+  if (late && up === -3 && canKick && pk > 0.5 && t < 480 * k && R.chance(0.55 + (plan.clutch ?? 0.6) * 0.4)) return 'fg';   // down 3 late with a makeable kick: tie it and take your chances
   if (late && ((up < -3 && t < 300 * k) || (up < 0 && t < 120 * k) || (up < -8 && t < 480 * k))) return canKick && up >= -3 && t < 40 ? 'fg' : 'go';
   const pc = convertOdds(s.toGo, ((plan.edge || 0) - (oppPlan.edge || 0)) / 2);
   const go = pc * (ep(s.ballOn + s.toGo) + (s.ballOn + s.toGo >= 100 ? 2.5 : 0)) - (1 - pc) * ep(100 - s.ballOn);

@@ -54,5 +54,6 @@ import './styles/coachBoard.css';
 import './styles/keyPlay.css';
 import './styles/gamePage.css';
 import './styles/craftBowl.css';
+import './styles/breaks.css';
 
 createRoot(document.getElementById('root')).render(<App />);

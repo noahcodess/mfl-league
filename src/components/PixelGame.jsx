@@ -20,6 +20,8 @@ import { STING_MID } from '../lib/pixelSwarm.js';
 import BroadcastSlot, { slotCard, slotBusy } from './BroadcastSlot.jsx';
 import ScoreTakeover from './ScoreTakeover.jsx';
 import { planGraphics } from '../lib/broadcastGfx.js';
+import HalftimeReport from './HalftimeReport.jsx';
+import OvertimeRules from './OvertimeRules.jsx';
 
 const SPEEDS = [1, 2, 4];
 const everyone = (lineups, side) => [...lineups[side].all, ...Object.values(lineups[side].kickTeams).flatMap((u) => u.players)].filter(Boolean);
@@ -42,6 +44,7 @@ function makeLooks(lineups, kits, teams, drips) {
 export default function PixelGame({ game, teams, lineups, onClose, onDone, onPlay, startAt = 0, match = null, full = false }) {
   const [sting, setSting] = useState(0), [i, setI] = useState(startAt), [speed, setSpeed] = useState(1), [paused, setPaused] = useState(false), [beat0, setBeat] = useState({ post: false, phase: 'live', i: startAt });
   const beat = beat0.i === i ? beat0 : { post: false, phase: 'live', i };   // a beat from the last play never leaks into this one (no flash of how this play ends)
+  const [brk, setBrk] = useState(null), shownBrk = useRef(new Set());   // a break between plays: 'half' (the halftime report) or 'ot' (the overtime rules), live = covering the field
   const kits = useGameKits(teams.home, teams.away, match), ids = useMemo(() => ['home', 'away'].flatMap((s) => everyone(lineups, s).map((p) => p.id)), [lineups]), drips = useDrips(ids);
   const looks = useMemo(() => (kits ? makeLooks(lineups, kits, teams, drips) : {}), [lineups, kits?.home?.name, kits?.away?.name, drips]); // eslint-disable-line react-hooks/exhaustive-deps
   const bc = useMemo(() => broadcastFor(match || { window: null }, teams.home), [match, teams.home]);
@@ -52,7 +55,11 @@ export default function PixelGame({ game, teams, lineups, onClose, onDone, onPla
   const live0 = useRef(null); useEffect(() => { live0.current = S; }, [S]);   // the play as it's being acted out right now
   const plan = useMemo(() => planGraphics(game.plays), [game.plays]), g = plan[i] || {};   // every graphic, planned so only one is ever up
   const people = useMemo(() => Object.fromEntries(['home', 'away'].flatMap((s) => everyone(lineups, s).map((p) => [p.id, p]))), [lineups]), playerOf = (id) => people[id];
-  const clock = useRef({ t: 0, last: 0, phase: 'live', rt: 0, hold: 0, tdAt: null, tdReal: 0 }), ctl = useRef({}); ctl.current = { speed, paused, S, i, shots, pace, sc: g.score };
+  const sideOf = useMemo(() => Object.fromEntries(['home', 'away'].flatMap((s) => everyone(lineups, s).map((p) => [p.id, s]))), [lineups]);
+  const marks = useMemo(() => ({ half: game.plays.findIndex((p) => p.before.quarter === 3), ot: game.plays.findIndex((p) => p.before.quarter >= 5) }), [game.plays]);   // the second-half kickoff and the first overtime snap
+  useEffect(() => { const kind = i === marks.half ? 'half' : i === marks.ot ? 'ot' : null; if (kind && i > 0 && !shownBrk.current.has(i)) { shownBrk.current.add(i); setBrk({ kind, live: true }); } }, [i, marks]);
+  const fresh = i === 0 || i === marks.half || i === marks.ot;   // the scorebug builds in again for these kickoffs
+  const clock = useRef({ t: 0, last: 0, phase: 'live', rt: 0, hold: 0, tdAt: null, tdReal: 0 }), ctl = useRef({}); ctl.current = { speed, paused: paused || !!brk?.live, S, i, shots, pace, sc: g.score, fresh };
   useEffect(() => { Object.assign(clock.current, { t: 0, phase: 'live', rt: 0, hold: 0, tdAt: null, tdReal: 0 }); setBeat({ post: false, phase: 'live', i }); }, [i]);
   useEffect(() => { // the play clock, scorebug flip and which shot we're in, a few times a second
     const id = setInterval(() => { const { S: s, i: n, pace: pc } = ctl.current, c = clock.current; if (s) setBeat({ i: n, post: c.t >= s.tEnd, t: c.t, tdAt: c.tdAt, phase: c.phase, ...clockFace(game, n, c.t, s, c.phase, pc.dead) }); }, 100);
@@ -61,7 +68,7 @@ export default function PixelGame({ game, teams, lineups, onClose, onDone, onPla
   const live = useMemo(() => ({
     target() {   // the camera operator (broadcastCam) decides the shot
       const { S: s, shots: sh } = ctl.current, c = clock.current; if (!s) return { x: yardX(50), y: MID_Y, zoom: 0.7 };
-      return camTarget(s, live0.current || s, { phase: c.phase, t: c.phase === 'replay' ? c.rt : c.t, slow: slowAt(sh, c.t) < 1, first: ctl.current.i === 0, flag: sh?.flag });
+      return camTarget(s, live0.current || s, { phase: c.phase, t: c.phase === 'replay' ? c.rt : c.t, slow: slowAt(sh, c.t) < 1, first: ctl.current.fresh, flag: sh?.flag, replay: sh?.replay });
     },
     draw(ctx, cam) {
       const c = clock.current, now = performance.now(), { S: s, speed: sp, paused: p, shots: sh, pace: pc, sc } = ctl.current, dt = c.last ? Math.min(0.1, (now - c.last) / 1000) * sp : 0;
@@ -86,7 +93,7 @@ export default function PixelGame({ game, teams, lineups, onClose, onDone, onPla
   }), [looks]);
   const pre = !beat.post && beat.phase === 'live' && !!play, bt = beat.t ?? 0, busy = slotBusy(g.pre, pace, bt, pre), card = slotCard(g.pre, pace, bt, pre, teams, playerOf);
   const scoreUp = !!g.score && beat.phase === 'live' && beat.tdAt != null && bt >= beat.tdAt;   // the scoring takeover of the bug
-  const bugUp = i > 0 || done || bt >= (S?.T0 ?? 0);   // the scorebug builds in as the opening kickoff is struck
+  const bugUp = !brk?.live && (!fresh || done || bt >= (S?.T0 ?? 0));   // the scorebug builds in as the opening (and second-half, and overtime) kickoff is struck
   const b4 = play && { quarter: play.before.quarter, clock: play.before.clock, score: play.before.score, poss: play.kind === 'kickoff' ? play.def : play.off,
     down: ['kickoff', 'xp', 'two'].includes(play.kind) ? null : play.before.down, toGo: play.before.toGo, ballOn: play.before.ballOn };   // before the snap
   const a = done ? game.plays[game.plays.length - 1].after : beat.post ? play.after : b4;
@@ -106,9 +113,13 @@ export default function PixelGame({ game, teams, lineups, onClose, onDone, onPla
         {done && <div className="pg-headline final">FINAL</div>}
         <BroadcastSlot pre={g.pre} pace={pace} bt={bt} live={pre} play={play} teams={teams} bug={bc.bug} playerOf={playerOf} n={i} />
         {bugUp && <div className="pg-shelf" />}
-        {bugUp && <div className={`pg-bug${scoreUp ? ' taken' : ''}${beat.phase === 'sting' || beat.phase === 'replay' ? ' snap' : ''}`}><Scorebug bc={bc} home={teams.home} away={teams.away} st={st} card={card} className={i === 0 ? 'sb-enter' : ''} />{scoreUp && <ScoreTakeover key={`sc${i}`} score={g.score} team={teams[g.score.side]} people={g.score.ids.map(playerOf)} bug={bc.bug} />}</div>}
+        {brk?.kind === 'half' && <HalftimeReport plays={game.plays.slice(0, marks.half)} score={game.plays[marks.half].before.score} teams={teams} people={people} sideOf={sideOf} bc={bc}
+          receiver={game.plays[marks.half].def} onReveal={() => setBrk((b) => b && { ...b, live: false })} onDone={() => setBrk(null)} />}
+        {brk?.kind === 'ot' && <OvertimeRules teams={teams} first={game.plays[marks.ot].off} score={game.plays[marks.ot].before.score} bc={bc}
+          onReveal={() => setBrk((b) => b && { ...b, live: false })} onDone={() => setBrk(null)} />}
+        {bugUp && <div className={`pg-bug${scoreUp ? ' taken' : ''}${beat.phase === 'sting' || beat.phase === 'replay' ? ' snap' : ''}`}><Scorebug bc={bc} home={teams.home} away={teams.away} st={st} card={card} className={fresh ? 'sb-enter' : ''} />{scoreUp && <ScoreTakeover key={`sc${i}`} score={g.score} team={teams[g.score.side]} people={g.score.ids.map(playerOf)} bug={bc.bug} />}</div>}
       </div>
-      {(!full || beat.post || done || play?.call?.name) && <p className="pg-text">{done ? 'That’s the game.' : beat.post ? play.text : play?.call?.name ? `${teams[play.off].code} · ${play.call.name}` : ' '}</p>}
+      {!brk?.live && (!full || beat.post || done || play?.call?.name) && <p className="pg-text">{done ? 'That’s the game.' : beat.post ? play.text : play?.call?.name ? `${teams[play.off].code} · ${play.call.name}` : ' '}</p>}
       <div className="ct-row">
         <button className="btn ghost" onClick={() => setPaused(!paused)}>{paused ? '▶ Play' : '⏸ Pause'}</button>
         {SPEEDS.map((s) => <button key={s} className={`btn ghost${speed === s ? ' on' : ''}`} onClick={() => setSpeed(s)}>{s}x</button>)}

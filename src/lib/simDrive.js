@@ -18,7 +18,10 @@ function log(G, play, secs) {
   if (!s.ot) s.clock -= play.clock.seconds;
   if (!s.ot && (s.quarter === 2 || s.quarter === 4) && was > 120 && s.clock <= 120) { s.running = false; play.twoMinute = true; }   // two-minute warning
   play.after = { score: { ...s.score }, poss: s.poss, ballOn: s.ballOn, down: s.down, toGo: s.toGo, quarter: s.quarter, clock: s.clock, mom: Math.round(G.mom * 100) / 100 };
-  G.mom *= 0.97; G.plays.push(play); return play;
+  G.mom *= 0.97; G.plays.push(play);
+  const lead = s.score.home - s.score.away;   // a one-score game late: the trailing side finds a little extra (the rally)
+  if (s.quarter === 4 && !s.ot && s.clock < (s.qlen || 360) * 0.5 && lead !== 0 && Math.abs(lead) <= 8) swing(G, lead > 0 ? 'away' : 'home', 0.012);
+  return play;
 }
 export function score(G, play, side, pts, how) {
   G.s.score[side] += pts; play.result.points = { side, pts, how }; G.scoring.push({ n: G.plays.length + 1, side, pts, how, quarter: G.s.quarter, clock: G.s.clock });
@@ -105,6 +108,7 @@ export function scrimmage(G) {
     secs = res.time; play.result.gain = res.gain; play.result.oob = !!res.oob; if (res.forced) play.result.forced = true;
     const flag = postPlayFlag(G, play, res, call), spot = s.ballOn + res.gain;
     if (flag) { // the play doesn't count
+      play.result.played = res.gain;   // what the play gained before the flag (the broadcast shows the play as it happened)
       if (flag.off) { s.ballOn -= flag.yards; s.toGo += flag.yards; play.result.gain = -flag.yards; }
       else { s.ballOn += flag.yards; s.down = 1; s.toGo = Math.min(10, 100 - s.ballOn); play.result.gain = flag.yards; play.result.firstDown = true; }
     } else if (res.turnover === 'int') {

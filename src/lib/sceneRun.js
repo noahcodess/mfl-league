@@ -8,7 +8,7 @@ import { carryPath } from './sceneCarry.js';
 
 export function buildRun(S, lineups, gainOverride) {
   const play = S.play, sneak = play.call?.sub === 'sneak' || play.call?.name === 'QB Sneak', { A, D } = lineup(S, lineups, { under: sneak || play.kind === 'two', huddle: true });
-  const hand = ev(play, 'handoff')[0], qb = A.QB, c = (hand && S.by[hand.to]) || A.RB, gain = gainOverride ?? play.result.gain, T0 = S.T0;
+  const hand = ev(play, 'handoff')[0], qb = A.QB, c = (hand && S.by[hand.to]) || A.RB, gain = gainOverride ?? (play.result.played ?? play.result.gain), T0 = S.T0;
   const blocks = Object.fromEntries(ev(play, 'block').map((e) => [e.def, e.move]));
   S.when(T0, (s) => s.give(qb));
   lineFight(S, A, D, false, { blocks, carrier: c });
@@ -49,7 +49,7 @@ export function buildScramble(S, lineups) {
   for (const k of ['WR1', 'WR2', 'TE']) if (A[k]) A[k].brain = B.path([S.at(12, A[k].y), S.at(18, A[k].y * 0.7)], T0 + 0.1, T0 + 3, A[k].max * 0.85);
   for (const [r, d] of [['WR1', 'CB1'], ['WR2', 'CB2'], ['TE', 'SS']]) if (A[r] && D[d]) D[d].brain = (a, dt, s) => { if (s.t > T0) { const dx = A[r].x + S.dir * 1.2 - a.x, dy = A[r].y - a.y, m = Math.hypot(dx, dy); if (m > 0.05) { const st = Math.min(m, a.max * dt); a.x += (dx / m) * st; a.y += (dy / m) * st; } } };
   pursueAll(S, qb, tEsc, []);
-  S.tEnd = carryPath(S, qb, S.at(-5.5, side * 4), tEsc, play.result.gain, side * (8 + S.rand() * 10), play);
+  S.tEnd = carryPath(S, qb, S.at(-5.5, side * 4), tEsc, (play.result.played ?? play.result.gain), side * (8 + S.rand() * 10), play);
 }
 
 export function buildKneel(S, lineups) {

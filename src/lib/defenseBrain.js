@@ -19,7 +19,7 @@ export function defenseCall(G, call = {}) {
   const offLead = s.score[s.poss] - s.score[side], t = secondsLeft(s), toGoal = 100 - s.ballOn, late = s.quarter === 4 && !s.ot;
   const mem = (G.defMem ||= { home: [], away: [] })[side], look = call.look || 'base', form = call.form;
   // protecting a late lead against a long field: prevent
-  if (late && offLead < 0 && offLead >= -16 && t < 100 && toGoal > 30) return pack(DEF_CALLS.find((c) => c.prevent));
+  if (late && offLead < 0 && offLead >= -16 && (t < 100 || (offLead >= -8 && t < 140)) && toGoal > 30) return pack(DEF_CALLS.find((c) => c.prevent));   // a one-score lead goes soft a little sooner (the prevent that lets teams tie it)
   const passLean = readOffense(plan, s, form), longDown = s.toGo >= 8 && s.down >= 2, shortDown = s.toGo <= 2, goal = toGoal <= 4;
   const hurry = (s.quarter === 2 && s.clock < 90) || (late && offLead < 0 && t < 180);
   const qbRuns = (form === 'pistol' || form === 'shotgun' || form === 'gun_wing') && val(G, G.O.QB, 'speed', 50) >= 74;
