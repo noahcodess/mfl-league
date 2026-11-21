@@ -9,6 +9,7 @@
 .pg-bug.taken:has(.sbt.closing) { transform: translateX(-50%) scale(1); transition-duration: .55s; }
 .pg-bug.taken:has(.sbt.closing) .sb { opacity: 1; transition-delay: .2s; }
 .pg-bug.snap { transition: none; }
+.pg-bug { transition: transform .5s cubic-bezier(.22, .9, .3, 1), opacity .35s ease .3s; } .pg-bug.replay { opacity: 0; }   /* no scorebug during replays: gone under the transition, back as the next one clears */
 .sbt.closing { animation: sbt-close .5s cubic-bezier(.6, 0, .8, .4) forwards; }
 @keyframes sbt-close { from { clip-path: inset(-3em 0 0 0); opacity: 1; } to { clip-path: inset(-3em 46% 0 46%); opacity: 0; } }
 .sbt { --g-font: 'Barlow Condensed', sans-serif; --g-acc: #f4b800; --g-acc-fg: #111; --g-r: .3em;

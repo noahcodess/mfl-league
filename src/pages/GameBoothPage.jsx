@@ -16,7 +16,7 @@ import { isRealGame } from '../data/gameState.js';
 // Commissioner Window: Broadcast Booth. Its own browser window for his second monitor while the broadcast is screen-shared.
 // Everything only he sees: playback controls and jumps, both coaches (online, last seen, or Bot) and their timeouts, the key
 // play with the coach's options and the play clock, graphics before they go on air (deny them), any player's stats with a
-// button to put his card up, the stat sheet, and test tools. It drives the broadcast in the main window.
+// button to put his card up, the stat sheet, test tools, and the play call and result (no longer shown on the broadcast). It drives the broadcast in the main window.
 export default function GameBoothPage({ id }) {
   const found = useGame(id), feed = useBoothFeed(id), presence = useCoachPresence(true), coaches = useCoaches(), coached = useCoachedTeams();
   useEffect(() => { document.title = 'Commissioner Window: Broadcast Booth'; }, []);
@@ -36,7 +36,7 @@ export default function GameBoothPage({ id }) {
       {s && (
         <div className="booth-cols">
           <div><BoothControls s={s} send={feed.send} /><BoothCoaches s={s} ids={ids} coaches={coaches} presence={presence} coached={coached} send={feed.send} /></div>
-          <div><BoothKeyPlay s={s} ids={ids} /><BoothGraphics s={s} send={feed.send} />{s.play?.text && <p className="booth-last">Last play: {s.play.text}</p>}</div>
+          <div><BoothKeyPlay s={s} ids={ids} /><BoothGraphics s={s} send={feed.send} />{s.play && <p className="booth-last"><b>📋 {getTeam(ids[s.play.off])?.code} · {s.play.call || s.play.kind}</b>{s.play.text ? ` → ${s.play.text}` : ' · before the snap'}</p>}</div>
           <div><BoothStats roster={feed.roster} stats={feed.stats} ids={ids} send={feed.send} />{(isTestMode() || !isRealGame(id)) && <BoothTest s={s} ids={ids} send={feed.send} />}</div>
         </div>
       )}

@@ -13,13 +13,13 @@ import { fanPose, cardMask, JUMP_MS } from './crowdActs.js';
 
 const CALLS = { jump: 'JUMP JUMP JUMP', wave: 'DO THE WAVE', towels: 'WAVE YOUR TOWELS', cheer: 'MAKE SOME NOISE', cards: 'CARDS UP', lights: 'LIGHT IT UP' };
 
-// o: { team, look, act, dress (fan color or null), theme (the alternate's name), logo (loaded image or null), stadiumName, ms }.
+// o: { team, look, act, dress (fan color or null), theme (the alternate's name), logo (loaded image or null), stadiumName, ms, fill (0-1 how full) }.
 // Returns draw(ctx, t) for a canvas that is a whole number of times bigger than 480x270.
 export function makeCrowdShot(o) {
   const { team, look, act, dress } = o, nick = (team.nickname || team.name.split(' ').pop()).toUpperCase(), ms = o.ms || 3500; // the climb; the 5-second shot then holds at the top
   const far = paintSky(look), upper = paintUpper(look, team, o.logo), poles = paintPoles(look), lower = paintLower(look, team, o.logo), front = paintFront(look);
   paintRoof(upper.getContext('2d'), look);
-  const fans = makeFans(team, dress, act === 'cards'), shake = act === 'jump' && team.id === 'ddc';
+  const fans = makeFans(team, dress, act === 'cards', o.fill ?? 1), shake = act === 'jump' && team.id === 'ddc';
   const paper = dress || team.color, ink = [team.accent, '#f2f5ee', '#16171a'].find((c) => Math.abs(brightness(c) - brightness(paper)) > 0.35);
   const env = { all: shake, towel: dress && brightness(dress) < 0.8 ? '#f4f6f8' : dress ? '#ffffff' : brightness(team.accent) > 0.5 ? team.accent : '#f4f6f8', mask: cardMask(nick), ink, paper };
   const words = `${o.theme ? `${o.theme.toUpperCase()}   ` : ''}${CALLS[act]}   GO ${nick}   ${(o.stadiumName || '').toUpperCase()}   `, wordsLen = textLength(words, 2) + 2;

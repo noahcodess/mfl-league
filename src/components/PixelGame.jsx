@@ -135,9 +135,9 @@ export default function PixelGame({ game, teams, lineups, onClose, onDone, onPla
           return brk.kind === 'half' ? <HalftimeReport plays={game.plays.slice(0, at)} score={p0.before.score} teams={teams} people={people} sideOf={sideOf} bc={bc} receiver={p0.def} {...ends} />
             : <OvertimeRules teams={teams} first={p0.off} score={p0.before.score} bc={bc} {...ends} />;
         })()}
-        {bugUp && <div className={`pg-bug${scoreUp ? ' taken' : ''}${beat.phase === 'sting' || beat.phase === 'replay' ? ' snap' : ''}`}><Scorebug bc={bc} home={teams.home} away={teams.away} st={st} rec={rec} card={card} className={fresh ? 'sb-enter' : ''} />{scoreUp && <ScoreTakeover key={`sc${i}`} score={g.score} team={teams[g.score.side]} people={g.score.ids.map(playerOf)} bug={bc.bug} />}</div>}
+        {bugUp && <div className={`pg-bug${scoreUp ? ' taken' : ''}${beat.phase === 'sting' || beat.phase === 'replay' ? ' snap' : ''}${beat.phase === 'replay' ? ' replay' : ''}`}><Scorebug bc={bc} home={teams.home} away={teams.away} st={st} rec={rec} card={card} className={fresh ? 'sb-enter' : ''} />{scoreUp && <ScoreTakeover key={`sc${i}`} score={g.score} team={teams[g.score.side]} people={g.score.ids.map(playerOf)} bug={bc.bug} />}</div>}
       </div>
-      {!brk?.live && (!full || beat.post || done || play?.call?.name) && <p className="pg-text">{done ? 'That’s the game.' : beat.post ? play.text : play?.call?.name ? `${teams[play.off].code} · ${play.call.name}` : ' '}</p>}
+      {!full && <p className="pg-text">{done ? 'That’s the game.' : beat.post ? play.text : play?.call?.name ? `${teams[play.off].code} · ${play.call.name}` : ' '}</p>}
       <div className="ct-row">
         <button className="btn ghost" onClick={() => setPaused(!paused)}>{paused ? '▶ Play' : '⏸ Pause'}</button>
         {SPEEDS.map((s) => <button key={s} className={`btn ghost${speed === s ? ' on' : ''}`} onClick={() => setSpeed(s)}>{s}x</button>)}

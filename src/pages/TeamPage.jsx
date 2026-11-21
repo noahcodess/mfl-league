@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import TeamBadge from '../components/TeamBadge.jsx';
 import TeamTrophies from '../components/TeamTrophies.jsx';
 import StadiumCard from '../components/StadiumCard.jsx';
+import FanSupportCard from '../components/FanSupportCard.jsx';
 import RatingChip from '../components/RatingChip.jsx';
 import CapBar from '../components/CapBar.jsx';
 import Roster from '../components/Roster.jsx';
@@ -15,7 +16,7 @@ import { links } from '../lib/router.js';
 import { usePotentials } from '../data/potentials.js';
 import { usePlayerTraits } from '../data/traits.js';
 
-// One team: ratings, cap, roster (click a player for his card), draft picks and any data problems.
+// One team: ratings, cap, fan support, roster (click a player for his card), draft picks and any data problems.
 export default function TeamPage({ teamId, viewer }) {
   const [open, setOpen] = useState(null);
   const potentials = usePotentials(viewer ? `${viewer.user_id}-${viewer.team_id}-${viewer.role}` : null);
@@ -43,6 +44,7 @@ export default function TeamPage({ teamId, viewer }) {
         <CapBar used={teamCapUsed(team.id)} limit={capLimit()} />
       </div>
       <CoachCard team={team} mine={isMine && viewer?.role === 'coach'} />
+      <FanSupportCard team={team} />
       <StadiumCard team={team} />
       <Roster players={players} vacancies={getVacancies(team.id)} team={team} onOpen={setOpen} insider={canSeePotential ? potentials.map : null} />
       <PickList picks={getPicks(team.id)} currentSeason={currentSeason()} />

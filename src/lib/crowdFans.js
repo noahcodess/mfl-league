@@ -15,11 +15,12 @@ function closet(team, dress) {
 }
 
 // Returns { upper: [...], lower: [...] }, each back row first.
-// grid: line the upper deck up for a card stunt.
-export function makeFans(team, dress, grid) {
+// grid: line the upper deck up for a card stunt. fill: how full the house is (0-1); empty seats go upper deck first.
+export function makeFans(team, dress, grid, fill = 1) {
+  const lowFill = Math.min(0.975, 0.25 + fill * 0.85), upFill = Math.min(0.99, Math.max(0, (fill - 0.3) / 0.7));   // the lower bowl fills first
   const rand = rng(team.id.charCodeAt(0) * 131 + team.id.length + (dress ? 7 : 0)), shirts = closet(team, dress), any = (a) => a[Math.floor(rand() * a.length)];
   const trim = dress ? (brightness(dress) > 0.5 ? shade(dress, 0.7) : shade(dress, 1.5)) : null;
-  const deck = (name) => seatSpots(name, grid).filter(() => rand() < (name === 'upper' ? 0.99 : 0.975)).map((s) => {
+  const deck = (name) => seatSpots(name, grid).filter(() => rand() < (name === 'upper' ? upFill : lowFill)).map((s) => {
     const shirt = any(shirts), hat = rand() < (dress ? 0.5 : 0.3) ? dress || any([team.color, team.accent]) : null, roll = rand();
     return { ...s, shirt, lo: shade(shirt, 0.72), skin: any(SKIN), hair: any(HAIR), hat, brim: hat && shade(hat, 0.7), ph: rand(),
       prop: roll < 0.03 ? 'sign' : roll < 0.1 ? 'finger' : null, jersey: rand() < 0.4, trim: trim || (shirt === team.accent ? team.color : team.accent), ink: any([team.color, team.accent, '#16171a']) };

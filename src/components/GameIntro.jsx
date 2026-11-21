@@ -13,6 +13,7 @@ import { broadcastFor } from '../data/broadcast.js';
 import { useGameKits } from '../data/gameKits.js';
 import { loadLineups } from '../data/gameLineups.js';
 import { useStadiums } from '../data/stadiums.js';
+import { useGameAttendance } from '../data/gameAttendance.js';
 import { playerSpotlight, gameWeather } from '../lib/introFacts.js';
 import { records } from '../lib/seasonStats.js';
 import { teamStats } from '../lib/teamRanks.js';
@@ -30,7 +31,7 @@ const FADE = 450;
 // kick: { receiving, home_dir } from the kickoff coin flip. st: the live game state (for the scorebug).
 export default function GameIntro({ game, season, kick, st, resume = null, onClose, onReplay }) {
   const home = getTeam(game.home), away = getTeam(game.away), bc = broadcastFor(game, home);
-  const kits = useGameKits(home, away, game), stadium = useStadiums()[home.id];
+  const kits = useGameKits(home, away, game), stadium = useStadiums()[home.id], att = useGameAttendance(game, kits, bc, stadium);
   const before = useMemo(() => season.weeks.slice(0, game.week - 1), [season, game.week]);
   const rec = useMemo(() => records(before), [before]);
   const stats = useMemo(() => teamStats(before), [before]);
@@ -59,7 +60,7 @@ export default function GameIntro({ game, season, kick, st, resume = null, onClo
           {scene === 'matchup' && <IntroMatchup bc={bc} game={game} home={home} away={away} kits={kits} rec={rec} stadium={stadium} />}
           {scene === 'player' && spot && <IntroPlayer bc={bc} spot={spot} team={spotTeam} kit={spotTeam.id === home.id ? kits?.home : kits?.away} />}
           {scene === 'tape' && <IntroTape home={home} away={away} rec={rec} stats={stats} />}
-          {scene === 'crowd' && <IntroCrowd bc={bc} home={home} stadium={stadium} weather={weather} gameId={game.id} dress={kits?.fans} theme={kits?.fans ? kits.home.name : ''} />}
+          {scene === 'crowd' && <IntroCrowd bc={bc} home={home} stadium={stadium} weather={weather} gameId={game.id} dress={kits?.fans} theme={kits?.fans ? kits.home.name : ''} att={att} />}
           {scene === 'game' && <LiveGame game={game} home={home} away={away} kick={kick} resume={resume || 0} st={st} rec={rec} />}
         </div>
         {sting > 0 && <NetStinger key={sting} net={bc.net} onDone={() => setSting(0)} />}

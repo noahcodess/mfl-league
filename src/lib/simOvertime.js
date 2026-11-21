@@ -6,8 +6,10 @@ import { scrimmage, twoPoint, score } from './simDrive.js';
 import { newPlay } from './simReport.js';
 import { extraPoint } from './simKicks.js';
 
+const ANSWER = 3;   // rating points for a team that needs a TD to answer in OT1 (tuned so OT2 is the most common ending: ~38% end in OT1, ~40% in OT2)
 function possession(G, side, second = false) {
-  const s = G.s; s.poss = side; s.ballOn = 70; s.down = 1; s.toGo = 10; s.phase = 'play'; s.running = false;
+  const s = G.s; G.answer = second && s.ot === 1 && s.score[other(side)] - s.score[side] >= 4 ? side : null; G.answerBoost = ANSWER;   // only when it takes a touchdown to answer
+  s.poss = side; s.ballOn = 70; s.down = 1; s.toGo = 10; s.phase = 'play'; s.running = false;
   for (let i = 0; i < 40; i++) {
     s.snapClock = G.R.int(7, 14);   // no game clock to manage, so snaps come with the usual handful left on the 24
     const play = scrimmage(G);
@@ -28,6 +30,7 @@ export function overtime(G) {
     s.ot += 1; s.quarter = 4 + s.ot; s.to = { home: 1, away: 1 };
     if (s.ot >= 3) { twoPoint(G, first); twoPoint(G, other(first)); }
     else if (!possession(G, first)) possession(G, other(first), true);
+    G.answer = null;
     first = other(first);
   }
 }

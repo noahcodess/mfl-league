@@ -1,0 +1,17 @@
+/* Team page fan support card: a ring with the number, the mood, a meter that fills on load, and what it's made of. */
+.fan-card { display: flex; gap: 18px; align-items: center; }
+.fan-ring { --deg: calc(var(--k) * 360deg); flex: none; width: 104px; height: 104px; border-radius: 50%; display: grid; place-items: center;
+  background: conic-gradient(var(--fc) var(--deg), #ffffff14 0); animation: fan-spin 1.1s cubic-bezier(.2, .8, .2, 1) both; position: relative; }
+.fan-ring::before { content: ''; position: absolute; inset: 9px; border-radius: 50%; background: var(--panel, #15181e); }
+.fan-ring b { position: relative; font-size: 30px; font-variant-numeric: tabular-nums; } .fan-ring small { font-size: 15px; opacity: .7; margin-left: 1px; }
+@property --deg { syntax: '<angle>'; inherits: false; initial-value: 0deg; }
+@keyframes fan-spin { from { --deg: 0deg; } }
+.fan-body { flex: 1; min-width: 0; }
+.fan-body h3 { margin: 0 0 6px; display: flex; align-items: center; gap: 8px; } .fan-body h3 em { font-style: normal; font-size: 13px; padding: 1px 9px; border-radius: 99px; background: var(--fc); color: #111; }
+.fan-meter { height: 8px; border-radius: 99px; background: #ffffff14; overflow: hidden; }
+.fan-meter i { display: block; height: 100%; width: calc(var(--k) * 100%); background: linear-gradient(90deg, #e5484d, #f2c230 45%, #2fbf71); background-size: calc(100% / max(var(--k), .01)) 100%; animation: fan-fill 1.1s cubic-bezier(.2, .8, .2, 1) both; }
+@keyframes fan-fill { from { width: 0; } }
+.fan-bits { list-style: none; margin: 10px 0 6px; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 4px 14px; font-size: 13px; }
+.fan-bits li { display: flex; justify-content: space-between; gap: 8px; border-bottom: 1px dashed #ffffff1a; padding: 2px 0; }
+.fan-crowd { margin: 4px 0 0; font-size: 12.5px; }
+@media (max-width: 560px) { .fan-card { flex-direction: column; align-items: stretch; } .fan-ring { align-self: center; } }
