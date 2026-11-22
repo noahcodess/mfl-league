@@ -1,29 +1,17 @@
 import React from 'react';
 import StarIcon from './StarIcon.jsx';
 
-// Shows a 0-5 star rating with real half stars, always gold; only a full 5 stars glows (now or potential, anywhere). If he's regressed (peak above his rating), the stars
-// he's lost show in red up to his peak. The number only shows when asked.
-export default function StarRating({ value, elite, declining, showNumber, peak }) {
+// Shows a 0-5 star rating, always gold: whole stars, then a half star (half gold, half empty) for a .5. Only a full 5 stars
+// glows (now or potential, anywhere). It shows what he IS: a player who dropped from 4 to 3 shows 3 stars (no red "lost"
+// stars). The number only shows when asked. (`elite`, `declining` and `peak` are no longer used.)
+export default function StarRating({ value, showNumber }) {
   if (value == null) return <span className="stars none">No rating</span>;
-  const cls = ['stars', value >= 5 && 'elite', declining && 'declining'].filter(Boolean).join(' ');   // `elite` is ignored: 5 stars glows, nothing else
-  const top = peak != null && peak > value ? peak : value;
-  const halves = Math.round(top * 2);
-  const have = Math.round(value * 2);
-  const icons = [];
-  for (let h = 0; h < halves; h += 2) {
-    const leftLost = h >= have;
-    const hasRight = h + 1 < halves;
-    const rightLost = h + 1 >= have;
-    if (hasRight && leftLost === rightLost) icons.push(<StarIcon key={h} lost={leftLost} />);
-    else {
-      icons.push(<StarIcon key={`${h}l`} half lost={leftLost} />);
-      if (hasRight) icons.push(<StarIcon key={`${h}r`} right lost={rightLost} />);
-    }
-  }
+  const v = Math.max(0, Math.min(5, Math.round(value * 2) / 2)), whole = Math.floor(v), half = v - whole >= 0.5;
   return (
-    <span className={cls} title={top > value ? `${value} stars (down from ${top})` : `${value} stars`}>
-      {icons}
-      {showNumber && <span className="stars-num">{value.toFixed(1)}{top > value && <em className="stars-lost"> ▼{(top - value).toFixed(1)}</em>}</span>}
+    <span className={`stars${v >= 5 ? ' elite' : ''}`} title={`${v} stars`}>
+      {Array.from({ length: whole }, (_, k) => <StarIcon key={k} />)}
+      {half && <StarIcon half />}
+      {showNumber && <span className="stars-num">{v.toFixed(1)}</span>}
     </span>
   );
 }

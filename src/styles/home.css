@@ -47,7 +47,7 @@
 .yrs { color: var(--dim); background: #0006; border: 1px solid var(--line); padding: 0 5px; }
 .yrs.last { color: var(--warn); border-color: #6b4a14; }
 .pot-mini { display: inline-flex; align-items: center; gap: 4px; color: var(--faint); font-family: var(--label); font-weight: 700; }
-.pot-mini .stars { transform: scale(.78); transform-origin: left center; }
+.pot-mini .star-icon { width: 11px; height: 11px; }   /* smaller stars that still take up their own space (a scale() made them overlap) */
 .owner-tag { font-family: var(--label); font-weight: 700; font-size: 12px; color: #062014; background: var(--gold); border: 1px solid #000; padding: 0 5px; }
 .console-grid.solo { grid-template-columns: 1fr; }
 
