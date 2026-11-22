@@ -9,12 +9,8 @@
 .badge-lg { width: 84px; height: 84px; font-size: 18px; }
 
 .stars { display: inline-flex; align-items: center; gap: 1px; white-space: nowrap; }
-.star-icon { display: block; flex: none; filter: drop-shadow(1px 1px 0 #000); }
-.star-icon .star-empty { fill: #3b2d17; stroke: #8a5a10; stroke-width: 1.3; stroke-linejoin: round; }
-.star-icon .star-base { fill: var(--gold); stroke: #6b4200; stroke-width: 1.3; stroke-linejoin: round; paint-order: stroke; }
-.star-icon .star-lit { fill: #fff3b8; opacity: .55; } .star-icon .star-shade { fill: #a86a00; opacity: .45; }
+.star-icon { display: block; flex: none; width: calc(var(--w) * 1px); height: 12px; filter: drop-shadow(1px 1px 0 #0008); }
 .stars.elite .star-icon { filter: drop-shadow(1px 1px 0 #000) drop-shadow(0 0 4px #ffd23acc); animation: pop .35s ease-out both, star-glow 1.8s ease-in-out .4s infinite; }
-.stars.elite .star-icon .star-base { fill: #ffd84a; }
 @keyframes star-glow { 50% { filter: drop-shadow(1px 1px 0 #000) drop-shadow(0 0 7px #ffe36aff); } }
 .stars.none { color: var(--faint); font-size: 12px; }
 .stars-num { color: var(--dim); font-size: 11px; margin-left: 6px; }

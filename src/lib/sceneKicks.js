@@ -80,6 +80,7 @@ export function buildKick(S, lineups) {
   K.brain = B.path([S.at(-7.6, -0.4)], T0 + 0.35, tKick, K.max * 0.7);
   S.when(tKick - 0.12, (s) => s.setPose(K, 'kick', 0.5));
   const good = kick?.good, dur = Math.max(0.9, Math.abs(goalX - S.los) / 21), y1 = good ? (S.rand() - 0.5) * 2 : (S.rand() < 0.5 ? -1 : 1) * (4.5 + S.rand() * 2);
-  S.when(tKick, (s) => s.throwBall(goalX + dir * 2, y1, good ? 4 : 2, dur, Math.min(9, Math.abs(goalX - S.los) * 0.2), (ss) => ss.loose(dir * 2, 0, -1), { kick: true }));
-  S.tEnd = tKick + dur;
+  const caught = Math.abs(y1) < 4.4;   // into the net behind the posts (kickNet): it bulges and the ball drops
+  S.when(tKick, (s) => s.throwBall(goalX + dir * 2, y1, good ? 4 : 2, dur, Math.min(9, Math.abs(goalX - S.los) * 0.2), (ss) => { if (caught && ss.net) { ss.net.hit = ss.t; ss.loose(-dir * 0.3, 0, -1); } else ss.loose(dir * 2, 0, -1); }, { kick: true }));
+  S.tKick = tKick; S.tEnd = tKick + dur;
 }

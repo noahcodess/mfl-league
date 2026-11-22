@@ -1,6 +1,6 @@
 // Draws the live play onto the broadcast canvas: the line of scrimmage and first-down line before the snap, the kickoff
 // tee, shadows, the ball-carrier ring (sceneRing), every player in the right pose and facing (scenePose), the ball
-// (sceneBall), the officials (refSprite) and the flag they throw (flagDraw).
+// (sceneBall), the officials (refSprite) and the flag they throw (flagDraw), and the kicking net (kickNet).
 import { FY0, FY1, YD, MID_Y, yardX } from './fieldLayout.js';
 import { sprite } from './fieldSprite.js';
 import { lookAt } from './scenePose.js';
@@ -10,6 +10,7 @@ import { hopAt } from './sceneCatch.js';
 import { refSprite } from './refSprite.js';
 import { drawFlag, drawFlagShadow } from './flagDraw.js';
 import { flagAt } from './sceneRefs.js';
+import { drawNet } from './kickNet.js';
 
 export const SPRITE_PX = 0.5; // world pixels per sprite pixel: a player stands about 2 yards tall, like the Drip tab art shrunk down
 
@@ -24,6 +25,7 @@ export function drawScene(ctx, S, cam, looks) {
     const f = S.lines.first; if (f != null && f > 0 && f < 100) { ctx.fillStyle = '#ffd83a'; ctx.fillRect(sx(f) - px, top, 2 * px, bottom - top); }
     ctx.globalAlpha = 1;
   }
+  drawNet(ctx, S, cam, px, sp);   // the kicking net and its crew, behind everyone
   if (S.tee && t < S.tee.t1 + 0.6) { ctx.fillStyle = '#ff7a1a'; ctx.fillRect(sx(S.tee.x) - Math.round(1.5 * sp), sy(S.tee.y) - Math.round(4 * sp), Math.round(3 * sp), Math.round(4 * sp)); }
   const cp = S.callPose, refs = (S.refs || []).map((r) => (cp && r.code === cp.code ? { ...r, x: cp.x, y: cp.y, sp: 0 } : r));   // the close-up moves the referee clear of the pile
   const list = S.actors.concat(refs).sort((m, n) => m.y - n.y), holder = S.ball.holder;   // players and officials, back to front

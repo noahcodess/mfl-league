@@ -4,7 +4,8 @@
 // the ball is in the air, tightening for slow motion, zooming in for replays and flags, and biting a little on a pump fake.
 import { yardX, MID_Y, YD, VIEW_H } from './fieldLayout.js';
 
-const LIVE = 1.0, AIR = 0.84, SLOW = 1.35, REPLAY = 1.6, FLAG = 1.9;
+const LIVE = 0.9, AIR = 0.76,   // pulled back a touch so you see more of the field around the play
+      SLOW = 1.35, REPLAY = 1.6, FLAG = 1.9;
 
 // S: the scene. cur: the scene stepped to now. phase: live | replay | flag. t: seconds into the play. slow: slow motion now.
 // first: the opening kickoff (starts wide and pushes in). flag: { x, y } for the flag close-up. replay: the replay's angle
