@@ -1,0 +1,18 @@
+/* The referee's call (RefCall): a referee-striped panel, the words typing out in a bold stencil-like face. Same on every network. */
+.refcall { position: absolute; left: 50%; bottom: 3.2cqw; z-index: 9; transform: translateX(-50%); display: grid; justify-items: center; gap: .6cqw; width: min(64cqw, 92%); pointer-events: none; }
+.refcall-tag { padding: .3cqw 1.3cqw; font: 400 1.3cqw/1 'Russo One', sans-serif; letter-spacing: .16em; text-transform: uppercase; color: #111; background: #ffd400; box-shadow: 0 .3cqw 0 #000; animation: rc-drop .4s cubic-bezier(.2, 1.4, .4, 1) both; }
+.refcall-panel { position: relative; width: 100%; display: grid; gap: .35cqw; padding: 1.2cqw 2cqw 1.3cqw; overflow: hidden; color: #fff;
+  background: repeating-linear-gradient(90deg, #0d0d0f 0 2.2cqw, #f2f2ee 2.2cqw 4.4cqw); border: .35cqw solid #0d0d0f; box-shadow: 0 1cqw 2.4cqw #000b;
+  animation: rc-open .5s cubic-bezier(.22, .9, .3, 1) both .15s; }
+.refcall-panel::before { content: ''; position: absolute; inset: .7cqw; background: #0d0d0fe6; border: .15cqw solid #ffffff33; }   /* the stripes frame a dark card */
+.refcall-l { position: relative; min-height: 1.2em; font: 400 2cqw/1.15 'Russo One', sans-serif; letter-spacing: .06em; text-shadow: .15cqw .15cqw 0 #000; white-space: nowrap; }
+.refcall-l.l0 { font-size: 3.4cqw; color: #ffd400; } .refcall-l.l2 { font-size: 1.7cqw; color: #e8e8e8; }
+.refcall-caret { display: inline-block; width: .5em; height: .9em; margin-left: .12em; vertical-align: -.05em; background: #ffd400; animation: rc-blink .5s steps(2) infinite; }
+@keyframes rc-open { from { clip-path: inset(0 50% 0 50%); } to { clip-path: inset(0 0 0 0); } }
+@keyframes rc-drop { from { opacity: 0; transform: translateY(-1.5cqw); } }
+@keyframes rc-blink { 50% { opacity: 0; } }
+/* FLAG on the scorebug, a second or so after the flag comes out: the down-and-distance turns into a yellow FLAG */
+.sb-flagged :is(.sb-down, .tnf-down, .snf-down) { background: #ffd400 !important; color: #111 !important; animation: sb-flag .5s cubic-bezier(.2, 1.4, .4, 1) both, sb-flag-pulse 1s ease-in-out infinite .5s; }
+.sb-flagged :is(.sb-down, .tnf-down, .snf-down) * { color: #111 !important; text-shadow: none !important; }
+@keyframes sb-flag { from { opacity: 0; filter: brightness(2.5); } }
+@keyframes sb-flag-pulse { 50% { filter: brightness(1.25); } }

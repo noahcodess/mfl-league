@@ -3,7 +3,7 @@
 import { WORLD_W, WORLD_H, VIEW_W, VIEW_H, MID_Y, YD, yardX } from './fieldLayout.js';
 
 // Widest view shows about 80 yards across, so the field never looks tiny; closest is the front row of fans.
-export const MIN_ZOOM = VIEW_W / (80 * YD), MAX_ZOOM = 2.4;
+export const MIN_ZOOM = VIEW_W / (80 * YD), MAX_ZOOM = 3.6;   // 3.6 only for the close-up on an official making a call
 
 export function clampCam(c) {
   const zoom = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, c.zoom)), hw = VIEW_W / zoom / 2, hh = VIEW_H / zoom / 2;

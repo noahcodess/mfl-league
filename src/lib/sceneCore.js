@@ -130,6 +130,7 @@ export class Scene {
       b.x = lerp(f.x0, f.x1, u); b.y = lerp(f.y0, f.y1, u); b.h = lerp(f.h0, f.h1, u) + f.apex * 4 * u * (1 - u);
       if (u >= 1) { b.flight = null; b.spin = false; f.land?.(this); }
     } else if (b.holder) { b.x = b.holder.x; b.y = b.holder.y; b.h = b.holder.down ? 0.25 : 0.62; }
+    if (this.tick) this.tick(this, dt);   // the officials (sceneRefs)
     else if (b.loose) { // bounces, then rolls to a stop
       const L = b.loose; L.vh -= 26 * dt; b.x += L.vx * dt; b.y += L.vy * dt; b.h += L.vh * dt;
       if (b.h <= 0.12) { b.h = 0.12; if (Math.abs(L.vh) > 1.5) { L.vh = -L.vh * 0.45; L.vx *= 0.65; L.vy *= 0.65; L.wild = !L.wild; } else { L.vh = 0; L.vx *= 1 - dt * 3; L.vy *= 1 - dt * 3; } }

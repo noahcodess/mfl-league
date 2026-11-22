@@ -40,10 +40,11 @@ export function pulseNow(G) {
 export function pulseShows(G, play, pul) {
   if (pul.v == null || !pul.away) return false;
   const k = play.kind, d = play.before.down, e = G.crowdE || 0, r = hash(G.seed || 1, play.n);
-  if (k === 'fg' || k === 'punt' || d === 4) return e > 0.05;
-  if (G.lastOff !== play.off) return e > 0.06 ? r < 0.93 : r < 0.3;   // the first snap of a drive: the house greets them (rarely not)
-  if (d === 3) return e > 0.14 ? r < 0.93 : r < 0.4;
-  return r < (pul.v >= 60 ? 0.5 : pul.v >= 45 ? 0.3 : pul.v >= 30 ? 0.12 : e > 0.15 ? 0.04 : 0);
+  if (k === 'fg' || k === 'punt' || d === 4) return e > 0.03;                 // 4th down, kicks: basically always
+  if (G.lastOff !== play.off) return e > 0.06 ? r < 0.94 : r < 0.35;   // the first snap of a drive: the house greets them (rarely not)
+  if (d === 3) return e > 0.12 ? r < 0.97 : r < 0.5;
+  if (d === 2) return r < (pul.v >= 45 ? 0.75 : pul.v >= 25 ? 0.5 : e > 0.1 ? 0.25 : 0.08);
+  return r < (pul.v >= 60 ? 0.55 : pul.v >= 40 ? 0.3 : pul.v >= 25 ? 0.15 : e > 0.15 ? 0.06 : 0);
 }
 
 // After the play: the crowd feeds on what happened. loud = the visitors cracked (a flag, a miscue, a sack, an incompletion).

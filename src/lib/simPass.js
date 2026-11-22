@@ -130,7 +130,7 @@ export function passPlay(G, play, call, def, plan = {}) {
     return { gain: d, time: tCatch + 3, turnover: 'int', by: tgt.c };
   };
   const pc = G.pul?.p || 0;
-  if (pc >= 0.35 && R.chance(0.07 * pc * pc)) { // too loud to hear the call: he ran the wrong route (Stadium Pulse)
+  if (pc >= 0.3 && R.chance(0.09 * pc * pc)) { // too loud to hear the call: he ran the wrong route (Stadium Pulse)
     addEvent(play, 'catch', tCatch, { target: tgt.p.id, def: tgt.c.id, result: 'miss', why: 'wrong route', sep: Math.round(tgt.sep * 10) / 10 }); play.crowdHit = true;
     play.text = `${qb.last} throws for ${tgt.p.last}... nobody there! Miscommunication in the noise.`; return { gain: 0, incomplete: true, time: tCatch + 1 };
   }

@@ -6,9 +6,9 @@
 .sp-box { position: relative; display: grid; gap: .45cqw; padding: .7cqw .9cqw .6cqw; background: var(--sp-bg); border: .15cqw solid var(--sp-edge); border-left: .45cqw solid var(--sp-acc);
   color: var(--sp-fg); box-shadow: 0 .5cqw 1.4cqw #0009; animation: sp-shake .11s linear infinite; }
 .sp-box small { font-size: .95cqw; letter-spacing: .2em; text-transform: uppercase; opacity: .85; }
-.sp-bars { display: flex; gap: .22cqw; }
-.sp-bars i { width: .85cqw; height: 2.2cqw; background: #ffffff18; border-radius: .12cqw; transform-origin: 50% 100%; }
-.sp-bars i.on { background: hsl(calc(120 - var(--k) * 13) 85% 52%); box-shadow: 0 0 .6cqw hsl(calc(120 - var(--k) * 13) 90% 55% / .7); animation: sp-bar .25s ease-out both, sp-flick .9s ease-in-out infinite alternate; }
+.sp-bars { display: flex; gap: .16cqw; align-items: flex-end; }
+.sp-bars i { width: .62cqw; height: calc(1.2cqw + var(--k) * .07cqw); background: #ffffff18; border-radius: .1cqw; transform-origin: 50% 100%; transition: background .12s, box-shadow .12s; }   /* each bar a little taller, like a level meter */
+.sp-bars i.on { background: hsl(calc(120 - var(--k) * 8) 85% 52%); box-shadow: 0 0 .6cqw hsl(calc(120 - var(--k) * 8) 90% 55% / .7); animation: sp-bar .25s ease-out both; }
 .sp-box b { display: flex; align-items: baseline; gap: .6cqw; font-size: 1.5cqw; letter-spacing: .06em; line-height: 1; }
 .sp-box b em { font-style: normal; font-size: .95cqw; opacity: .8; letter-spacing: .1em; }
 .sp-hot .sp-box::after { content: ''; position: absolute; inset: -.3cqw; border: .2cqw solid var(--sp-acc); opacity: 0; animation: sp-beat .7s ease-out infinite; pointer-events: none; }

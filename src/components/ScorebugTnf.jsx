@@ -20,7 +20,7 @@ export default function ScorebugTnf({ home, away, st, rec, pop, card, className 
     </div>
   );
   return (
-    <div className={`sb sb-tnf${st?.quarter >= 5 ? ' sb-ot' : ''} ${className}`}>
+    <div className={`sb sb-tnf${st?.quarter >= 5 ? ' sb-ot' : ''}${st?.flag ? ' sb-flagged' : ''} ${className}`}>
       <div className="sb-pop">{pop}</div>
       <div className="tnf">
         {side(away, 'away')}

@@ -6,6 +6,7 @@ import { frame, lineup, ev, huddleUp } from './sceneLineup.js';
 import { buildRun, buildScramble, buildKneel, buildSpike } from './sceneRun.js';
 import { buildPass } from './scenePass.js';
 import { buildKickoff, buildPunt, buildKick } from './sceneKicks.js';
+import { addRefs } from './sceneRefs.js';
 
 // A flag before the snap: the offender jumps early, the flag flies, everyone stands up.
 function buildPenalty(S, lineups) {
@@ -55,6 +56,7 @@ export function buildScene(play, lineups, pace = {}, seed = 1, slack = null) {
   else buildRun(S, lineups);
   if (S.huddle) huddleUp(S);   // now that everything is set from the real spots, start them in the huddle
   if (play.flagged && !S.flag) S.flag = { t: S.tEnd - 0.4, x: S.los, y: 2 };
+  addRefs(S);   // the officials (and who throws the flag, where and when)
   S.dur = S.tEnd + 2.4;
   S.rebuild = () => buildScene(play, lineups, pace, seed, slack);
   return S;

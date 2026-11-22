@@ -50,10 +50,11 @@ export default function Scorebug(props) {
   const fin = parts.status === 'final', won = (st?.home_score ?? 0) > (st?.away_score ?? 0) ? home : away;
   parts.clock = fin ? '' : gameClockText(st?.quarter || 1, parts.left);   // a final shows Final (or Final/OT2) and who won, no clocks
   if (fin) { parts.down = `${won.code} win`; parts.pc = ''; } else parts.pc = st?.play_clock ?? 24;
+  if (st?.flag) parts.down = 'FLAG';   // a flag is down: the down and distance turns into FLAG
   if (bc.bug === 'tnf') return <ScorebugTnf {...props} {...parts} />;
   if (bc.bug === 'snf') return <ScorebugSnf {...props} {...parts} />;
   return (
-    <div className={`sb sb-${bc.bug}${st?.quarter >= 5 ? ' sb-ot' : ''}${fin ? ' sb-final' : ''} ${className}`}>
+    <div className={`sb sb-${bc.bug}${st?.quarter >= 5 ? ' sb-ot' : ''}${fin ? ' sb-final' : ''}${st?.flag ? ' sb-flagged' : ''} ${className}`}>
       <div className="sb-pop">{pop}</div>
       <div className="sb-bar">
         <span className="sb-net"><img src={bc.prime ? bc.logo : bc.net.logo} alt="" /></span>
