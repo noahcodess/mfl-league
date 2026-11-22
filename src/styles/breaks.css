@@ -71,3 +71,4 @@
 .ht-lrow .headshot { width: 4.6cqw; height: 4.6cqw; border: .2cqw solid #000; image-rendering: pixelated; }
 .ht-lrow small { display: block; font-size: 1cqw; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); } .ht-lrow b { display: block; font-size: 1.7cqw; } .ht-lrow span { font-size: 1.3cqw; opacity: .85; }
 .ht-next { margin: 1cqw 0 0; justify-self: center; font-size: 1.8cqw; font-weight: 800; animation: brk-up .5s both 1.4s; }
+.htc-pos { margin-right: .25em; padding: .05em .3em; font-size: .45em; vertical-align: .35em; background: var(--accent); color: var(--on-accent, #111); border-radius: .15em; }   /* WR Garcia vs CB Greene */

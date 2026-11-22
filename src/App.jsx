@@ -79,7 +79,7 @@ function Screen({ route, session, step, reload }) {
   if (route.page === 'gameBooth') {
     if (step === 'login') return <LoginPage />;
     if (step !== 'ready') return null;
-    return session.profile.role === 'commissioner' || session.profile.site_owner ? <GameBoothPage id={route.id} /> : <div className="notice bad">Commissioner only.</div>;
+    return session.profile.role === 'commissioner' || session.profile.site_owner ? <GameBoothPage id={route.id} viewer={session.profile} /> : <div className="notice bad">Commissioner only.</div>;
   }
   if (route.page === 'freeAgents') return <FreeAgentsPage viewer={step === 'ready' ? session.profile : null} />;
   if (route.page === 'game') {

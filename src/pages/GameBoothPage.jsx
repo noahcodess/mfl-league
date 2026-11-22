@@ -1,4 +1,6 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
+import Modal from '../components/Modal.jsx';
+import TeamPage from './TeamPage.jsx';
 import BoothControls from '../components/BoothControls.jsx';
 import BoothCoaches from '../components/BoothCoaches.jsx';
 import BoothKeyPlay from '../components/BoothKeyPlay.jsx';
@@ -16,8 +18,9 @@ import { isRealGame } from '../data/gameState.js';
 // Commissioner Window: Broadcast Booth. Its own browser window for his second monitor while the broadcast is screen-shared.
 // Everything only he sees: playback controls and jumps, both coaches (online, last seen, or Bot) and their timeouts, the key
 // play with the coach's options and the play clock, graphics before they go on air (deny them), any player's stats with a
-// button to put his card up, the stat sheet, test tools, and the play call and result (no longer shown on the broadcast). It drives the broadcast in the main window.
-export default function GameBoothPage({ id }) {
+// button to put his card up, either team's roster (tap a team), the stat sheet, test tools, and the play call and result (no longer shown on the broadcast). It drives the broadcast in the main window.
+export default function GameBoothPage({ id, viewer }) {
+  const [roster, setRoster] = useState(null);
   const found = useGame(id), feed = useBoothFeed(id), presence = useCoachPresence(true), coaches = useCoaches(), coached = useCoachedTeams();
   useEffect(() => { document.title = 'Commissioner Window: Broadcast Booth'; }, []);
   if (!found) return <div className="desk-page"><p className="dim">Looking for that game...</p></div>;
@@ -27,19 +30,20 @@ export default function GameBoothPage({ id }) {
       <header className="desk-top">
         <div><b>COMMISSIONER WINDOW: BROADCAST BOOTH</b><small>Week {game.week} · only you see this window · keep the broadcast on your shared screen</small></div>
         <div className="booth-score">
-          {['away', 'home'].map((k) => <span key={k}><img src={getTeam(ids[k]).logo} alt="" />{getTeam(ids[k]).code} <b>{sc ? sc[k] : '-'}</b></span>)}
-          <em className={s ? 'on' : ''}>{s ? (s.paused ? '⏸ PAUSED' : s.brk ? `📺 ${s.brk === 'half' ? 'HALFTIME REPORT' : 'OVERTIME RULES'}` : s.i >= s.total ? 'FINAL' : '● LIVE') : 'Waiting for the broadcast'}</em>
+          {['away', 'home'].map((k) => <button key={k} className="booth-team" title="See this team's roster" onClick={() => setRoster(ids[k])}><img src={getTeam(ids[k]).logo} alt="" />{getTeam(ids[k]).code} <b>{sc ? sc[k] : '-'}</b></button>)}
+          <em className={s ? 'on' : ''}>{s ? (s.paused ? '⏸ PAUSED' : s.brk ? `📺 ${{ half: 'HALFTIME REPORT', ot: 'OVERTIME RULES', q1: 'END OF THE 1ST', q3: 'END OF THE 3RD' }[s.brk]}` : s.i >= s.total ? 'FINAL' : '● LIVE') : 'Waiting for the broadcast'}</em>
         </div>
       </header>
       {!feed.supported && <p className="notice bad">This browser can't link windows. Use Chrome, Edge or Firefox.</p>}
       {!s && <p className="notice">Start or resume the game in the main window (Live → the game → ▶ Start game). This booth links up by itself, in this same browser.</p>}
       {s && (
         <div className="booth-cols">
-          <div><BoothControls s={s} send={feed.send} /><BoothCoaches s={s} ids={ids} coaches={coaches} presence={presence} coached={coached} send={feed.send} /></div>
+          <div><BoothControls s={s} send={feed.send} /><BoothCoaches s={s} ids={ids} coaches={coaches} presence={presence} coached={coached} send={feed.send} onRoster={setRoster} /></div>
           <div><BoothKeyPlay s={s} ids={ids} /><BoothGraphics s={s} send={feed.send} />{s.play && <p className="booth-last"><b>📋 {getTeam(ids[s.play.off])?.code} · {s.play.call || s.play.kind}</b>{s.play.text ? ` → ${s.play.text}` : ' · before the snap'}</p>}</div>
           <div><BoothStats roster={feed.roster} stats={feed.stats} ids={ids} send={feed.send} />{(isTestMode() || !isRealGame(id)) && <BoothTest s={s} ids={ids} send={feed.send} />}</div>
         </div>
       )}
+      {roster && <Modal className="booth-roster" onClose={() => setRoster(null)}><button className="btn ghost small booth-roster-x" onClick={() => setRoster(null)}>✕ Close</button><TeamPage teamId={roster} viewer={viewer} rosterOnly /></Modal>}
     </div>
   );
 }

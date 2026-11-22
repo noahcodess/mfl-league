@@ -64,3 +64,11 @@
 .sbt.bgx-snf .sbt-word, .sbt.bgx-snf .sbt-p b { font-style: italic; font-weight: 800; }
 .sbt.bgx-snf .sbt-score { margin-right: 1.4em; border-radius: 0; }
 .sbt.bgx-nbc { --g-r: .6em; }
+/* timeouts: the bug grows, the team's light (the last one lit) blinks with a glow and goes out, then the TIMEOUT bar (TimeoutTakeover) */
+.pg-bug.to-grow { transform: translateX(-50%) scale(1.16); }
+.pg-bug.to-blink[data-to="away"] :is(.sb-team.away, .tnf-side.away, .snf-side.away) .sb-tos i.on:not(:has(+ i.on)),
+.pg-bug.to-blink[data-to="home"] :is(.sb-team.home, .tnf-side.home, .snf-side.home) .sb-tos i.on:not(:has(+ i.on)) { animation: to-blink .32s steps(2) 3 both .15s; }
+@keyframes to-blink { 0% { background: #fff; box-shadow: 0 0 .5em .15em #fff, 0 0 1em .3em var(--ta, #ffd84a); } 100% { opacity: .25; box-shadow: none; } }
+.sbt-to-who { display: grid; line-height: 1.05; animation: sbt-up .45s cubic-bezier(.22, .9, .3, 1) .7s both; }
+.sbt-to-who b { font-size: 1.15em; letter-spacing: .02em; } .sbt-to-who small { font-size: .8em; opacity: .9; letter-spacing: .06em; text-transform: uppercase; }
+.sbt-to { padding-right: 1.2em; }

@@ -24,7 +24,7 @@ export function HalfPlayer({ potg, who, team }) {
 export function StoryCard({ st, people, teams }) {
   const team = teams[st.side], p = people[st.id || st.off], vs = st.def && people[st.def], name = (x) => x?.last || x?.name || '?';
   const body = {
-    duel: () => ({ tag: 'Matchup cooking 🔥', title: <>{name(p)} <i>vs</i> {name(vs)}</>, nums: [[st.rec, 'Catches'], [st.yds, 'Yards'], [st.td, 'TD'], [`${st.rec}/${st.tgt}`, 'On targets']], line: `${p?.name || 'He'} has owned ${vs?.name || 'his man'} so far.` }),
+    duel: () => ({ tag: 'Matchup cooking 🔥', title: <><small className="htc-pos">{p?.pos}</small>{name(p)} <i>vs</i> <small className="htc-pos">{vs?.pos}</small>{name(vs)}</>, nums: [[st.rec, 'Catches'], [st.yds, 'Yards'], [st.td, 'TD'], [`${st.rec}/${st.tgt}`, 'On targets']], line: `${p?.name || 'He'} has owned ${vs?.name || 'his man'} so far.` }),
     qb: () => ({ tag: 'Can\'t miss', title: name(p), nums: [[`${st.cmp}/${st.att}`, 'Comp/Att'], [`${Math.round((st.cmp / st.att) * 100)}%`, 'Comp %'], [st.yds, 'Yards'], [st.td, 'TD']], line: 'Picking the defense apart.' }),
     rb: () => ({ tag: 'Big chunks', title: name(p), nums: [[st.ypc.toFixed(1), 'Yds / carry'], [st.car, 'Carries'], [st.yds, 'Yards'], [st.td, 'TD']], line: st.ypc >= 10 ? 'Double digits a carry. That\'s absurd.' : 'Every carry is moving the chains.' }),
     rush: () => ({ tag: 'Living in the backfield', title: name(p), nums: [[st.sacks, 'Sacks'], [st.pres, 'Pressures']], line: 'The line has no answer for him.' }),

@@ -3,15 +3,20 @@ import BreakShow from './BreakShow.jsx';
 import { HalfPlayer, StoryCard } from './HalftimeCards.jsx';
 import { halfStory, teamLines, halfLeaders } from '../lib/halftimeStats.js';
 import Headshot from './Headshot.jsx';
+import PlaySlide from './PlaySlide.jsx';
+import { playsOfHalf } from '../lib/playsOfGame.js';
+import { clipFor } from '../lib/replayClip.js';
 
 // The halftime report (about 35-45 seconds): transition, the network's halftime title with the score, the first-half team
-// numbers (each network picks its own lines), transition, the player of the half, then up to three storylines, then back
+// numbers (each network picks its own lines), transition, the player of the half, up to three storylines, the plays of the
+// half replayed (2 to 4), the leaders, then back
 // to the field for the second-half kickoff. Styled by the network around it, so every broadcast's report looks different.
 // plays: the first half. score: at the half. people: id → player. sideOf: id → side. bc: the broadcast.
-export default function HalftimeReport({ plays, score, teams, people, sideOf, bc, receiver, onReveal, onDone }) {
+export default function HalftimeReport({ plays, score, teams, people, sideOf, bc, receiver, lineups, looks, seed, onReveal, onDone }) {
   const key = bc.prime ? bc.show.key : bc.net.key;
   const s = useMemo(() => halfStory(plays, sideOf, score), [plays, sideOf, score]);
   const lines = useMemo(() => teamLines(s.teams, key), [s.teams, key]);
+  const best = useMemo(() => (lineups ? playsOfHalf(plays).map((p) => ({ p, clip: clipFor(p, lineups, seed) })) : []), [plays, lineups, seed]);   // the plays of the half, 2 to 4
   const star = s.potg && people[s.potg.player_id], starTeam = s.potg && teams[s.potg.team_id];
   const title = () => (
     <div className="ht-title">
@@ -55,6 +60,7 @@ export default function HalftimeReport({ plays, score, teams, people, sideOf, bc
     { sting: true },
     { ms: 8000, render: () => <HalfPlayer potg={s.potg} who={star} team={starTeam || teams.home} /> },
     ...s.stories.map((st) => ({ ms: 5200, render: () => <StoryCard st={st} people={people} teams={teams} /> })),
+    ...(best.length ? [{ sting: true }, ...best.map(({ p, clip }, k) => ({ ms: clip.ms, render: () => <PlaySlide label={`Plays of the half · ${k + 1} of ${best.length}`} play={p} clip={clip} teams={teams} looks={looks} /> }))] : []),
     { sting: true },
     { ms: 7500, render: leaders },
   ];

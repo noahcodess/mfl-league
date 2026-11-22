@@ -36,6 +36,7 @@ export default function BoothTest({ s, ids, send }) {
       <div className="booth-row">
         <button className="btn small ghost" onClick={() => send('preview', 'half')}>▶ Preview the halftime report</button>
         <button className="btn small ghost" onClick={() => send('preview', 'ot')}>▶ Preview the overtime rules</button>
+        <button className="btn small ghost" onClick={() => send('preview', 'q1')}>▶ Preview the end-of-quarter recap</button>
         <button className="btn small ghost" disabled={!s?.play} onClick={() => send('deny', s?.pre?.id)}>🚫 Deny this graphic</button>
       </div>
     </details>

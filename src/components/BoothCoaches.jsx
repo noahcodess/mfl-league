@@ -6,7 +6,7 @@ import { isTestMode } from '../data/teams.js';
 // team (it takes effect before the next snap, and the rest of the game plays out from it).
 const ago = (t) => { if (!t) return 'never'; const m = Math.round((Date.now() - Date.parse(t)) / 60000); return m < 1 ? 'just now' : m < 60 ? `${m} min ago` : m < 1440 ? `${Math.round(m / 60)} h ago` : `${Math.round(m / 1440)} d ago`; };
 
-export default function BoothCoaches({ s, ids, coaches, presence, coached, send }) {
+export default function BoothCoaches({ s, ids, coaches, presence, coached, send, onRoster }) {
   const to = s?.play?.before?.to;
   return (
     <section className="booth-card">
@@ -16,7 +16,7 @@ export default function BoothCoaches({ s, ids, coaches, presence, coached, send 
         return (
           <div key={side} className="booth-coach" style={{ '--tc': t.color }}>
             <img src={t.logo} alt="" />
-            <div><b>{t.name}</b><small>{c?.name ? `Coach ${c.name}` : 'Coach'} · {human ? (p?.online ? <em className="on">● Online</em> : <em>Last seen {ago(p?.lastSeen)}</em>) : <em className="bot">🤖 Bot</em>}</small></div>
+            <div><button className="booth-link" onClick={() => onRoster?.(t.id)} title="See the roster"><b>{t.name}</b> 📋</button><small>{c?.name ? `Coach ${c.name}` : 'Coach'} · {human ? (p?.online ? <em className="on">● Online</em> : <em>Last seen {ago(p?.lastSeen)}</em>) : <em className="bot">🤖 Bot</em>}</small></div>
             <span className="booth-tos">{[0, 1, 2].map((k) => <i key={k} className={k < left ? 'on' : ''} />)}</span>
             <button className="btn small" disabled={!s?.play || left <= 0} onClick={() => send('timeout', null, { input: { kind: 'timeout', side, by: 'commissioner' } })}>⏸ Timeout</button>
           </div>

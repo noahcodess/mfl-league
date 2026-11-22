@@ -19,9 +19,11 @@ import NetStinger from './NetStinger.jsx';
 import { STING_MID } from '../lib/pixelSwarm.js';
 import BroadcastSlot, { slotCard, slotBusy, slotWindow } from './BroadcastSlot.jsx';
 import ScoreTakeover from './ScoreTakeover.jsx';
+import TimeoutTakeover from './TimeoutTakeover.jsx';
 import { planGraphics } from '../lib/broadcastGfx.js';
 import HalftimeReport from './HalftimeReport.jsx';
 import OvertimeRules from './OvertimeRules.jsx';
+import QuarterRecap from './QuarterRecap.jsx';
 import useBoothRemote from './useBoothRemote.js';
 import { finalText } from '../data/gameState.js';
 
@@ -60,8 +62,8 @@ export default function PixelGame({ game, teams, lineups, onClose, onDone, onPla
   const plan = useMemo(() => planGraphics(game.plays), [game.plays]), g = plan[i] || {};   // every graphic, planned so only one is ever up
   const people = useMemo(() => Object.fromEntries(['home', 'away'].flatMap((s) => everyone(lineups, s).map((p) => [p.id, p]))), [lineups]), playerOf = (id) => people[id];
   const sideOf = useMemo(() => Object.fromEntries(['home', 'away'].flatMap((s) => everyone(lineups, s).map((p) => [p.id, s]))), [lineups]);
-  const marks = useMemo(() => ({ half: game.plays.findIndex((p) => p.before.quarter === 3), ot: game.plays.findIndex((p) => p.before.quarter >= 5) }), [game.plays]);   // the second-half kickoff and the first overtime snap
-  useEffect(() => { const kind = i === marks.half ? 'half' : i === marks.ot ? 'ot' : null; if (kind && i > 0 && !shownBrk.current.has(i)) { shownBrk.current.add(i); setBrk({ kind, live: true }); } }, [i, marks]);
+  const marks = useMemo(() => ({ q1: game.plays.findIndex((p) => p.before.quarter === 2), half: game.plays.findIndex((p) => p.before.quarter === 3), q3: game.plays.findIndex((p) => p.before.quarter === 4), ot: game.plays.findIndex((p) => p.before.quarter >= 5) }), [game.plays]);   // the first snap of the 2nd, the second-half kickoff, the first snap of the 4th, the first overtime snap
+  useEffect(() => { const kind = i === marks.half ? 'half' : i === marks.ot ? 'ot' : i === marks.q1 ? 'q1' : i === marks.q3 ? 'q3' : null; if (kind && i > 0 && !shownBrk.current.has(i)) { shownBrk.current.add(i); setBrk({ kind, live: true }); } }, [i, marks]);
   const fresh = i === 0 || i === marks.half || i === marks.ot;   // the scorebug builds in again for these kickoffs
   const jumpTo = (k) => { const q = play?.before.quarter ?? 1, at = k === 'half' ? marks.half : k === 'ot' ? marks.ot : k === 'nextq' ? game.plays.findIndex((p, n) => n > i && p.before.quarter > q) : -1; setI(at > i ? at : game.plays.length); };
   const booth = useBoothRemote({ gameId: boothId, game, i, people, sideOf, act: { setPaused, setSpeed, setI, jumpTo, onInput, preview: (kind) => setBrk({ kind, live: true, at: i }) },
@@ -105,7 +107,7 @@ export default function PixelGame({ game, teams, lineups, onClose, onDone, onPla
   const gpre = booth.denied.has(`pre-${i}`) ? null : g.pre, man = booth.manual && playerOf(booth.manual.id);   // the commissioner can deny a graphic, or put up a stat card
   const pre = !beat.post && beat.phase === 'live' && !!play, bt = beat.t ?? 0, busy = slotBusy(gpre, pace, bt, pre);
   const card = (man && { side: booth.manual.side, player: man, team: teams[booth.manual.side], lines: booth.manual.lines, out: booth.manual.until - Date.now() < 450 }) || slotCard(gpre, pace, bt, pre, teams, playerOf);   // his card beats the planned one
-  const tout = (game.timeouts || []).find((x) => x.n === i + 1), toutUp = tout && pre && bt < 3.4;   // a timeout before this snap: the banner, and the pip goes out
+  const tout = (game.timeouts || []).find((x) => x.n === i + 1), toutUp = tout && pre && bt < 3.7, toutBar = toutUp && bt >= 1.4;   // a timeout as they break the huddle: the bug grows, his light blinks out, then the TIMEOUT bar
   const tos = (side) => { const v = (beat.post ? game.plays[i + 1]?.before.to : play?.before.to)?.[side] ?? 3; return toutUp && tout.side === side && bt < 1.3 ? v + 1 : v; };
   const scoreUp = !!g.score && beat.phase === 'live' && beat.tdAt != null && bt >= beat.tdAt;   // the scoring takeover of the bug
   const bugUp = !brk?.live && (!fresh || done || bt >= (S?.T0 ?? 0));   // the scorebug builds in as the opening (and second-half, and overtime) kickoff is struck
@@ -127,15 +129,16 @@ export default function PixelGame({ game, teams, lineups, onClose, onDone, onPla
         {beat.phase === 'flag' && shots?.flag && <div className="pg-flag"><span>🚩</span>{shots.flag.text}</div>}
         {!beat.post && pace?.keyPlay && !busy && <div className="pg-key">KEY PLAY</div>}
         {done && <div className="pg-headline final">{finalText(4 + (game.overtimes || 0)).toUpperCase()}</div>}
-        {toutUp && <div className={`pg-timeout net-${bc.net.key}`} key={`to${i}`} style={{ '--tc': teams[tout.side].color }}><img src={teams[tout.side].logo} alt="" /><b>TIMEOUT</b><span>{teams[tout.side].name}</span></div>}
         <BroadcastSlot pre={gpre} pace={pace} bt={bt} live={pre} play={play} teams={teams} bug={bc.bug} playerOf={playerOf} n={i} />
         {bugUp && <div className="pg-shelf" />}
         {brk && (() => {   // the break plays at its mark, or wherever the booth previews it (at)
-          const at = brk.at ?? (brk.kind === 'half' ? marks.half : marks.ot), p0 = game.plays[Math.min(at, game.plays.length - 1)], ends = { onReveal: () => setBrk((b) => b && { ...b, live: false }), onDone: () => setBrk(null) };
-          return brk.kind === 'half' ? <HalftimeReport plays={game.plays.slice(0, at)} score={p0.before.score} teams={teams} people={people} sideOf={sideOf} bc={bc} receiver={p0.def} {...ends} />
+          const at = brk.at ?? marks[brk.kind], p0 = game.plays[Math.min(at, game.plays.length - 1)], ends = { onReveal: () => setBrk((b) => b && { ...b, live: false }), onDone: () => setBrk(null) };
+          const film = { lineups, looks, seed: game.seed || 1 };   // to act out the replays
+          if (brk.kind === 'q1' || brk.kind === 'q3') return <QuarterRecap q={brk.kind === 'q1' ? 1 : 3} plays={game.plays.slice(0, at)} score={p0.before.score} teams={teams} bc={bc} {...film} {...ends} />;
+          return brk.kind === 'half' ? <HalftimeReport plays={game.plays.slice(0, at)} score={p0.before.score} teams={teams} people={people} sideOf={sideOf} bc={bc} receiver={p0.def} {...film} {...ends} />
             : <OvertimeRules teams={teams} first={p0.off} score={p0.before.score} bc={bc} {...ends} />;
         })()}
-        {bugUp && <div className={`pg-bug${scoreUp ? ' taken' : ''}${beat.phase === 'sting' || beat.phase === 'replay' ? ' snap' : ''}${beat.phase === 'replay' ? ' replay' : ''}`}><Scorebug bc={bc} home={teams.home} away={teams.away} st={st} rec={rec} card={card} className={fresh ? 'sb-enter' : ''} />{scoreUp && <ScoreTakeover key={`sc${i}`} score={g.score} team={teams[g.score.side]} people={g.score.ids.map(playerOf)} bug={bc.bug} />}</div>}
+        {bugUp && <div className={`pg-bug${scoreUp ? ' taken' : ''}${beat.phase === 'sting' || beat.phase === 'replay' ? ' snap' : ''}${beat.phase === 'replay' ? ' replay' : ''}${toutUp && !scoreUp ? ' to-grow' : ''}${toutUp && bt < 1.3 ? ' to-blink' : ''}${toutBar && !scoreUp ? ' taken' : ''}`} data-to={toutUp ? tout.side : undefined}><Scorebug bc={bc} home={teams.home} away={teams.away} st={st} rec={rec} card={card} className={fresh ? 'sb-enter' : ''} />{scoreUp && <ScoreTakeover key={`sc${i}`} score={g.score} team={teams[g.score.side]} people={g.score.ids.map(playerOf)} bug={bc.bug} />}{toutBar && !scoreUp && <TimeoutTakeover key={`to${i}`} team={teams[tout.side]} left={tos(tout.side)} pc={beat.playClock} bug={bc.bug} closing={bt > 3.2} />}</div>}
       </div>
       {!full && <p className="pg-text">{done ? 'That’s the game.' : beat.post ? play.text : play?.call?.name ? `${teams[play.off].code} · ${play.call.name}` : ' '}</p>}
       <div className="ct-row">

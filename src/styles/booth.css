@@ -44,9 +44,12 @@
 .booth-test .booth-row > span { min-width: 92px; color: var(--dim); }
 
 /* the TIMEOUT banner on the broadcast: slides out of the top, in the calling team's color */
-.pg-timeout { position: absolute; left: 50%; top: 4cqw; z-index: 8; display: flex; align-items: center; gap: 1cqw; padding: .6cqw 1.8cqw .6cqw .8cqw; transform: translateX(-50%);
   background: linear-gradient(90deg, var(--tc), color-mix(in srgb, var(--tc) 40%, #000)); border: .2cqw solid #000; box-shadow: .3cqw .3cqw 0 #000; color: #fff;
   font-family: var(--hf, 'Barlow Condensed'), sans-serif; animation: pg-to 3.4s cubic-bezier(.2, .9, .3, 1) both; }
-.pg-timeout img { width: 3.2cqw; height: 3.2cqw; object-fit: contain; filter: drop-shadow(.15cqw .15cqw 0 #000); }
-.pg-timeout b { font-size: 2.4cqw; letter-spacing: .08em; text-shadow: .15cqw .15cqw 0 #000; } .pg-timeout span { font-size: 1.4cqw; opacity: .9; }
 @keyframes pg-to { 0% { opacity: 0; transform: translate(-50%, -1.5cqw); } 10% { opacity: 1; transform: translate(-50%, 0); } 88% { opacity: 1; transform: translate(-50%, 0); } 100% { opacity: 0; transform: translate(-50%, -1cqw); } }
+/* either team's roster, from the score in the header or a coach's team name */
+.booth-team { display: inline-flex; align-items: center; gap: 6px; background: none; border: 1px solid transparent; border-radius: 4px; color: inherit; font: inherit; cursor: pointer; padding: 2px 6px; }
+.booth-team:hover { border-color: #ffffff40; background: #ffffff10; }
+.booth-link { background: none; border: 0; padding: 0; color: inherit; font: inherit; cursor: pointer; text-align: left; } .booth-link:hover b { text-decoration: underline; }
+.modal.booth-roster { width: min(1200px, 96vw); max-height: 92vh; overflow: auto; position: relative; }
+.booth-roster-x { position: sticky; top: 0; float: right; z-index: 5; }

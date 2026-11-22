@@ -58,6 +58,7 @@ import './styles/breaks.css';
 import './styles/breakNets.css';
 import './styles/overtime.css';
 import './styles/fanSupport.css';
+import './styles/recap.css';
 import './styles/booth.css';
 
 createRoot(document.getElementById('root')).render(<App />);
