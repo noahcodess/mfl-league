@@ -14,7 +14,7 @@ export function useWeekGate(game, season) {
   const simAll = async () => {
     setStep(3);
     for (const g of left) {
-      try { const { result } = await simGameNow(g.id, g.home, g.away, 'auto'); setLog((l) => [...l, { g, s: result.score }]); }
+      try { const { result } = await simGameNow(g.id, g.home, g.away, 'auto', g); setLog((l) => [...l, { g, s: result.score }]); }
       catch (e) { setErr(`${getTeam(g.away)?.code} at ${getTeam(g.home)?.code}: ${e.message}`); return; }
     }
     setStep(0); next?.();

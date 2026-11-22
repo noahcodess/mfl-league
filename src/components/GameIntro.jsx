@@ -13,7 +13,7 @@ import { broadcastFor } from '../data/broadcast.js';
 import { useGameKits } from '../data/gameKits.js';
 import { loadLineups } from '../data/gameLineups.js';
 import { useStadiums } from '../data/stadiums.js';
-import { useGameAttendance } from '../data/gameAttendance.js';
+import { useGameCrowd } from '../data/gameCrowd.js';
 import { playerSpotlight, gameWeather } from '../lib/introFacts.js';
 import { records } from '../lib/seasonStats.js';
 import { teamStats } from '../lib/teamRanks.js';
@@ -31,7 +31,7 @@ const FADE = 450;
 // kick: { receiving, home_dir } from the kickoff coin flip. st: the live game state (for the scorebug).
 export default function GameIntro({ game, season, kick, st, resume = null, onClose, onReplay }) {
   const home = getTeam(game.home), away = getTeam(game.away), bc = broadcastFor(game, home);
-  const kits = useGameKits(home, away, game), stadium = useStadiums()[home.id], att = useGameAttendance(game, kits, bc, stadium);
+  const kits = useGameKits(home, away, game), stadium = useStadiums()[home.id], att = useGameCrowd(game);
   const before = useMemo(() => season.weeks.slice(0, game.week - 1), [season, game.week]);
   const rec = useMemo(() => records(before), [before]);
   const stats = useMemo(() => teamStats(before), [before]);

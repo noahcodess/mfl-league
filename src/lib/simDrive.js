@@ -11,6 +11,7 @@ import { remember, pickPlay } from './simPlaybook.js';
 import { scout } from './coachPlan.js';
 import { preSnapFlag, postPlayFlag } from './simFlags.js';
 import { PLAY_CLOCK } from './simClock.js';
+import { pulseNow, stampPulse } from './stadiumPulse.js';
 
 export function sides(G) { const s = G.s; G.defSide = other(s.poss); G.O = G.teams[s.poss].O; G.D = G.teams[G.defSide].D; }
 const start = (G) => { const p = newPlay({ ...G.s, hash: 'middle' }, G.plays.length + 1); p.stats = []; return p; };
@@ -79,10 +80,11 @@ export function scrimmage(G) {
   sides(G);
   const s = G.s, o = s.poss, d = G.defSide, play = start(G), R = G.R;
   play.keyPlay = isKeyPlay(G);
+  const pul = G.pul = pulseNow(G);   // how loud the house is for this snap (Stadium Pulse)
   const pre = preSnapFlag(G, play);
   if (pre) { // five yards and replay the down
     if (pre.off) { s.ballOn -= pre.yards; s.toGo += pre.yards; } else { s.ballOn += pre.yards; s.toGo -= pre.yards; if (s.toGo <= 0) { s.down = 1; s.toGo = Math.min(10, 100 - s.ballOn); play.result.firstDown = true; } }
-    s.running = false; play.result.endOn = s.ballOn; return log(G, play, 0);
+    s.running = false; play.result.endOn = s.ballOn; stampPulse(G, play, pul); return log(G, play, 0);
   }
   // a coach in the coaching room can make the call on a key play; otherwise the AI coach does
   // a human coach calls key plays (never in test mode: bots coach everyone); the defense sees the formation first
@@ -131,5 +133,6 @@ export function scrimmage(G) {
     }
   }
   play.result.endOn = s.ballOn; play.ended = ended; s.running = moving && !ended;
+  stampPulse(G, play, pul);
   return log(G, play, secs);
 }

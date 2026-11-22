@@ -21,6 +21,7 @@ async function load() {
 }
 
 // Every Craft Bowl, newest season first (unknown seasons last). Shared and loaded once.
+export const craftBowlsNow = () => (cache ? Promise.resolve(cache) : load());   // for code that isn't a screen
 export function useCraftBowls() {
   const [list, setList] = useState(cache);
   useEffect(() => {

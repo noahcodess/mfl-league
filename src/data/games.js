@@ -24,6 +24,12 @@ const demoGames = () => makeSchedule(getTeams(), {}, (() => { let s = 7; return 
       odds: { home_win: p, away_win: 1 - p, rating: lop >= 0.32 ? 'blowout' : lop <= 0.1 ? 'great' : lop <= 0.15 ? 'good' : lop <= 0.25 ? 'okay' : 'bad', keys: [] } };
   });
 
+// The season's games right now (for code that isn't a screen).
+export async function seasonGamesNow(season) {
+  if (DEMO) return new URLSearchParams(window.location.search).get('nosched') ? [] : demoGames();
+  return (await db.rpc('season_games', { p_season: season })).data || [];
+}
+
 // Null while loading, then the season's games (week order, then slot).
 export function useSeasonGames(season, version = 0) {
   const [games, setGames] = useState(null), [bump, setBump] = useState(0);

@@ -15,7 +15,7 @@ export default function QuickSimButton({ game, home, away, gate }) {
     setStep(2); setErr('');
     try {
       const sample = async () => { const [h, a] = await loadLineups([home.id, away.id]), l = { home: h, away: a }; return { lineups: l, result: playOfficial(l, home.id, away.id, { ...flipKickoff(game), seed: Math.floor(Math.random() * 1e9) }, false) }; };
-      const [out] = await Promise.all([isRealGame(game.id) ? simGameNow(game.id, home.id, away.id, 'quick') : sample(), new Promise((r) => setTimeout(r, 1200))]);
+      const [out] = await Promise.all([isRealGame(game.id) ? simGameNow(game.id, home.id, away.id, 'quick', game) : sample(), new Promise((r) => setTimeout(r, 1200))]);
       setResult({ lineups: out.lineups, game: out.result }); setStep(3);
     } catch (e) { setErr(e.message); setStep(1); }
   };

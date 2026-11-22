@@ -20,6 +20,7 @@ import { STING_MID } from '../lib/pixelSwarm.js';
 import BroadcastSlot, { slotCard, slotBusy, slotWindow } from './BroadcastSlot.jsx';
 import ScoreTakeover from './ScoreTakeover.jsx';
 import TimeoutTakeover from './TimeoutTakeover.jsx';
+import StadiumPulse from './StadiumPulse.jsx';
 import { planGraphics } from '../lib/broadcastGfx.js';
 import HalftimeReport from './HalftimeReport.jsx';
 import OvertimeRules from './OvertimeRules.jsx';
@@ -68,10 +69,10 @@ export default function PixelGame({ game, teams, lineups, onClose, onDone, onPla
   const jumpTo = (k) => { const q = play?.before.quarter ?? 1, at = k === 'half' ? marks.half : k === 'ot' ? marks.ot : k === 'nextq' ? game.plays.findIndex((p, n) => n > i && p.before.quarter > q) : -1; setI(at > i ? at : game.plays.length); };
   const booth = useBoothRemote({ gameId: boothId, game, i, people, sideOf, act: { setPaused, setSpeed, setI, jumpTo, onInput, preview: (kind) => setBrk({ kind, live: true, at: i }) },
     read: () => ({ i, total: game.plays.length, paused, speed, phase: beat.phase, post: beat.post, t: beat.t ?? 0, T0: S?.T0, tEnd: S?.tEnd, dead: pace?.dead, clock: beat.clock, playClock: beat.playClock, brk: brk?.kind || null,
-      play: play && { n: play.n, kind: play.kind, off: play.off, keyPlay: !!play.keyPlay, call: play.call?.name || null, before: play.before, text: beat.post ? play.text : null },
+      play: play && { n: play.n, kind: play.kind, off: play.off, keyPlay: !!play.keyPlay, call: play.call?.name || null, pulse: play.pulse || null, before: play.before, text: beat.post ? play.text : null },
       pre: g.pre ? { id: `pre-${i}`, type: g.pre.type, label: g.pre.type === 'card' ? `${playerOf(g.pre.id)?.name} stat card` : g.pre.type === 'drive' ? 'Drive summary' : g.pre.type === 'fg' ? `Field goal bar (${g.pre.dist} yds)` : 'Ball on tag', window: slotWindow(g.pre, pace) } : null,
       marks, timeouts: game.timeouts || [], score: (beat.post ? play?.after?.score : play?.before.score) || game.score }) });
-  const clock = useRef({ t: 0, last: 0, phase: 'live', rt: 0, hold: 0, tdAt: null, tdReal: 0 }), ctl = useRef({}); ctl.current = { speed, paused: paused || !!brk?.live, S, i, shots, pace, sc: g.score, fresh, hold: booth.hold };
+  const clock = useRef({ t: 0, last: 0, phase: 'live', rt: 0, hold: 0, tdAt: null, tdReal: 0 }), ctl = useRef({}); ctl.current = { speed, paused: paused || !!brk?.live, S, i, shots, pace, sc: g.score, fresh, hold: booth.hold, pz: play?.pulse };
   useEffect(() => { Object.assign(clock.current, { t: 0, phase: 'live', rt: 0, hold: 0, tdAt: null, tdReal: 0 }); setBeat({ post: false, phase: 'live', i }); }, [i]);
   useEffect(() => { // the play clock, scorebug flip and which shot we're in, a few times a second
     const id = setInterval(() => { const { S: s, i: n, pace: pc } = ctl.current, c = clock.current; if (s) setBeat({ i: n, post: c.t >= s.tEnd, t: c.t, tdAt: c.tdAt, phase: c.phase, ...clockFace(game, n, c.t, s, c.phase, pc.dead) }); }, 100);
@@ -81,6 +82,12 @@ export default function PixelGame({ game, teams, lineups, onClose, onDone, onPla
     target() {   // the camera operator (broadcastCam) decides the shot
       const { S: s, shots: sh } = ctl.current, c = clock.current; if (!s) return { x: yardX(50), y: MID_Y, zoom: 0.7 };
       return camTarget(s, live0.current || s, { phase: c.phase, t: c.phase === 'replay' ? c.rt : c.t, slow: slowAt(sh, c.t) < 1, first: ctl.current.fresh, flag: sh?.flag, replay: sh?.replay });
+    },
+    shake() {   // a loud house shakes the camera before the snap (the graphics don't shake, only the pulse meter)
+      const { S: s, pz } = ctl.current, c = clock.current;
+      if (!s || !pz?.show || c.phase !== 'live' || c.t < 0.6 || c.t > s.T0 + 0.8) return null;
+      const a = Math.max(0, (pz.v - 40) / 60) * 1.2, n = performance.now();
+      return { dx: Math.sin(n / 31) * a, dy: Math.cos(n / 47) * a * 0.7 };
     },
     draw(ctx, cam) {
       const c = clock.current, now = performance.now(), { S: s, speed: sp, paused: p, shots: sh, pace: pc, sc } = ctl.current, dt = c.last ? Math.min(0.1, (now - c.last) / 1000) * sp : 0;
@@ -109,6 +116,8 @@ export default function PixelGame({ game, teams, lineups, onClose, onDone, onPla
   const card = (man && { side: booth.manual.side, player: man, team: teams[booth.manual.side], lines: booth.manual.lines, out: booth.manual.until - Date.now() < 450 }) || slotCard(gpre, pace, bt, pre, teams, playerOf);   // his card beats the planned one
   const tout = (game.timeouts || []).find((x) => x.n === i + 1), toutUp = tout && pre && bt < 3.7, toutBar = toutUp && bt >= 1.4;   // a timeout as they break the huddle: the bug grows, his light blinks out, then the TIMEOUT bar
   const tos = (side) => { const v = (beat.post ? game.plays[i + 1]?.before.to : play?.before.to)?.[side] ?? 3; return toutUp && tout.side === side && bt < 1.3 ? v + 1 : v; };
+  const pz = play?.pulse, t0 = S?.T0 ?? 0, pzHit = pz?.hit && beat.post && bt < (S?.tEnd ?? 0) + 3.2;   // Stadium Pulse: up before the snap (and after, when the noise caused it)
+  const pzUp = !!pz?.show && beat.phase === 'live' && ((bt >= 0.6 && bt < t0 + 1.1) || pzHit), pzOut = !pzHit && bt > t0 + 0.75;
   const scoreUp = !!g.score && beat.phase === 'live' && beat.tdAt != null && bt >= beat.tdAt;   // the scoring takeover of the bug
   const bugUp = !brk?.live && (!fresh || done || bt >= (S?.T0 ?? 0));   // the scorebug builds in as the opening (and second-half, and overtime) kickoff is struck
   const b4 = play && { quarter: play.before.quarter, clock: play.before.clock, score: play.before.score, poss: play.kind === 'kickoff' ? play.def : play.off,
@@ -130,6 +139,7 @@ export default function PixelGame({ game, teams, lineups, onClose, onDone, onPla
         {!beat.post && pace?.keyPlay && !busy && <div className="pg-key">KEY PLAY</div>}
         {done && <div className="pg-headline final">{finalText(4 + (game.overtimes || 0)).toUpperCase()}</div>}
         <BroadcastSlot pre={gpre} pace={pace} bt={bt} live={pre} play={play} teams={teams} bug={bc.bug} playerOf={playerOf} n={i} />
+        {pzUp && !brk?.live && <StadiumPulse key={`sp${i}`} v={pz.v} net={bc.net.key} hit={pz.hit && beat.post} out={pzOut} />}
         {bugUp && <div className="pg-shelf" />}
         {brk && (() => {   // the break plays at its mark, or wherever the booth previews it (at)
           const at = brk.at ?? marks[brk.kind], p0 = game.plays[Math.min(at, game.plays.length - 1)], ends = { onReveal: () => setBrk((b) => b && { ...b, live: false }), onDone: () => setBrk(null) };

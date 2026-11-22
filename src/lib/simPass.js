@@ -129,6 +129,11 @@ export function passPlay(G, play, call, def, plan = {}) {
     play.text = `${qb.last} throws for ${tgt.p.last}... INTERCEPTED by ${tgt.c.last}!`;
     return { gain: d, time: tCatch + 3, turnover: 'int', by: tgt.c };
   };
+  const pc = G.pul?.p || 0;
+  if (pc >= 0.35 && R.chance(0.07 * pc * pc)) { // too loud to hear the call: he ran the wrong route (Stadium Pulse)
+    addEvent(play, 'catch', tCatch, { target: tgt.p.id, def: tgt.c.id, result: 'miss', why: 'wrong route', sep: Math.round(tgt.sep * 10) / 10 }); play.crowdHit = true;
+    play.text = `${qb.last} throws for ${tgt.p.last}... nobody there! Miscommunication in the noise.`; return { gain: 0, incomplete: true, time: tCatch + 1 };
+  }
   if (q < need) { // off target
     if (q < need - 0.45 && tgt.sep < 2.8 && R.chance(clamp(0.1 + (val(G, tgt.c, 'ball_skills', 50) - 65) * 0.005, 0.08, 0.4))) return picked();
     const why = R.pick(['overthrown', 'behind him', 'too high', 'out of reach']);

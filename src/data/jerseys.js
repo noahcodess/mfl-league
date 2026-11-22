@@ -91,6 +91,8 @@ export function useGamePicks(season) {
 }
 // True when the home team has every fan wearing its alternate's color for this game (call after useGamePicks).
 export const fansDressed = (gameId) => picks.fans.has(gameId);
+// For code that isn't a screen: the home team's specialty pick for a game, and whether the fans dress to match.
+export async function specialtyNow(gameId, season) { if (picks.season !== season) await loadPicks(season); return { slot: picks.map.get(gameId) || null, fans: picks.fans.has(gameId) }; }
 export async function pickSpecialty(gameId, slot, season, fans = false) {
   await rpc('pick_specialty_game', { p_game: gameId, p_slot: slot, p_fans: !!slot && fans });
   await loadPicks(season);

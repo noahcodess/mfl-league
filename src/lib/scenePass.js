@@ -81,11 +81,11 @@ function outcome(S, play, tgt, cat, at, tThrow, tCatch, wob) {
   const df = cat && S.by[cat.def], deepBall = d > 20 || cat?.catchType === 'over the shoulder';
   // how he goes and gets it (sceneCatch): in stride, up high, low, or diving; a miss shows the way it missed
   const plan = catchPlan(S, play, cat, d);
-  if (res === 'miss') { const how = { 'too high': 'highpoint', 'out of reach': 'hands', 'behind him': 'scoop' }[cat.why] || (deepBall ? 'shoulder' : 'hands'); S.when(tCatch - 0.3, (s) => s.setPose(tgt, how, 0.42)); }
+  if (res === 'miss') { const how = { 'too high': 'highpoint', 'out of reach': 'hands', 'behind him': 'scoop' }[cat.why] || (deepBall ? 'shoulder' : 'hands'); if (cat.why !== 'wrong route') S.when(tCatch - 0.3, (s) => s.setPose(tgt, how, 0.42)); }
   else playCatch(S, tgt, df, plan, tCatch, res, at);
   if (df && (cat?.contested || res === 'breakup')) S.when(tCatch - 0.26, (s) => s.setPose(df, res === 'breakup' ? 'swat' : 'contest', 0.5));   // the defender goes up with him
   if (res === 'miss') { // off target, the way the call says
-    const why = cat.why || 'overthrown', [dx, dy, h] = { overthrown: [dir * 5, 0, 0.5], 'too high': [dir * 3, 0, 2.8], 'behind him': [-dir * 2.5, 0, 0.4], 'out of reach': [dir * 0.8, (at[1] >= 0 ? 1 : -1) * 3.2, 0.4] }[why] || [dir * 4, 0, 0.5];
+    const why = cat.why || 'overthrown', [dx, dy, h] = { overthrown: [dir * 5, 0, 0.5], 'too high': [dir * 3, 0, 2.8], 'behind him': [-dir * 2.5, 0, 0.4], 'out of reach': [dir * 0.8, (at[1] >= 0 ? 1 : -1) * 3.2, 0.4], 'wrong route': [dir * 2, (at[1] >= 0 ? -1 : 1) * 6, 0.3] }[why] || [dir * 4, 0, 0.5];
     S.when(tThrow, (s) => s.throwBall(at[0] + dx, clamp(at[1] + dy, -28, 28), h, tCatch - tThrow + 0.15, arc, (ss) => ss.loose(dir * 3, 0, 1.5), wob));
     if (why === 'out of reach') S.when(tCatch - 0.1, (s) => { tgt.brain = B.to(tgt.x + dir * 0.4, tgt.y + (at[1] >= 0 ? 1.5 : -1.5), 6); s.when(s.t + 0.15, () => s.knock(tgt, 1.3)); });
     else S.when(tCatch + 0.4, (s) => s.setPose(tgt, 'drop', 1.5));

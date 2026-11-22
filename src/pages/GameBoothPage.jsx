@@ -39,7 +39,7 @@ export default function GameBoothPage({ id, viewer }) {
       {s && (
         <div className="booth-cols">
           <div><BoothControls s={s} send={feed.send} /><BoothCoaches s={s} ids={ids} coaches={coaches} presence={presence} coached={coached} send={feed.send} onRoster={setRoster} /></div>
-          <div><BoothKeyPlay s={s} ids={ids} /><BoothGraphics s={s} send={feed.send} />{s.play && <p className="booth-last"><b>📋 {getTeam(ids[s.play.off])?.code} · {s.play.call || s.play.kind}</b>{s.play.text ? ` → ${s.play.text}` : ' · before the snap'}</p>}</div>
+          <div><BoothKeyPlay s={s} ids={ids} /><BoothGraphics s={s} send={feed.send} />{s.play && <p className="booth-last"><b>📋 {getTeam(ids[s.play.off])?.code} · {s.play.call || s.play.kind}</b>{s.play.pulse ? ` · 🔊 Pulse ${s.play.pulse.v}${s.play.pulse.show ? ' (on screen)' : ''}` : ''}{s.play.text ? ` → ${s.play.text}` : ' · before the snap'}</p>}</div>
           <div><BoothStats roster={feed.roster} stats={feed.stats} ids={ids} send={feed.send} />{(isTestMode() || !isRealGame(id)) && <BoothTest s={s} ids={ids} send={feed.send} />}</div>
         </div>
       )}

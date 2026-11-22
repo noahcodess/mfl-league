@@ -13,7 +13,7 @@ const TOUR = ['wide', 'midfield', 'left', 'stands', 'right'];
 // shot: { from, to, k } runs a hands-off camera move instead (broadcast intros): no buttons, no dragging, and a screen 3x
 // (or 6x) the usual size so at the widest zoom every field pixel is exactly 2x2 (or 4x4) screen pixels and nothing shimmers.
 // crowd: 'normal', 'bloodbath', or a color every fan wears.
-// live: { target() -> camera spot, draw(ctx, cam) } lets a broadcast steer the camera and paint players over the field every frame.
+// live: { target() -> camera spot, draw(ctx, cam), shake() -> { dx, dy } or null } lets a broadcast steer the camera and paint players over the field every frame.
 export default function GameField({ team, look = {}, crowd = 'normal', shot = null, live = null }) {
   const liveRef = useRef(live); liveRef.current = live;
   const view = useRef(null);
@@ -43,9 +43,9 @@ export default function GameField({ team, look = {}, crowd = 'normal', shot = nu
       if (liveRef.current) target.current = clampCam(liveRef.current.target());
       cam.current = glide(cam.current, target.current, liveRef.current ? 0.07 : shot?.k);
       if (view.current && world.current) {
-        const ctx = view.current.getContext('2d');
-        blit(ctx, world.current, cam.current);
-        liveRef.current?.draw(ctx, cam.current);
+        const ctx = view.current.getContext('2d'), sh = liveRef.current?.shake?.(), c = sh ? { ...cam.current, x: cam.current.x + sh.dx, y: cam.current.y + sh.dy } : cam.current;   // a loud crowd can shake the shot
+        blit(ctx, world.current, c);
+        liveRef.current?.draw(ctx, c);
       }
       raf = requestAnimationFrame(frame);
     };

@@ -19,6 +19,7 @@ export const capacityText = (n) => Number(n).toLocaleString('en-US');
 let cache = null;
 const subs = new Set();
 export async function reloadStadiums() { return load(); }
+export async function stadiumsNow() { if (!cache) await load(); return cache; }   // for code that isn't a screen
 async function load() {
   const map = fallback();
   if (!DEMO) {

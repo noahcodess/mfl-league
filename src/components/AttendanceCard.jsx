@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 
 // The attendance graphic over the stadium shot. Every program has its own design in its own spot (attendance.css):
 // FOX bottom left, CBS along the bottom, TNF top right, SNF bottom middle around a circle, ESPN top left.
-// The number counts up to the real crowd (fan support and the occasion decide it, data/gameAttendance.js); then the chip pops in: SOLD OUT at a sellout, otherwise how full it is ("72% full"). --fill tracks how full.
+// The number counts up to the real crowd (fan support and the occasion decide it, data/gameCrowd.js); then the chip pops in: SOLD OUT at a sellout, otherwise how full it is ("72% full"). --fill tracks how full.
 export default function AttendanceCard({ bc, home, stadium, att = null }) {
   const cap = stadium?.capacity || 60000, goal = att?.count ?? cap;
   const [n, setN] = useState(0), [done, setDone] = useState(false);

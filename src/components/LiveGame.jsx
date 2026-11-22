@@ -7,6 +7,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import PixelGame from './PixelGame.jsx';
 import { useGameLineups } from '../data/gameLineups.js';
 import { isRealGame } from '../data/gameState.js';
+import { loadCrowd } from '../data/gameCrowd.js';
 import { playOfficial, finalizeGame, isRivalGame, loadReplay, saveReplay, saveProgress, addGameInput } from '../data/gameResults.js';
 
 const seedOf = (s) => [...String(s)].reduce((h, c) => (h * 31 + c.charCodeAt(0)) >>> 0, 7);
@@ -18,12 +19,14 @@ export default function LiveGame({ game, home, away, kick, resume = 0, st = null
   const lineups = useGameLineups(home.id, away.id);
   const [rivalry, setRivalry] = useState(null), [done, setDone] = useState(''), real = isRealGame(game.id);
   const [inputs, setInputs] = useState(() => (kick?.already ? st?.inputs || [] : []));
+  const [crowd, setCrowd] = useState(undefined);   // the crowd (Stadium Pulse), fixed before kickoff so every rerun plays the same
+  useEffect(() => { let on = true; loadCrowd(game).then((c) => on && setCrowd(c || null)); return () => { on = false; }; }, [game.id]); // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => { let on = true; isRivalGame(home.id, away.id).then((r) => on && setRivalry(r)).catch(() => on && setRivalry(false)); return () => { on = false; }; }, [home.id, away.id]);
   const k = useMemo(() => (kick?.seed ? kick : { ...kick, seed: seedOf(game.id) }), [kick, game.id]);
   const [saved, setSavedRun] = useState(real && kick?.already ? undefined : null);   // a paused game's saved run (undefined = still looking)
   useEffect(() => { if (saved === undefined) loadReplay(game.id, kick.seed).then((r) => setSavedRun(r || null), () => setSavedRun(null)); }, []); // eslint-disable-line react-hooks/exhaustive-deps
   const useSaved = saved && sameInputs(saved.inputs, inputs);
-  const fresh = useMemo(() => !useSaved && saved !== undefined && lineups && rivalry !== null && { ...playOfficial(lineups, home.id, away.id, k, rivalry, inputs), inputs }, [useSaved, saved, lineups, rivalry, k, inputs]); // eslint-disable-line react-hooks/exhaustive-deps
+  const fresh = useMemo(() => !useSaved && saved !== undefined && lineups && rivalry !== null && crowd !== undefined && { ...playOfficial(lineups, home.id, away.id, k, rivalry, inputs, crowd), inputs }, [useSaved, saved, lineups, rivalry, k, inputs, crowd]); // eslint-disable-line react-hooks/exhaustive-deps
   const base = useSaved ? saved : fresh;
   useEffect(() => { if (fresh && real && kick?.seed) saveReplay(game.id, kick.seed, fresh); }, [fresh]); // eslint-disable-line react-hooks/exhaustive-deps
   // keep the plays already on screen as the very same objects, so a replay from the next play never restarts this one

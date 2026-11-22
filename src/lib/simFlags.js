@@ -12,12 +12,25 @@ const sloppy = (G, R) => LINE.map((k) => G.O[k]).sort((a, b) => (val(G, a, 'disc
 // Before the snap. Returns null, or { name, on (player), side, yards } after writing it into the report.
 export function preSnapFlag(G, play) {
   const { R, s } = G, roll = R.r();
-  if (roll > 0.02) return null;
+  if (roll > 0.02) return crowdFlag(G, play);
   const off = roll < 0.012, p = off ? sloppy(G, R) : G.D[R.pick(['DE1', 'DE2', 'DT1', 'DT2', 'DL'])], side = off ? s.poss : G.defSide;
   const yards = off ? Math.min(5, Math.floor(s.ballOn / 2)) : Math.min(5, Math.floor((100 - s.ballOn) / 2)), name = off ? 'False start' : 'Offside';
   addEvent(play, 'flag', 0, { name, on: p.id, team: side, yards, accepted: true }); stat(play, p, 'pen'); stat(play, p, 'penyds', yards);
   play.kind = 'penalty'; play.headline = 'FLAG'; play.text = `FLAG: ${name} on ${p.last}, ${yards} yards.`;
   return { name, on: p, side, yards, off };
+}
+
+// A loud house rattles the visitors (Stadium Pulse): false starts and delay of game climb fast as it gets louder.
+function crowdFlag(G, play) {
+  const p = G.pul?.p || 0, { R, s } = G;
+  if (p < 0.3) return null;
+  const r = R.r(), fs = 0.042 * p * p, dog = 0.02 * p * p;
+  if (r >= fs + dog) return null;
+  const dg = r >= fs, who = dg ? G.O.QB : sloppy(G, R), name = dg ? 'Delay of game' : 'False start', yards = Math.min(5, Math.floor(s.ballOn / 2));
+  addEvent(play, 'flag', 0, { name, on: who.id, team: s.poss, yards, accepted: true, crowd: true }); stat(play, who, 'pen'); stat(play, who, 'penyds', yards);
+  play.kind = 'penalty'; play.headline = 'FLAG'; play.crowdHit = true;
+  play.text = dg ? `FLAG: Delay of game on the offense, ${yards} yards. They couldn't hear the call over the crowd.` : `FLAG: False start on ${who.last}, ${yards} yards. The crowd got to him!`;
+  return { name, on: who, side: s.poss, yards, off: true };
 }
 
 // After a run or pass. May change the result: returns null, or { name, yards, off, auto1st } with the play's stats wiped.

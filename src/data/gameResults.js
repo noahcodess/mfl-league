@@ -1,6 +1,7 @@
 // Official results. Watched or quick-simmed, a game is the same engine run: the server's kickoff seed, the real coin flip and
 // the rivalry flag go into playGame, and the finished game (score plus every player's stats) is saved as final.
 import { db } from './supabase.js';
+import { loadCrowd } from './gameCrowd.js';
 import { startGame } from './gameState.js';
 import { loadLineups } from './gameLineups.js';
 import { rivalPairs } from './games.js';
@@ -22,9 +23,9 @@ export async function isRivalGame(homeId, awayId) {
 }
 
 // The one way a game is played. kick: { receiving, seed } from game_start. inputs: what people did live (timeouts, test tools).
-export function playOfficial(lineups, homeId, awayId, kick, rivalry, inputs = []) {
+export function playOfficial(lineups, homeId, awayId, kick, rivalry, inputs = [], crowd = null) {
   const receiver = kick?.receiving === homeId ? 'home' : kick?.receiving === awayId ? 'away' : undefined;
-  const out = playGame(lineups.home, lineups.away, Number(kick?.seed) || 1, { receiver, rivalry: !!rivalry, inputs });
+  const out = playGame(lineups.home, lineups.away, Number(kick?.seed) || 1, { receiver, rivalry: !!rivalry, inputs, crowd });
   return inputs.some(isTestInput) ? { ...out, testForced: true } : out;   // a test tool was used: this game is never saved as final
 }
 // Saves one live input with the game (commissioner). { n, kind, side?, ... }: see simInputs.
@@ -65,10 +66,11 @@ export function saveProgress(gameId, i, play) {
 }
 
 // Quick sim: kickoff (coin flip + seed), the full engine run (or the saved one, if the game was paused), saved as final.
-export async function simGameNow(gameId, homeId, awayId, method = 'quick') {
+export async function simGameNow(gameId, homeId, awayId, method = 'quick', game = null) {
   const kick = await startGame(gameId);
-  const [[home, away], rivalry, kept] = await Promise.all([loadLineups([homeId, awayId]), isRivalGame(homeId, awayId), kick.already ? loadReplay(gameId, kick.seed) : null]);
-  const lineups = { home, away }, result = kept || playOfficial(lineups, homeId, awayId, kick, rivalry, kick.inputs || []);
+  const [[home, away], rivalry, kept, crowd] = await Promise.all([loadLineups([homeId, awayId]), isRivalGame(homeId, awayId), kick.already ? loadReplay(gameId, kick.seed) : null,
+    loadCrowd(game || { id: gameId, home: homeId, away: awayId })]);   // the same crowd a watched game gets
+  const lineups = { home, away }, result = kept || playOfficial(lineups, homeId, awayId, kick, rivalry, kick.inputs || [], crowd);
   const saved = await finalizeGame(gameId, result, lineups, kick, method);
   return { result, lineups, saved };
 }
