@@ -14,6 +14,7 @@ export default function BoothTest({ s, ids, send }) {
         <button className="btn small" onClick={() => test({ kind: 'ot' })}>⏱ Force overtime (tie it, 4th quarter 0:00)</button>
         <button className="btn small ghost" onClick={() => test({ kind: 'win', side: 'away' })}>🏆 Force {name('away')} win</button>
         <button className="btn small ghost" onClick={() => test({ kind: 'win', side: 'home' })}>🏆 Force {name('home')} win</button>
+        <button className="btn small ghost" onClick={() => test({ kind: 'onside' })}>🏈 Run an onside kick (whoever has the ball kicks it)</button>
       </div>
       <div className="booth-row">
         <span>Set score</span>

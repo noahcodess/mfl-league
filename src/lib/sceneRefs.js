@@ -8,7 +8,9 @@ import { clamp, dist, stepTo } from './sceneCore.js';
 import { refLook } from './refSprite.js';
 
 // [code, yards behind (-) or past (+) the line, lateral yards, cap]: the referee wears the white cap.
-const CREW = [['R', -12, 4, 'white'], ['U', -7, -3, 'black'], ['DJ', 0, -28, 'black'], ['LJ', 0, 28, 'black'], ['SJ', 17, -27.5, 'black'], ['FJ', 19, 27.5, 'black'], ['BJ', 24, 2, 'black']];
+// Everyone stays on the field: the wing officials work right along the sideline, never out among the benches and the crowd.
+const CREW = [['R', -12, 4, 'white'], ['U', -7, -3, 'black'], ['DJ', 0, -25.4, 'black'], ['LJ', 0, 25.4, 'black'], ['SJ', 17, -24.2, 'black'], ['FJ', 19, 24.2, 'black'], ['BJ', 24, 2, 'black']];
+const EDGE = 25.6;
 const ev = (play, type) => (play.events || []).filter((e) => e.type === type);
 
 // Sets up the crew and the flag for this scene (call after the play is built). seed: the game's, so they look the same all game.
@@ -19,7 +21,7 @@ export function addRefs(S, seed = 1) {
   const f = ev(S.play, 'flag')[0];
   if (f) {   // when the flag comes out: before the snap at the snap, holding mid-play, interference as the ball arrives
     const pre = S.play.kind === 'penalty', pi = /pass interference/i.test(f.name);
-    const t = pre ? (S.flag?.t ?? S.T0 - 0.2) : pi ? (S.tCatch ?? S.tEnd - 0.5) + 0.15 : S.T0 + 1.3 + (S.play.n % 5) * 0.08;
+    const t = S.flag?.at ?? (pre ? (S.flag?.t ?? S.T0 - 0.2) : null) ?? (pi ? (S.tCatch ?? S.tEnd - 0.5) + 0.15 : S.T0 + 1.3 + (S.play.n % 5) * 0.08);   // flag.at: a scene that knows exactly when (an onside touch)
     const rel = t + 0.22, air = 1.35 + (S.play.n % 7) * 0.04;   // the windup, then about a second and a half in the air
     S.flag = { t, rel, land: rel + air, x: S.flag?.x ?? S.los, y: S.flag?.y ?? 0, by: null, name: f.name };
     S.when(t, (s) => {   // the foul spot is wherever the offender is right now; the nearest official throws it
@@ -55,7 +57,7 @@ function stepRefs(S, dt) {
     } else if (over) { tx = r.code === 'R' || r.code === 'U' ? b.x - d * (r.code === 'R' ? 3 : 1.5) : r.code === 'DJ' || r.code === 'LJ' ? b.x : r.x; ty = r.code === 'R' ? b.y + 2 : r.code === 'U' ? b.y - 1.5 : r.y; speed = 3; }
     const busy = r.sig && r.sig !== 'flagArm' && t - r.sigAt < 2.4;
     if (r.sig === 'throw') speed *= 0.25; else if (busy) speed = 0.2;              // he pulls up to make the call
-    const ox = r.x, oy = r.y; stepTo(r, tx, ty, speed, dt);
+    const ox = r.x, oy = r.y; stepTo(r, tx, clamp(ty, -EDGE, EDGE), speed, dt); r.y = clamp(r.y, -EDGE, EDGE);
     r.vx = (r.x - ox) / dt; r.sp = Math.hypot(r.x - ox, r.y - oy) / dt; r.run += r.sp * dt;   // r.run: distance covered (drives the leg cycle)
     const toBall = Math.sign(b.x - r.x) || r.face;
     if (['BJ', 'FJ', 'SJ', 'R', 'U'].includes(r.code) && Math.abs(r.vx) > 0.4 && Math.sign(r.vx) !== toBall && r.sp < 6.5) { r.back = true; r.face = toBall; }   // backing up, eyes on the ball

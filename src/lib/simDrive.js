@@ -5,6 +5,7 @@ import { clamp, other, stat, swing } from './simCore.js';
 import { runPlay } from './simRun.js';
 import { passPlay } from './simPass.js';
 import { kickoff, punt, fieldGoal, extraPoint } from './simKicks.js';
+import { onsideKick } from './simOnside.js';
 import { offenseCall, goForTwo } from './simCalls.js';
 import { defenseCall } from './defenseBrain.js';
 import { remember, pickPlay } from './simPlaybook.js';
@@ -40,10 +41,9 @@ const give = (G, side, ballOn) => { const s = G.s; s.poss = side; s.ballOn = cla
 export function doKickoff(G) {
   const s = G.s, play = start(G), rcv = other(s.kicker); play.off = s.kicker; play.def = rcv;
   const behind = s.score[rcv] - s.score[s.kicker];   // onside kicks: only when losing, and only tried late when it's the last hope
-  if (!s.freeKick && behind > 0 && behind <= 16 && s.quarter === 4 && s.clock < 150) {
-    const got = G.R.chance(0.12); play.kind = 'kickoff'; play.onside = true; play.headline = got ? 'ONSIDE RECOVERED' : null;
-    play.text = got ? `ONSIDE KICK... recovered by the kicking team!` : 'Onside kick... recovered by the receiving team.';
-    if (got) swing(G, s.kicker, 0.3); give(G, got ? s.kicker : rcv, got ? 46 : 54); return log(G, play, 3);
+  if (G.forceOnside || (!s.freeKick && behind > 0 && behind <= 16 && s.quarter === 4 && s.clock < 150)) {   // forceOnside: the commissioner's test button
+    G.forceOnside = false; const o = onsideKick(G, play, s.kicker, s.freeKick ? 20 : 35); s.freeKick = false;
+    give(G, o.side, o.ballOn); return log(G, play, o.time);
   }
   const out = kickoff(G, play, s.kicker, s.freeKick ? 20 : 35); s.freeKick = false;
   if (out.td) { score(G, play, rcv, 6, 'kick return'); play.result.td = true; s.poss = rcv; s.phase = 'pat'; s.patSide = rcv; } else give(G, rcv, out.ballOn);

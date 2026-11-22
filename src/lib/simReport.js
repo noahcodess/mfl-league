@@ -19,6 +19,7 @@ export const EVENTS = {
   fumble: 'The ball comes out, and who got it',                                                      // { by, forcedBy, recoveredBy, lost }
   kick: 'A kickoff, punt, field goal or extra point',                                                // { kind, by, dist, hang, good, landOn }
   ret: 'A kick or punt return',                                                                      // { by, from, yards, fair, touchback }
+  onside: 'An onside kick: how it was kicked, how far it went, who came up with it',                  // { kind, d, got, illegal, by, kicker, tackled, tackler, adv, lat }
   flag: 'A penalty',                                                                                 // { name, on, team, yards, accepted, auto1st }
   injury: 'A player is hurt',                                                                        // { id, weeks }
   celebrate: 'After a big play',                                                                     // { id, kind }

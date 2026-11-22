@@ -3,6 +3,7 @@
 // the uprights or wide). Everyone moves at his own speed; the tackler is whoever really gets there.
 import { B, clamp, dist } from './sceneCore.js';
 import { frame, pursueAll, finishCarry, ev } from './sceneLineup.js';
+import { buildOnside } from './sceneOnside.js';
 
 const row = (n, w = 34) => Array.from({ length: n }, (_, i) => -w / 2 + (w * i) / Math.max(1, n - 1));
 const absOf = (side, ballOn) => (side === 'away' ? ballOn : 100 - ballOn);
@@ -19,6 +20,7 @@ function runBack(S, ret, from, end, tCatch, cover, blockers, td) {
 }
 
 export function buildKickoff(S, lineups) {
+  const onside = ev(S.play, 'onside')[0]; if (onside) return buildOnside(S, lineups, onside);   // sceneOnside
   const play = S.play, kick = lineups[play.off].kickTeams.kickoff, rec = lineups[play.def].kickTeams.kickReturn, retEv = ev(play, 'ret')[0];
   const from = play.before.ballOn > 0 ? 35 : 35; frame(S, play, play.off === 'away' ? from : 100 - from); S.lines = null;
   const dir = S.dir, T0 = (S.T0 = play.n === 1 ? 4.2 : 3.2); S.tee = { x: S.los, y: 0, t1: T0 };   // the opening kickoff holds a second longer while the camera pushes in
@@ -27,13 +29,6 @@ export function buildKickoff(S, lineups) {
   S.ball.x = S.los; S.ball.y = 0; S.ball.h = 0.22;
   K.brain = B.path([S.at(-0.5, -0.2)], T0 - 1.6, T0, K.max * 0.8); cover.forEach((c) => { c.brain = B.path([S.at(-0.6, c.y)], T0 - 1.5, T0, c.max * 0.9); });
   S.when(T0 - 0.12, (s) => s.setPose(K, 'kick', 0.5));
-  if (play.onside) {
-    const land = S.at(11, (S.rand() - 0.5) * 6), got = play.headline === 'ONSIDE RECOVERED';
-    S.when(T0, (s) => s.throwBall(land[0], land[1], 0.12, 1.1, 1.2, (ss) => ss.loose(dir * 1.5, 0, 2.5), { kick: true }));
-    [...cover, ...blockers].forEach((a) => { a.brain = (b, dt, s) => { if (s.t > T0 + 0.1) { const dx = land[0] - b.x, dy = land[1] - b.y, d = Math.hypot(dx, dy); if (d > 1.2) { const st = Math.min(d, b.max * 0.8 * dt); b.x += (dx / d) * st; b.y += (dy / d) * st; } } }; });
-    const win = got ? cover[2] : blockers[0]; S.when(T0 + 1.7, (s) => { if (win) win.brain = B.meet(s.ball.x, s.ball.y, s.t + 0.35, win.max, (a, ss) => { ss.knock(a); ss.give(a); }); });
-    S.tEnd = T0 + 2.4; return;
-  }
   const oob = ev(play, 'kick')[0]?.oob, endRcv = play.result.td ? 100 : play.after.ballOn, retYds = retEv?.yards ?? 0, landOn = oob ? 6 : retEv ? endRcv - retYds : -4, hang = 3.4;
   const landAbs = absOf(play.def, landOn), landY = oob ? (S.rand() < 0.5 ? -28 : 28) : clamp((S.rand() - 0.5) * 12, -20, 20);   // a hooked kick lands out of bounds
   ret.x = landAbs - dir * 2; ret.y = landY;

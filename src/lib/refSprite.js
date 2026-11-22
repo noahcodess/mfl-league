@@ -51,6 +51,7 @@ export function armsFor(sig, u, dir = 1, slow = 1) {
     case 'Offside': return [40, -82, 40, -82];                                    // hands on his hips
     case 'Defensive pass interference': case 'Offensive pass interference': { const p = 0.5 + 0.5 * w2; return [28 + 18 * p, 132, 28 + 18 * p, 132]; }   // the push
     case 'Delay of game': return [16, -104, 20, -97];                             // arms folded
+    case 'Illegal touching': return [40, -174 + 9 * w2, 40, -174 + 9 * w2];          // fingertips tapping both shoulders
     default: return [8, 0, 8, 0];
   }
 }

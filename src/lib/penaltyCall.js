@@ -11,5 +11,9 @@ export function penaltyCall(play, people, teams) {
   const yards = SPOT.has(f.name) ? `${f.yards}-yard spot foul` : `${f.yards}-yard penalty`;
   const down = !onO && (f.auto1st || a.down === 1) ? 'Automatic first down' : a.down ? `Repeat ${ORD[a.down]} down` : '';
   const line2 = f.name === 'Delay of game' ? `Offense, ${team?.name || ''}` : `#${who?.number ?? '?'}, ${team?.name || (onO ? 'Offense' : 'Defense')}`;
+  if (f.spotBall) {   // illegal touching on an onside kick: no yards, the receiving team just takes it where he touched it
+    const rcv = teams[play.def];
+    return { name: f.name, lines: [f.name.toUpperCase(), line2.toUpperCase(), `${rcv?.name || 'Receiving team'}'s ball at the spot`.toUpperCase()], signal: f.name, first: false, off: true };
+  }
   return { name: f.name, lines: [f.name.toUpperCase(), line2.toUpperCase(), `${yards} · ${down}`.toUpperCase()], signal: f.name, first: !onO && down.startsWith('Automatic'), off: onO };
 }
