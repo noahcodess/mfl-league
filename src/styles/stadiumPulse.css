@@ -24,3 +24,4 @@
 /* each network's colors */
 .sp-fox { --sp-acc: #f4b800; } .sp-cbs { --sp-bg: #0b3a82ee; --sp-acc: #fff; } .sp-espn { --sp-acc: #e3261b; --sp-bg: #1d2328ee; }
 .sp-nbc { --sp-bg: #050a1cee; --sp-acc: #f5c84a; } .sp-nbc .sp-box { border-image: linear-gradient(#fcb711, #f37021, #cc004c, #6460aa, #0089d0, #0db14b) 1; border-left-width: .45cqw; }
+.sp-run { background: linear-gradient(90deg, #ff9a1a, #ff4d1a); color: #fff; text-shadow: 0 1px 0 #000; }

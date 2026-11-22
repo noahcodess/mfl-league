@@ -96,3 +96,4 @@
 .lw-prog b { font-family: var(--hf); font-weight: var(--hw); font-style: var(--hs); font-size: 14px; letter-spacing: .04em; text-transform: uppercase; }
 .lw-prog.net-fox { --hf: 'Anton', Impact, sans-serif; --hw: 400; --hs: italic; } .lw-prog.net-fox b { color: #f4b800; } .lw-prog.net-cbs b { color: #9fc0ff; }
 .lw-when { display: inline-flex; align-items: center; gap: 8px; }
+.ls-live { display: inline-flex; align-items: center; gap: 6px; font: 700 12px var(--label); letter-spacing: .14em; text-transform: uppercase; color: var(--dim); }

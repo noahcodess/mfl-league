@@ -20,11 +20,13 @@ export default function LiveHeader({ stage }) {
         <small>Live · Season {currentSeason()}</small>
         <h1>{s.icon} {s.title}</h1>
       </div>
-      <div className="live-clock">
-        <small>{target ? `${LABEL[target.kind] || target.label} in` : 'Up next'}</small>
-        <b>{target ? (left > 0 ? untilText(left) : 'Now') : 'Date not set yet'}</b>
-        {target && <span className="dim">{whenText(target.at)}</span>}
-      </div>
+      {target && (   // nothing on the calendar yet: no countdown at all
+        <div className="live-clock">
+          <small>{`${LABEL[target.kind] || target.label} in`}</small>
+          <b>{left > 0 ? untilText(left) : 'Now'}</b>
+          <span className="dim">{whenText(target.at)}</span>
+        </div>
+      )}
     </div>
   );
 }

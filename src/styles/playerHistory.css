@@ -1,0 +1,25 @@
+/* A player's History tab (PastTeams): a timeline read bottom to top. Each team: its logo over a big bold "SEASON 7–8" in
+   the team's color, a few short lines beside it; small steps for the draft and college at the bottom. */
+.ph-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 0; }
+.ph-stint { display: grid; }
+.ph-card { display: grid; grid-template-columns: minmax(170px, 46%) 1fr; align-items: center; gap: 14px; padding: 10px 14px; border: 2px solid #000; border-radius: 14px;
+  background: linear-gradient(100deg, color-mix(in srgb, var(--team) 34%, #120c09), #140e0b 70%); box-shadow: var(--shadow); }
+.ph-stint.now .ph-card { outline: 2px solid var(--gold); outline-offset: 2px; }
+.ph-art { position: relative; display: grid; place-items: center; min-height: 84px; overflow: hidden; container-type: inline-size; }
+.ph-big { font: 900 15cqw/1 'Russo One', 'Barlow Condensed', sans-serif; text-transform: uppercase; letter-spacing: .02em; white-space: nowrap;
+  color: color-mix(in srgb, var(--team) 62%, #fff 38%); opacity: .62; -webkit-text-stroke: 1px #0009; }
+.ph-art .logo, .ph-art .badge { position: absolute; filter: drop-shadow(0 4px 0 #000a) drop-shadow(0 0 14px #000c); }
+.logo-xl { width: 72px; height: 72px; object-fit: contain; image-rendering: pixelated; }
+.badge-xl { display: grid; place-items: center; width: 64px; height: 64px; border-radius: 12px; font: 800 18px var(--label); border: 2px solid #000; }
+.ph-info { display: grid; gap: 3px; min-width: 0; }
+.ph-info b { font: 800 17px 'Barlow Condensed', var(--label); letter-spacing: .02em; }
+.ph-info .career-tag { justify-self: start; }
+.ph-info small { color: var(--dim); font-size: 12.5px; }
+.ph-link { justify-self: center; position: relative; padding: 14px 0 8px; font: 700 12px var(--label); color: var(--dim); letter-spacing: .04em; }
+.ph-link::before { content: ''; position: absolute; left: 50%; top: 0; bottom: 0; width: 2px; background: var(--line); z-index: -1; }
+.ph-stint + .ph-stint, .ph-stint + .ph-old, .ph-old + .ph-old, .ph-stint + .ph-step, .ph-old + .ph-step, .ph-step + .ph-step { margin-top: 12px; }
+.ph-step, .ph-old { justify-self: center; padding: 7px 14px; border: 2px solid #000; border-radius: 999px; background: #1b1310; font: 600 13px var(--label); color: var(--text); }
+.ph-old { color: var(--dim); font-size: 12px; }
+.ph-college { background: #12202a; }
+.ph-free { margin-bottom: 12px; padding: 8px 12px; border: 2px dashed var(--line); border-radius: 12px; text-align: center; font: 700 14px var(--label); color: var(--dim); }
+@media (max-width: 560px) { .ph-card { grid-template-columns: 1fr; } }

@@ -2,8 +2,9 @@
 // decibels. Like a real noise meter it never sits still: the lit bars and the dB reading each wander on their own, a
 // couple of bars up, one down, two down, at uneven moments (more up than down, always pulled back toward the real level),
 // it shakes harder the louder it gets (the rest of the graphics never shake), beats like a heart once it's electric, and
-// when the noise caused the mistake, "THE CROWD DID THAT" pops under it.
-// v: 0-100. net: the network key (colors). hit: the visitors just cracked because of the noise. out: on its way off.
+// when the noise caused the mistake, "THE CROWD DID THAT" pops under it. On a home run of unanswered points it says so.
+// v: 0-100. net: the network key (colors). hit: the visitors just cracked because of the noise. run: the home side's
+// unanswered points (a comeback brewing). out: on its way off.
 import React, { useEffect, useState } from 'react';
 import { pulseDb, pulseWord, DB_MIN, DB_MAX } from '../lib/stadiumPulse.js';
 
@@ -18,7 +19,7 @@ function wander(off, lim, steps) {
 const BAR_STEPS = [[2, 0.2], [1, 0.22], [0, 0.1], [-1, 0.2], [-2, 0.17], [3, 0.06], [-3, 0.05]];
 const DB_STEPS = [[1, 0.24], [2, 0.18], [3, 0.06], [0, 0.08], [-1, 0.22], [-2, 0.16], [-3, 0.06]];
 
-export default function StadiumPulse({ v, net, hit = false, out = false }) {
+export default function StadiumPulse({ v, net, hit = false, run = null, out = false }) {
   const [j, setJ] = useState({ lvl: 0, db: 0 }), [boot, setBoot] = useState(true);   // boot: the bars light up one by one when it first comes on
   useEffect(() => {
     let id; const tick = () => { setJ((o) => ({ lvl: wander(o.lvl, 4, BAR_STEPS), db: wander(o.db, 6, DB_STEPS) })); id = setTimeout(tick, 140 + Math.random() * 170); };
@@ -33,7 +34,7 @@ export default function StadiumPulse({ v, net, hit = false, out = false }) {
         <span className="sp-bars">{Array.from({ length: BARS }, (_, k) => <i key={k} className={k < lit ? 'on' : ''} style={{ '--k': k, animationDelay: boot ? `${0.1 + k * 0.045}s` : '0s' }} />)}</span>
         <b>{pulseWord(v)}<em>{db} dB</em></b>
       </div>
-      {hit && <span className="sp-hit">📣 The crowd did that</span>}
+      {hit ? <span className="sp-hit">📣 The crowd did that</span> : run ? <span className="sp-hit sp-run">🔥 {run}-0 run · they're back in it</span> : null}
     </div>
   );
 }

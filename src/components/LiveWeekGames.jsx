@@ -22,7 +22,8 @@ function Side({ id, score, won, rec, done, tag }) {
 
 // Live → a week: every game in the order it airs, two across. Each card: day, kickoff time, network, the two teams stacked
 // (away on top), the score once it starts, and the stadium. A game in progress blinks LIVE with its live score and clock;
-// the two coaches get a Join coaching room button. Click any card to open the game.
+// the two coaches get a Join coaching room button. Click any card to open the game; your own game this week (not played
+// yet) opens your coaching room.
 export default function LiveWeekGames({ week, rec, teamId }) {
   const stadiums = useStadiums(), rivals = useRivals(), states = useGameStates(week.games.map((g) => String(g.id)));
   if (!week.games.length) return <p className="dim">No games scheduled for this week yet.</p>;
@@ -35,7 +36,7 @@ export default function LiveWeekGames({ week, rec, teamId }) {
         const coach = teamId && (g.home === teamId || g.away === teamId);
         return (
           <li key={g.id} className={`lw-game ${isLive ? 'live' : g.status}${prime ? ' prime' : ''} click`} style={{ '--away': away?.color, '--home': home?.color }}
-            onClick={() => { window.location.hash = links.game(g.id); }}>
+            onClick={() => { window.location.hash = coach && !done ? links.coaching(g.id) : links.game(g.id); }} title={coach && !done ? 'Your game: open the coaching room' : undefined}>
             <div className="lw-top">
               <span className="lw-when">{g.time}{bc && <span className={`lw-prog net-${bc.net.key}${bc.prime ? ` show-${bc.show.key}` : ''}`} title={bc.title}><img src={bc.logo} alt={bc.title} />{!bc.prime && <b>Day game</b>}</span>}</span>
               <span className="lw-status">{done ? finalText(st?.quarter) : isLive ? <span className="lw-live"><i className="live-pulse" />Live{st ? ` · ${quarterText(st.quarter)} ${gameClockText(st.quarter, clockLeft(st))}` : ''}</span>

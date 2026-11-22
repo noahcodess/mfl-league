@@ -31,7 +31,7 @@ export default function LivePage({ viewer, canControl, reload }) {
   }
   return (
     <div className="live">
-      <LiveHeader stage={stage} />
+      {stage !== 'season' && <LiveHeader stage={stage} />}   {/* in the season, LiveSeason's week card is the header */}
       {canControl && stage !== 'season' && <div className="ls-preview-bar"><button className="btn small" onClick={() => setPreview(true)}>📺 Preview the season view</button></div>}
       {(stage === 'birthday_soon' || stage === 'birthday') && <BirthdayView done={stage === 'birthday'} canControl={canControl} reload={reload} />}
       {stage === 'fa' && <FaLiveView viewer={viewer} />}

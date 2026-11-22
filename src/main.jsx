@@ -34,6 +34,7 @@ import './styles/uniforms.css';
 import './styles/stadiums.css';
 import './styles/liveSeason.css';
 import './styles/confTheme.css';
+import './styles/playerHistory.css';
 import './styles/tradeWire.css';
 import './styles/intro.css';
 import './styles/introScenes.css';

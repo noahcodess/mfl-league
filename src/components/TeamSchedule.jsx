@@ -34,7 +34,7 @@ export default function TeamSchedule({ teamId, canPick }) {
               <span className="ts-opp"><b>{home ? 'vs' : '@'} {opp?.name}</b>{g.rivalry && <small className="riv">⚔️ Rivalry</small>}{!g.conference && <small>other conference</small>}</span>
               <span className="ts-when">{g.prime ? `📺 ${windowLabel(g.prime)} · ${networkFor(g.prime, getTeam(g.home))}` : ''}{g.starts_at ? ` ${new Date(g.starts_at).toLocaleString(undefined, { weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })}` : ''}</span>
               {done ? <span className={`ts-result ${won ? 'w' : 'l'}`}><b>{won ? 'W' : 'L'}</b> {mine2}-{theirs}</span> : <span className={`grating ${g.odds?.rating}`}>{r.icon} {r.label}</span>}
-              {home && canPick && !done && <SpecialtyPick game={g} jerseys={jerseys} pick={picks.get(g.id)} fans={fansDressed(g.id)} open={open} left={2 - used} season={currentSeason()} />}
+              {home && canPick && <SpecialtyPick game={g} jerseys={jerseys} pick={picks.get(g.id)} fans={fansDressed(g.id)} open={open && !done} left={2 - used} season={currentSeason()} taken={g.kind === 'regular' ? mine.filter((x) => x.home === teamId && x.id !== g.id && x.kind === 'regular').map((x) => picks.get(x.id)).filter(Boolean) : []} />}
             </li>
           );
         })}

@@ -3,8 +3,9 @@ import { pickSpecialty } from '../data/jerseys.js';
 
 // One home game's uniform on My Team → Schedule: a dropdown (Home or one of the two alternates) while picks are open, and once
 // an alternate is picked, a switch to have every fan wear that jersey's main color (whiteout, blackout, bloodbath).
-// After picks lock it's a small tag if this is a specialty game.
-export default function SpecialtyPick({ game, jerseys, pick, fans, open, left, season }) {
+// After picks lock (or once the game is played) it's a small tag if this is a specialty game. Each alternate can only be
+// worn in one regular-season specialty game, so one already picked for another game is greyed out (taken: those slots).
+export default function SpecialtyPick({ game, jerseys, pick, fans, open, left, season, taken = [] }) {
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState('');
   const alts = jerseys.filter((j) => j.slot >= 3);
@@ -19,7 +20,7 @@ export default function SpecialtyPick({ game, jerseys, pick, fans, open, left, s
     <span className={`sp-pick${current ? ' on' : ''}`}>
       <select value={pick || ''} disabled={busy || (!current && left <= 0)} onChange={(e) => save(e.target.value ? Number(e.target.value) : null, false)} title={!current && left <= 0 ? 'You used both specialty games' : 'Specialty uniform'}>
         <option value="">👕 Home uniform</option>
-        {alts.map((j) => <option key={j.slot} value={j.slot}>⭐ {j.name}</option>)}
+        {alts.map((j) => { const used = taken.includes(j.slot) && j.slot !== pick; return <option key={j.slot} value={j.slot} disabled={used}>⭐ {j.name}{used ? ' (used in another game)' : ''}</option>; })}
       </select>
       {current && (
         <label className={`sp-fans${fans ? ' on' : ''}`} title="The whole crowd shows up in this jersey's main color">

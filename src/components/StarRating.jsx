@@ -1,11 +1,11 @@
 import React from 'react';
 import StarIcon from './StarIcon.jsx';
 
-// Shows a 0-5 star rating with real half stars; gold glow for elite. If he's regressed (peak above his rating), the stars
+// Shows a 0-5 star rating with real half stars, always gold; only a full 5 stars glows (now or potential, anywhere). If he's regressed (peak above his rating), the stars
 // he's lost show in red up to his peak. The number only shows when asked.
 export default function StarRating({ value, elite, declining, showNumber, peak }) {
   if (value == null) return <span className="stars none">No rating</span>;
-  const cls = ['stars', elite && 'elite', declining && 'declining'].filter(Boolean).join(' ');
+  const cls = ['stars', value >= 5 && 'elite', declining && 'declining'].filter(Boolean).join(' ');   // `elite` is ignored: 5 stars glows, nothing else
   const top = peak != null && peak > value ? peak : value;
   const halves = Math.round(top * 2);
   const have = Math.round(value * 2);
