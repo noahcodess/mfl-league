@@ -1,11 +1,11 @@
 // Decides how each player looks this frame: which way he faces (front, back or side, left or right) and which pose and
 // frame he's in. It reads the live player (where he's moving and how fast, what he's doing), so the picture always matches
 // the motion. Linemen and anyone squared up to an opponent keep facing their man however they get shoved.
-const SIDE_ONLY = ['olset', 'dlset', 'qbset', 'rbset', 'wrset', 'cbset', 'lbset', 'qbready', 'qbdrop', 'throw', 'block', 'anchor', 'driven', 'drive', 'swim', 'rush',
+const SIDE_ONLY = ['rocked', 'olset', 'dlset', 'qbset', 'rbset', 'wrset', 'cbset', 'lbset', 'qbready', 'qbdrop', 'throw', 'block', 'anchor', 'driven', 'drive', 'swim', 'rush',
   'reach', 'drop', 'cut', 'juke', 'stiff', 'kick', 'kneel', 'backpedal', 'tackle', 'wrap', 'layout', 'stumble', 'pump',
   'catch', 'hands', 'shoulder', 'highpoint', 'onehand', 'scoop', 'contest', 'swat', 'stretch', 'plant', 'plantc', 'breakdown', 'stutter', 'truck'];
 const PREFER = { cheer: 'front', ...Object.fromEntries(SIDE_ONLY.map((k) => [k, 'side'])) };
-const SQUARE = new Set(['breakdown', 'olset', 'dlset', 'qbset', 'rbset', 'wrset', 'cbset', 'lbset', 'block', 'anchor', 'driven', 'drive', 'swim', 'rush', 'throw', 'pump', 'kick', 'stiff', 'qbready', 'qbdrop', 'backpedal']);
+const SQUARE = new Set(['rocked', 'breakdown', 'olset', 'dlset', 'qbset', 'rbset', 'wrset', 'cbset', 'lbset', 'block', 'anchor', 'driven', 'drive', 'swim', 'rush', 'throw', 'pump', 'kick', 'stiff', 'qbready', 'qbdrop', 'backpedal']);
 const SPIN = [['side', 1], ['front', 1], ['side', -1], ['back', 1]];
 const beat = (a) => { if (a.beat) return a.beat; let h = 7; for (const ch of String(a.id)) h = (h * 31 + ch.charCodeAt(0)) >>> 0; return (a.beat = { per: 0.22 + (h % 7) * 0.035, off: (h % 97) / 97 }); };
 
@@ -13,7 +13,12 @@ const beat = (a) => { if (a.beat) return a.beat; let h = 7; for (const ch of Str
 export function lookAt(a, t, S, holder) {
   const speed = Math.hypot(a.vx, a.vy), moving = speed > 0.7, mine = holder === a, back = a.backUntil && t < a.backUntil && moving;
   let view = a.vis?.view || 'side', face = a.vis?.face || a.face, pose;
-  if (a.down) pose = 'down';
+  let fallK = -1;
+  if (a.down) {   // going down: the fall frames, then lying there (face down, or on his back)
+    const f = a.fall || {}; if (f.face == null) f.face = a.vis?.face || a.face || 1;
+    fallK = f.t0 != null && t - f.t0 < f.dur ? Math.min(3, Math.floor(((t - f.t0) / f.dur) * 4)) : 4;
+    pose = fallK < 4 ? (f.back ? 'fallB' : 'fallF') : f.back ? 'downB' : 'down'; face = f.face;
+  }
   else if (a.pose === 'tackle') pose = 'dive';
   else if (a.celebrate || a.pose === 'cheer') pose = 'cheer';
   else if (a.pose === 'spin') pose = 'spin';
@@ -41,6 +46,7 @@ export function lookAt(a, t, S, holder) {
   else if (pose === 'plant' || pose === 'plantc') frame = a.plantFoot > 0 ? 1 : 0;   // cutting toward the camera plants the far foot
   else if (pose === 'throw') { const u = (t - a.poseAt) / 0.6; frame = u < 0.45 ? 0 : u < 0.7 ? 1 : 2; }
   else if (pose === 'kick' || pose === 'drop') frame = t - a.poseAt > (pose === 'kick' ? 0.15 : 0.5) ? 1 : 0;
+  if (fallK >= 0) { face = a.fall.face; frame = Math.min(3, fallK); view = 'side'; }
   a.vis = { view, face };
   return { view, face, pose, frame };
 }

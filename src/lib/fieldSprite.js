@@ -83,6 +83,18 @@ function turned(img, deg) { // lying on the turf (90) or diving (about 60)
   return c;
 }
 
+// Tipped over by deg, turning around a point that slides from his feet (deg 0) to his middle (k = 1), so a fall starts at
+// his feet and ends with him lying where he went down.
+function tipped(img, deg, k) {
+  const r = (deg * Math.PI) / 180, D = Math.ceil(Math.hypot(img.width, img.height)) + 4, c = document.createElement('canvas'); c.width = D; c.height = D;
+  const px = img.footX + (img.width / 2 - img.footX) * k, py = img.footY + (img.height * 0.56 - img.footY) * k;
+  const ctx = c.getContext('2d'); ctx.imageSmoothingEnabled = false; ctx.translate(D / 2, D / 2); ctx.rotate(r); ctx.drawImage(img, -px, -py);
+  const turn = ([x, y]) => [D / 2 + (x - px) * Math.cos(r) - (y - py) * Math.sin(r), D / 2 + (x - px) * Math.sin(r) + (y - py) * Math.cos(r)];
+  c.footX = D / 2; c.footY = D / 2 + 6 * k; c.hand = turn(img.hand); c.hand2 = turn(img.hand2);
+  return c;
+}
+const FALL = [22, 46, 68, 84];
+
 const cache = new Map();
 // look: { key, colors (the game uniform), face (portrait looks), number, drip, design, wide, tall }. view: front | back | side.
 // pose: any name in fieldRig POSES (side) or FRONT (front and back), plus down and dive. face: 1 right, -1 left.
@@ -91,6 +103,10 @@ export function sprite(look, view, pose, frame, face) {
   let c = cache.get(k);
   if (!c) {
     if (pose === 'down') c = turned(rigFrame(look, 'stand', 0, face), 90 * face);
+    else if (pose === 'downB') c = turned(rigFrame(look, 'kneel', 0, face), -90 * face);                       // flat on his back, a knee up
+    else if (pose === 'fallF') c = tipped(rigFrame(look, 'reach', 0, face), FALL[frame] * face, frame / 3);   // pitching forward, hands out to break the fall
+    else if (pose === 'fallB') c = tipped(rigFrame(look, 'driven', 1, face), -FALL[frame] * face, frame / 3);   // going over backward
+    else if (pose === 'rocked') c = tipped(rigFrame(look, 'driven', 0, face), -40 * face, 0.5);              // blown up off his feet
     else if (pose === 'dive') c = turned(rigFrame(look, 'tackle', 0, face), 50 * face);
     else if (pose === 'layout') c = turned(rigFrame(look, 'layout', 0, face), 72 * face);   // flying through the air
     else if (view === 'side') c = rigFrame(look, pose, frame, face);

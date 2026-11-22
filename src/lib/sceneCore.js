@@ -112,7 +112,11 @@ export class Scene {
   }
   when(t, fn) { this.timers.push({ t, fn, fired: false }); }   // do fn at time t
   setPose(a, name, hold) { if (!a) return; a.pose = name; a.poseAt = this.t; if (hold) this.when(this.t + hold, () => { if (a.pose === name) a.pose = null; }); }
-  knock(a, upAfter = null) { if (!a) return; a.down = true; a.pose = null; a.downAt = this.t; if (upAfter) this.when(this.t + upAfter, () => { a.down = false; a.brain = B.idle(); }); }
+  // Down he goes: he falls over through a few frames (forward, or onto his back), lies there, and gets up through a knee.
+  knock(a, upAfter = null, { back = false, dur = 0.3, face = null } = {}) {   // face: which way he falls (1 right, -1 left), if not the way he's facing
+    if (!a) return; a.down = true; a.pose = null; a.downAt = this.t; a.fall = { t0: this.t, dur, back, face };
+    if (upAfter) this.when(this.t + upAfter, () => { a.down = false; a.brain = B.idle(); this.setPose(a, 'kneel', 0.35); });
+  }
   update(dt) {
     this.t += dt;
     for (const tm of this.timers) if (!tm.fired && this.t >= tm.t) { tm.fired = true; tm.fn(this); }
@@ -131,7 +135,7 @@ export class Scene {
       if (u >= 1) { b.flight = null; b.spin = false; f.land?.(this); }
     } else if (b.holder) { b.x = b.holder.x; b.y = b.holder.y; b.h = b.holder.down ? 0.25 : 0.62; }
     if (this.tick) this.tick(this, dt);   // the officials (sceneRefs)
-    else if (b.loose) { // bounces, then rolls to a stop
+    if (b.loose && !b.flight && !b.holder) { // bounces, then rolls to a stop
       const L = b.loose; L.vh -= 26 * dt; b.x += L.vx * dt; b.y += L.vy * dt; b.h += L.vh * dt;
       if (b.h <= 0.12) { b.h = 0.12; if (Math.abs(L.vh) > 1.5) { L.vh = -L.vh * 0.45; L.vx *= 0.65; L.vy *= 0.65; L.wild = !L.wild; } else { L.vh = 0; L.vx *= 1 - dt * 3; L.vy *= 1 - dt * 3; } }
     }

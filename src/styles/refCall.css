@@ -13,6 +13,7 @@
 @keyframes rc-blink { 50% { opacity: 0; } }
 /* FLAG on the scorebug, a second or so after the flag comes out: the down-and-distance turns into a yellow FLAG */
 .sb-flagged :is(.sb-down, .tnf-down, .snf-down) { background: #ffd400 !important; color: #111 !important; animation: sb-flag .5s cubic-bezier(.2, 1.4, .4, 1) both, sb-flag-pulse 1s ease-in-out infinite .5s; }
+.sb-flagged :is(.tnf-down, .snf-down) { min-width: 4.6em; text-align: center; }   /* FLAG sits in a box the width of a down and distance, centered */
 .sb-flagged :is(.sb-down, .tnf-down, .snf-down) * { color: #111 !important; text-shadow: none !important; }
 @keyframes sb-flag { from { opacity: 0; filter: brightness(2.5); } }
 @keyframes sb-flag-pulse { 50% { filter: brightness(1.25); } }

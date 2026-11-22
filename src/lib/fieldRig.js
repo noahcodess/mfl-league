@@ -65,7 +65,7 @@ const rot = ([x, y], a) => [x * Math.cos(a) - y * Math.sin(a), x * Math.sin(a) +
 const add2 = (a, b) => [a[0] + b[0], a[1] + b[1]], sub2 = (a, b) => [a[0] - b[0], a[1] - b[1]];
 
 // Paints one piece turned by angle a (radians) with its pivot at `at`. Inverse mapping keeps it gap-free.
-function paint(piece, a, at, out, tag) {
+export function paint(piece, a, at, out, tag) {
   let x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9;
   piece.px.forEach((_, k) => { const [x, y] = k.split(',').map(Number); x0 = Math.min(x0, x); y0 = Math.min(y0, y); x1 = Math.max(x1, x + 1); y1 = Math.max(y1, y + 1); });
   const corners = [[x0, y0], [x1, y0], [x0, y1], [x1, y1]].map((p) => add2(at, rot(sub2(p, piece.pivot), a)));
@@ -92,16 +92,19 @@ export function rigFrame(look, poseName, frame, face) {
   legAt(art.ft, art.fs, ft, fs, art.ft.pivot);
   paint(art.body, ab, hip, pts, 'body');
   legAt(art.nt, art.ns, nt, ns, art.nt.pivot);
-  const hand = armAt(art.nu, art.nf, nu, nf, shoulder);
+  const n0 = pts.length, hand = armAt(art.nu, art.nf, nu, nf, shoulder);
   let ground = -1e9, xmin = 1e9, xmax = -1e9, ymin = 1e9;
   pts.forEach(([x, y, , tag]) => { if (tag === 'foot' || (tag === 'hand' && GROUND_HANDS.has(poseName))) ground = Math.max(ground, y); xmin = Math.min(xmin, x); xmax = Math.max(xmax, x); ymin = Math.min(ymin, y); });
   const cw = 72, ch = 84, ox = Math.round(cw / 2 - hip[0]), oy = ch - 3 - ground - lift * 2;
   const px = new Array(cw * ch).fill(null);
   pts.forEach(([x, y, c]) => { const X = x + ox, Y = y + oy; if (X >= 0 && Y >= 0 && X < cw && Y < ch) px[Y * cw + (face < 0 ? cw - 1 - X : X)] = c; });
+  const near = new Set();   // look.armEdge: the near arm gets its own dark edge where it crosses his body (the officials' bare arms)
+  if (look.armEdge) pts.slice(n0).forEach(([x, y]) => { const X = x + ox, Y = y + oy; if (X >= 0 && Y >= 0 && X < cw && Y < ch) near.add(Y * cw + (face < 0 ? cw - 1 - X : X)); });
   const cv = document.createElement('canvas'); cv.width = cw; cv.height = ch;
   const ctx = cv.getContext('2d');
   for (let y = 0; y < ch; y++) for (let x = 0; x < cw; x++) {
-    const k = px[y * cw + x];
+    const k = px[y * cw + x], i = y * cw + x;
+    if (k && near.size && !near.has(i) && (near.has(i - 1) || near.has(i + 1) || near.has(i - cw) || near.has(i + cw))) { ctx.fillStyle = INK; ctx.fillRect(x, y, 1, 1); continue; }
     if (k) { ctx.fillStyle = k; ctx.fillRect(x, y, 1, 1); continue; }
     if ((x > 0 && px[y * cw + x - 1]) || (x < cw - 1 && px[y * cw + x + 1]) || (y > 0 && px[(y - 1) * cw + x]) || (y < ch - 1 && px[(y + 1) * cw + x])) { ctx.fillStyle = INK; ctx.fillRect(x, y, 1, 1); }
   }

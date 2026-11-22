@@ -5,6 +5,7 @@
 import { B, clamp, dist, getGoing, stepTo } from './sceneCore.js';
 import { lineup, lineFight, pursueAll, finishCarry, ev, COVER } from './sceneLineup.js';
 import { carryPath } from './sceneCarry.js';
+import { stageSack } from './sceneSack.js';
 import { routeFor } from './sceneRoutes.js';
 import { routeTime, routeBrain, breakOf, routeSkill, coverBrain, presses } from './sceneCover.js';
 import { catchPlan, playCatch } from './sceneCatch.js';
@@ -60,7 +61,7 @@ export function buildPass(S, lineups) {
   if (hurry && thr?.pressured) contact[hurry.by] = tThrow + 0.1;
   lineFight(S, A, D, true, { rush, qb, contact, throwAt: thr ? tThrow : null });
   S.tThrow = tThrow; S.tCatch = tCatch; S.catchAt = catchAt;
-  if (sackEv) return sack(S, play, qb, sackEv);
+  if (sackEv) return stageSack(S, play, qb, sackEv);   // a dozen ways to get sacked (sceneSack)
   const pk = ev(play, 'pocket')[0];   // the pocket moves: climb, slide, roll out on a boot, or bail when it takes too long
   const sd = tgt ? (tgt.y >= 0 ? 1 : -1) : S.rand() < 0.5 ? -1 : 1;
   if (pk?.move === 'rollout') { S.when(Math.max(tDrop - 0.3, T0 + 0.5), () => { qb.brain = B.to(drop[0] + dir * 1.5, sd * 9, qb.max * 0.85); }); }   // rolls out and throws on the run
@@ -112,12 +113,3 @@ function outcome(S, play, tgt, cat, at, tThrow, tCatch, wob) {
   pursueAll(S, tgt, tCatch, []);
 }
 
-// The rusher (or blitzer) who got home runs the QB down on his own legs; the QB drifts to where it happens.
-function sack(S, play, qb, e) {
-  const tS = S.T0 + clamp(e.t, 1.2, 6.2), by = S.by[e.by], spot = S.at((play.result.played ?? play.result.gain) - 0.5, (S.rand() - 0.5) * 3);
-  S.when(Math.max(S.T0 + 1, tS - 1), () => { qb.brain = B.to(spot[0], spot[1], 3); });
-  if (by) S.when(Math.max(S.T0 + 0.4, tS - 1.6), () => { by.pose = null; by.brain = timedChase(qb, tS); });
-  S.when(tS - 0.2, (s) => s.setPose(by, 'tackle', 0.3));
-  S.when(tS, (s) => { if (by) s.star = { a: by, at: s.t + 0.2 }; s.knock(qb, 1.8); if (by && dist(by.x, by.y, qb.x, qb.y) < 3) s.knock(by, 1.5); for (const a of s.actors) if (!a.down && a !== by && dist(a.x, a.y, qb.x, qb.y) < 12) { a.pose = null; a.brain = B.gather(s, qb.x, qb.y, 2); } });
-  S.tEnd = tS + 0.2;
-}

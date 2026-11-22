@@ -1,13 +1,14 @@
 // Draws the live play onto the broadcast canvas: the line of scrimmage and first-down line before the snap, the kickoff
 // tee, shadows, the ball-carrier ring (sceneRing), every player in the right pose and facing (scenePose), the ball
-// (sceneBall), the officials (refDraw) and the flag they throw.
+// (sceneBall), the officials (refSprite) and the flag they throw (flagDraw).
 import { FY0, FY1, YD, MID_Y, yardX } from './fieldLayout.js';
 import { sprite } from './fieldSprite.js';
 import { lookAt } from './scenePose.js';
 import { drawBall } from './sceneBall.js';
 import { drawRing } from './sceneRing.js';
 import { hopAt } from './sceneCatch.js';
-import { drawRef, drawFlag } from './refDraw.js';
+import { refSprite } from './refSprite.js';
+import { drawFlag, drawFlagShadow } from './flagDraw.js';
 import { flagAt } from './sceneRefs.js';
 
 export const SPRITE_PX = 0.5; // world pixels per sprite pixel: a player stands about 2 yards tall, like the Drip tab art shrunk down
@@ -24,19 +25,22 @@ export function drawScene(ctx, S, cam, looks) {
     ctx.globalAlpha = 1;
   }
   if (S.tee && t < S.tee.t1 + 0.6) { ctx.fillStyle = '#ff7a1a'; ctx.fillRect(sx(S.tee.x) - Math.round(1.5 * sp), sy(S.tee.y) - Math.round(4 * sp), Math.round(3 * sp), Math.round(4 * sp)); }
-  const list = S.actors.concat(S.refs || []).sort((m, n) => m.y - n.y), holder = S.ball.holder;   // players and officials, back to front
+  const cp = S.callPose, refs = (S.refs || []).map((r) => (cp && r.code === cp.code ? { ...r, x: cp.x, y: cp.y, sp: 0 } : r));   // the close-up moves the referee clear of the pile
+  const list = S.actors.concat(refs).sort((m, n) => m.y - n.y), holder = S.ball.holder;   // players and officials, back to front
   ctx.fillStyle = 'rgba(0,0,0,0.28)';
   for (const a of list) ctx.fillRect(sx(a.x) - (a.down ? 13 : 7) * px, sy(a.y) - 1.5 * px, (a.down ? 26 : 14) * px, 3 * px);
   const tag = drawRing(ctx, S, { sx, sy, px, yd: YD }, looks);   // the ring around whoever has the ball (its name goes on top, below)
   for (const a of list) {
-    if (a.code) { drawRef(ctx, sx(a.x), sy(a.y), sp, a, t, S.callPose?.code === a.code ? S.callPose : null); continue; }   // an official
-    const look = looks[a.id]; if (!look) continue;
-    const L = lookAt(a, t, S, holder), img = sprite(look, L.view, L.pose, L.frame, L.face), X = Math.round(sx(a.x) - img.footX * sp), Y = Math.round(sy(a.y) - img.footY * sp - hopAt(a, t) * YD * px);   // off the ground when he jumps
+    let img;
+    if (a.code) img = refSprite(a, t, cp?.code === a.code ? cp : null);   // an official
+    else { const look = looks[a.id]; if (!look) continue; const L = lookAt(a, t, S, holder); img = sprite(look, L.view, L.pose, L.frame, L.face); }
+    const X = Math.round(sx(a.x) - img.footX * sp), Y = Math.round(sy(a.y) - img.footY * sp - hopAt(a, t) * YD * px);   // off the ground when he jumps
     ctx.drawImage(img, X, Y, Math.round(img.width * sp), Math.round(img.height * sp));
     a.handAt = [X + img.hand[0] * sp, Y + img.hand[1] * sp];   // where his hands are on screen, so a carried (or caught) ball sits in them
     a.hand2At = [X + img.hand2[0] * sp, Y + img.hand2[1] * sp];
   }
   drawBall(ctx, S, { sx, sy, px, sp, yd: YD });
   tag?.();
-  const fl = flagAt(S); if (fl) drawFlag(ctx, sx(fl.x), sy(fl.y) - fl.h * YD * px, sp * 1.2, fl);   // thrown by the official, landing on the spot
+  const fl = flagAt(S);
+  if (fl) { if (!fl.landed) drawFlagShadow(ctx, sx(fl.x), sy(fl.y), sp, fl.h); drawFlag(ctx, sx(fl.x), sy(fl.y) - fl.h * YD * px, sp, fl); }   // thrown by the official, floating down to the spot
 }
