@@ -1,6 +1,7 @@
 import React from 'react';
 import TeamBadge from './TeamBadge.jsx';
-import { networkFor, windowLabel } from '../data/games.js';
+import { networkFor } from '../data/games.js';
+import { broadcastFor } from '../data/broadcast.js';
 import { getTeam } from '../data/teams.js';
 import { recordText } from '../lib/seasonStats.js';
 import { useStadiums } from '../data/stadiums.js';
@@ -30,15 +31,15 @@ export default function LiveWeekGames({ week, rec, teamId }) {
       {week.games.map((g) => {
         const st = states[String(g.id)], isLive = st?.status === 'live' || g.status === 'live', done = g.status === 'final' || st?.status === 'final';
         const hs = st ? st.home_score : g.homeScore, as = st ? st.away_score : g.awayScore, started = done || isLive;
-        const home = getTeam(g.home), away = getTeam(g.away), net = networkFor(g.window, home), prime = g.window?.endsWith('night');
+        const home = getTeam(g.home), away = getTeam(g.away), net = networkFor(g.window, home), prime = g.window?.endsWith('night'), bc = net && broadcastFor(g, home);
         const coach = teamId && (g.home === teamId || g.away === teamId);
         return (
           <li key={g.id} className={`lw-game ${isLive ? 'live' : g.status}${prime ? ' prime' : ''} click`} style={{ '--away': away?.color, '--home': home?.color }}
             onClick={() => { window.location.hash = links.game(g.id); }}>
             <div className="lw-top">
-              <span>{g.time}{net ? ` · ${net}` : ''}</span>
+              <span className="lw-when">{g.time}{bc && <span className={`lw-prog net-${bc.net.key}${bc.prime ? ` show-${bc.show.key}` : ''}`} title={bc.title}><img src={bc.logo} alt={bc.title} />{!bc.prime && <b>Day game</b>}</span>}</span>
               <span className="lw-status">{done ? finalText(st?.quarter) : isLive ? <span className="lw-live"><i className="live-pulse" />Live{st ? ` · ${quarterText(st.quarter)} ${gameClockText(st.quarter, clockLeft(st))}` : ''}</span>
-                : prime ? `⭐ ${windowLabel(g.window)}` : windowLabel(g.window)}</span>
+                : ''}</span>
             </div>
             <Side id={g.away} score={started ? as : null} won={as > hs} rec={rec} done={done} tag="Away" />
             <Side id={g.home} score={started ? hs : null} won={hs > as} rec={rec} done={done} tag="Home" />

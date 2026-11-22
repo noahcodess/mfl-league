@@ -37,7 +37,7 @@ export const top = (G, p, keys, floor = 35) => Math.max(floor, ...keys.map((k) =
 
 export function stat(play, p, key, n = 1) { if (p && !play.noStats) play.stats.push([p.id, key, n]); }
 // Momentum runs from -1 (all away) to +1 (all home). amt: how big the moment was (a touchdown about 0.25).
-export function swing(G, side, amt) { G.mom = clamp(G.mom + (side === 'home' ? amt : -amt), -1, 1); }
+export function swing(G, side, amt) { const a = side === 'home' && amt > 0 ? amt * (1 + 0.3 * (G.crowdE || 0)) : amt; G.mom = clamp(G.mom + (side === 'home' ? a : -a), -1, 1); }   // momentum.js: a loud house lands the home team's moments harder
 
 // Per-play fatigue: how much speed a runner has lost after `ran` yards on this snap. Toughness slows the fade. Tops out at 20%.
 export const tired = (G, p, ran) => clamp((ran - 15) * 0.004 * (1.3 - val(G, p, 'toughness', 60) / 100), 0, 0.2);

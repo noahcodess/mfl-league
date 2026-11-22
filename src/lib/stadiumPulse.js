@@ -3,7 +3,8 @@
 // color game like a whiteout goes up a few), the moment (3rd and long, 4th down, late in a close game, the red zone, overtime)
 // and the crowd feeding on itself: a false start or a miscue in the noise makes it louder (heat). It only matters when the
 // visiting team has the ball. Loud enough, it causes false starts, delay of game, receivers running the wrong route and a
-// slightly shakier kick. The meter shows on most 3rd downs, every 4th-down try and kicks, and more often when it's rocking.
+// slightly shakier kick. The meter shows on the first snap of nearly every visiting drive, most 3rd downs, every 4th-down
+// try and kicks, and on more and more 1st and 2nd downs the louder it gets. Momentum (momentum.js) pushes it up or down.
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
 const hash = (a, b) => { let x = (a * 374761393 + b * 668265263) >>> 0; x = ((x ^ (x >>> 13)) * 1274126177) >>> 0; return (x >>> 0) / 4294967296; };
 
@@ -30,7 +31,7 @@ export function pulseNow(G) {
   const c = G.opts?.crowd, s = G.s;
   if (!c) return { v: null, p: 0, away: false };
   const away = s.poss === 'away', e = G.crowdE ?? (G.crowdE = crowdEnergy(c)), mom = clamp(G.mom || 0, -1, 1);
-  const raw = away ? e * (0.3 + 0.7 * moment(s)) + (G.heat || 0) + Math.max(0, mom) * 0.06 : e * 0.18;   // their own offense: the crowd hushes
+  const raw = away ? e * (0.3 + 0.7 * moment(s)) + (G.heat || 0) + (mom > 0 ? mom * 0.16 : mom * 0.12) : e * 0.18;   // momentum: a rolling home team gets louder, a visiting surge quiets the house   // their own offense: the crowd hushes
   const v = Math.round(clamp(raw, 0, 1) * 100);
   return { v, p: away ? v / 100 : 0, away };
 }
@@ -39,10 +40,10 @@ export function pulseNow(G) {
 export function pulseShows(G, play, pul) {
   if (pul.v == null || !pul.away) return false;
   const k = play.kind, d = play.before.down, e = G.crowdE || 0, r = hash(G.seed || 1, play.n);
-  if (k === 'fg' || k === 'punt') return e > 0.08;
-  if (d === 4) return e > 0.08;
-  if (d === 3) return e > 0.15 ? r < 0.9 : r < 0.35;
-  return pul.v >= 70 ? r < 0.4 : pul.v >= 55 ? r < 0.15 : false;
+  if (k === 'fg' || k === 'punt' || d === 4) return e > 0.05;
+  if (G.lastOff !== play.off) return e > 0.06 ? r < 0.93 : r < 0.3;   // the first snap of a drive: the house greets them (rarely not)
+  if (d === 3) return e > 0.14 ? r < 0.93 : r < 0.4;
+  return r < (pul.v >= 60 ? 0.5 : pul.v >= 45 ? 0.3 : pul.v >= 30 ? 0.12 : e > 0.15 ? 0.04 : 0);
 }
 
 // After the play: the crowd feeds on what happened. loud = the visitors cracked (a flag, a miscue, a sack, an incompletion).
@@ -58,6 +59,7 @@ export function stampPulse(G, play, pul) {
   const stop = pul.away && (r.turnover === 'int' || r.turnover === 'fumble' || r.turnover === 'downs');
   play.pulse = { v: pul.v, show: pulseShows(G, play, pul), hit: !!play.crowdHit };
   pulseAfter(G, pul, loud, stop);
+  G.lastOff = play.off;
 }
 
 // Noise in decibels for the graphic (a quiet house ~70 dB, a deafening one ~130).

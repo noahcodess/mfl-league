@@ -90,3 +90,9 @@
 }
 .rival-badge { margin-left: 8px; padding: 1px 7px; border-radius: 999px; background: #7a1010; color: #ffd9d9; font: 800 10px var(--label); text-transform: uppercase; letter-spacing: .05em; }
 .ls-coach { padding: 5px 12px; border-radius: 999px; border: 2px solid #000; background: var(--brand); color: var(--brand-text, #fff); font: 700 13px var(--label); text-decoration: none; }
+/* the program on each game: a primetime show's logo, or FOX/CBS and "Day game" in the network's headline font */
+.lw-prog { display: inline-flex; align-items: center; gap: 6px; --hf: 'Barlow Condensed', sans-serif; --hw: 800; --hs: normal; }
+.lw-prog img { height: 24px; width: auto; object-fit: contain; }
+.lw-prog b { font-family: var(--hf); font-weight: var(--hw); font-style: var(--hs); font-size: 14px; letter-spacing: .04em; text-transform: uppercase; }
+.lw-prog.net-fox { --hf: 'Anton', Impact, sans-serif; --hw: 400; --hs: italic; } .lw-prog.net-fox b { color: #f4b800; } .lw-prog.net-cbs b { color: #9fc0ff; }
+.lw-when { display: inline-flex; align-items: center; gap: 8px; }

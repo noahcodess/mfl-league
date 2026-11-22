@@ -24,6 +24,7 @@ export function fourthDown(G) {
   const canKick = dist <= kickRange(G, s.poss), pk = canKick ? kickOdds(G, s.poss, dist) * (missed ? 0.88 : 1) : 0;   // a kicker who's missed today gets less trust
   const moving = plan.report ? (working(plan, 'inside') + working(plan, 'short') + working(plan, 'quick') + working(plan, 'medium')) / 4 : 1;   // how today's offense is going
   const halfEnds = (s.quarter === 2 || late) && s.clock <= 12;
+  if (s.ot === 1 && !G.otSecond && s.toGo <= 2) return 'go';   // going first in OT: a short 4th down is worth the touchdown
   if (s.ot) return canKick && pk > 0.55 && (up >= -3 && up <= 0) ? 'fg' : 'go';
   if (halfEnds) return canKick && pk > 0.12 && (!late || (up >= -3 && up <= 0) || up > 0) ? 'fg' : late && up < 0 ? 'go' : canKick ? 'fg' : 'punt';
   // must score: late and down more than a field goal, or down at all with almost no time

@@ -3,6 +3,8 @@
 // Sim Lab). The same seed always plays the exact same game. Nothing here draws anything.
 import { dice, other, val, mix } from './simCore.js';
 import { scrimmage, doKickoff, doPat } from './simDrive.js';
+import { crowdEnergy } from './stadiumPulse.js';
+import { momentumStart } from './momentum.js';
 import { tempo, clockStop, PLAY_CLOCK } from './simClock.js';
 import { makePlan } from './coachPlan.js';
 import { overtime } from './simOvertime.js';
@@ -59,9 +61,10 @@ const teamDay = (R) => R.gauss(0, 2.4) + (R.chance(0.11) ? (R.chance(0.5) ? 1 : 
 
 export function createGame(home, away, seed, opts = {}) {
   const R = dice(seed), flip = R.chance(0.5) ? 'home' : 'away', receiver = opts.receiver || flip, qlen = opts.quarterSeconds || QUARTER_SECONDS;
-  const G = { R, opts, seed, mom: 0, form: { home: teamDay(R), away: teamDay(R) },   // some days a team has it, some days it doesn't
+  const G = { R, opts, seed, mom: 0, crowdE: crowdEnergy(opts.crowd), form: { home: teamDay(R), away: teamDay(R) },   // some days a team has it, some days it doesn't
     teams: { home: team(home, 'home', R), away: team(away, 'away', R) }, plays: [], scoring: [], timeouts: [], injuries: [], openingReceiver: receiver };
   G.teams.home.plan = makePlan(home, away, home.coach); G.teams.away.plan = makePlan(away, home, away.coach);   // each coach's game plan
+  G.mom = momentumStart(G);   // the home team starts with a little momentum
   G.s = { quarter: 1, clock: qlen, qlen, poss: receiver, down: 1, toGo: 10, ballOn: 25, score: { home: 0, away: 0 }, to: { home: 3, away: 3 }, phase: 'kickoff', kicker: other(receiver), running: false, ot: 0, over: false };
   return G;
 }

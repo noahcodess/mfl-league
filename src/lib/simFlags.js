@@ -28,7 +28,7 @@ function crowdFlag(G, play) {
   if (r >= fs + dog) return null;
   const dg = r >= fs, who = dg ? G.O.QB : sloppy(G, R), name = dg ? 'Delay of game' : 'False start', yards = Math.min(5, Math.floor(s.ballOn / 2));
   addEvent(play, 'flag', 0, { name, on: who.id, team: s.poss, yards, accepted: true, crowd: true }); stat(play, who, 'pen'); stat(play, who, 'penyds', yards);
-  play.kind = 'penalty'; play.headline = 'FLAG'; play.crowdHit = true;
+  play.kind = 'penalty'; play.headline = 'FLAG'; play.crowdHit = true; G.mom = Math.min(1, G.mom + 0.05);   // the crowd caused it: momentum to the home team
   play.text = dg ? `FLAG: Delay of game on the offense, ${yards} yards. They couldn't hear the call over the crowd.` : `FLAG: False start on ${who.last}, ${yards} yards. The crowd got to him!`;
   return { name, on: who, side: s.poss, yards, off: true };
 }

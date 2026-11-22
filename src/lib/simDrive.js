@@ -12,6 +12,7 @@ import { scout } from './coachPlan.js';
 import { preSnapFlag, postPlayFlag } from './simFlags.js';
 import { PLAY_CLOCK } from './simClock.js';
 import { pulseNow, stampPulse } from './stadiumPulse.js';
+import { settle } from './momentum.js';
 
 export function sides(G) { const s = G.s; G.defSide = other(s.poss); G.O = G.teams[s.poss].O; G.D = G.teams[G.defSide].D; }
 const start = (G) => { const p = newPlay({ ...G.s, hash: 'middle' }, G.plays.length + 1); p.stats = []; return p; };
@@ -20,7 +21,7 @@ function log(G, play, secs) {
   if (!s.ot) s.clock -= play.clock.seconds;
   if (!s.ot && (s.quarter === 2 || s.quarter === 4) && was > 120 && s.clock <= 120) { s.running = false; play.twoMinute = true; }   // two-minute warning
   play.after = { score: { ...s.score }, poss: s.poss, ballOn: s.ballOn, down: s.down, toGo: s.toGo, quarter: s.quarter, clock: s.clock, mom: Math.round(G.mom * 100) / 100 };
-  G.mom *= 0.97; G.plays.push(play);
+  settle(G); G.plays.push(play);   // momentum drifts back toward the home edge
   const lead = s.score.home - s.score.away;   // a one-score game late: the trailing side finds a little extra (the rally)
   if (s.quarter === 4 && !s.ot && s.clock < (s.qlen || 360) * 0.5 && lead !== 0 && Math.abs(lead) <= 8) swing(G, lead > 0 ? 'away' : 'home', 0.02);
   return play;
@@ -126,8 +127,9 @@ export function scrimmage(G) {
     else if (spot <= 0) { score(G, play, d, 2, 'safety'); play.result.safety = true; play.headline = 'SAFETY'; s.phase = 'kickoff'; s.kicker = o; s.freeKick = true; ended = 'safety'; }
     else {
       s.ballOn = spot;
-      if (res.gain >= s.toGo) { play.result.firstDown = true; s.down = 1; s.toGo = Math.min(10, 100 - spot); if (res.gain >= 20) play.big = true; }
-      else { s.down += 1; s.toGo -= res.gain; }
+      const fourth = s.down === 4;
+      if (res.gain >= s.toGo) { play.result.firstDown = true; s.down = 1; s.toGo = Math.min(10, 100 - spot); if (res.gain >= 20) play.big = true; if (fourth) swing(G, o, 0.12); if (res.gain >= 20 && call.type === 'pass') swing(G, o, 0.06); }   // momentum: a 4th-down conversion, a big strike
+      else { s.down += 1; s.toGo -= res.gain; if (s.down === 4) swing(G, d, 0.04); }   // a 3rd-down stop
       if (s.down > 4) { give(G, d, 100 - spot); swing(G, d, 0.15); play.result.turnover = 'downs'; play.headline = 'TURNOVER ON DOWNS'; ended = 'downs'; }
       else moving = !res.incomplete && !(res.oob && (s.quarter === 2 || s.quarter === 4) && s.clock < 120);
     }
