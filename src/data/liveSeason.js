@@ -14,13 +14,21 @@ export function getSampleSeason() {
 
 const timeText = (iso) => new Date(iso).toLocaleString('en-US', { weekday: 'short', hour: 'numeric', minute: '2-digit' }).replace(',', '');
 
+// The week the league is really on: the first week that still has a game to play (never behind the saved week). A week
+// whose games are all final is done, even if the saved week hasn't caught up yet.
+export function weekNow(games) {
+  const open = (games || []).filter((g) => g.kind === 'regular' && g.status !== 'final').map((g) => g.week);
+  const first = open.length ? Math.min(...open) : 12;
+  return Math.min(12, Math.max(1, currentWeek() || 1, first));
+}
+
 function fromGames(games) {
   const weeks = Array.from({ length: 12 }, (_, i) => ({ week: i + 1, games: [] }));
   games.filter((g) => g.kind === 'regular' && g.week >= 1 && g.week <= 12).forEach((g) => weeks[g.week - 1].games.push({
     id: g.id, week: g.week, home: g.home, away: g.away, window: g.prime, time: g.starts_at ? timeText(g.starts_at) : 'Time to be set',
     status: g.status === 'final' ? 'final' : 'upcoming', homeScore: g.home_score, awayScore: g.away_score, lines: [], rivalry: !!g.rivalry, startsAt: g.starts_at || null,
   }));
-  return { sample: false, current: Math.min(12, Math.max(1, currentWeek() || 1)), weeks };
+  return { sample: false, current: weekNow(games), weeks };
 }
 
 // Every rivalry as a set of 'a|b' keys (both orders), for the ⚔️ Rivalry badge.

@@ -1,0 +1,10 @@
+/* The conferences' colors on the standings (Live tab and League tab): the Overworld green into brown, the Nether dark red
+   into black, the first color being the main one. */
+.conf-overworld { --c1: #3f9a34; --c2: #6b4a2b; --c-ink: #eaffd9; }
+.conf-nether { --c1: #9e1b1b; --c2: #120505; --c-ink: #ffe1d9; }
+.conf-card { background: linear-gradient(180deg, color-mix(in srgb, var(--c1, transparent) 20%, var(--panel)), var(--panel) 160px); overflow: hidden; }
+.conf-card > header { background: linear-gradient(90deg, var(--c1), var(--c2)); margin: -14px -14px 4px; padding: 12px 14px; color: var(--c-ink); border-bottom: 2px solid #000; }
+.conf-card > header small { color: color-mix(in srgb, var(--c-ink) 75%, transparent); }
+.conf-tabs button.conf-overworld.on, .conf-tabs button.conf-nether.on { background: linear-gradient(90deg, var(--c1), var(--c2)); color: var(--c-ink); border-color: #000; }
+.conf-row { box-shadow: inset 4px 0 0 var(--c1); }
+.conf-card .cs-table tr:nth-child(-n+4) td:first-child, .conf-card .fs-rank.top { color: var(--c-ink); text-shadow: 0 0 6px var(--c1); }

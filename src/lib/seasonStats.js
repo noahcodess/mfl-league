@@ -1,15 +1,16 @@
 // Numbers worked out from a season's games: team records, conference standings, each week's top players, and season leaders.
 // Works the same for the sample season and the real one.
+import { rankRows } from './tiebreak.js';
 
 export function records(weeks) {
   const rec = {};
-  const get = (id) => (rec[id] ||= { w: 0, l: 0, pf: 0, pa: 0, last: [] });
+  const get = (id) => (rec[id] ||= { w: 0, l: 0, pf: 0, pa: 0, last: [], games: [] });
   weeks.forEach(({ games }) => games.forEach((g) => {
     get(g.home); get(g.away);
     if (g.status !== 'final') return;
     const hw = g.homeScore > g.awayScore;
-    [[g.home, g.homeScore, g.awayScore, hw], [g.away, g.awayScore, g.homeScore, !hw]].forEach(([id, f, a, won]) => {
-      const r = get(id); r[won ? 'w' : 'l'] += 1; r.pf += f; r.pa += a; r.last.push(won ? 'W' : 'L');
+    [[g.home, g.away, g.homeScore, g.awayScore, hw], [g.away, g.home, g.awayScore, g.homeScore, !hw]].forEach(([id, opp, f, a, won]) => {
+      const r = get(id); r[won ? 'w' : 'l'] += 1; r.pf += f; r.pa += a; r.last.push(won ? 'W' : 'L'); r.games.push({ opp, won });
     });
   }));
   Object.values(rec).forEach((r) => {
@@ -22,11 +23,12 @@ export function records(weeks) {
 
 export const recordText = (r) => (r ? `${r.w}-${r.l}` : '0-0');
 
-// { Overworld: [{ id, ...record }], Nether: [...] }, best first (wins, then point difference).
-export function standings(teams, rec) {
-  const out = {};
-  teams.forEach((t) => { (out[t.conference || 'League'] ||= []).push({ id: t.id, ...(rec[t.id] || { w: 0, l: 0, pf: 0, pa: 0, streak: '-' }) }); });
-  Object.values(out).forEach((list) => list.sort((a, b) => b.w - a.w || a.l - b.l || (b.pf - b.pa) - (a.pf - a.pa)));
+// { Overworld: [{ id, ...record }], Nether: [...] }, best first by the league's tiebreakers (tiebreak.js). confOf: each
+// team's real conference (when the teams were lumped into one table). seed: the coin flip's.
+export function standings(teams, rec, confOf = null, seed = 1) {
+  const out = {}, conf = confOf || Object.fromEntries(teams.map((t) => [t.id, t.conference]));
+  teams.forEach((t) => { (out[t.conference || 'League'] ||= []).push({ id: t.id, ...(rec[t.id] || { w: 0, l: 0, pf: 0, pa: 0, streak: '-', games: [] }) }); });
+  Object.keys(out).forEach((k) => { out[k] = rankRows(out[k], conf, seed); });
   return out;
 }
 

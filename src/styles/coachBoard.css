@@ -17,7 +17,7 @@
 .cb-team.home .cb-tos { justify-content: flex-end; }
 .cb-tos i { width: 18px; height: 6px; border-radius: 2px; background: #0005; border: 1px solid #0008; }
 .cb-tos i.on { background: #fff; }
-.cb-score { position: relative; margin-left: auto; font: 700 60px var(--pixel); color: #fff; text-shadow: 4px 4px 0 #000; min-width: 64px; text-align: center; }
+.cb-score { position: relative; margin-left: auto; font: 800 64px var(--score); color: #fff; text-shadow: 4px 4px 0 #000; min-width: 64px; text-align: center; }
 .cb-team.home .cb-score { margin: 0 auto 0 0; }
 .cb-mid { display: grid; justify-items: center; align-content: center; gap: 6px; padding: 12px 22px; min-width: 230px; font-family: var(--hf, var(--label)); }
 .cb-net { max-height: 46px; max-width: 120px; margin-top: -38px; filter: drop-shadow(2px 2px 0 #000a); }

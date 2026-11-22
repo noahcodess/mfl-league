@@ -6,6 +6,7 @@
   --gold: #ffd23f; --elite: #ffb21a; --good: #4fd18b; --warn: #ffa046; --bad: #ff5d5d; --link: #ffb48a;
   --brand: var(--mfl-hi); --brand-accent: #ffffff;
   --pixel: 'Pixelify Sans', ui-monospace, monospace;
+  --score: 'Barlow Condensed', 'Arial Narrow', sans-serif; /* scores and game numbers: the broadcast font, easy to read */
   --label: Inter, 'Segoe UI', system-ui, sans-serif; /* small text: readable, numbers line up */
   --shadow: 4px 4px 0 #000;
 }

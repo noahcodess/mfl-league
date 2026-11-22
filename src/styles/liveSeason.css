@@ -10,7 +10,7 @@
   font: 700 28px/1 var(--pixel); cursor: pointer; box-shadow: 2px 2px 0 #000; }
 .wk-arrow:disabled { opacity: .3; cursor: default; }
 .wk-strip { flex: 1; display: grid; grid-template-columns: 1fr 1.2fr 2.4fr 1.2fr 1fr; align-items: center; justify-items: center; min-width: 0; }
-.wk-item { background: none; border: 0; color: var(--text); font: 700 15px var(--pixel); cursor: pointer; white-space: nowrap; padding: 4px; }
+.wk-item { background: none; border: 0; color: var(--text); font: 700 17px var(--score); cursor: pointer; white-space: nowrap; padding: 4px; }
 .wk-item.d2 { opacity: .22; font-size: 13px; }
 .wk-item.d1 { opacity: .6; font-size: 17px; }
 .wk-item.d0 { margin: 0; font-size: clamp(30px, 6vw, 50px); letter-spacing: .04em; cursor: default; color: #fff; text-shadow: 3px 3px 0 var(--brand), 6px 6px 0 #000; }
@@ -39,7 +39,7 @@
 .lw-name small { color: var(--dim); font: 600 12px var(--label); }
 .lw-side.lost { opacity: .5; }
 .lw-side.won .lw-score { color: var(--gold); }
-.lw-score { margin-left: auto; font: 700 28px var(--pixel); min-width: 40px; text-align: right; text-shadow: 2px 2px 0 #000; }
+.lw-score { margin-left: auto; font: 800 32px var(--score); min-width: 40px; text-align: right; text-shadow: 2px 2px 0 #000; }
 .lw-at { font: 600 11px var(--label); color: var(--dim); }
 
 .ls-cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; align-items: start; }
@@ -61,9 +61,9 @@
 .lv-rank li > div { display: grid; min-width: 0; flex: 1; }
 .lv-rank li b { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .lv-rank li small { color: var(--dim); font: 600 11px var(--label); }
-.lv-n { width: 18px; text-align: center; font: 700 14px var(--pixel); color: var(--dim); }
+.lv-n { width: 18px; text-align: center; font: 800 16px var(--score); color: var(--dim); }
 .lv-rank li:first-child .lv-n { color: var(--gold); }
-.lv-big { display: grid; justify-items: end; font: 700 20px var(--pixel); }
+.lv-big { display: grid; justify-items: end; font: 800 22px var(--score); }
 .lv-big small { font: 600 10px var(--label); color: var(--dim); }
 .lv-line { font: 600 12px var(--label); text-align: right; white-space: nowrap; }
 .ws-icon { font-size: 18px; width: 24px; text-align: center; }

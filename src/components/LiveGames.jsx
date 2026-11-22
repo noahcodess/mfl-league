@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react';
 import GameOdds from './GameOdds.jsx';
 import GameUniforms from './GameUniforms.jsx';
 import { useSeasonGames, networkFor, windowLabel } from '../data/games.js';
-import { currentSeason, currentWeek, getTeam } from '../data/teams.js';
+import { currentSeason, getTeam } from '../data/teams.js';
+import { weekNow } from '../data/liveSeason.js';
 import { untilText } from '../data/schedule.js';
 
 // Live during the preseason (the commissioner's one-off games) or a regular season week: each game with its broadcast
@@ -12,7 +13,7 @@ export default function LiveGames({ kind }) {
   const [now, setNow] = useState(Date.now());
   useEffect(() => { const t = setInterval(() => setNow(Date.now()), 1000); return () => clearInterval(t); }, []);
   if (!games) return <p className="dim">Loading games...</p>;
-  const week = currentWeek() || 1;
+  const week = weekNow(games);
   const list = games.filter((g) => (kind === 'preseason' ? g.kind === 'preseason' : g.kind === 'regular' && g.week === week));
   if (!list.length) {
     return (
