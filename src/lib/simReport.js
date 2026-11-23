@@ -21,7 +21,7 @@ export const EVENTS = {
   ret: 'A kick or punt return',                                                                      // { by, from, yards, fair, touchback }
   onside: 'An onside kick: how it was kicked, how far it went, who came up with it',                  // { kind, d, got, illegal, by, kicker, tackled, tackler, adv, lat }
   flag: 'A penalty',                                                                                 // { name, on, team, yards, accepted, auto1st }
-  injury: 'A player is hurt',                                                                        // { id, type, part, weeks, sub (the backup going in) }
+  injury: 'A player is hurt',                                                                        // { id, kind, part, weeks, sub (the backup going in) }
   injuryReturn: 'A hurt player comes back in',                                                       // { id }
   celebrate: 'After a big play',                                                                     // { id, kind }
 };

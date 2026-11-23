@@ -115,7 +115,7 @@ export class Scene {
   // Down he goes: he falls over through a few frames (forward, or onto his back), lies there, and gets up through a knee.
   knock(a, upAfter = null, { back = false, dur = 0.3, face = null } = {}) {   // face: which way he falls (1 right, -1 left), if not the way he's facing
     if (!a) return; a.down = true; a.pose = null; a.downAt = this.t; a.fall = { t0: this.t, dur, back, face };
-    if (upAfter) this.when(this.t + upAfter, () => { a.down = false; a.brain = B.idle(); this.setPose(a, 'kneel', 0.35); });
+    if (upAfter) this.when(this.t + upAfter, () => { if (a.hurt) return; a.down = false; a.brain = B.idle(); this.setPose(a, 'kneel', 0.35); });
   }
   update(dt) {
     this.t += dt;

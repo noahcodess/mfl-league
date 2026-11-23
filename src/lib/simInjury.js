@@ -60,7 +60,7 @@ function hurt(G, play, p, contact, t) {
   const sub = swapOut(G, p);
   const x = { id: p.id, name: p.name, side: p.side, pos: p.pos, type: type.key, label: type.name, part: type.part, weeks, severity: severity(weeks), n: play.n, back, sub: sub?.id || null, returned: false };
   G.injuries.push(x);
-  addEvent(play, 'injury', t, { id: p.id, type: type.key, part: type.part, weeks, sub: sub?.id || null });
+  addEvent(play, 'injury', t, { id: p.id, kind: type.key, part: type.part, weeks, sub: sub?.id || null });
   play.text += ` ${p.last} is down on the field (${type.name.toLowerCase()}).`;
   return x;
 }
@@ -83,6 +83,7 @@ export function injuryCheck(G, play) {
   for (const [id, w, contact, t] of list) {
     const p = id && byId(G, id);
     if (!p || p.league || G.out.has(p.id) || String(p.id).includes('-sub-')) continue;
+    if (G.forceInjury) { G.forceInjury = false; return hurt(G, play, p, contact, t ?? 0); }   // the booth's test tool
     const chance = Math.min(0.012 * w, BASE * w * frailty(G, p) * (G.opts?.rivalry ? 1.15 : 1));   // nobody's chance is ever high
     if (R.chance(chance)) return hurt(G, play, p, contact, t ?? 0);
   }

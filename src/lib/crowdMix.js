@@ -43,5 +43,6 @@ export function masterLevel(v) {
   if (v.paused) return 0;
   if (v.brk) return 0.3;
   if (v.done) return 0.35;
+  if (v.phase === 'inj' || v.phase === 'toinj') return 0.4;   // the house goes quiet for a man down
   return v.phase === 'replay' ? 0.45 : v.phase === 'call' || v.phase === 'tocall' ? 0.75 : 1;
 }

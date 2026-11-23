@@ -34,6 +34,9 @@ import useCrowdSound from './useCrowdSound.js';
 import SoundToggle from './SoundToggle.jsx';
 import WhiteoutShot from './WhiteoutShot.jsx';
 import { isWhiteout, whiteoutPlays, huddleCam, WO } from '../lib/whiteoutPlan.js';
+import InjuryTakeover from './InjuryTakeover.jsx';
+import InjuryReport from './InjuryReport.jsx';
+import { lineupsAt, injuryCam, reportPlays, INJ_LEN, REPORT_IN, REPORT_LEN } from '../lib/injuryShow.js';
 
 const SPEEDS = [1, 2, 4];
 const everyone = (lineups, side) => [...lineups[side].all, ...Object.values(lineups[side].kickTeams).flatMap((u) => u.players)].filter(Boolean);
@@ -66,13 +69,14 @@ export default function PixelGame({ game, teams, lineups, onClose, onDone, onPla
   const wo = useMemo(() => (isWhiteout(teams.home, kits) ? whiteoutPlays(game.plays, game.seed || 1) : new Set()), [teams.home, kits?.special, kits?.home?.name, game.plays]), shownWo = useRef(new Set()), woRun = useRef(-1);   // the whiteout cutscene, once per play it's planned for
   const play = game.plays[i], done = i >= game.plays.length, woHere = wo.has(i);
   const pace = useMemo(() => { const pc = play && paceFor(play); return pc && woHere ? { ...pc, T0: Math.max(pc.T0, 5.4), huddleD: true } : pc; }, [play, woHere]);   // a whiteout play: both teams in a real huddle
-  const S = useMemo(() => (play ? buildScene(play, lineups, pace, game.seed || 1) : null), [play, lineups, pace, game.seed]), shots = useMemo(() => S && shotsFor(S, pace), [S, pace]);
+  const S = useMemo(() => (play ? buildScene(play, lineupsAt(lineups, game.injuries, play.n), pace, game.seed || 1) : null), [play, lineups, pace, game.seed, game.injuries]), shots = useMemo(() => S && shotsFor(S, pace), [S, pace]);
   useEffect(() => { if (done) onDone?.(); }, [done]); // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => { onPlay?.(i); }, [i]); // eslint-disable-line react-hooks/exhaustive-deps
   const live0 = useRef(null); useEffect(() => { live0.current = S; }, [S]);   // the play as it's being acted out right now
   const plan = useMemo(() => planGraphics(game.plays), [game.plays]), g = plan[i] || {};
   const callOf = useMemo(() => play && penaltyCall(play, Object.fromEntries(['home', 'away'].flatMap((s) => everyone(lineups, s).map((p) => [p.id, p]))), teams), [play, lineups, teams]);   // the referee's announcement for a flagged play   // every graphic, planned so only one is ever up
   const people = useMemo(() => Object.fromEntries(['home', 'away'].flatMap((s) => everyone(lineups, s).map((p) => [p.id, p]))), [lineups]), playerOf = (id) => people[id];
+  const inj = play && game.injuries?.find((x) => x.n === play.n), reps = useMemo(() => reportPlays(game.plays, game.injuries), [game.plays, game.injuries]), rep = reps[i];   // someone hurt on this play; the injury report due on this one
   const sideOf = useMemo(() => Object.fromEntries(['home', 'away'].flatMap((s) => everyone(lineups, s).map((p) => [p.id, s]))), [lineups]);
   const marks = useMemo(() => ({ q1: game.plays.findIndex((p) => p.before.quarter === 2), half: game.plays.findIndex((p) => p.before.quarter === 3), q3: game.plays.findIndex((p) => p.before.quarter === 4), ot: game.plays.findIndex((p) => p.before.quarter >= 5) }), [game.plays]);   // the first snap of the 2nd, the second-half kickoff, the first snap of the 4th, the first overtime snap
   useEffect(() => { const kind = i === marks.half ? 'half' : i === marks.ot ? 'ot' : i === marks.q1 ? 'q1' : i === marks.q3 ? 'q3' : null; if (kind && i > 0 && !shownBrk.current.has(i)) { shownBrk.current.add(i); setBrk({ kind, live: true }); } }, [i, marks]);
@@ -83,8 +87,8 @@ export default function PixelGame({ game, teams, lineups, onClose, onDone, onPla
       play: play && { n: play.n, kind: play.kind, off: play.off, keyPlay: !!play.keyPlay, call: play.call?.name || null, pulse: play.pulse || null, before: play.before, text: beat.post ? play.text : null },
       pre: g.pre ? { id: `pre-${i}`, type: g.pre.type, label: g.pre.type === 'card' ? `${playerOf(g.pre.id)?.name} stat card` : g.pre.type === 'drive' ? 'Drive summary' : g.pre.type === 'fg' ? `Field goal bar (${g.pre.dist} yds)` : 'Ball on tag', window: slotWindow(g.pre, pace) } : null,
       marks, timeouts: game.timeouts || [], score: (beat.post ? play?.after?.score : play?.before.score) || game.score }) });
-  const clock = useRef({ t: 0, last: 0, phase: 'live', rt: 0, hold: 0, tdAt: null, tdReal: 0 }), ctl = useRef({}); ctl.current = { speed, paused: paused || !!brk?.live, S, i, shots, pace, sc: g.score, fresh, hold: booth.hold, pz: play?.pulse, tout: !!(game.timeouts || []).find((x) => x.n === i + 1), call: callOf };
-  useEffect(() => { Object.assign(clock.current, { t: 0, phase: 'live', rt: 0, hold: 0, tdAt: null, tdReal: 0 }); setBeat({ post: false, phase: 'live', i }); woRun.current = -1;
+  const clock = useRef({ t: 0, last: 0, phase: 'live', rt: 0, hold: 0, tdAt: null, tdReal: 0 }), ctl = useRef({}); ctl.current = { inj, speed, paused: paused || !!brk?.live, S, i, shots, pace, sc: g.score, fresh, hold: booth.hold, pz: play?.pulse, tout: !!(game.timeouts || []).find((x) => x.n === i + 1), call: callOf };
+  useEffect(() => { Object.assign(clock.current, { t: 0, phase: 'live', rt: 0, hold: 0, tdAt: null, tdReal: 0, injDone: false }); setBeat({ post: false, phase: 'live', i }); woRun.current = -1;
     if (wo.has(i) && !shownWo.current.has(i)) { shownWo.current.add(i); woRun.current = i; clock.current.phase = 'wo'; setSting((n) => n + 1); }   // cut to the whiteout
   }, [i]); // eslint-disable-line react-hooks/exhaustive-deps
   const snd = useCrowdSound(sound, game.seed || 1, () => ({ play, S, c: clock.current, brk: !!brk?.live, paused, done, wo: woRun.current === i }));
@@ -96,7 +100,7 @@ export default function PixelGame({ game, teams, lineups, onClose, onDone, onPla
     target() {   // the camera operator (broadcastCam) decides the shot
       const { S: s, shots: sh } = ctl.current, c = clock.current; if (!s) return { x: yardX(50), y: MID_Y, zoom: 0.7 };
       const cp = c.phase === 'call' && live0.current?.callPose; if (cp) return callCam(cp);
-      const hc = c.phase === 'wo' && huddleCam(live0.current || s); if (hc) return hc;   // the whiteout: tight on the visitors' huddle   // the close-up: the referee in the middle of the screen
+      const hc = c.phase === 'wo' && huddleCam(live0.current || s); if (hc) return hc; const ic = /inj$/.test(c.phase) && injuryCam(live0.current, ctl.current.inj?.id); if (ic) return ic;   // the whiteout: tight on the visitors' huddle   // the close-up: the referee in the middle of the screen
       return camTarget(s, live0.current || s, { phase: c.phase, t: c.phase === 'replay' ? c.rt : c.t, slow: slowAt(sh, c.t) < 1, first: ctl.current.fresh, flag: sh?.flag, replay: sh?.replay });
     },
     shake() {   // a loud house shakes the camera before the snap (the graphics don't shake, only the pulse meter)
@@ -109,17 +113,18 @@ export default function PixelGame({ game, teams, lineups, onClose, onDone, onPla
     draw(ctx, cam) {
       const c = clock.current, now = performance.now(), { S: s, speed: sp, paused: p, shots: sh, pace: pc, sc } = ctl.current, dt = c.last ? Math.min(0.1, (now - c.last) / 1000) * sp : 0;
       c.last = now; if (!s || !sh) return;
-      const next = () => { c.t = 0; setI((n) => (n === ctl.current.i ? n + 1 : n)); };
+      const next = (stung) => { if (ctl.current.inj && !c.injDone) { c.injDone = true; c.phase = 'toinj'; c.hold = 0; if (!stung) setSting((n) => n + 1); return; } c.t = 0; c.phase = 'live'; c.hold = 0; setI((n) => (n === ctl.current.i ? n + 1 : n)); };   // someone's hurt: the INJURY takeover first
       if (!p && !(ctl.current.hold && c.phase === 'live' && c.t >= s.T0 - 0.5 && c.t < s.T0)) {   // the booth can hold the snap (the play clock stops)
         if ((c.phase === 'sting' || c.phase === 'replay') && !sh.replay) c.phase = 'live';   // jumped to a new play mid-replay (booth skip): pick the new one up live
         const toReplay = () => { c.phase = 'sting'; c.hold = 0; setSting((n) => n + 1); };   // the network transition covers the cut to the replay
         if (c.phase === 'live') { c.t += dt * slowAt(sh, c.t); if (c.t > s.tEnd + pc.dead && (c.tdAt == null || (c.tdReal && now - c.tdReal > (sc?.type === 'fg' ? 3300 : 3700)))) {   // the scoring takeover runs its full length at any speed
           if (sh.flag && ctl.current.call) { c.phase = 'tocall'; c.hold = 0; setSting((n) => n + 1); } else if (sh.replay) toReplay(); else next(); } }   // a flag: transition to the referee's call
         else if (c.phase === 'wo') { const h0 = c.hold; c.hold += dt / sp; if (h0 < WO.back && c.hold >= WO.back) setSting((n) => n + 1); if (c.hold > WO.len) { c.phase = 'live'; c.hold = 0; } }   // stadium shot, back to the huddle
+        else if (c.phase === 'toinj' || c.phase === 'inj') { c.hold += dt / sp; c.t += dt; if (c.phase === 'toinj' && c.hold > STING_MID / 1000) { c.phase = 'inj'; c.hold = 0; } else if (c.phase === 'inj' && c.hold > INJ_LEN) { setSting((n) => n + 1); next(true); } }   // on him while he's down
         else if (c.phase === 'tocall') { c.hold += dt / sp; if (c.hold > STING_MID / 1000) { c.phase = 'call'; c.hold = 0; } }
-        else if (c.phase === 'call') { c.hold += dt / sp; if (c.hold > CALL_LEN) { if (sh.replay) toReplay(); else { setSting((n) => n + 1); next(); } } }
+        else if (c.phase === 'call') { c.hold += dt / sp; if (c.hold > CALL_LEN) { if (sh.replay) toReplay(); else { setSting((n) => n + 1); next(true); } } }
         else if (c.phase === 'sting') { c.hold += dt; if (c.hold > STING_MID / 1000) { c.phase = 'replay'; c.rt = sh.replay.from; } }
-        else if (c.phase === 'replay') { c.rt += dt * sh.replay.speed; if (c.rt > sh.replay.to) { setSting((n) => n + 1); next(); } }   // and the cut back
+        else if (c.phase === 'replay') { c.rt += dt * sh.replay.speed; if (c.rt > sh.replay.to) { setSting((n) => n + 1); next(true); } }   // and the cut back
       }
       live0.current = seek(live0.current || s, c.phase === 'replay' ? c.rt : c.t);   // step the live play to now (a replay rewinds and replays it)
       const cs = ctl.current.call, R = live0.current.refs?.find((r) => r.code === 'R');
@@ -160,6 +165,7 @@ export default function PixelGame({ game, teams, lineups, onClose, onDone, onPla
         {beat.phase === 'replay' && <div className={`pg-replay net-${bc.net.key}`}><b>REPLAY</b></div>}
         {sting > 0 && <NetStinger key={sting} net={bc.net} onDone={() => setSting(0)} />}
         {beat.phase === 'call' && callOf && beat.hold > CALL_PANEL && <RefCall key={`rc${i}`} call={callOf} />}
+        {rep && beat.phase === 'live' && bt >= REPORT_IN && bt < REPORT_IN + REPORT_LEN && <InjuryReport key={`ir${i}`} x={rep} n={i + 1} player={playerOf(rep.id)} sub={playerOf(rep.sub)} team={teams[rep.side]} bug={bc.bug} week={match?.week ?? null} out={bt > REPORT_IN + REPORT_LEN - 0.5} />}
         {beat.phase === 'wo' && beat.hold >= WO.shotIn && beat.hold < WO.shotOut && <WhiteoutShot home={teams.home} bc={bc} v={pz?.v ?? 80} fill={sound?.fill ?? 1} />}
         {!beat.post && beat.phase !== 'wo' && pace?.keyPlay && !busy && <div className="pg-key">KEY PLAY</div>}
         {done && <div className="pg-headline final">{finalText(4 + (game.overtimes || 0)).toUpperCase()}</div>}
@@ -173,7 +179,7 @@ export default function PixelGame({ game, teams, lineups, onClose, onDone, onPla
           return brk.kind === 'half' ? <HalftimeReport plays={game.plays.slice(0, at)} score={p0.before.score} teams={teams} people={people} sideOf={sideOf} bc={bc} receiver={p0.def} {...film} {...ends} />
             : <OvertimeRules teams={teams} first={p0.off} score={p0.before.score} bc={bc} {...ends} />;
         })()}
-        {bugUp && <div className={`pg-bug${scoreUp ? ' taken' : ''}${beat.phase === 'sting' || beat.phase === 'replay' ? ' snap' : ''}${beat.phase === 'replay' || beat.phase === 'call' ? ' replay' : ''}${toutUp && !scoreUp ? ' to-grow' : ''}${toutUp && bt < 1.3 ? ' to-blink' : ''}${toutBar && !scoreUp ? ' taken' : ''}`} data-to={toutUp ? tout.side : undefined}><Scorebug bc={bc} home={teams.home} away={teams.away} st={st} rec={rec} card={card} className={fresh ? 'sb-enter' : ''} />{scoreUp && <ScoreTakeover key={`sc${i}`} score={g.score} team={teams[g.score.side]} people={g.score.ids.map(playerOf)} bug={bc.bug} />}{toutBar && !scoreUp && <TimeoutTakeover key={`to${i}`} team={teams[tout.side]} left={tos(tout.side)} pc={beat.playClock} bug={bc.bug} closing={bt > 3.2} />}</div>}
+        {bugUp && <div className={`pg-bug${scoreUp || (beat.phase === 'inj' && inj) ? ' taken' : ''}${beat.phase === 'sting' || beat.phase === 'replay' ? ' snap' : ''}${beat.phase === 'replay' || beat.phase === 'call' ? ' replay' : ''}${toutUp && !scoreUp ? ' to-grow' : ''}${toutUp && bt < 1.3 ? ' to-blink' : ''}${toutBar && !scoreUp ? ' taken' : ''}`} data-to={toutUp ? tout.side : undefined}><Scorebug bc={bc} home={teams.home} away={teams.away} st={st} rec={rec} card={card} className={fresh ? 'sb-enter' : ''} />{beat.phase === 'inj' && inj && <InjuryTakeover key={`ij${i}`} player={playerOf(inj.id)} team={teams[inj.side]} bug={bc.bug} />}{scoreUp && <ScoreTakeover key={`sc${i}`} score={g.score} team={teams[g.score.side]} people={g.score.ids.map(playerOf)} bug={bc.bug} />}{toutBar && !scoreUp && <TimeoutTakeover key={`to${i}`} team={teams[tout.side]} left={tos(tout.side)} pc={beat.playClock} bug={bc.bug} closing={bt > 3.2} />}</div>}
       </div>
       {!full && <p className="pg-text">{done ? 'That’s the game.' : beat.post ? play.text : play?.call?.name ? `${teams[play.off].code} · ${play.call.name}` : ' '}</p>}
       <div className="ct-row">

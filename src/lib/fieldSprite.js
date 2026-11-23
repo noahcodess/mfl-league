@@ -2,6 +2,7 @@
 // bends at every joint (fieldRig.js). Big men are drawn wider and tall men get longer legs. Every pose is drawn once per
 // player and reused, so a full game costs almost nothing.
 import { W, H, INK } from './uniformDraw.js';
+import { HURT_TURN } from './hurtPoses.js';
 import { viewParts } from './fieldViews.js';
 import { rigFrame } from './fieldRig.js';
 
@@ -94,6 +95,8 @@ function tipped(img, deg, k) {
   return c;
 }
 const FALL = [22, 46, 68, 84];
+const seat = (c) => { const d = c.getContext('2d').getImageData(0, 0, c.width, c.height).data, at = (x, y) => d[(y * c.width + x) * 4 + 3];   // a sitting man's seat: the bottom of the sprite
+  for (let y = c.height - 1; y > 0; y--) { const xs = []; for (let x = 0; x < c.width; x++) if (at(x, y)) xs.push(x); if (xs.length) { c.footY = y - 1; c.footX = xs[0] + (xs[xs.length - 1] - xs[0]) * 0.25; return; } } };
 
 const cache = new Map();
 // look: { key, colors (the game uniform), face (portrait looks), number, drip, design, wide, tall }. view: front | back | side.
@@ -109,6 +112,7 @@ export function sprite(look, view, pose, frame, face) {
     else if (pose === 'rocked') c = tipped(rigFrame(look, 'driven', 0, face), -40 * face, 0.5);              // blown up off his feet
     else if (pose === 'dive') c = turned(rigFrame(look, 'tackle', 0, face), 50 * face);
     else if (pose === 'layout') c = turned(rigFrame(look, 'layout', 0, face), 72 * face);   // flying through the air
+    else if (HURT_TURN[pose]) { c = turned(rigFrame(look, pose, frame, face), HURT_TURN[pose] * face); if (pose === 'hurtAnkle') seat(c); }   // hurt, down on the field (hurtPoses); sitting up sits on his seat
     else if (view === 'side') c = rigFrame(look, pose, frame, face);
     else c = compose(look, view, pose, frame, face);
     cache.set(k, c);

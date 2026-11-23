@@ -7,6 +7,7 @@ import { buildRun, buildScramble, buildKneel, buildSpike } from './sceneRun.js';
 import { buildPass } from './scenePass.js';
 import { buildKickoff, buildPunt, buildKick } from './sceneKicks.js';
 import { addRefs } from './sceneRefs.js';
+import { stageInjury } from './sceneInjury.js';
 import { addNet } from './kickNet.js';
 
 // A flag before the snap: the offender jumps early, the flag flies, everyone stands up.
@@ -62,6 +63,7 @@ export function buildScene(play, lineups, pace = {}, seed = 1, slack = null) {
   if (S.huddle) huddleUp(S);   // now that everything is set from the real spots, start them in the huddle
   if (play.flagged && !S.flag) S.flag = { t: S.tEnd - 0.4, x: S.los, y: 2 };
   addRefs(S, seed);   // the officials (and who throws the flag, where and when)
+  stageInjury(S);   // anyone hurt goes down and stays down
   addNet(S, seed);    // the kicking net behind the posts (field goals and extra points; it needs S.tKick)
   S.dur = S.tEnd + 2.4;
   S.rebuild = () => buildScene(play, lineups, pace, seed, slack);

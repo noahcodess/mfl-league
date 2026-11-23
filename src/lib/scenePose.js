@@ -14,6 +14,10 @@ export function lookAt(a, t, S, holder) {
   const speed = Math.hypot(a.vx, a.vy), moving = speed > 0.7, mine = holder === a, back = a.backUntil && t < a.backUntil && moving;
   let view = a.vis?.view || 'side', face = a.vis?.face || a.face, pose;
   let fallK = -1;
+  if (a.hurt && t >= a.hurt.at + 0.45) {   // hurt: down in one of the five hurt poses, breathing hard (slower as the seconds go by)
+    const el = t - a.hurt.at; a.vis = { view: 'side', face: a.hurt.face };
+    return { view: 'side', face: a.hurt.face, pose: a.hurt.pose, frame: Math.floor(el * Math.max(1.8, 3.2 - el * 0.12)) & 1 };
+  }
   if (a.down) {   // going down: the fall frames, then lying there (face down, or on his back)
     const f = a.fall || {}; if (f.face == null) f.face = a.vis?.face || a.face || 1;
     fallK = f.t0 != null && t - f.t0 < f.dur ? Math.min(3, Math.floor(((t - f.t0) / f.dur) * 4)) : 4;

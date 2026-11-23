@@ -11,6 +11,7 @@ import { loadCrowd } from '../data/gameCrowd.js';
 import { playOfficial, finalizeGame, isRivalGame, loadReplay, saveReplay, saveProgress, addGameInput } from '../data/gameResults.js';
 
 const seedOf = (s) => [...String(s)].reduce((h, c) => (h * 31 + c.charCodeAt(0)) >>> 0, 7);
+const DEV_INJ = import.meta.env.DEV && Number(new URLSearchParams(window.location.search).get('devinjury'));   // dev only: ?devinjury=N hurts someone on play N
 const sameInputs = (a = [], b = []) => JSON.stringify(a) === JSON.stringify(b);
 
 // game: the scheduled game. home/away: team objects. kick: { receiving, seed } from the kickoff. st: the live game state
@@ -18,7 +19,7 @@ const sameInputs = (a = [], b = []) => JSON.stringify(a) === JSON.stringify(b);
 export default function LiveGame({ game, home, away, kick, resume = 0, st = null, rec = null }) {
   const lineups = useGameLineups(home.id, away.id);
   const [rivalry, setRivalry] = useState(null), [done, setDone] = useState(''), real = isRealGame(game.id);
-  const [inputs, setInputs] = useState(() => (kick?.already ? st?.inputs || [] : []));
+  const [inputs, setInputs] = useState(() => (kick?.already ? st?.inputs || [] : DEV_INJ ? [{ kind: 'injury', n: DEV_INJ }] : []));
   const [crowd, setCrowd] = useState(undefined);   // the crowd (Stadium Pulse), fixed before kickoff so every rerun plays the same
   useEffect(() => { let on = true; loadCrowd(game).then((c) => on && setCrowd(c || null)); return () => { on = false; }; }, [game.id]); // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => { let on = true; isRivalGame(home.id, away.id).then((r) => on && setRivalry(r)).catch(() => on && setRivalry(false)); return () => { on = false; }; }, [home.id, away.id]);

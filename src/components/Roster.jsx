@@ -2,12 +2,14 @@ import React, { useState } from 'react';
 import Headshot from './Headshot.jsx';
 import StarRating from './StarRating.jsx';
 import { OFFENSE, DEFENSE, SPECIAL, POSITION_NAMES } from '../data/positions.js';
+import MedicalCross from './MedicalCross.jsx';
+import { useInjuries, returnText } from '../data/injuries.js';
 
 // The roster as a real depth chart: a card per position, players stacked top to bottom with the best starter on top
-// (WR1, WR2...), backups tucked under "+ backups". Insiders also see contract years and potential.
+// (WR1, WR2...), backups tucked under "+ backups". Insiders also see contract years and potential. Injured players say so.
 const best = (a, b) => b.stars - a.stars || (a.slot || 0) - (b.slot || 0) || (a.age || 0) - (b.age || 0);
 
-function DepthRow({ p, label, team, onOpen, insider, backup }) {
+function DepthRow({ p, label, team, onOpen, insider, backup, hurt }) {
   const pot = insider ? insider[p.id] : null;
   return (
     <button className={`depth-row${backup ? ' backup' : ''}`} onClick={() => onOpen(p)}>
@@ -20,13 +22,14 @@ function DepthRow({ p, label, team, onOpen, insider, backup }) {
           <StarRating value={p.stars} elite={p.elite} peak={p.peakStars} />
           <span className="dim">Age {p.age ?? '-'}</span>
           {pot != null && pot > p.stars && <span className="pot-mini">POT <StarRating value={pot} elite={pot === 5} /></span>}
+          {hurt && <span className="ptile-hurt" title={`${hurt.label} (${hurt.severity})`}><MedicalCross /> Out · {returnText(hurt)}</span>}
         </span>
       </span>
     </button>
   );
 }
 
-function PositionCard({ pos, players, vacancies, team, onOpen, insider, showAll }) {
+function PositionCard({ pos, players, vacancies, team, onOpen, insider, showAll, hurt = {} }) {
   const [open, setOpen] = useState(false);
   const starters = players.filter((p) => p.position === pos && p.depth === 'starter').sort(best);
   const backups = players.filter((p) => p.position === pos && p.depth === 'backup').sort(best);
@@ -35,8 +38,8 @@ function PositionCard({ pos, players, vacancies, team, onOpen, insider, showAll 
   return (
     <div className="pos-card">
       <div className="pos-card-head"><b>{pos}</b><span>{POSITION_NAMES[pos]}</span></div>
-      {starters.map((p, i) => <DepthRow key={p.id} p={p} label={starters.length > 1 ? `${pos}${i + 1}` : pos} team={team} onOpen={onOpen} insider={insider} />)}
-      {expanded && backups.map((p, i) => <DepthRow key={p.id} p={p} label={`${pos}${starters.length + i + 1}`} team={team} onOpen={onOpen} insider={insider} backup />)}
+      {starters.map((p, i) => <DepthRow key={p.id} p={p} label={starters.length > 1 ? `${pos}${i + 1}` : pos} team={team} onOpen={onOpen} insider={insider} hurt={hurt[p.id]} />)}
+      {expanded && backups.map((p, i) => <DepthRow key={p.id} p={p} label={`${pos}${starters.length + i + 1}`} team={team} onOpen={onOpen} insider={insider} hurt={hurt[p.id]} backup />)}
       {pos === 'K' && !starters.length && !backups.length && <div className="depth-open">No kicker: a backup kicks in an emergency (badly). Sign one in free agency.</div>}
       {openSpots > 0 && <div className="depth-open">{openSpots} open spot{openSpots > 1 ? 's' : ''}</div>}
       {backups.length > 0 && !showAll && (
@@ -63,11 +66,12 @@ function Side({ title, positions, ...rest }) {
 }
 
 export default function Roster(props) {
+  const hurt = useInjuries();   // 🩹 who's out, and until when
   return (
     <>
-      <Side title="Offense" positions={OFFENSE} {...props} />
-      <Side title="Defense" positions={DEFENSE} {...props} />
-      <Side title="Special teams" positions={SPECIAL} {...props} />
+      <Side title="Offense" positions={OFFENSE} hurt={hurt} {...props} />
+      <Side title="Defense" positions={DEFENSE} hurt={hurt} {...props} />
+      <Side title="Special teams" positions={SPECIAL} hurt={hurt} {...props} />
     </>
   );
 }

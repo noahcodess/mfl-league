@@ -1,8 +1,8 @@
 // Things people do during a live game, fed back into the engine so the rest of the game plays out from them:
 // a timeout (a coach's, or the commissioner calling one for a team), and in test mode only, the commissioner's test tools
-// (force overtime, force a win, set the score, set timeouts, run an onside kick). Each input says before which play it happens (n).
+// (force overtime, force a win, set the score, set timeouts, run an onside kick, injure a player). Each input says before which play it happens (n).
 // The engine is still the same seeded game: every play before n is identical, so nothing already shown ever changes.
-const TEST = new Set(['ot', 'win', 'score', 'timeouts', 'onside']);
+const TEST = new Set(['ot', 'win', 'score', 'timeouts', 'onside', 'injury']);
 export const isTestInput = (x) => TEST.has(x.kind);
 
 // Runs before the engine creates play n. Returns true if something changed.
@@ -28,6 +28,8 @@ export function applyInputs(G) {
       s.score = { home: Math.max(0, x.home | 0), away: Math.max(0, x.away | 0) };
     } else if (x.kind === 'onside') {   // whoever has the ball kicks an onside kick next (same odds as any other)
       s.phase = 'kickoff'; s.kicker = s.poss; s.freeKick = false; G.forceOnside = true;
+    } else if (x.kind === 'injury') {   // someone on the next play with contact gets hurt (the usual kinds and lengths)
+      G.forceInjury = true;
     } else if (x.kind === 'timeouts') {
       s.to[side] = Math.max(0, Math.min(3, x.count | 0));
     }
