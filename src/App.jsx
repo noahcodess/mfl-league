@@ -105,6 +105,7 @@ export default function App() {
   const [version, setVersion] = useState(0);
   const reload = async () => { setLive(await loadLeague()); setVersion((v) => v + 1); };
   useEffect(() => { loadLeague().then(setLive); }, []);
+  useEffect(() => { const on = () => loadLeague().then(setLive); window.addEventListener('mfl-week-changed', on); return () => window.removeEventListener('mfl-week-changed', on); }, []);   // simming moved the week
   const myTeam = step === 'ready' && session.profile?.role === 'coach' ? getTeam(session.profile.team_id) : null;
   setViewer(step === 'ready' ? session.profile : null);   // before any screen renders, so cards know who's looking
   usePresenceHeartbeat(step === 'ready');

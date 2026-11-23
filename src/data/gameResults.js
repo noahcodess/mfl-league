@@ -1,6 +1,7 @@
 // Official results. Watched or quick-simmed, a game is the same engine run: the server's kickoff seed, the real coin flip and
 // the rivalry flag go into playGame, and the finished game (score plus every player's stats) is saved as final.
 import { db } from './supabase.js';
+import { catchUpToGame } from './weeks.js';
 import { loadCrowd } from './gameCrowd.js';
 import { startGame } from './gameState.js';
 import { loadLineups } from './gameLineups.js';
@@ -51,6 +52,7 @@ export async function finalizeGame(gameId, result, lineups, kick, method) {
   const out = await rpc('game_finalize', { p_game: Number(gameId), p_home: result.score.home, p_away: result.score.away, p_ot: result.overtimes || 0,
     p_seed: Number(kick.seed), p_receiver: kick.receiving, p_method: method, p_teams: result.teams, p_scoring: result.scoring.map((x) => ({ ...x, text: result.plays[x.n - 1]?.text })), p_stats: stats });
   if (!out?.already) await recordInjuries(gameId, result.injuries).catch(() => null);   // who got hurt, and for how long
+  if (!out?.already) await catchUpToGame(gameId).catch(() => null);   // a game from a later week moves the league there (bots move each week)
   gamesChanged();
   return out;
 }

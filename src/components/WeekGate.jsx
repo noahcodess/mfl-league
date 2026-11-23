@@ -3,6 +3,7 @@ import Modal from './Modal.jsx';
 import HoldButton from './HoldButton.jsx';
 import { getTeam } from '../data/teams.js';
 import { simGameNow } from '../data/gameResults.js';
+import { catchUpWeeks } from '../data/weeks.js';
 
 // "Finish last week first": before a game can be played, every game from earlier weeks must be final. Two hard warnings
 // (what's unplayed, then a press-and-hold), then those games are quick-simmed one by one and the original action carries on.
@@ -17,6 +18,7 @@ export function useWeekGate(game, season) {
       try { const { result } = await simGameNow(g.id, g.home, g.away, 'auto', g); setLog((l) => [...l, { g, s: result.score }]); }
       catch (e) { setErr(`${getTeam(g.away)?.code} at ${getTeam(g.home)?.code}: ${e.message}`); return; }
     }
+    await catchUpWeeks(game.week).catch(() => null);   // those weeks count as played: the league moves up and the bots make each week's moves
     setStep(0); next?.();
   };
   const name = (id) => getTeam(id)?.name || id;
