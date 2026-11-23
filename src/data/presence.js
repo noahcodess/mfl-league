@@ -6,7 +6,7 @@ import { DEMO } from './demo.js';
 export function usePresenceHeartbeat(signedIn) {
   useEffect(() => {
     if (!signedIn || DEMO) return undefined;
-    const beat = () => { if (document.visibilityState === 'visible') db.rpc('touch_presence'); };
+    const beat = () => { if (document.visibilityState === 'visible') { db.rpc('touch_presence'); db.rpc('coach_ping'); } };   // coach_ping: activity for Coach of the Year (counts coaches only)
     beat();
     const t = setInterval(beat, 30000);
     document.addEventListener('visibilitychange', beat);

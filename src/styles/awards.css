@@ -1,0 +1,35 @@
+/* Awards: the commissioner's award lists (top 3 shaded as finalists, drag to reorder) and the League tab's awards card. */
+.aw-bar { display: flex; flex-wrap: wrap; gap: .8rem 1.4rem; align-items: center; margin-bottom: .6rem; }
+.aw-bar label { display: flex; gap: .5rem; align-items: center; font-size: .9rem; }
+.aw-intro { margin: 0 0 1rem; }
+.aw-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(330px, 1fr)); gap: 1rem; }
+.aw-card { background: var(--card, #1c1f26); border: 1px solid var(--line, #ffffff1a); border-radius: 12px; padding: .9rem 1rem; display: grid; gap: .55rem; align-content: start; }
+.aw-card header { display: flex; align-items: center; gap: .5rem; flex-wrap: wrap; }
+.aw-card header b { font-size: 1.02rem; }
+.aw-icon { font-size: 1.3rem; }
+.aw-how-btn { border: 0; background: #ffffff12; border-radius: 50%; width: 1.7rem; height: 1.7rem; cursor: pointer; font-size: .85rem; line-height: 1; }
+.aw-how-btn.on { background: #f2b70544; }
+.aw-how { margin: 0; padding: .6rem .75rem; border-radius: 8px; background: #f2b70514; border: 1px solid #f2b70533; font-size: .86rem; line-height: 1.45; }
+.aw-edited { font-size: .72rem; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; padding: .1rem .45rem; border-radius: .3rem; background: #5c7cfa33; color: #a5b8ff; }
+.aw-list { list-style: none; margin: 0; padding: 0; display: grid; gap: .35rem; }
+.aw-list li { display: flex; align-items: center; gap: .6rem; padding: .45rem .55rem; border-radius: 8px; background: #ffffff08; border: 1px solid transparent; cursor: default; }
+.aw-list li[draggable='true'] { cursor: grab; }
+.aw-list li.aw-final { background: linear-gradient(90deg, #f2b7051f, #f2b70508); border-color: #f2b70540; }
+.aw-list li.drag { opacity: .45; }
+.aw-rank { width: 1.5rem; height: 1.5rem; flex: none; display: grid; place-items: center; border-radius: 50%; background: #ffffff14; font-weight: 800; font-size: .85rem; }
+.aw-final .aw-rank { background: #f2b705; color: #1a1300; }
+.aw-who { flex: 1; min-width: 0; display: grid; }
+.aw-who b { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.aw-who small { color: var(--dim, #9aa3b2); font-size: .78rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.aw-score { font-variant-numeric: tabular-nums; font-size: .8rem; color: var(--dim, #9aa3b2); }
+.aw-tools { display: flex; gap: .15rem; }
+.aw-tools .btn { padding: .1rem .4rem; }
+.aw-note { margin: 0; font-size: .78rem; color: var(--dim, #9aa3b2); }
+.aw-add { justify-self: start; }
+.aw-add-pick { width: 100%; }
+.aw-feed-row { padding: .5rem 0; border-top: 1px solid var(--line, #ffffff14); }
+.aw-feed-row:first-of-type { border-top: 0; }
+.aw-feed-row ol { margin: .3rem 0 0; padding-left: 1.3rem; display: grid; gap: .2rem; }
+.aw-feed-row li { display: flex; align-items: center; gap: .4rem; }
+.aw-feed-row li img { width: 18px; height: 18px; object-fit: contain; image-rendering: pixelated; }
+.aw-feed-row li small { color: var(--dim, #9aa3b2); }

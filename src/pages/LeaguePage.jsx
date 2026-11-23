@@ -7,13 +7,13 @@ import LeagueLog from '../components/LeagueLog.jsx';
 import FeedRequestsCard from '../components/FeedRequestsCard.jsx';
 import CraftBowlCard from '../components/CraftBowlCard.jsx';
 import PlayoffPicture from '../components/PlayoffPicture.jsx';
-import StadiumsCard from '../components/StadiumsCard.jsx';
+import AwardsCard from '../components/AwardsCard.jsx';
 import PlayerModal from '../components/PlayerModal.jsx';
 import { useLeagueNews } from '../data/leagueNews.js';
 import { getTeams, getTeam, currentSeason, PHASE_NAMES, currentPhase, leagueEvents } from '../data/teams.js';
 import { getAllPlayers, getFreeAgents } from '../data/players.js';
 
-// League: the playoff bracket (from Week 7), then a news feed. Standings, recent trades, trade requests, records, Craft Bowl champions, stadiums, the trade block, the best players and league news.
+// League: the playoff bracket (from Week 7), then a news feed. Standings, recent trades, trade requests, records, Craft Bowl champions, last season's awards, the trade block, the best players and league news.
 // One scrolling column on phones (like a feed), two or three columns on bigger screens.
 export default function LeaguePage() {
   const news = useLeagueNews();
@@ -27,12 +27,12 @@ export default function LeaguePage() {
       <PlayoffPicture />
       {!news ? <p className="dim">Loading the latest...</p> : (
         <div className="feed">
+          <AwardsCard />
           <StandingsCard results={news.results} season={news.season} />
           <FeedTradesCard moves={news.moves} onOpen={setOpen} />
           <FeedRequestsCard onOpen={setOpen} />
           <RecordsCard results={news.results} season={news.season} />
           <CraftBowlCard />
-          <StadiumsCard />
           <FeedPlayersCard icon="📋" title="On the trade block" sub="Teams willing to deal these players" players={news.block} onOpen={setOpen} empty="Nobody is on the block right now." />
           <FeedPlayersCard icon="⭐" title="Top 10 players" sub="League rank: stars first, then ratings" players={news.top} onOpen={setOpen} ranked />
           <article className="feed-card"><header><span className="feed-icon">📰</span><div><b>League news</b><small>Signings, retirements, the draft and more</small></div></header>

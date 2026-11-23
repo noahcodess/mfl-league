@@ -1,0 +1,62 @@
+// The Commissioner's Desk Awards tab: every award's top 5 as the numbers have it (awardRank), which he can reorder, cut and
+// add to; only each list's top 3 are finalists. Plus how long last season's awards stay on the League tab. The numbers'
+// lists save themselves until he edits one; after that his order stands until he hits "Use the numbers".
+import React, { useEffect, useState } from 'react';
+import AwardList from './AwardList.jsx';
+import { AWARDS } from '../lib/awardRank.js';
+import { statLine } from '../lib/awardMath.js';
+import { computeAwards, savedAwards, saveAward, setAwardsUntil } from '../data/awards.js';
+import { currentSeason, awardsUntil, getTeams } from '../data/teams.js';
+
+const UNTIL = [[-1, "Don't display awards"], ...Array.from({ length: 11 }, (_, w) => [w, `Through the end of Week ${w}`])];
+
+function pools(inp) {
+  const name = (id) => getTeams().find((t) => t.id === id)?.name || id;
+  const players = Object.entries(inp.players).filter(([, p]) => p.games > 0).sort((a, b) => a[1].name.localeCompare(b[1].name))
+    .map(([id, p]) => ({ id, rookie: p.rookie, label: `${p.name} · ${p.pos} · ${name(p.team)}`, entry: { id, name: p.name, team: p.team, pos: p.pos, line: statLine(p.s, p.pos), score: null } }));
+  return {
+    player: players, rookie: players.filter((p) => p.rookie),
+    team: getTeams().map((t) => ({ id: t.id, label: t.name, entry: { id: t.id, name: t.name, team: t.id, line: '', score: null } })),
+    game: [...inp.games].sort((a, b) => a.week - b.week).map((g) => ({ id: String(g.id), label: `Week ${g.week}: ${name(g.away)} ${g.as} at ${name(g.home)} ${g.hs}`, entry: { id: String(g.id), name: `${name(g.away)} at ${name(g.home)}`, line: `Week ${g.week} · ${g.as}-${g.hs}`, score: null } })),
+  };
+}
+
+export default function AwardsTab({ canControl }) {
+  const [season, setSeason] = useState(currentSeason()), [data, setData] = useState(null), [err, setErr] = useState(''), [until, setUntil] = useState(awardsUntil());
+  const load = async () => {
+    setData(null); setErr('');
+    try {
+      const [calc, saved] = await Promise.all([computeAwards(season), savedAwards(season)]);
+      if (!calc) return setData({ lists: {}, edited: {}, pool: null });
+      const lists = {}, edited = {};
+      for (const a of AWARDS) {
+        const s = saved[a.key], mine = calc.lists[a.key];
+        if (s?.edited) { lists[a.key] = s.entries; edited[a.key] = true; } else {
+          lists[a.key] = mine;
+          if (canControl && JSON.stringify(s?.entries || []) !== JSON.stringify(mine)) saveAward(season, a.key, mine, false).catch(() => {});   // the numbers' list keeps itself current
+        }
+      }
+      setData({ lists, edited, pool: pools(calc.inputs), calc: calc.lists });
+    } catch (e) { setErr(e.message || String(e)); }
+  };
+  useEffect(() => { load(); }, [season]); // eslint-disable-line react-hooks/exhaustive-deps
+  const change = (key, list, ed) => { setData((d) => ({ ...d, lists: { ...d.lists, [key]: list }, edited: { ...d.edited, [key]: ed } })); saveAward(season, key, list, ed).catch((e) => setErr(e.message)); };
+  const poolFor = (a) => (!data?.pool ? [] : a.key === 'roy' ? data.pool.rookie : a.kind === 'team' ? data.pool.team : a.kind === 'game' ? data.pool.game : data.pool.player);
+  return (
+    <div className="aw-tab">
+      <div className="aw-bar">
+        <label>Season <select value={season} onChange={(e) => setSeason(Number(e.target.value))}>{Array.from({ length: currentSeason() }, (_, k) => currentSeason() - k).map((s) => <option key={s} value={s}>Season {s}</option>)}</select></label>
+        <label>Show last season's awards on the League tab <select value={until} disabled={!canControl} onChange={(e) => { const w = Number(e.target.value); setUntil(w); setAwardsUntil(w).catch((x) => setErr(x.message)); }}>{UNTIL.map(([w, t]) => <option key={w} value={w}>{t}</option>)}</select></label>
+        <button className="btn small ghost" onClick={load}>↻ Recalculate</button>
+      </div>
+      <p className="dim aw-intro">The numbers rank a top 5 for each award; the top 3 are the finalists (shaded), and only they are ever shown. Drag rows (or use ▲▼) to reorder, ✕ to drop, ➕ to add. Tap ❓ for how each one is calculated.</p>
+      {err && <p className="error">{err}</p>}
+      {!data ? <p className="dim">Crunching the season...</p> : !data.pool ? <p className="dim">Awards need the live league (not the demo).</p> : (
+        <div className="aw-grid">
+          {AWARDS.map((a) => <AwardList key={a.key} award={a} list={data.lists[a.key] || []} edited={!!data.edited[a.key]} pool={poolFor(a)} canEdit={canControl}
+            onChange={(list, ed) => change(a.key, list, ed)} onReset={() => change(a.key, data.calc[a.key], false)} />)}
+        </div>
+      )}
+    </div>
+  );
+}

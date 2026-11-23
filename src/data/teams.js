@@ -38,6 +38,7 @@ export function currentPhase() {
 
 // Game week of the regular season (0 before Week 1).
 export const currentWeek = () => store.league.meta.currentWeek ?? 0;
+export const awardsUntil = () => store.league.meta.awardsUntil ?? 3;   // last season's awards stay on the League tab through this week (-1: not shown)
 // Test mode (the sandbox, green banner): every team is run by a bot coach and human coaches can't make moves. Leaving it ends that.
 export const isTestMode = () => !!store.league.meta.testMode;
 

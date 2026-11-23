@@ -14,6 +14,7 @@ export function parseHash(hash) {
   if (h === 'console') return { page: 'console' };
   if (h === 'control') return { page: 'control' };
   if (h === 'control-accounts') return { page: 'control', tab: 'accounts' };
+  if (h === 'control-awards') return { page: 'control', tab: 'awards' };
   if (h === 'league') return { page: 'league' };
   if (h === 'free-agents') return { page: 'freeAgents' };
   if (h === 'draft') return { page: 'draft' };
@@ -46,6 +47,7 @@ export const links = {
   console: '#console',
   control: '#control',
   accounts: '#control-accounts',
+  awards: '#control-awards',
   freeAgents: '#free-agents',
   draft: '#draft',
   trades: '#trades',
