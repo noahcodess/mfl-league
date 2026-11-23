@@ -48,8 +48,8 @@ export function stepGame(G) {
     if (stop?.kind === 'timeout') { s.to[stop.side] -= 1; s.snapClock = G.R.int(10, 16); G.timeouts.push({ n: G.plays.length + 1, side: stop.side, quarter: s.quarter, clock: s.clock }); }
     else if (stop?.kind === 'spike') { const run = Math.min(s.clock - 1, G.R.int(4, 7)); s.clock -= run; s.snapClock = PLAY_CLOCK - run; G.spikeNow = true; }   // hurry to the line and spike it
     else {
-      let run = tempo(G); if ((s.quarter === 2 || s.quarter === 4) && s.clock > 120 && s.clock - run < 120) run = s.clock - 120;   // stops at the two-minute warning
-      s.snapClock = Math.max(1, PLAY_CLOCK - run); if (run >= s.clock) { s.clock = 0; return endQuarter(G); } s.clock -= run;
+      let run = tempo(G), warn = false; if ((s.quarter === 2 || s.quarter === 4) && s.clock > 120 && s.clock - run <= 120) { run = s.clock - 120; warn = true; }   // the clock stops at 2:00: the two-minute warning (the snap starts it again)
+      s.snapClock = warn ? G.R.int(8, 13) : Math.max(1, PLAY_CLOCK - run); if (warn) G.tmw = true; if (run >= s.clock) { s.clock = 0; return endQuarter(G); } s.clock -= run;
     }
   } else s.snapClock = G.R.int(8, 13);   // after a stoppage the 24 starts fresh and most snaps come with about 10 left
   return scrimmage(G);

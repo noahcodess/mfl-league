@@ -1,0 +1,24 @@
+/* The two-minute warning card: the field dims and a big card in the program's colors and font (bgx-<bug> variables)
+   says TWO-MINUTE WARNING, the quarter and the clock, and both teams with the score and timeouts left. */
+.tmw-back { position: absolute; inset: 0; z-index: 4; display: grid; place-items: center; background: radial-gradient(ellipse at 50% 45%, #0008, #000c 75%); animation: wo-in .25s ease both; pointer-events: none; }
+:where(.tmw) { --g-bg: linear-gradient(180deg, #2a2d33, #0d0f12); --g-fg: #fff; --g-acc: #f2b705; --g-acc-fg: #111; --g-font: 'Barlow Condensed', sans-serif; --g-r: .6cqw; }
+.tmw { width: 50cqw; display: grid; justify-items: center; gap: 1.2cqw; padding: 2.4cqw 3cqw 2.2cqw; margin-top: -3cqw; background: var(--g-bg); color: var(--g-fg, #fff);
+  border-radius: var(--g-r); box-shadow: 0 1.4cqw 3.4cqw #000c, inset 0 0 0 .16cqw #ffffff22, inset 0 .5cqw 0 var(--g-acc); font-size: 1.2cqw;
+  animation: tmw-in .55s cubic-bezier(.2, 1.3, .4, 1) .1s both; }
+@keyframes tmw-in { from { opacity: 0; transform: scale(.82) translateY(2cqw); } to { opacity: 1; transform: none; } }
+.tmw-net { height: 3.2em; object-fit: contain; image-rendering: pixelated; filter: drop-shadow(0 .2em .3em #0009); }
+.tmw-title { display: grid; justify-items: center; font: 400 5.4em/0.92 var(--g-font); letter-spacing: .04em; text-align: center; }
+.tmw-row { display: flex; } .tmw-row span { display: inline-block; animation: tmw-drop .4s cubic-bezier(.2, 1.5, .4, 1) both; }
+.tmw-title em { font-style: normal; font-size: .62em; letter-spacing: .32em; padding: .14em .5em 0; color: var(--g-acc); animation: tmw-up .4s ease-out .6s both; }
+@keyframes tmw-drop { from { opacity: 0; transform: translateY(-.6em) scale(1.3); } to { opacity: 1; transform: none; } }
+@keyframes tmw-up { from { opacity: 0; transform: translateY(.4em); } to { opacity: 1; transform: none; } }
+.tmw-clock { display: flex; align-items: center; gap: .8em; padding: .3em 1em; border-radius: 2em; background: var(--g-acc); color: var(--g-acc-fg); animation: tmw-up .4s ease-out .8s both; }
+.tmw-clock small { font-weight: 800; letter-spacing: .12em; text-transform: uppercase; font-size: .9em; }
+.tmw-clock i { font: 400 2em/1 var(--g-font); font-style: normal; font-variant-numeric: tabular-nums; }
+.tmw-teams { display: grid; grid-template-columns: 1fr 1fr; gap: 1em; width: 100%; animation: tmw-up .4s ease-out 1s both; }
+.tmw-team { display: flex; align-items: center; gap: .7em; padding: .5em .8em; border-radius: .4em; background: linear-gradient(90deg, color-mix(in srgb, var(--tc) 75%, #000), color-mix(in srgb, var(--tc) 35%, #000)); color: #fff; }
+.tmw-team img { width: 3em; height: 3em; object-fit: contain; image-rendering: pixelated; filter: drop-shadow(0 .1em .15em #000a); }
+.tmw-team span { flex: 1; display: grid; gap: .25em; }
+.tmw-team b { font: 400 1.7em/1 var(--g-font); letter-spacing: .04em; }
+.tmw-team small { display: flex; gap: .25em; } .tmw-team small i { width: 1.1em; height: .32em; border-radius: .2em; background: #ffffff33; } .tmw-team small i.on { background: #fff; }
+.tmw-team strong { font: 400 2.6em/1 var(--g-font); }

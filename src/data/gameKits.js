@@ -8,7 +8,7 @@ import { currentSeason } from './teams.js';
 export function useGameKits(home, away, game) {
   const hj = useJerseys(home), aj = useJerseys(away), picks = useGamePicks(game?.season ?? currentSeason());
   if (!hj?.length || !aj?.length) return null;
-  const devWo = import.meta.env.DEV && home?.id === 'snm' && /[?&]demowo/.test(window.location.search) ? 3 : null;   // dev only: a whiteout game to test with
+  const q = import.meta.env.DEV ? window.location.search : '', devWo = (home?.id === 'snm' && /[?&]demowo/.test(q)) || new RegExp(`[?&]demoalt=${home?.id}\\b`).test(q) ? 3 : null;   // dev only: a home team in its 3rd jersey (?demowo, ?demoalt=crf)
   const kits = gameUniforms(hj, aj, devWo || (game ? picks.get(game.id) : null));
   return { ...kits, fans: kits.special && fansDressed(game.id) ? kits.home.colors.jersey : null };
 }

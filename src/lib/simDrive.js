@@ -17,7 +17,7 @@ import { settle } from './momentum.js';
 import { injuryCheck } from './simInjury.js';
 
 export function sides(G) { const s = G.s; G.defSide = other(s.poss); G.O = G.teams[s.poss].O; G.D = G.teams[G.defSide].D; }
-const start = (G) => { const p = newPlay({ ...G.s, hash: 'middle' }, G.plays.length + 1); p.stats = []; return p; };
+const start = (G) => { const p = newPlay({ ...G.s, hash: 'middle' }, G.plays.length + 1); p.stats = []; if (G.tmw) { p.tmwBefore = true; G.tmw = false; } return p; };   // tmwBefore: the clock ran down to 2:00 before this snap
 function log(G, play, secs) {
   const s = G.s, was = s.clock; play.clock.seconds = s.ot ? 0 : Math.min(Math.round(secs), s.clock);
   if (!s.ot) s.clock -= play.clock.seconds;

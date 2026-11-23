@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import TeamBadge from '../components/TeamBadge.jsx';
 import TeamTrophies from '../components/TeamTrophies.jsx';
-import StadiumCard from '../components/StadiumCard.jsx';
 import FanSupportCard from '../components/FanSupportCard.jsx';
 import RatingChip from '../components/RatingChip.jsx';
 import CapBar from '../components/CapBar.jsx';
@@ -16,7 +15,7 @@ import { links } from '../lib/router.js';
 import { usePotentials } from '../data/potentials.js';
 import { usePlayerTraits } from '../data/traits.js';
 
-// One team: ratings, cap, coach, fan support, stadium, roster (click a player for his card) and picks.
+// One team: ratings, cap, coach, fan support, roster (click a player for his card) and picks.
 // rosterOnly (My Team → Roster): just the header (name, offense, defense, cap) and the roster.
 export default function TeamPage({ teamId, viewer, rosterOnly = false }) {
   const [open, setOpen] = useState(null);
@@ -46,7 +45,6 @@ export default function TeamPage({ teamId, viewer, rosterOnly = false }) {
       </div>
       {!rosterOnly && <CoachCard team={team} mine={isMine && viewer?.role === 'coach'} />}
       {!rosterOnly && <FanSupportCard team={team} />}
-      {!rosterOnly && <StadiumCard team={team} />}
       <Roster players={players} vacancies={getVacancies(team.id)} team={team} onOpen={setOpen} insider={canSeePotential ? potentials.map : null} />
       {!rosterOnly && <PickList picks={getPicks(team.id)} currentSeason={currentSeason()} />}
       <PlayerModal player={open} team={team} myTeamId={viewer?.role === 'coach' ? viewer.team_id : null} canSeePotential={canSeePotential} potential={open && potentials.loaded ? (potentials.map[open.id] ?? null) : undefined} traits={open ? traits[open.id] : null} onClose={() => setOpen(null)} />

@@ -9,14 +9,14 @@ import { toSlots } from '../data/gameState.js';
 // SNF's scorebug: a long night-blue bar that tapers at both ends with a circle in the middle (like NBC's real one), silver
 // edges and a peacock stripe. Big logos at the ends, abbreviation and record, score boxes with timeouts under them; the circle
 // holds the quarter, the game clock and the play clock, and its outline IS the play clock: the ring empties as it ticks down
-// (red at 5 seconds). Down and distance hangs under the circle; a silver pointer on the circle points at who has the ball.
+// (red at 5 seconds). Down and distance hangs under the circle; a little football over the team's name shows who has the ball.
 export default function ScorebugSnf({ home, away, st, rec = {}, pop, card, className = '', clock, down, quarter, pc: pcIn }) {
   const pc = pcIn === '' ? 0 : pcIn ?? 24;
   const side = (t, s) => (
     <div className={`snf-side ${s}${st?.possession === t.id ? ' ball' : ''}`} style={{ '--tc': t.color }}>
       <i className="snf-plate" aria-hidden="true" />
       <img className="snf-logo" src={t.logo} alt="" />
-      <div className="snf-id"><b>{t.code}</b><small>{recordText(rec[t.id])}</small></div>
+      <div className="snf-id">{st?.possession === t.id && <i className="snf-ball" title="Has the ball" />}<b>{t.code}</b><small>{recordText(rec[t.id])}</small></div>
       <div className="snf-score"><ScoreNum value={st?.[`${s}_score`] ?? 0} /><span className="sb-tos">{toSlots(st?.quarter).map((i) => <i key={i} className={i < (st?.[`${s}_timeouts`] ?? 3) ? 'on' : ''} />)}</span></div>
       {card?.side === s && <ScorebugCard card={card} />}
     </div>
@@ -27,8 +27,6 @@ export default function ScorebugSnf({ home, away, st, rec = {}, pop, card, class
       <div className="snf">
         {side(away, 'away')}
         <div className={`snf-circle${pc <= 5 && pcIn !== '' ? ' low' : ''}`} style={{ '--pc': pc / PLAY_CLOCK }}>
-          {st?.possession === away.id && <i className="snf-pointer left" title="Has the ball" />}
-          {st?.possession === home.id && <i className="snf-pointer right" title="Has the ball" />}
           <small className="sb-qx" key={quarter}>{quarter}</small>
           {clock && <b>{clock}</b>}
           {pcIn !== '' && <span>{pc}</span>}

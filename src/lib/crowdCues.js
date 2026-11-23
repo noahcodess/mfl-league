@@ -1,18 +1,24 @@
-// The crowd's one-off reactions on a play, on top of the beds: an eruption for a home score or a takeaway, a big cheer for
+// The crowd's one-off reactions on a play, on top of the beds (and the officials' whistles): an eruption for a home score or a takeaway, a big cheer for
 // a stop, a sack or a home big play, a groan when the visitors hurt them, boos when the flag is on the home team. And the PA
 // announcer's "third down!" on some big visiting 3rd downs (only if those clips exist). Pure: the same play always gets the
 // same reactions, at the same moments.
 const hash = (a, b) => { let x = (a * 374761393 + b * 668265263) >>> 0; x = ((x ^ (x >>> 13)) * 1274126177) >>> 0; return x / 4294967296; };
 export const ANNOUNCERS = 4;
 
-// play: the play. S: its scene (tEnd, tSack, flag). seed: the game's seed.
-// Returns [{ name ('eruption' | 'cheer' | 'groan' | 'boo' | 'third1'..'third4'), at (scene seconds, 'score' = as the score lands,
-// 'call' = as the referee announces a penalty), gain }].
-export function cuesFor(play, S, seed = 1) {
+// play: the play. S: its scene (tEnd, tSack, flag). seed: the game's seed. next: the play after it, or 'end' after the last one (did the quarter end?).
+// Returns [{ name ('eruption' | 'cheer' | 'groan' | 'boo' | 'third1'..'third4' | 'whPlay' | 'whQuarter'), at (scene seconds,
+// 'score' = as the score lands, 'call' = as the referee announces a penalty), gain, delay (seconds after at, whistles) }].
+export function cuesFor(play, S, seed = 1, next = null) {
   const out = [], r = play.result || {}, k = play.kind, home = play.off === 'home', d = play.before?.down, pz = play.pulse || {};
   const b4 = play.before?.score, af = play.after?.score, h = af && b4 ? af.home - b4.home : 0, a = af && b4 ? af.away - b4.away : 0;
   const end = Math.max(S.T0 ?? 0, (S.tEnd ?? 0) - 0.1), add = (name, at, gain) => out.push({ name, at, gain });
   const flag = (play.events || []).find((e) => e.type === 'flag');
+  // The officials' whistles: the play's over (a few at once on a fumble or a pile at the goal line), or the long one when
+  // the quarter runs out. Not on a score: they signal that one.
+  const over = next === 'end', ranOut = over || (!!next && next.before?.quarter !== play.before?.quarter && play.after?.clock > 0);   // the clock ran out after the whistle (or the game's over)
+  const qEnd = (play.after?.clock <= 0 || ranOut) && ((play.before?.quarter ?? 5) <= 4 || over), pile = r.turnover === 'fumble' || (k === 'run' && (r.gain ?? 9) <= 1 && (play.before?.ballOn ?? 0) >= 95);
+  if (qEnd) out.push({ name: 'whQuarter', at: (S.tEnd ?? end) + (ranOut ? 2.2 : 0.15), gain: 0.85 });
+  else if (h < 6 && a < 6 && !['xp', 'two'].includes(k)) (pile ? [0, 0.08, 0.19] : [0]).forEach((dl, n) => out.push({ name: 'whPlay', at: (S.tEnd ?? end) + 0.05, gain: n ? 0.6 : 0.75, delay: dl }));
   if (flag) {   // boos (or a cheer) as the referee announces it; a visitor's false start or delay they all saw: they erupt as the flag flies
     const seen = flag.team === 'away' && k === 'penalty' && play.off === 'away' && S.flag;
     if (seen) add('eruption', S.flag.t + 0.22 + 0.12, flag.crowd ? 1 : 0.75);

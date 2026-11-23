@@ -38,11 +38,12 @@ export function bedLevels(m) {
 }
 
 // The overall level: quieter under the breaks, replays and the referee's call, silent while paused.
-// v: { phase, paused, brk (a halftime/quarter break covers the field), done }.
+// v: { phase, cut (the cutscene, if any), paused, brk (a halftime/quarter break covers the field), done }.
 export function masterLevel(v) {
   if (v.paused) return 0;
   if (v.brk) return 0.3;
   if (v.done) return 0.35;
   if (v.phase === 'inj' || v.phase === 'toinj') return 0.4;   // the house goes quiet for a man down
+  if (v.phase === 'cut' && v.cut === 'tmw') return 0.5;   // the two-minute warning: a break
   return v.phase === 'replay' ? 0.45 : v.phase === 'call' || v.phase === 'tocall' ? 0.75 : 1;
 }
