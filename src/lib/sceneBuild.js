@@ -43,7 +43,7 @@ export function buildScene(play, lineups, pace = {}, seed = 1, slack = null) {
     return buildScene(play, lineups, pace, seed, sl);
   }
   const S = new Scene(play, (seed * 7919 + play.n * 104729) >>> 0);
-  S.slack = slack; S.T0 = pace.T0 || 2.8; frame(S, play);
+  S.slack = slack; S.T0 = pace.T0 || 2.8; S.huddleD = !!pace.huddleD; frame(S, play);
   const thr = ev(play, 'throw')[0];
   if (play.kind === 'kickoff') buildKickoff(S, lineups);
   else if (play.kind === 'punt') buildPunt(S, lineups);

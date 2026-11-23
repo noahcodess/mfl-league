@@ -59,7 +59,7 @@ export default function LiveGame({ game, home, away, kick, resume = 0, st = null
   return (
     <>
       <PixelGame game={result} teams={{ home, away }} lineups={lineups} match={game} full onDone={onDone} onPlay={onPlay} startAt={Math.min(resume, result.plays.length - 1)}
-        rec={rec} boothId={game.id} onInput={onInput} />
+        rec={rec} boothId={game.id} onInput={onInput} sound={crowd || { fill: 0.75 }} />
       {done && done !== 'saving' && <div className={`lg-saved${done === 'saved' ? '' : ' bad'}`}>{done === 'saved' ? '✅ Final saved: records and stats are in' : done === 'test' ? '🧪 Test game: a test tool was used, so it isn\'t saved' : done}</div>}
     </>
   );

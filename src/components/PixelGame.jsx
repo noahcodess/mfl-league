@@ -30,6 +30,10 @@ import OvertimeRules from './OvertimeRules.jsx';
 import QuarterRecap from './QuarterRecap.jsx';
 import useBoothRemote from './useBoothRemote.js';
 import { finalText } from '../data/gameState.js';
+import useCrowdSound from './useCrowdSound.js';
+import SoundToggle from './SoundToggle.jsx';
+import WhiteoutShot from './WhiteoutShot.jsx';
+import { isWhiteout, whiteoutPlays, huddleCam, WO } from '../lib/whiteoutPlan.js';
 
 const SPEEDS = [1, 2, 4];
 const everyone = (lineups, side) => [...lineups[side].all, ...Object.values(lineups[side].kickTeams).flatMap((u) => u.players)].filter(Boolean);
@@ -50,15 +54,18 @@ function makeLooks(lineups, kits, teams, drips) {
 // uniforms), if it's a real one. full: fills the broadcast screen with the controls on top. onDone: called once the last play is shown.
 // startAt: the play to open on (a resumed game). onPlay(i): called as each play starts (saves where a paused game is).
 // rec: { teamId: record } for the scorebugs. boothId: links this broadcast to the commissioner's Broadcast Booth window;
-// onInput(input): a timeout or test tool from the booth (the game replays from there).
-export default function PixelGame({ game, teams, lineups, onClose, onDone, onPlay, startAt = 0, match = null, full = false, rec = null, boothId = null, onInput }) {
+// onInput(input): a timeout or test tool from the booth (the game replays from there). sound: the game's crowd, for the
+// commissioner's crowd sound (null: silent). A Creepers whiteout game also gets the whiteout cutscene (whiteoutPlan).
+export default function PixelGame({ game, teams, lineups, onClose, onDone, onPlay, startAt = 0, match = null, full = false, rec = null, boothId = null, onInput, sound = null }) {
   const [sting, setSting] = useState(0), [i, setI] = useState(startAt), [speed, setSpeed] = useState(1), [paused, setPaused] = useState(false), [beat0, setBeat] = useState({ post: false, phase: 'live', i: startAt });
   const beat = beat0.i === i ? beat0 : { post: false, phase: 'live', i };   // a beat from the last play never leaks into this one (no flash of how this play ends)
   const [brk, setBrk] = useState(null), shownBrk = useRef(new Set());   // a break between plays: 'half' (the halftime report) or 'ot' (the overtime rules), live = covering the field
   const kits = useGameKits(teams.home, teams.away, match), ids = useMemo(() => ['home', 'away'].flatMap((s) => everyone(lineups, s).map((p) => p.id)), [lineups]), drips = useDrips(ids);
   const looks = useMemo(() => (kits ? makeLooks(lineups, kits, teams, drips) : {}), [lineups, kits?.home?.name, kits?.away?.name, drips]); // eslint-disable-line react-hooks/exhaustive-deps
   const bc = useMemo(() => broadcastFor(match || { window: null }, teams.home), [match, teams.home]);
-  const play = game.plays[i], done = i >= game.plays.length, pace = useMemo(() => play && paceFor(play), [play]);
+  const wo = useMemo(() => (isWhiteout(teams.home, kits) ? whiteoutPlays(game.plays, game.seed || 1) : new Set()), [teams.home, kits?.special, kits?.home?.name, game.plays]), shownWo = useRef(new Set()), woRun = useRef(-1);   // the whiteout cutscene, once per play it's planned for
+  const play = game.plays[i], done = i >= game.plays.length, woHere = wo.has(i);
+  const pace = useMemo(() => { const pc = play && paceFor(play); return pc && woHere ? { ...pc, T0: Math.max(pc.T0, 5.4), huddleD: true } : pc; }, [play, woHere]);   // a whiteout play: both teams in a real huddle
   const S = useMemo(() => (play ? buildScene(play, lineups, pace, game.seed || 1) : null), [play, lineups, pace, game.seed]), shots = useMemo(() => S && shotsFor(S, pace), [S, pace]);
   useEffect(() => { if (done) onDone?.(); }, [done]); // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => { onPlay?.(i); }, [i]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -77,7 +84,10 @@ export default function PixelGame({ game, teams, lineups, onClose, onDone, onPla
       pre: g.pre ? { id: `pre-${i}`, type: g.pre.type, label: g.pre.type === 'card' ? `${playerOf(g.pre.id)?.name} stat card` : g.pre.type === 'drive' ? 'Drive summary' : g.pre.type === 'fg' ? `Field goal bar (${g.pre.dist} yds)` : 'Ball on tag', window: slotWindow(g.pre, pace) } : null,
       marks, timeouts: game.timeouts || [], score: (beat.post ? play?.after?.score : play?.before.score) || game.score }) });
   const clock = useRef({ t: 0, last: 0, phase: 'live', rt: 0, hold: 0, tdAt: null, tdReal: 0 }), ctl = useRef({}); ctl.current = { speed, paused: paused || !!brk?.live, S, i, shots, pace, sc: g.score, fresh, hold: booth.hold, pz: play?.pulse, tout: !!(game.timeouts || []).find((x) => x.n === i + 1), call: callOf };
-  useEffect(() => { Object.assign(clock.current, { t: 0, phase: 'live', rt: 0, hold: 0, tdAt: null, tdReal: 0 }); setBeat({ post: false, phase: 'live', i }); }, [i]);
+  useEffect(() => { Object.assign(clock.current, { t: 0, phase: 'live', rt: 0, hold: 0, tdAt: null, tdReal: 0 }); setBeat({ post: false, phase: 'live', i }); woRun.current = -1;
+    if (wo.has(i) && !shownWo.current.has(i)) { shownWo.current.add(i); woRun.current = i; clock.current.phase = 'wo'; setSting((n) => n + 1); }   // cut to the whiteout
+  }, [i]); // eslint-disable-line react-hooks/exhaustive-deps
+  const snd = useCrowdSound(sound, game.seed || 1, () => ({ play, S, c: clock.current, brk: !!brk?.live, paused, done, wo: woRun.current === i }));
   useEffect(() => { // the play clock, scorebug flip and which shot we're in, a few times a second
     const id = setInterval(() => { const { S: s, i: n, pace: pc } = ctl.current, c = clock.current; if (s) setBeat({ i: n, post: c.t >= s.tEnd, t: c.t, tdAt: c.tdAt, phase: c.phase, hold: c.hold, ...clockFace(game, n, c.t, s, c.phase, pc.dead) }); }, 100);
     return () => clearInterval(id);
@@ -85,7 +95,8 @@ export default function PixelGame({ game, teams, lineups, onClose, onDone, onPla
   const live = useMemo(() => ({
     target() {   // the camera operator (broadcastCam) decides the shot
       const { S: s, shots: sh } = ctl.current, c = clock.current; if (!s) return { x: yardX(50), y: MID_Y, zoom: 0.7 };
-      const cp = c.phase === 'call' && live0.current?.callPose; if (cp) return callCam(cp);   // the close-up: the referee in the middle of the screen
+      const cp = c.phase === 'call' && live0.current?.callPose; if (cp) return callCam(cp);
+      const hc = c.phase === 'wo' && huddleCam(live0.current || s); if (hc) return hc;   // the whiteout: tight on the visitors' huddle   // the close-up: the referee in the middle of the screen
       return camTarget(s, live0.current || s, { phase: c.phase, t: c.phase === 'replay' ? c.rt : c.t, slow: slowAt(sh, c.t) < 1, first: ctl.current.fresh, flag: sh?.flag, replay: sh?.replay });
     },
     shake() {   // a loud house shakes the camera before the snap (the graphics don't shake, only the pulse meter)
@@ -104,6 +115,7 @@ export default function PixelGame({ game, teams, lineups, onClose, onDone, onPla
         const toReplay = () => { c.phase = 'sting'; c.hold = 0; setSting((n) => n + 1); };   // the network transition covers the cut to the replay
         if (c.phase === 'live') { c.t += dt * slowAt(sh, c.t); if (c.t > s.tEnd + pc.dead && (c.tdAt == null || (c.tdReal && now - c.tdReal > (sc?.type === 'fg' ? 3300 : 3700)))) {   // the scoring takeover runs its full length at any speed
           if (sh.flag && ctl.current.call) { c.phase = 'tocall'; c.hold = 0; setSting((n) => n + 1); } else if (sh.replay) toReplay(); else next(); } }   // a flag: transition to the referee's call
+        else if (c.phase === 'wo') { const h0 = c.hold; c.hold += dt / sp; if (h0 < WO.back && c.hold >= WO.back) setSting((n) => n + 1); if (c.hold > WO.len) { c.phase = 'live'; c.hold = 0; } }   // stadium shot, back to the huddle
         else if (c.phase === 'tocall') { c.hold += dt / sp; if (c.hold > STING_MID / 1000) { c.phase = 'call'; c.hold = 0; } }
         else if (c.phase === 'call') { c.hold += dt / sp; if (c.hold > CALL_LEN) { if (sh.replay) toReplay(); else { setSting((n) => n + 1); next(); } } }
         else if (c.phase === 'sting') { c.hold += dt; if (c.hold > STING_MID / 1000) { c.phase = 'replay'; c.rt = sh.replay.from; } }
@@ -148,7 +160,8 @@ export default function PixelGame({ game, teams, lineups, onClose, onDone, onPla
         {beat.phase === 'replay' && <div className={`pg-replay net-${bc.net.key}`}><b>REPLAY</b></div>}
         {sting > 0 && <NetStinger key={sting} net={bc.net} onDone={() => setSting(0)} />}
         {beat.phase === 'call' && callOf && beat.hold > CALL_PANEL && <RefCall key={`rc${i}`} call={callOf} />}
-        {!beat.post && pace?.keyPlay && !busy && <div className="pg-key">KEY PLAY</div>}
+        {beat.phase === 'wo' && beat.hold >= WO.shotIn && beat.hold < WO.shotOut && <WhiteoutShot home={teams.home} bc={bc} v={pz?.v ?? 80} fill={sound?.fill ?? 1} />}
+        {!beat.post && beat.phase !== 'wo' && pace?.keyPlay && !busy && <div className="pg-key">KEY PLAY</div>}
         {done && <div className="pg-headline final">{finalText(4 + (game.overtimes || 0)).toUpperCase()}</div>}
         <BroadcastSlot pre={gpre} pace={pace} bt={bt} live={pre} play={play} teams={teams} bug={bc.bug} playerOf={playerOf} n={i} />
         {pzUp && !brk?.live && <StadiumPulse key={`sp${i}${pzAfter ? 'a' : ''}`} v={pzAfter ? pz.after : pz.v} net={bc.net.key} hit={pz.hit && beat.post} run={pz.run} out={pzOut} />}
@@ -169,6 +182,7 @@ export default function PixelGame({ game, teams, lineups, onClose, onDone, onPla
         <button className="btn ghost" disabled={i === 0} onClick={() => setI(Math.max(0, i - 1))}>⏮ Back</button>
         <button className="btn ghost" disabled={done} onClick={() => setI(i + 1)}>Next ⏭</button>
         <span className="dim">Play {Math.min(i + 1, game.plays.length)} of {game.plays.length}</span>
+        {sound && <SoundToggle snd={snd} whiteout={teams.home.id === 'snm'} />}
         {onClose && <button className="btn ghost" onClick={onClose}>✕ Close</button>}
       </div>
     </div>

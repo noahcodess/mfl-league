@@ -47,8 +47,9 @@ export function lineup(S, lineups, opts = {}) {
 // play is built, so routes, blocks and coverage are all worked out from where players really line up.
 export function huddleUp(S) {
   const play = S.play, ready = S.T0 - 1.3, breakAt = Math.max(0.4, ready - 2.4);   // huddle up, then a brisk 2-3 second walk to the line
+  S.breakAt = breakAt;   // the crowd sound keys off it (the whiteout song stops as they break)
   for (const a of S.actors) {
-    const sx = a.x, sy = a.y, off = a.side === play.off, [hx, hy] = off ? S.at(-8 + S.rand() * 1.5, sy * 0.15) : S.at(S.along(a) + 3.5, sy * 0.55);
+    const sx = a.x, sy = a.y, off = a.side === play.off, [hx, hy] = off ? S.at(-8 + S.rand() * 1.5, sy * 0.15) : S.huddleD ? S.at(8 + S.rand() * 1.5, sy * 0.13) : S.at(S.along(a) + 3.5, sy * 0.55);   // huddleD: the defense in a real huddle too (the whiteout cutscene)
     a.x = hx; a.y = hy; a.pre = { x: sx, y: sy, at: breakAt + S.rand() * 0.25, speed: Math.min(7.5, Math.max(3.2, dist(hx, hy, sx, sy) / Math.max(0.6, ready - breakAt))) };
   }
 }
