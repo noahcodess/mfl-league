@@ -49,4 +49,4 @@
 /* sitting right on top of each bug (they're different heights) */
 .bgx-fox.bg-fg, .bgx-fox.bg-ballon { bottom: 6.6cqw; }
 .bgx-tnf.bg-fg, .bgx-tnf.bg-ballon { bottom: 8.4cqw; }
-.bgx-snf.bg-fg, .bgx-snf.bg-ballon { bottom: 10.3cqw; }
+.bgx-snf.bg-fg, .bgx-snf.bg-ballon { bottom: 13.3cqw; }   /* clear of the clock circle, which rises above the bar */

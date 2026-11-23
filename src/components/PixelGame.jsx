@@ -31,7 +31,9 @@ import QuarterRecap from './QuarterRecap.jsx';
 import useBoothRemote from './useBoothRemote.js';
 import { finalText } from '../data/gameState.js';
 import useCrowdSound from './useCrowdSound.js';
-import SoundToggle from './SoundToggle.jsx';
+import GameControls from './GameControls.jsx';
+import LineupShowcase from './LineupShowcase.jsx';
+import { introPlan, introCountdown, introSlides, INTRO_AT, INTRO_LEN, INTRO_T0 } from '../lib/introPlan.js';
 import CutShow from './CutShow.jsx';
 import { huddleCam, woPulse } from '../lib/whiteoutPlan.js';
 import { cutPlan, firstWhiteout, CUT, HUDDLE_CUTS } from '../lib/cutPlan.js';
@@ -39,7 +41,6 @@ import InjuryTakeover from './InjuryTakeover.jsx';
 import InjuryReport from './InjuryReport.jsx';
 import { lineupsAt, injuryCam, reportPlays, INJ_LEN, REPORT_IN, REPORT_LEN } from '../lib/injuryShow.js';
 
-const SPEEDS = [1, 2, 4];
 const everyone = (lineups, side) => [...lineups[side].all, ...Object.values(lineups[side].kickTeams).flatMap((u) => u.players)].filter(Boolean);
 // One look per player: his Drip tab sprite in this game's uniform, with his face, number, helmet, gear and body size.
 function makeLooks(lineups, kits, teams, drips) {
@@ -69,8 +70,9 @@ export default function PixelGame({ game, teams, lineups, onClose, onDone, onPla
   const looks = useMemo(() => (kits ? makeLooks(lineups, kits, teams, drips) : {}), [lineups, kits?.home?.name, kits?.away?.name, drips]); // eslint-disable-line react-hooks/exhaustive-deps
   const bc = useMemo(() => broadcastFor(match || { window: null }, teams.home), [match, teams.home]);
   const cuts = useMemo(() => cutPlan(game.plays, teams.home, kits, game.seed || 1), [teams.home, kits?.special, kits?.home?.name, game.plays]), shownCut = useRef(new Set()), cutRun = useRef(null);   // a cutscene, once per play it's planned for
-  const play = game.plays[i], done = i >= game.plays.length, hud = HUDDLE_CUTS.has(cuts[i]);
-  const pace = useMemo(() => { const pc = play && paceFor(play); return pc && hud ? { ...pc, T0: Math.max(pc.T0, 5.4), huddleD: true } : pc; }, [play, hud]);   // a stadium cutscene: both teams in a real huddle
+  const intros = useMemo(() => (bc.bug === 'snf' ? introPlan(game.plays, cuts) : {}), [bc.bug, game.plays, cuts]);   // SNF's starting lineup showcases
+  const play = game.plays[i], done = i >= game.plays.length, hud = HUDDLE_CUTS.has(cuts[i]), ix = intros[i];
+  const pace = useMemo(() => { const pc = play && paceFor(play); return pc && (hud || ix) ? { ...pc, T0: Math.max(pc.T0, ix ? INTRO_T0 : 5.4), huddleD: hud } : pc; }, [play, hud, ix]);   // a stadium cutscene: both teams in a real huddle; a showcase: room before the snap
   const S = useMemo(() => (play ? buildScene(play, lineupsAt(lineups, game.injuries, play.n), pace, game.seed || 1) : null), [play, lineups, pace, game.seed, game.injuries]), shots = useMemo(() => S && shotsFor(S, pace), [S, pace]);
   useEffect(() => { if (done) onDone?.(); }, [done]); // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => { onPlay?.(i); }, [i]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -88,7 +90,7 @@ export default function PixelGame({ game, teams, lineups, onClose, onDone, onPla
     read: () => ({ i, total: game.plays.length, paused, speed, phase: beat.phase, post: beat.post, t: beat.t ?? 0, T0: S?.T0, tEnd: S?.tEnd, dead: pace?.dead, clock: beat.clock, playClock: beat.playClock, brk: brk?.kind || null,
       play: play && { n: play.n, kind: play.kind, off: play.off, keyPlay: !!play.keyPlay, call: play.call?.name || null, pulse: play.pulse || null, before: play.before, text: beat.post ? play.text : null },
       pre: g.pre ? { id: `pre-${i}`, type: g.pre.type, label: g.pre.type === 'card' ? `${playerOf(g.pre.id)?.name} stat card` : g.pre.type === 'drive' ? 'Drive summary' : g.pre.type === 'fg' ? `Field goal bar (${g.pre.dist} yds)` : 'Ball on tag', window: slotWindow(g.pre, pace) } : null,
-      marks, timeouts: game.timeouts || [], score: (beat.post ? play?.after?.score : play?.before.score) || game.score }) });
+      intro: introNow, marks, timeouts: game.timeouts || [], score: (beat.post ? play?.after?.score : play?.before.score) || game.score }) });
   const clock = useRef({ t: 0, last: 0, phase: 'live', rt: 0, hold: 0, tdAt: null, tdReal: 0 }), ctl = useRef({}); ctl.current = { inj, speed, paused: paused || !!brk?.live, S, i, shots, pace, sc: g.score, fresh, hold: booth.hold, pz: play?.pulse, tout: !!(game.timeouts || []).find((x) => x.n === i + 1), call: callOf };
   useEffect(() => { Object.assign(clock.current, { t: 0, phase: 'live', rt: 0, hold: 0, tdAt: null, tdReal: 0, injDone: false }); setBeat({ post: false, phase: 'live', i }); cutRun.current = null;
     if (cuts[i] && !shownCut.current.has(i)) { shownCut.current.add(i); cutRun.current = { i, kind: cuts[i] }; clock.current.phase = 'cut'; setSting((n) => n + 1); }   // cut away
@@ -140,6 +142,7 @@ export default function PixelGame({ game, teams, lineups, onClose, onDone, onPla
       drawScene(ctx, live0.current, cam, looks);
     },
   }), [looks]);
+  const introNow = introCountdown(intros, i, clock.current, S, teams, done);
   const gpre = booth.denied.has(`pre-${i}`) ? null : g.pre, man = booth.manual && playerOf(booth.manual.id);   // the commissioner can deny a graphic, or put up a stat card
   const pre = !beat.post && beat.phase === 'live' && !!play, bt = beat.t ?? 0, busy = slotBusy(gpre, pace, bt, pre);
   const card = (man && { side: booth.manual.side, player: man, team: teams[booth.manual.side], lines: booth.manual.lines, out: booth.manual.until - Date.now() < 450 }) || slotCard(gpre, pace, bt, pre, teams, playerOf);   // his card beats the planned one
@@ -171,7 +174,8 @@ export default function PixelGame({ game, teams, lineups, onClose, onDone, onPla
         {beat.phase === 'cut' && <CutShow kind={ck} hold={beat.hold} teams={teams} play={play} bc={bc} v={pz?.v ?? 90} crowd={sound} kits={kits} />}
         {!beat.post && beat.phase !== 'cut' && pace?.keyPlay && !busy && <div className="pg-key">KEY PLAY</div>}
         {done && <div className="pg-headline final">{finalText(4 + (game.overtimes || 0)).toUpperCase()}</div>}
-        <BroadcastSlot pre={gpre} pace={pace} bt={bt} live={pre} play={play} teams={teams} bug={bc.bug} playerOf={playerOf} n={i} />
+        {ix && pre && bt >= INTRO_AT && bt < INTRO_AT + INTRO_LEN && <LineupShowcase x={ix} team={teams[ix.side]} slides={introSlides(lineupsAt(lineups, game.injuries, play.n)[ix.side], ix.unit)} playerOf={playerOf} t={bt - INTRO_AT} />}
+        <BroadcastSlot pre={ix ? null : gpre} pace={pace} bt={bt} live={pre} play={play} teams={teams} bug={bc.bug} playerOf={playerOf} n={i} />
         {pzUp && !brk?.live && <StadiumPulse key={`sp${i}${pzAfter ? 'a' : ''}`} v={pzAfter ? pz.after : pz.v} net={bc.net.key} hit={pz.hit && beat.post} run={pz.run} out={pzOut} />}
         {bugUp && <div className="pg-shelf" />}
         {brk && (() => {   // the break plays at its mark, or wherever the booth previews it (at)
@@ -184,15 +188,7 @@ export default function PixelGame({ game, teams, lineups, onClose, onDone, onPla
         {bugUp && <div className={`pg-bug${scoreUp || (beat.phase === 'inj' && inj) ? ' taken' : ''}${beat.phase === 'sting' || beat.phase === 'replay' ? ' snap' : ''}${beat.phase === 'replay' || beat.phase === 'call' ? ' replay' : ''}${toutUp && !scoreUp ? ' to-grow' : ''}${toutUp && bt < 1.3 ? ' to-blink' : ''}${toutBar && !scoreUp ? ' taken' : ''}`} data-to={toutUp ? tout.side : undefined}><Scorebug bc={bc} home={teams.home} away={teams.away} st={st} rec={rec} card={card} className={fresh ? 'sb-enter' : ''} />{beat.phase === 'inj' && inj && <InjuryTakeover key={`ij${i}`} player={playerOf(inj.id)} team={teams[inj.side]} bug={bc.bug} />}{scoreUp && <ScoreTakeover key={`sc${i}`} score={g.score} team={teams[g.score.side]} people={g.score.ids.map(playerOf)} bug={bc.bug} />}{toutBar && !scoreUp && <TimeoutTakeover key={`to${i}`} team={teams[tout.side]} left={tos(tout.side)} pc={beat.playClock} bug={bc.bug} closing={bt > 3.2} />}</div>}
       </div>
       {!full && <p className="pg-text">{done ? 'That’s the game.' : beat.post ? play.text : play?.call?.name ? `${teams[play.off].code} · ${play.call.name}` : ' '}</p>}
-      <div className="ct-row">
-        <button className="btn ghost" onClick={() => setPaused(!paused)}>{paused ? '▶ Play' : '⏸ Pause'}</button>
-        {SPEEDS.map((s) => <button key={s} className={`btn ghost${speed === s ? ' on' : ''}`} onClick={() => setSpeed(s)}>{s}x</button>)}
-        <button className="btn ghost" disabled={i === 0} onClick={() => setI(Math.max(0, i - 1))}>⏮ Back</button>
-        <button className="btn ghost" disabled={done} onClick={() => setI(i + 1)}>Next ⏭</button>
-        <span className="dim">Play {Math.min(i + 1, game.plays.length)} of {game.plays.length}</span>
-        {sound && <SoundToggle snd={snd} />}
-        {onClose && <button className="btn ghost" onClick={onClose}>✕ Close</button>}
-      </div>
+      <GameControls paused={paused} setPaused={setPaused} speed={speed} setSpeed={setSpeed} i={i} setI={setI} total={game.plays.length} done={done} sound={sound} snd={snd} onClose={onClose} intro={introNow} />
     </div>
   );
 }

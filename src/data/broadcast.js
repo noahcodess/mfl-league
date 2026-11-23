@@ -23,7 +23,8 @@ const SHOWS = {
 const BUG = { tnf: 'tnf', snf: 'snf', stnf: 'espn', mnf: 'espn' };
 
 // { net, show (null for day games), prime, logo (show logo, else the network's MFL logo), title, bug (scorebug design) }
-export function broadcastFor(game, homeTeam) {
+export function broadcastFor(game0, homeTeam) {
+  const dev = import.meta.env.DEV && typeof window !== 'undefined' && /[?&]devnet=([a-z_]+)/.exec(window.location.search)?.[1], game = dev ? { ...game0, window: dev } : game0;   // dev only: ?devnet=sun_night
   const net = NETS[networkFor(game.window, homeTeam)] || NETS.FOX, show = SHOWS[game.window] || null;
   return { net, show, prime: !!show, logo: show?.logo || net.logo, title: show?.name || `The MFL on ${net.name}`, bug: BUG[show?.key] || net.key };
 }

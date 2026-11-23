@@ -12,7 +12,14 @@ function addStats(tot, play) {
 const pl = (n, one, many = `${one}S`) => `${n} ${n === 1 ? one : many}`;
 
 // The two short lines a card shows for this kind of player, from his game so far.
+const avg = (a, b) => (b ? (a / b).toFixed(1) : '0.0');
 export function cardLines(kind, s = {}) {
+  if (kind === 'k') return [`${s.fgm || 0}/${s.fga || 0} FG · LONG ${s.fglong || 0}`, `${s.xpm || 0}/${s.xpa || 0} XP`];
+  if (kind === 'p') return [`${pl(s.punts || 0, 'PUNT')} · ${avg(s.puntyds || 0, s.punts)} AVG`, `${s.in20 || 0} INSIDE 20 · LONG ${s.plong || 0}`];
+  if (kind === 'ol') return [`${pl(s.sa || 0, 'SACK')} ALLOWED`, `${pl(s.pa || 0, 'PRESSURE')} ALLOWED`];
+  if (kind === 'dl') return [`${pl(s.sacks || 0, 'SACK')} · ${s.tkl || 0} TKL`, `${s.tfl || 0} TFL · ${s.pres || 0} PRESSURES`];
+  if (kind === 'lb') return [`${pl(s.tkl || 0, 'TACKLE')} · ${s.tfl || 0} TFL`, `${pl(s.sacks || 0, 'SACK')} · ${s.dint || 0} INT`];
+  if (kind === 'db') return [`${s.pd || 0} PASS BREAKUPS · ${s.dint || 0} INT`, `${pl(s.tkl || 0, 'TACKLE')}`];
   if (kind === 'qb') return [`${s.cmp || 0}/${s.att || 0} · ${s.pyds || 0} YDS`, `${s.ptd || 0} TD · ${s.int || 0} INT`];
   if (kind === 'rush') return [`${s.car || 0} CAR · ${s.ryds || 0} YDS`, `${s.car ? (s.ryds / s.car).toFixed(1) : '0.0'} AVG · ${s.rtd || 0} TD`];
   if (kind === 'rec') return [`${s.rec || 0} REC · ${s.recyds || 0} YDS`, `${s.rectd || 0} TD · LONG ${s.reclong || 0}`];

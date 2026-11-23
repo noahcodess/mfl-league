@@ -15,6 +15,7 @@ export default function BoothGraphics({ s, send }) {
           {!denied && !gone && <button className="btn small danger" onClick={() => send('deny', pre.id)}>🚫 Deny</button>}
         </div>
       )}
+      {s?.intro && <div className={`booth-gfx${s.intro.when === 'now' ? ' air' : ''}`}><div><b>🎬 {s.intro.label} showcase</b><small>{s.intro.when === 'now' ? '🔴 On air now' : `Displayed ${s.intro.when}`} · SNF starting lineups, planned ahead</small></div></div>}
       {s?.manual && <div className="booth-gfx air"><div><b>Your stat card</b><small>🔴 On air: {s.manual.lines.join(' · ')}</small></div><button className="btn small ghost" onClick={() => send('clearCard')}>Take down</button></div>}
       <p className="dim booth-note">Touchdown and field goal graphics fire the moment they happen, so they never show early.</p>
     </section>

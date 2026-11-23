@@ -6,11 +6,11 @@ export function boothChannel(gameId) {
   return new BroadcastChannel(`mfl-booth-${gameId}`);
 }
 
-// What kind of stat card a player gets from his position (the same cards the graphics producer uses).
+// What kind of stat card a player gets from his position: every position has its own (a kicker's field goals, a lineman's
+// sacks allowed, a corner's pass breakups), never a quarterback's numbers on a kicker.
+const KIND = { QB: 'qb', RB: 'rush', WR: 'rec', TE: 'rec', OT: 'ol', OG: 'ol', C: 'ol', DE: 'dl', DT: 'dl', DL: 'dl', LB: 'lb', CB: 'db', SS: 'db', FS: 'db', K: 'k', P: 'p' };
 export function cardKindFor(pos, stats = {}) {
-  if (pos === 'QB') return 'qb';
-  if (pos === 'RB') return 'rush';
-  if (pos === 'WR' || pos === 'TE') return 'rec';
-  if (pos === 'CB' || pos === 'SS') return 'ball';
-  return (stats.sacks || 0) > 0 ? 'rush_d' : 'tackle';
+  const k = KIND[pos];
+  if (k === 'k' && !(stats.fga || stats.xpa) && stats.punts) return 'p';   // the kicker punts too: show his punting if that's all he's done
+  return k || ((stats.sacks || 0) > 0 ? 'rush_d' : 'tackle');
 }

@@ -38,6 +38,7 @@ import './styles/playerHistory.css';
 import './styles/crowdSound.css';
 import './styles/injury.css';
 import './styles/twoMinute.css';
+import './styles/lineupShowcase.css';
 import './styles/tradeWire.css';
 import './styles/intro.css';
 import './styles/introScenes.css';

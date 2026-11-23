@@ -1,5 +1,7 @@
-/* The crowd sound controls under the broadcast, and the Creepers whiteout cutscene's stadium shot. */
+/* The controls under the broadcast (crowd sound, the SNF showcase countdown), and the stadium cutscene shot. */
 .snd { display: inline-flex; align-items: center; gap: .5rem; flex-wrap: wrap; }
+.ct-intro { font-size: .85rem; padding: .2rem .6rem; border-radius: 1rem; background: #6460aa33; color: #d6dee8; font-variant-numeric: tabular-nums; }
+.ct-intro.on { background: #e01b24; color: #fff; }
 .snd-vol { width: 90px; accent-color: var(--accent, #6fd36b); }
 
 .wo-shot { position: absolute; inset: 0; z-index: 4; overflow: hidden; background: #05060a; animation: wo-in .2s ease both; }

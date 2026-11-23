@@ -48,10 +48,11 @@ function routes(G, call, def, plan) {
   });
 }
 
-function sack(G, play, qb, by, t) {
+function sack(G, play, qb, by, t, blocker = null) {
   const loss = G.R.int(4, 9);
   addEvent(play, 'pressure', t, { by: by.id, kind: 'sack', move: rushMove(by) });
   stat(play, by, 'sacks'); stat(play, by, 'tkl'); stat(play, qb, 'sk'); stat(play, qb, 'skyds', loss); swing(G, by.side, 0.1);
+  if (blocker) stat(play, blocker, 'sa');   // the man who was supposed to block him: a sack allowed
   play.kind = 'sack'; play.text = `${qb.last} is SACKED by ${by.last} for a loss of ${loss}.`; play.headline = 'SACK';
   const strip = G.R.chance(0.07), lost = strip && G.R.chance(0.5);
   if (strip) { stat(play, qb, 'fum'); stat(play, by, 'ff'); addEvent(play, 'fumble', t, { by: qb.id, forcedBy: by.id, recoveredBy: lost ? by.id : qb.id, lost }); if (lost) { stat(play, qb, 'fuml'); stat(play, by, 'fr'); } }
@@ -82,7 +83,7 @@ export function passPlay(G, play, call, def, plan = {}) {
   if (!tgt) { // nobody's open: the smart ones throw it away, the rest force it to whoever looks best
     const best = ranked.slice().sort((a, b) => b.seen - a.seen)[0], inFace = heat.by && heat.t < best.at + 0.3;
     if (inFace && R.chance(0.22 + val(G, qb, 'awareness', 55) / 250 - (bold > 1 ? 0.15 : 0))) { // only with a rusher in his face
-      stat(play, heat.by, 'pres'); addEvent(play, 'pressure', heat.t, { by: heat.by.id, kind: 'hurry' });
+      stat(play, heat.by, 'pres'); if (heat.blocker) stat(play, heat.blocker, 'pa'); addEvent(play, 'pressure', heat.t, { by: heat.by.id, kind: 'hurry' });
       return throwAway(G, play, qb, heat.t + 0.15, true);
     }
     tgt = best;
@@ -94,9 +95,9 @@ export function passPlay(G, play, call, def, plan = {}) {
   const hot = heat.t < tThrow && ranked.find((o) => o.at + 0.25 <= heat.t && o.seen > 0.6);
   if (hot && R.chance(0.35 + val(G, qb, 'vision', 55) / 200)) { tgt = hot; tThrow = hot.at + 0.2; addEvent(play, 'pocket', tThrow, { qb: qb.id, move: 'quick release' }); } // he feels it and gets the ball out
   if (heat.t < tThrow) { // the rush got there first
-    stat(play, heat.by, 'pres');
+    stat(play, heat.by, 'pres'); if (heat.blocker) stat(play, heat.blocker, 'pa');
     const slip = odds(val(G, qb, 'break_sack', 45) * 0.6 + val(G, qb, 'speed', 50) * 0.4 - val(G, heat.by, 'tackling', 55) * 0.5 - val(G, heat.by, 'speed', 55) * 0.5 - 4, 12);
-    if (!R.chance(slip)) { if (R.chance(clamp((tThrow - heat.t) / 1.35, 0.16, 0.7))) return sack(G, play, qb, heat.by, heat.t); pressured = true; }
+    if (!R.chance(slip)) { if (R.chance(clamp((tThrow - heat.t) / 1.35, 0.16, 0.7))) return sack(G, play, qb, heat.by, heat.t, heat.blocker); pressured = true; }
     else if (R.chance(qb.style === 'scrambler' ? 0.6 : val(G, qb, 'speed', 50) > 76 ? 0.4 : 0.15)) { // he takes off
       addEvent(play, 'pocket', heat.t, { qb: qb.id, move: 'escape' }); stat(play, qb, 'car');
       const out = carry(G, play, qb, -3, [{ p: D.LB1, at: 2 + R.int(0, 4) }, { p: D.SS, at: 8 }, { p: D.CB1, at: 13 }], toGoal, [D.CB1, D.CB2], heat.t, G.s.toGo), gain = Math.round(out.end);
@@ -107,7 +108,7 @@ export function passPlay(G, play, call, def, plan = {}) {
     } else { addEvent(play, 'pocket', heat.t, { qb: qb.id, move: 'slide' }); pressured = true; onRun = true; tThrow = heat.t + 0.4; }
     addEvent(play, 'pressure', heat.t, { by: heat.by.id, kind: 'hurry' });
   } else if (heat.by && heat.t - tThrow < 0.35) { // the rusher arrives as he lets it go: a hurried throw and a hit
-    stat(play, heat.by, 'pres'); pressured = true; addEvent(play, 'pressure', tThrow, { by: heat.by.id, kind: 'hurry' });
+    stat(play, heat.by, 'pres'); if (heat.blocker) stat(play, heat.blocker, 'pa'); pressured = true; addEvent(play, 'pressure', tThrow, { by: heat.by.id, kind: 'hurry' });
   } else if (heat.t - tThrow < 0.6) addEvent(play, 'pocket', tThrow - 0.3, { qb: qb.id, move: 'step up' });
   if (plan.mods?.rollout && !pressured) { onRun = true; addEvent(play, 'pocket', Math.max(0.6, tThrow - 1.2), { qb: qb.id, move: 'rollout' }); }   // a boot: he throws on the move
   // a pump fake on a longer look: it can freeze his man for a step
