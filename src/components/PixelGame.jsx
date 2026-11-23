@@ -33,7 +33,7 @@ import { finalText } from '../data/gameState.js';
 import useCrowdSound from './useCrowdSound.js';
 import SoundToggle from './SoundToggle.jsx';
 import WhiteoutShot from './WhiteoutShot.jsx';
-import { isWhiteout, whiteoutPlays, huddleCam, WO } from '../lib/whiteoutPlan.js';
+import { isWhiteout, whiteoutPlays, huddleCam, woPulse, WO } from '../lib/whiteoutPlan.js';
 import InjuryTakeover from './InjuryTakeover.jsx';
 import InjuryReport from './InjuryReport.jsx';
 import { lineupsAt, injuryCam, reportPlays, INJ_LEN, REPORT_IN, REPORT_LEN } from '../lib/injuryShow.js';
@@ -143,7 +143,7 @@ export default function PixelGame({ game, teams, lineups, onClose, onDone, onPla
   const card = (man && { side: booth.manual.side, player: man, team: teams[booth.manual.side], lines: booth.manual.lines, out: booth.manual.until - Date.now() < 450 }) || slotCard(gpre, pace, bt, pre, teams, playerOf);   // his card beats the planned one
   const tout = (game.timeouts || []).find((x) => x.n === i + 1), toutUp = tout && pre && bt < 3.7, toutBar = toutUp && bt >= 1.4;   // a timeout as they break the huddle: the bug grows, his light blinks out, then the TIMEOUT bar
   const tos = (side) => { const v = (beat.post ? game.plays[i + 1]?.before.to : play?.before.to)?.[side] ?? 3; return toutUp && tout.side === side && bt < 1.3 ? v + 1 : v; };
-  const pz = play?.pulse, t0 = S?.T0 ?? 0, pzHit = pz?.hit && beat.post && bt < (S?.tEnd ?? 0) + 3.2;   // Stadium Pulse: up before the snap (and after, when the noise caused it)
+  const pz = woRun.current === i ? woPulse(play?.pulse, sound, i === Math.min(...wo)) : play?.pulse, t0 = S?.T0 ?? 0, pzHit = pz?.hit && beat.post && bt < (S?.tEnd ?? 0) + 3.2;   // Stadium Pulse: up before the snap (and after, when the noise caused it)
   const te = S?.tEnd ?? 0, pzAfter = pz?.after != null && !pzHit && beat.post && bt > te + 0.5 && bt < te + 3.6;   // and right after a big stop by the home defense
   const pzUp = beat.phase === 'live' && ((!!pz?.show && ((bt >= 0.6 && bt < t0 + 1.1) || pzHit)) || pzAfter), pzOut = pzAfter ? bt > te + 3.2 : !pzHit && bt > t0 + 0.75;
   const scoreUp = !!g.score && beat.phase === 'live' && beat.tdAt != null && bt >= beat.tdAt;   // the scoring takeover of the bug
@@ -166,7 +166,7 @@ export default function PixelGame({ game, teams, lineups, onClose, onDone, onPla
         {sting > 0 && <NetStinger key={sting} net={bc.net} onDone={() => setSting(0)} />}
         {beat.phase === 'call' && callOf && beat.hold > CALL_PANEL && <RefCall key={`rc${i}`} call={callOf} />}
         {rep && beat.phase === 'live' && bt >= REPORT_IN && bt < REPORT_IN + REPORT_LEN && <InjuryReport key={`ir${i}`} x={rep} n={i + 1} player={playerOf(rep.id)} sub={playerOf(rep.sub)} team={teams[rep.side]} bug={bc.bug} week={match?.week ?? null} out={bt > REPORT_IN + REPORT_LEN - 0.5} />}
-        {beat.phase === 'wo' && beat.hold >= WO.shotIn && beat.hold < WO.shotOut && <WhiteoutShot home={teams.home} bc={bc} v={pz?.v ?? 80} fill={sound?.fill ?? 1} />}
+        {beat.phase === 'wo' && beat.hold >= WO.shotIn && beat.hold < WO.shotOut && <WhiteoutShot home={teams.home} bc={bc} v={pz?.v ?? 90} fill={sound?.fill ?? 1} />}
         {!beat.post && beat.phase !== 'wo' && pace?.keyPlay && !busy && <div className="pg-key">KEY PLAY</div>}
         {done && <div className="pg-headline final">{finalText(4 + (game.overtimes || 0)).toUpperCase()}</div>}
         <BroadcastSlot pre={gpre} pace={pace} bt={bt} live={pre} play={play} teams={teams} bug={bc.bug} playerOf={playerOf} n={i} />

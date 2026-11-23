@@ -51,10 +51,13 @@ export function createCrowdAudio() {
       song = ctx.createBufferSource(); song.buffer = b; song.connect(songGain); song.start(0, Math.min(from, b.duration - 1));
       ramp(songGain.gain, 1, 0.12);
     },
-    stopSong(fade = 0.25) {
+    stopSong(fade = 0.25) {   // fade >= 1: a long equal-power (cosine) fade, for the crossfade into the crowd
       if (!song) return;
-      const s = song, end = ctx.currentTime + fade * 4; song = null;
-      ramp(songGain.gain, 0, fade); try { s.stop(end); } catch { /* already stopped */ }
+      const s = song, now = ctx.currentTime, g = songGain.gain; song = null;
+      if (fade >= 1) {
+        const len = fade * 3.4, from = g.value, curve = Float32Array.from({ length: 48 }, (_, k) => from * Math.cos((k / 47) * Math.PI / 2));
+        g.cancelScheduledValues(now); g.setValueCurveAtTime(curve, now, len); try { s.stop(now + len + 0.1); } catch { /* already stopped */ }
+      } else { ramp(g, 0, fade); try { s.stop(now + fade * 4); } catch { /* already stopped */ } }
     },
     close() { closed = true; try { song?.stop(); } catch { /* fine */ } ctx.close().catch(() => {}); },
   };

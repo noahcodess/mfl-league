@@ -43,7 +43,10 @@ export function drawFan(r, f, y, p, glow) {
   arm(x, both || p.arms === 'l'); arm(rx, both || p.arms === 'r');
   const hx = rx + lean;
   if (p.item === 'towel') { const [dx, dy, w, h] = (b ? TOWEL.big : TOWEL.small)[p.frame % 4]; r(hx + dx, top + dy + 2, w, h, p.color); if (b) r(hx + dx, top + dy + 1 + h, w, 1, shade(p.color, 0.8)); }
-  else if (p.item === 'finger') { r(hx - 1, top - (b ? 4 : 2), b ? 3 : 2, b ? 5 : 3, f.trim); r(hx, top - (b ? 7 : 4), 1, b ? 3 : 2, f.trim); }
+  else if (p.item === 'whirl') {   // a towel on a circle around the raised hand, with a pixel of it trailing back
+    const R = b ? 5 : 2, cx = hx + Math.round(Math.cos(p.ang) * R), cy = top - (b ? 3 : 1) + Math.round(Math.sin(p.ang) * R * 0.6);
+    r(cx - (b ? 2 : 0), cy - (b ? 1 : 0), b ? 4 : 2, b ? 3 : 1, p.color); if (b) r(cx - 2, cy + 2, 4, 1, shade(p.color, 0.84)); r(Math.round((cx + hx) / 2), Math.round((cy + top) / 2), 1, 1, shade(p.color, 0.82));
+  } else if (p.item === 'finger') { r(hx - 1, top - (b ? 4 : 2), b ? 3 : 2, b ? 5 : 3, f.trim); r(hx, top - (b ? 7 : 4), 1, b ? 3 : 2, f.trim); }
   else if (p.item === 'sign') { r(x - 1, top - (b ? 6 : 3), b ? 11 : 7, b ? 7 : 4, PAPER); r(x - 1, top - (b ? 6 : 3), b ? 11 : 7, 1, f.ink); r(x, top - (b ? 4 : 2), b ? 9 : 5, b ? 2 : 1, f.ink); if (b) r(x + 1, top - 1, 6, 1, f.trim); }
   else if (p.item === 'light' && glow) glow.push(hx, top - 1, b);
 }

@@ -11,7 +11,7 @@ import { paintRoof, paintPoles, paintFront } from './stadiumSupports.js';
 import { makeFans, drawFan } from './crowdFans.js';
 import { fanPose, cardMask, JUMP_MS } from './crowdActs.js';
 
-const CALLS = { jump: 'JUMP JUMP JUMP', wave: 'DO THE WAVE', towels: 'WAVE YOUR TOWELS', cheer: 'MAKE SOME NOISE', cards: 'CARDS UP', lights: 'LIGHT IT UP' };
+const CALLS = { jump: 'JUMP JUMP JUMP', wave: 'DO THE WAVE', towels: 'WAVE YOUR TOWELS', whirl: 'TOWELS UP', cheer: 'MAKE SOME NOISE', cards: 'CARDS UP', lights: 'LIGHT IT UP' };
 
 // o: { team, look, act, dress (fan color or null), theme (the alternate's name), logo (loaded image or null), stadiumName, ms, fill (0-1 how full) }.
 // Returns draw(ctx, t) for a canvas that is a whole number of times bigger than 480x270.

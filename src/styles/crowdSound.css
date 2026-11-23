@@ -3,17 +3,15 @@
 .snd-vol { width: 90px; accent-color: var(--accent, #6fd36b); }
 
 .wo-shot { position: absolute; inset: 0; z-index: 4; overflow: hidden; background: #05060a; animation: wo-in .2s ease both; }
-.wo-shot .crowd-px { inset: -3%; width: 106%; height: 106%; animation: wo-shake .11s steps(2) infinite; }
+.wo-shot .crowd-px { inset: -11%; width: 122%; height: 122%; animation: wo-shake .085s steps(2) infinite; }   /* tighter than the intro shot */
 .wo-shot::after { content: ''; position: absolute; inset: 0; pointer-events: none; background: radial-gradient(ellipse at 50% 45%, transparent 55%, #00000073 100%); }
 .wo-shot.out { animation: wo-out .25s ease both; }
-.wo-tag { position: absolute; right: 2.4cqw; top: 2.4cqw; padding: .4cqw 1.4cqw; background: #f4f6f8; color: #0f2a36; font: 900 2.4cqw/1.1 var(--font-display, system-ui);
-  letter-spacing: .14em; border: .3cqw solid #1f9cc4; box-shadow: 0 0 1.6cqw #ffffff88; animation: pg-pop .35s cubic-bezier(.2, 1.4, .4, 1) .3s both; }
 @keyframes wo-shake {
-  0% { transform: translate(calc(var(--amp) * .55cqw), calc(var(--amp) * -.4cqw)); }
-  50% { transform: translate(calc(var(--amp) * -.5cqw), calc(var(--amp) * .45cqw)); }
-  100% { transform: translate(calc(var(--amp) * .3cqw), calc(var(--amp) * .5cqw)); }
+  0% { transform: translate(calc(var(--amp) * 1cqw), calc(var(--amp) * -.75cqw)) rotate(calc(var(--amp) * .25deg)); }
+  50% { transform: translate(calc(var(--amp) * -.95cqw), calc(var(--amp) * .8cqw)) rotate(calc(var(--amp) * -.3deg)); }
+  100% { transform: translate(calc(var(--amp) * .6cqw), calc(var(--amp) * .9cqw)) rotate(calc(var(--amp) * .15deg)); }
 }
-.wo-push { position: absolute; inset: 0; animation: wo-push 15.5s cubic-bezier(.3, 0, .7, 1) both; }
-@keyframes wo-push { from { transform: scale(1); } to { transform: scale(1.16); } }
+.wo-push { position: absolute; inset: 0; animation: wo-push 8s cubic-bezier(.3, 0, .7, 1) both; }
+@keyframes wo-push { from { transform: scale(1); } to { transform: scale(1.1); } }
 @keyframes wo-in { from { opacity: 0; } to { opacity: 1; } }
 @keyframes wo-out { from { opacity: 1; } to { opacity: 0; } }

@@ -11,12 +11,19 @@ const SNAP = new Set(['run', 'pass', 'sack', 'penalty', 'kneel', 'spike']);
 const QW = { 1: 0, 2: 0.12, 3: 1, 4: 1.5 };   // how likely each quarter is for the second one (overtime: 1.8)
 const hash = (a, b) => { let x = (Math.imul(a, 0x9e3779b1) ^ Math.imul(b + 0x7f4a7c15, 0x85ebca6b)) >>> 0; x ^= x >>> 16; x = Math.imul(x, 0x7feb352d) >>> 0; x ^= x >>> 15; x = Math.imul(x, 0x846ca68b) >>> 0; x ^= x >>> 16; return (x >>> 0) / 4294967296; };
 
-// The cutscene runs to Noah's whiteout track (Whiteout Creepers.mp3, 24.3 s): the network transition, the stadium shot
-// for most of the song, the transition back, the visitors' huddle, and they break it right at the end of the song
-// (about 22.5 s in, with the usual 1.7 s from the snap clock starting to the break). In seconds from the start.
+// The cutscene runs to Noah's whiteout track (Whiteout Creepers.mp3, 24.3 s): the network transition, the stadium shot,
+// the transition back, the visitors' huddle (they break it about 13.8 s in), the walk to the line and the snap (about
+// 17.5 s in), and the track keeps going into the play until our crowd crossfades in past the middle of it. In seconds.
 const MID = STING_MID / 1000;
 export const SONG_LEN = 24.3;
-export const WO = { shotIn: MID, back: 16, shotOut: 16 + MID, len: 20.8 };
+export const WO = { shotIn: MID, back: 8.4, shotOut: 8.4 + MID, len: 12.1 };
+
+// The Stadium Pulse on the whiteout: maxed out on the first one (the opening snap), unless the place isn't sold out and the
+// fans don't back the team much; at least ELECTRIC on the second. Broadcast only: the engine's crowd effects don't change.
+export function woPulse(pz, crowd, first) {
+  const max = first && (crowd?.soldOut || (crowd?.fan ?? 50) >= 50), v = max ? 100 : Math.max(pz?.v ?? 0, first ? 80 : 72);
+  return { ...(pz || {}), v, show: true };
+}
 
 // Is this a whiteout game? home: the home team. kits: from useGameKits.
 export const isWhiteout = (home, kits) => home?.id === 'snm' && !!kits?.special && kits.home?.name === WHITEOUT_NAME;

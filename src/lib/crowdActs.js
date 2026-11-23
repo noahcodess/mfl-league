@@ -3,7 +3,7 @@
 import { G } from './pixelFont.js';
 import { W, seatSpots } from './stadiumLayout.js';
 
-export const ACTS = { jump: 'Jumping', wave: 'The wave', towels: 'Towel wave', cheer: 'Cheering', cards: 'Card stunt', lights: 'Phone lights' };
+export const ACTS = { jump: 'Jumping', wave: 'The wave', towels: 'Towel wave', whirl: 'Towel whirl', cheer: 'Cheering', cards: 'Card stunt', lights: 'Phone lights' };
 export const JUMP_MS = 460;
 
 // seed: any number that stays the same for a game. dress: the color every fan wears, if the home team turned that on.
@@ -55,6 +55,10 @@ const DO = {
     if (f.ph > (f.big ? 0.95 : 0.6)) return idle(f, t); // fewer towels up top so the upper deck doesn't turn to static
     const frame = Math.floor(t / 95 + f.ph * 4) % 4;
     return { dy: frame % 2 ? -1 : 0, arms: 'r', item: 'towel', frame, color: env.towel };
+  },
+  whirl(f, t, env) {   // the whiteout: every fan swings a white towel around in circles over his head
+    const a = t / 150 + f.ph * 6.283;
+    return { dy: Math.sin(a) > 0.5 ? -1 : 0, arms: 'r', item: 'whirl', ang: a, color: env.towel };
   },
   cards(f, t, env) {
     if (f.big || t < 350 + f.x * 2.4) return cheer(f, t); // the cards flip up in a sweep; the lower bowl just cheers
