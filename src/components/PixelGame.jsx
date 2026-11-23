@@ -188,7 +188,7 @@ export default function PixelGame({ game, teams, lineups, onClose, onDone, onPla
         <button className="btn ghost" disabled={i === 0} onClick={() => setI(Math.max(0, i - 1))}>⏮ Back</button>
         <button className="btn ghost" disabled={done} onClick={() => setI(i + 1)}>Next ⏭</button>
         <span className="dim">Play {Math.min(i + 1, game.plays.length)} of {game.plays.length}</span>
-        {sound && <SoundToggle snd={snd} whiteout={teams.home.id === 'snm'} />}
+        {sound && <SoundToggle snd={snd} />}
         {onClose && <button className="btn ghost" onClick={onClose}>✕ Close</button>}
       </div>
     </div>

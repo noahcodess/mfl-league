@@ -12,8 +12,8 @@ export function bedLevels(m) {
   if (!play) return [0.6, 0.3, 0, 0];
   const pz = play.pulse || {}, lv = (pz.v ?? 0) / 100, away = play.off === 'away', k = play.kind, d = play.before?.down;
   const size = 0.45 + 0.55 * e;   // a small, half-empty place never gets as loud as a sold-out big house
-  if (wo?.song) return [0.15, 0.25 * size, 0.2 * size, 0];   // the song has the stadium
-  if (wo?.roar) return [0, 0.6 * size, size, (d >= 3 ? 0.8 : 0.3) * size];   // the song stops and the place explodes
+  if (wo?.roar) return [0, 0.6 * size, size, (d >= 3 ? 0.8 : 0.3) * size];   // they break the huddle: our crowd comes up, very loud
+  if (wo?.song) return [0, 0, 0, 0];   // the whiteout track replaces every crowd sound
   const h = play.after?.score && play.before?.score ? play.after.score.home - play.before.score.home : 0;
   if (tdAt != null && t >= tdAt && t < tdAt + 4.5) return h > 0 ? [0, 0.7 * size, 0.95 * size, 0] : [0.5, 0.35 * size, 0, 0];   // a score: the house blows up (or goes quiet)
   if (NO_SNAP.has(k)) {   // kicks: a buzz on the tee, a roar as it's struck

@@ -1,5 +1,6 @@
 // The whiteout cutscene's stadium shot: a still of the Creepers' house all in white, towels going, the camera shaking with
-// the noise (harder than the meter's own shake), the Stadium Pulse up and the scorebug staying on top.
+// the noise (harder than the meter's own shake) and a slow push in over the song, the Stadium Pulse up and the scorebug
+// staying on top.
 import React, { useMemo } from 'react';
 import PixelCanvas from './PixelCanvas.jsx';
 import StadiumPulse from './StadiumPulse.jsx';
@@ -20,7 +21,7 @@ export default function WhiteoutShot({ home, bc, v, fill = 1, out = false }) {
   return (
     <>
       <div className={`wo-shot${out ? ' out' : ''}`} style={{ '--amp': ((lvl - 40) / 60).toFixed(2) }}>
-        <PixelCanvas className="crowd-px" w={W * scale} h={H * scale} make={make} deps={[home.id, logo, look.sky, fill]} />
+        <div className="wo-push"><PixelCanvas className="crowd-px" w={W * scale} h={H * scale} make={make} deps={[home.id, logo, look.sky, fill]} /></div>
         <span className="wo-tag">❄️ {WHITEOUT_NAME.toUpperCase()}</span>
       </div>
       <StadiumPulse v={lvl} net={bc.net.key} out={out} />

@@ -11,9 +11,12 @@ const SNAP = new Set(['run', 'pass', 'sack', 'penalty', 'kneel', 'spike']);
 const QW = { 1: 0, 2: 0.12, 3: 1, 4: 1.5 };   // how likely each quarter is for the second one (overtime: 1.8)
 const hash = (a, b) => { let x = (Math.imul(a, 0x9e3779b1) ^ Math.imul(b + 0x7f4a7c15, 0x85ebca6b)) >>> 0; x ^= x >>> 16; x = Math.imul(x, 0x7feb352d) >>> 0; x ^= x >>> 15; x = Math.imul(x, 0x846ca68b) >>> 0; x ^= x >>> 16; return (x >>> 0) / 4294967296; };
 
-// The cutscene's beats in seconds: the network transition, the stadium shot, the transition back, the huddle on the field.
+// The cutscene runs to Noah's whiteout track (Whiteout Creepers.mp3, 24.3 s): the network transition, the stadium shot
+// for most of the song, the transition back, the visitors' huddle, and they break it right at the end of the song
+// (about 22.5 s in, with the usual 1.7 s from the snap clock starting to the break). In seconds from the start.
 const MID = STING_MID / 1000;
-export const WO = { shotIn: MID, back: MID + 3.6, shotOut: MID * 2 + 3.6, len: MID * 2 + 4.8, songAt: 2.5 };
+export const SONG_LEN = 24.3;
+export const WO = { shotIn: MID, back: 16, shotOut: 16 + MID, len: 20.8 };
 
 // Is this a whiteout game? home: the home team. kits: from useGameKits.
 export const isWhiteout = (home, kits) => home?.id === 'snm' && !!kits?.special && kits.home?.name === WHITEOUT_NAME;
