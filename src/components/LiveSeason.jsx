@@ -34,7 +34,7 @@ export default function LiveSeason({ preview, canControl, teamId }) {
           {week.games.length > 0 && <span>{count('final')} played{live ? ` · ${live} live` : ''} · {count('upcoming')} left</span>}
         </div>
       </header>
-      <LiveWeekGames week={week} rec={rec} teamId={teamId} />
+      <LiveWeekGames week={week} rec={rec} teamId={teamId} canControl={canControl} />
       <div className="ls-cards">
         <WeekStars week={week} />
         <TeamRanks stats={stats} kind="offense" through={n} />
