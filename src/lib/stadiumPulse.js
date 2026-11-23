@@ -12,12 +12,18 @@ import { crowdBelief } from './crowdMood.js';
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
 const hash = (a, b) => { let x = (a * 374761393 + b * 668265263) >>> 0; x = ((x ^ (x >>> 13)) * 1274126177) >>> 0; return (x >>> 0) / 4294967296; };
 
-// The crowd's energy before the moment counts, 0-1. crowd: { fill, capacity, fan, rivalry, color } from data/gameCrowd.
+// The crowd's energy before the moment counts, 0-1. Mostly how many people are actually in the seats (a sold-out 89,000
+// is a different animal from 37,000 in a 57,000 house), then how hard those fans back the team, then the occasion.
+// crowd: { fill, capacity, fan, rivalry, color } from data/gameCrowd.
+export const crowdPeople = (c) => (c?.fill ?? 0.7) * (c?.capacity || 60000);
 export function crowdEnergy(c) {
   if (!c) return 0;
-  const size = clamp(((c.capacity || 60000) - 55000) / 42000, 0, 1), fan = clamp((c.fan ?? 50) / 100, 0, 1);   // a bigger place helps, but how full it is matters far more
-  return clamp((c.fill ?? 0.7) ** 2 * (0.66 + 0.12 * size + 0.22 * fan) + (c.rivalry ? 0.08 : 0) + (c.color ? 0.06 : 0), 0, 1);
+  const k = clamp((crowdPeople(c) - 28000) / 67000, 0, 1), fan = clamp((c.fan ?? 50) / 100, 0, 1), fill = clamp(c.fill ?? 0.7, 0, 1);
+  return clamp(0.08 + 0.66 * k ** 0.92 + 0.24 * fan * fill + (c.rivalry ? 0.08 : 0) + (c.color ? 0.06 : 0), 0, 1);
 }
+
+// Does this crowd always get at least one false start out of the visitors? A sold-out house in one of the 7 biggest stadiums.
+export const bigHouse = (c) => !!c?.soldOut && (c.capRank ?? 99) <= 7;
 
 // How much the moment makes them stand up, 0-1. s: the game state; away has the ball.
 function moment(s) {

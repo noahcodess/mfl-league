@@ -14,6 +14,7 @@ import { preSnapFlag, postPlayFlag } from './simFlags.js';
 import { PLAY_CLOCK } from './simClock.js';
 import { pulseNow, stampPulse } from './stadiumPulse.js';
 import { settle } from './momentum.js';
+import { injuryCheck } from './simInjury.js';
 
 export function sides(G) { const s = G.s; G.defSide = other(s.poss); G.O = G.teams[s.poss].O; G.D = G.teams[G.defSide].D; }
 const start = (G) => { const p = newPlay({ ...G.s, hash: 'middle' }, G.plays.length + 1); p.stats = []; return p; };
@@ -22,7 +23,7 @@ function log(G, play, secs) {
   if (!s.ot) s.clock -= play.clock.seconds;
   if (!s.ot && (s.quarter === 2 || s.quarter === 4) && was > 120 && s.clock <= 120) { s.running = false; play.twoMinute = true; }   // two-minute warning
   play.after = { score: { ...s.score }, poss: s.poss, ballOn: s.ballOn, down: s.down, toGo: s.toGo, quarter: s.quarter, clock: s.clock, mom: Math.round(G.mom * 100) / 100 };
-  settle(G); G.plays.push(play);   // momentum drifts back toward the home edge
+  injuryCheck(G, play); settle(G); G.plays.push(play);   // anyone hurt on it; momentum drifts back toward the home edge
   const lead = s.score.home - s.score.away;   // a one-score game late: the trailing side finds a little extra (the rally)
   if (s.quarter === 4 && !s.ot && s.clock < (s.qlen || 360) * 0.5 && lead !== 0 && Math.abs(lead) <= 8) swing(G, lead > 0 ? 'away' : 'home', 0.02);
   return play;

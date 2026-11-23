@@ -69,7 +69,7 @@ export function punt(G, play) {
 // The chance a field goal from `dist` yards is good for this side's kicker today.
 export const kickOdds = (G, side, dist) => { const K = kickerOf(G, side); return makeOdds(dist, leg(G, K, 'kick_power'), leg(G, K, 'kick_accuracy')); };
 export function fieldGoal(G, play) {
-  const { R, s } = G, K = kickerOf(G, s.poss), dist = 100 - s.ballOn + 17, good = R.chance(kickOdds(G, s.poss, dist) * (1 - 0.05 * (G.pul?.p || 0)));   // a visiting kicker in a loud house
+  const { R, s } = G, K = kickerOf(G, s.poss), dist = 100 - s.ballOn + 17, good = R.chance(kickOdds(G, s.poss, dist) * (1 - 0.07 * (G.pul?.p || 0)));   // a visiting kicker in a loud house
   play.kind = 'fg'; stat(play, K, 'fga'); if (good) { stat(play, K, 'fgm'); stat(play, K, 'fglong', dist); }
   addEvent(play, 'kick', 1.2, { kind: 'fg', by: K.id, dist, good });
   play.text = good ? `The ${dist}-yard field goal is GOOD.` : `The ${dist}-yard field goal is NO GOOD.`; play.headline = good ? 'FIELD GOAL' : 'NO GOOD';

@@ -54,7 +54,7 @@ export default function Gamecast({ game, teams, names, finished = false }) {
       {tab === 'plays' && <ol className="gc-log">{recent.map((p) => <li key={p.n} className={p.headline ? 'hl' : ''}><span>{qName(p.before.quarter)} {p.before.quarter > 4 ? '' : clock(p.before.clock)} · {teams[p.off].id.toUpperCase()}</span>{p.text}</li>)}</ol>}
       {tab === 'box' && (done ? <BoxScore game={game} names={names} teams={teams} /> : <p className="dim">The box score opens when the game ends. Hit "Skip to the end" to see it now.</p>)}
       {tab === 'scoring' && <ol className="gc-log">{game.scoring.filter((x) => x.n <= i + 1).map((x) => <li key={x.n + x.how}><span>{qName(x.quarter)} {x.quarter > 4 ? '' : clock(x.clock)} · {teams[x.side].id.toUpperCase()} +{x.pts}</span>{x.how}: {game.plays[x.n - 1]?.text}</li>)}</ol>}
-      {done && game.injuries.length > 0 && <p className="gc-inj">🩹 Injuries: {game.injuries.map((x) => `${x.name} (${x.weeks} week${x.weeks > 1 ? 's' : ''})`).join(', ')}</p>}
+      {done && game.injuries.length > 0 && <p className="gc-inj">🩹 Injuries: {game.injuries.map((x) => `${x.name} (${x.label || 'hurt'}, ${x.weeks >= 99 ? 'season' : x.returned ? 'returned' : x.weeks === 0 ? 'day to day' : `${x.weeks} wk${x.weeks > 1 ? 's' : ''}`})`).join(', ')}</p>}
     </div>
   );
 }

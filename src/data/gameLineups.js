@@ -8,6 +8,7 @@ import { getTeam } from './teams.js';
 import { getPlayers } from './players.js';
 import { buildLineup } from '../lib/simLineup.js';
 import { buildKickTeams } from '../lib/simKickTeams.js';
+import { activeInjuries } from './injuries.js';
 
 const chunks = (a, n) => a.length ? [a.slice(0, n), ...chunks(a.slice(n), n)] : [];
 
@@ -21,7 +22,8 @@ export function loadLineups(teamIds) {
 }
 
 async function fetchLineups(teamIds) {
-  const rosters = teamIds.map((id) => getPlayers(id)), ids = rosters.flat().map((p) => p.id), attrs = {}, inj = {}, coaches = {};
+  const hurt = await activeInjuries().catch(() => ({}));   // injured players sit; their backups start
+  const rosters = teamIds.map((id) => getPlayers(id).filter((p) => !hurt[p.id])), ids = rosters.flat().map((p) => p.id), attrs = {}, inj = {}, coaches = {};
   if (!DEMO) {
     await Promise.all(chunks(ids, 150).flatMap((part) => [
       db.from('player_attributes').select('player_id, ratings, style').in('player_id', part).then(({ data }) => (data || []).forEach((r) => { attrs[r.player_id] = r; })),
@@ -29,7 +31,11 @@ async function fetchLineups(teamIds) {
     ]).concat(db.from('coaches').select('team_id, scheme, ratings, brain').in('team_id', teamIds)
       .then(({ data }) => (data || []).forEach((c) => { coaches[c.team_id] = { scheme: c.scheme, ratings: c.ratings, archetype: c.brain?.archetype }; }))));
   }
-  return teamIds.map((id, i) => { const lineup = buildLineup(getTeam(id), rosters[i], attrs, inj); return { ...lineup, kickTeams: buildKickTeams(lineup), coach: coaches[id] || {} }; });
+  return teamIds.map((id, i) => {
+    const lineup = buildLineup(getTeam(id), rosters[i], attrs, inj), out = getPlayers(id).filter((p) => hurt[p.id]);
+    if (out.length) lineup.problems.unshift(...out.map((p) => `🩹 ${p.name} is out (${hurt[p.id].label}), so his backup plays`));
+    return { ...lineup, injured: out.map((p) => ({ id: p.id, name: p.name, position: p.position, ...hurt[p.id] })), kickTeams: buildKickTeams(lineup), coach: coaches[id] || {} };
+  });
 }
 
 // Returns { home, away } lineups, or null while loading.

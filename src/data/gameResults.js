@@ -7,6 +7,7 @@ import { loadLineups } from './gameLineups.js';
 import { rivalPairs } from './games.js';
 import { playGame } from '../lib/simGame.js';
 import { isTestInput } from '../lib/simInputs.js';
+import { recordInjuries } from './injuries.js';
 
 const clean = (msg = '') => (msg.includes('not allowed') ? 'Only the commissioner can do this.' : msg.replace(/^.*?ERROR:\s*/, ''));
 async function rpc(fn, args) {
@@ -49,6 +50,7 @@ export async function finalizeGame(gameId, result, lineups, kick, method) {
   const stats = Object.entries(result.players || {}).filter(([id]) => teams[id]).map(([id, s]) => ({ player_id: id, team_id: teams[id], stats: s }));
   const out = await rpc('game_finalize', { p_game: Number(gameId), p_home: result.score.home, p_away: result.score.away, p_ot: result.overtimes || 0,
     p_seed: Number(kick.seed), p_receiver: kick.receiving, p_method: method, p_teams: result.teams, p_scoring: result.scoring.map((x) => ({ ...x, text: result.plays[x.n - 1]?.text })), p_stats: stats });
+  if (!out?.already) await recordInjuries(gameId, result.injuries).catch(() => null);   // who got hurt, and for how long
   gamesChanged();
   return out;
 }
