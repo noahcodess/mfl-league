@@ -6,13 +6,18 @@ const hash = (a, b) => { let x = (a * 374761393 + b * 668265263) >>> 0; x = ((x 
 export const ANNOUNCERS = 4;
 
 // play: the play. S: its scene (tEnd, tSack, flag). seed: the game's seed.
-// Returns [{ name ('eruption' | 'cheer' | 'groan' | 'boo' | 'third1'..'third4'), at (scene seconds, or 'score' = as the score lands), gain }].
+// Returns [{ name ('eruption' | 'cheer' | 'groan' | 'boo' | 'third1'..'third4'), at (scene seconds, 'score' = as the score lands,
+// 'call' = as the referee announces a penalty), gain }].
 export function cuesFor(play, S, seed = 1) {
   const out = [], r = play.result || {}, k = play.kind, home = play.off === 'home', d = play.before?.down, pz = play.pulse || {};
   const b4 = play.before?.score, af = play.after?.score, h = af && b4 ? af.home - b4.home : 0, a = af && b4 ? af.away - b4.away : 0;
   const end = Math.max(S.T0 ?? 0, (S.tEnd ?? 0) - 0.1), add = (name, at, gain) => out.push({ name, at, gain });
   const flag = (play.events || []).find((e) => e.type === 'flag');
-  if (flag) add(flag.team === 'home' ? 'boo' : 'cheer', (S.flag?.t ?? end) + 1, flag.team === 'home' ? 0.9 : flag.crowd ? 0.85 : 0.55);   // the flag hits the ground
+  if (flag) {   // boos (or a cheer) as the referee announces it; a visitor's false start or delay they all saw: they erupt as the flag flies
+    const seen = flag.team === 'away' && k === 'penalty' && play.off === 'away' && S.flag;
+    if (seen) add('eruption', S.flag.t + 0.22 + 0.12, flag.crowd ? 1 : 0.75);
+    else add(flag.team === 'home' ? 'boo' : 'cheer', 'call', flag.team === 'home' ? 0.95 : 0.6);
+  }
   if (!home && d >= 3 && pz.show && (pz.v ?? 0) >= 55 && hash(seed, play.n * 3 + 1) < 0.35) add(`third${1 + Math.floor(hash(play.n, seed) * ANNOUNCERS)}`, 0.9, 1);
   const onside = (play.events || []).find((e) => e.type === 'onside');
   if (onside) { const kickHome = play.off === 'home'; const ours = onside.got === kickHome; add(ours ? 'eruption' : 'groan', end, ours ? 1 : 0.5); return out; }

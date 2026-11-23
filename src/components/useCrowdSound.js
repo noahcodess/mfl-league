@@ -9,6 +9,7 @@ import { bedLevels, masterLevel } from '../lib/crowdMix.js';
 import { cuesFor } from '../lib/crowdCues.js';
 import { crowdEnergy } from '../lib/stadiumPulse.js';
 import { WO } from '../lib/whiteoutPlan.js';
+import { CALL_PANEL } from '../lib/refCallShow.js';
 import { loadWhiteoutSong, saveWhiteoutSong, clearWhiteoutSong } from '../data/whiteoutSong.js';
 
 const PREFS = 'mfl-crowd-sound';
@@ -43,11 +44,13 @@ export default function useCrowdSound(crowd, seed, read) {
     e.setBeds(beds, roar ? 0.12 : 0.4);
     if (import.meta.env.DEV) window.__crowd = { beds, phase: c.phase, t, song: woSong && hasSong, roar, i: play.n };   // dev only: tests read the mix
     e.setMaster(masterLevel({ phase: c.phase, paused: st.paused, brk: st.brk, done: st.done }));
-    if (!live || st.paused) return;
+    const call = c.phase === 'call' && c.hold >= CALL_PANEL + 0.15;   // the referee's announcement is up
+    if ((!live && !call) || st.paused) return;
     if (!cues.current.has(play)) cues.current.set(play, cuesFor(play, S, seed));
     cues.current.get(play).forEach((q, n) => {
+      if (q.at === 'call') { if (call && !done.has(n)) { done.add(n); e.pop(q.name, q.gain * (0.4 + 0.6 * e0)); } return; }
       const at = q.at === 'score' ? c.tdAt : q.at;
-      if (at == null || done.has(n) || t < at) return;
+      if (!live || at == null || done.has(n) || t < at) return;
       done.add(n); if (t < at + 1.5) { e.pop(q.name, q.gain * (0.4 + 0.6 * e0)); if (import.meta.env.DEV) (window.__pops ||= []).push([play.n, q.name]); }   // jumped past it: skip it
     });
   }

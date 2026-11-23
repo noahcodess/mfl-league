@@ -34,7 +34,7 @@ function delayOfGame(G, play, crowd) {   // on the offense, 5 yards; the play cl
 function crowdFlag(G, play) {
   const p = G.pul?.p || 0, { R, s } = G;
   if (p < 0.3) return null;
-  const r = R.r(), fs = 0.055 * p * p, dog = 0.026 * p * p;
+  const v = G.pul?.v || 0, r = R.r(), fs = 0.055 * p * p * (v >= 88 ? 1.35 : v >= 72 ? 1.18 : 1), dog = 0.026 * p * p;   // DEAFENING and ELECTRIC: false starts come a bit easier
   if (r >= fs + dog) return null;
   if (r >= fs) return delayOfGame(G, play, true);
   const who = sloppy(G, R), name = 'False start', yards = Math.min(5, Math.floor(s.ballOn / 2));

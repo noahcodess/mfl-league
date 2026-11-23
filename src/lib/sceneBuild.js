@@ -10,13 +10,17 @@ import { addRefs } from './sceneRefs.js';
 import { addNet } from './kickNet.js';
 
 // A flag before the snap: the offender jumps early, the flag flies, everyone stands up.
-function buildPenalty(S, lineups) {
+function buildPenalty(S, lineups) {   // before the snap: a lineman jumps (false start, offside), the flag flies half a second later
   lineup(S, lineups, { huddle: true });
-  const f = ev(S.play, 'flag')[0], who = f && S.by[f.on], t = S.T0 - 0.4;
-  if (who) S.when(t, (s) => { const fwd = who.side === s.play.off ? s.dir : -s.dir; who.brain = B.to(who.x + fwd * 0.9, who.y, 4); s.setPose(who, 'stand'); });
-  S.when(t + 0.3, (s) => { for (const a of s.actors) a.pose = a.pose || 'stand'; });
-  S.flag = { t: t + 0.2, x: who ? who.x : S.los, y: who ? who.y : 0 };
-  S.tEnd = t + 0.8;
+  const f = ev(S.play, 'flag')[0], who = f && S.by[f.on], jump = f?.name !== 'Delay of game', t = jump ? S.T0 - 0.55 : S.T0 - 0.1;   // delay: when the play clock hits 0
+  if (who && jump) S.when(t, (s) => {
+    const fwd = who.side === s.play.off ? s.dir : -s.dir;
+    who.hop = { t0: s.t, dur: 0.34, h: 0.45 }; who.brain = B.to(who.x + fwd * 0.95, who.y, 7); s.setPose(who, 'drive');   // he flinches out of his stance
+    s.when(s.t + 0.42, () => s.setPose(who, 'stand'));
+  });
+  S.when(t + 0.6, (s) => { for (const a of s.actors) a.pose = a.pose || 'stand'; });
+  S.flag = { t: t + (jump ? 0.28 : 0), x: who ? who.x : S.los, y: who ? who.y : 0 };   // sceneRefs lets it go 0.22 s after this: thrown 0.5 s after the jump
+  S.tEnd = t + 1.4;
 }
 
 // How far short of the engine's spot the ball carrier is when the tackle lands (cuts, jukes and dodging defenders all cost

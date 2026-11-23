@@ -29,7 +29,9 @@ export function bedLevels(m) {
   }
   const up = !!pz.show && t >= 0.6, crucial = d >= 3 || lv >= 0.72;   // the meter is on (it comes up at 0.6 s)
   const murmur = (0.4 + 0.6 * sm(lv * 1.5)) * size, loud = up && crucial ? sm((lv - 0.3) / 0.45) * size : 0;
-  const third = up && d >= 3 && lv >= 0.4 && t < T0 + 0.6 ? (0.5 + 0.5 * sm((lv - 0.4) / 0.5)) * size : 0;   // the sustained 3rd-down scream, let go just after the snap
+  const now = t >= 0.6 && t < T0 + 0.6;   // the sustained scream, on with the meter and let go just after the snap
+  const third = !now ? 0 : d >= 3 && lv >= 0.22 ? (0.6 + 0.4 * sm((lv - 0.22) / 0.5)) * size   // every real 3rd and 4th down, meter or not
+    : pz.show && lv >= 0.68 ? (0.35 + 0.3 * sm((lv - 0.68) / 0.2)) * size : 0;              // and an electric house on an early down
   if (t < T0) return [0.25 * (1 - lv), murmur, loud, third];
   if (!post) return [0, Math.max(murmur, 0.7 * size), loud * 0.85, third];
   return [0.3 * (1 - lv), murmur * 0.85, 0, 0];   // back down between plays
@@ -41,5 +43,5 @@ export function masterLevel(v) {
   if (v.paused) return 0;
   if (v.brk) return 0.3;
   if (v.done) return 0.35;
-  return v.phase === 'replay' ? 0.45 : v.phase === 'call' || v.phase === 'tocall' ? 0.55 : 1;
+  return v.phase === 'replay' ? 0.45 : v.phase === 'call' || v.phase === 'tocall' ? 0.75 : 1;
 }

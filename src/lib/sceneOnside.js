@@ -53,11 +53,20 @@ export function buildOnside(S, lineups, e) {
   S.when(T0, hop(0));
 
   // Everyone goes for it: the kicking team can run the moment it's kicked (they just can't TOUCH it short of 10 yards).
+  // The kicking team's closest three lay out for it, arriving just as it's recovered, so it looks like anyone's ball until the end.
+  const divers = cover.filter((a) => a !== winner).sort((a, b) => dist(a.x, a.y, end.x, end.y) - dist(b.x, b.y, end.x, end.y)).slice(0, 3);
+  S.when(T0 + 0.05, () => divers.forEach((a, n) => {
+    const ang = Math.PI + (n - 1) * 0.55, r = 2.1 + n * 0.3, at = [end.x + dir * Math.cos(ang) * r, clamp(end.y + Math.sin(ang) * r, -25, 25)];
+    a.brain = B.meet(at[0], at[1], tRec - 0.3 + n * 0.14 + S.rand() * 0.08, a.max * 1.25, (d, s) => {
+      d.brain = B.to(end.x - dir * 0.4, end.y + (n - 1) * 0.5, d.max * 1.3); s.setPose(d, 'layout', 0.32); d.hop = { t0: s.t, dur: 0.3, h: 0.22 };   // airborne at the ball
+      s.when(s.t + 0.24, (s3) => s3.knock(d, 1.5, { dur: 0.2 }));
+    });
+  }));
   S.when(T0 + 0.05, () => all.forEach((a) => {
-    if (a === winner) return;
+    if (a === winner || divers.includes(a)) return;
     const mine = a.side === play.off, ang = (mine ? Math.PI : 0) + Math.sign(a.y - end.y || 1) * (0.3 + S.rand() * 1.1), r = 1.3 + S.rand() * 2.4;   // a ring around the ball, each team on its own side of it
-    const near = dist(a.x, a.y, end.x, end.y) < 16, slot = [end.x + dir * Math.cos(ang) * r, clamp(end.y + Math.sin(ang) * r, -25, 25)];
-    a.brain = near ? B.meet(slot[0], slot[1], tRec + 0.25 + S.rand() * 0.5, a.max * 0.95) : B.to(end.x + (a.side === play.off ? -dir : dir) * 6, clamp(a.y * 0.7, -24, 24), a.max * 0.6);
+    const near = dist(a.x, a.y, end.x, end.y) < 16, late = mine ? 0.05 : 0.25, slot = [end.x + dir * Math.cos(ang) * r, clamp(end.y + Math.sin(ang) * r, -25, 25)];
+    a.brain = near ? B.meet(slot[0], slot[1], tRec + late + S.rand() * 0.45, a.max * 0.95) : B.to(end.x + (a.side === play.off ? -dir : dir) * 6, clamp(a.y * 0.7, -24, 24), a.max * 0.6);
   }));
   if (winner) S.when(winner === K ? T0 + 0.15 : T0 + 0.05, () => { winner.brain = B.meet(end.x, end.y, tRec, winner.max * 1.35); });   // the kicker sprints after his own kick
 
