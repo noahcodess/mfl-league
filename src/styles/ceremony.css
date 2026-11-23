@@ -1,0 +1,26 @@
+/* The award ceremony on the Live tab: the pixel stage with its countdown, and the nominees below. */
+.cer-live { display: grid; gap: 1.2rem; }
+.cer-stage { position: relative; border-radius: 14px; overflow: hidden; background: #050203; border: 1px solid #c79a3a55; box-shadow: 0 10px 40px #0008, inset 0 0 0 1px #0006; }
+.cer-canvas { display: block; width: 100%; aspect-ratio: 16 / 9; image-rendering: pixelated; }
+.cer-count { position: absolute; left: 50%; bottom: 4%; transform: translateX(-50%); display: grid; justify-items: center; gap: .15rem; text-align: center;
+  padding: .7rem 1.6rem .8rem; border-radius: 14px; background: linear-gradient(180deg, #0b0710e6, #12080ce6); border: 1px solid #e9c36866;
+  box-shadow: 0 6px 30px #000a, 0 0 24px #e9c36822; font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif; backdrop-filter: blur(2px); }
+.cer-count small { font-size: clamp(.62rem, 1.3vw, .8rem); letter-spacing: .22em; text-transform: uppercase; color: #e9c368; font-weight: 700; }
+.cer-count b { font-size: clamp(1.4rem, 4.6vw, 2.9rem); font-weight: 800; color: #fff; font-variant-numeric: tabular-nums; letter-spacing: .02em; line-height: 1.1; text-shadow: 0 2px 12px #e9c36844; }
+.cer-count span { font-size: clamp(.72rem, 1.5vw, .95rem); color: #d9d2c4; }
+.cer-count.live b { color: #ff6b6b; animation: cer-live 1.6s ease-in-out infinite; }
+@keyframes cer-live { 50% { opacity: .6; } }
+.cer-noms h2 { margin: 0 0 .7rem; }
+.cer-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: .9rem; }
+.cer-card { background: linear-gradient(160deg, #23160a, var(--card, #1c1f26) 55%); border: 1px solid #c79a3a44; border-radius: 12px; padding: .8rem .95rem; display: grid; gap: .5rem; }
+.cer-card header { display: flex; gap: .5rem; align-items: center; font-size: 1rem; }
+.cer-card header span { font-size: 1.25rem; }
+.cer-card ol { list-style: none; margin: 0; padding: 0; display: grid; gap: .35rem; }
+.cer-card li { display: flex; align-items: center; gap: .55rem; padding: .4rem .5rem; border-radius: 8px; background: #ffffff08; }
+.cer-card li.won { background: linear-gradient(90deg, #f2b70533, #f2b70508); border: 1px solid #f2b70566; }
+.cer-card li img { width: 24px; height: 24px; object-fit: contain; image-rendering: pixelated; flex: none; }
+.cer-dot { width: 24px; text-align: center; flex: none; }
+.cer-who { display: grid; min-width: 0; }
+.cer-who b { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cer-who small { color: var(--dim, #9aa3b2); font-size: .78rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cer-foot { margin: .7rem 0 0; font-size: .82rem; }

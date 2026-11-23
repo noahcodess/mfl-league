@@ -5,12 +5,14 @@ import { currentPhase, currentSeason } from '../data/teams.js';
 import { useSeasonGames } from '../data/games.js';
 import { weekNow } from '../data/liveSeason.js';
 import { inSandbox } from '../data/sandbox.js';
+import { useCeremony } from '../data/ceremony.js';
 
 // Commissioner's Desk → Season: the current game week and "Go to next week". Moving on also runs the bots' weekly moves.
 export default function WeekControl({ canControl, reload }) {
   const [result, setResult] = useState(null);
   const [error, setError] = useState('');
-  const inSeason = currentPhase() === 'regular_season', wk = weekNow(useSeasonGames(currentSeason()));
+  const inSeason = currentPhase() === 'regular_season', wk = weekNow(useSeasonGames(currentSeason())), cer = useCeremony(currentSeason());
+  const needAwards = inSeason && wk >= 12 && cer && !cer.locked;   // past Week 12 only once the award finalists are confirmed
   const go = async () => {
     setError('');
     try { setResult(await advanceWeek()); await reload?.(); } catch (e) { setError(e.message); }
@@ -23,8 +25,9 @@ export default function WeekControl({ canControl, reload }) {
         <p className="dim">{inSeason
           ? 'When every game this week is played, go to the next week.'
           : 'Game weeks start when the regular season begins (the last offseason step, Training camp, starts Week 1).'}</p>
-        <ConfirmButton className="btn" label="⏭️ Go to next week" disabled={!canControl || !inSeason} title={`Finish Week ${wk}?`} yes="Go to next week"
+        <ConfirmButton className="btn" label="⏭️ Go to next week" disabled={!canControl || !inSeason || needAwards} title={`Finish Week ${wk}?`} yes="Go to next week"
           text={`${inSandbox() ? '🧪 TEST mode. ' : ''}Every coach gets a notice, and the bots make their weekly moves.`} onConfirm={go} />
+        {needAwards && <p className="aw-cer-warn">🏅 Before going past Week 12, confirm the award finalists: <a href="#control-awards">Commissioner's Desk → Awards</a>.</p>}
         {error && <p className="form-error">{error}</p>}
         {result && <p className="week-result">✅ Week {result.week} is here. Bots: {result.bots.blocks} on the block · {result.bots.deals} bot trade{result.bots.deals === 1 ? '' : 's'} · {result.bots.offers} offer{result.bots.offers === 1 ? '' : 's'} to coaches · {result.bots.filled} free agents signed.</p>}
       </section>

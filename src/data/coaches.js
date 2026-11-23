@@ -37,6 +37,13 @@ export function useCoaches(version = 0) {
   return map;
 }
 
+// Every team's coach name, as teamId -> name (for Coach of the Year).
+export async function coachNames() {
+  if (DEMO) return Object.fromEntries(['snm', 'crf', 'lsc', 'dst', 'ocn', 'ntw'].map((t) => [t, DEMO_COACH(t).name]));
+  const { data } = await db.from('coaches').select('team_id, name');
+  return Object.fromEntries((data || []).map((c) => [c.team_id, c.name]));
+}
+
 export async function saveMyCoach(outfit) {
   if (DEMO) return {};
   const { data, error } = await db.rpc('set_my_coach', { p_name: null, p_outfit: outfit });

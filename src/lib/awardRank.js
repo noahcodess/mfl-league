@@ -41,7 +41,7 @@ export function rankAwards(season) {
     roy: top(ids.filter((id) => P[id].rookie).map((id) => player(id, best(id, 0.9) * (0.9 + 0.2 * win(P[id].team))))),
     coy: top(Object.entries(T).map(([id, t]) => {
       const c = coachScore({ ...t, winPct: win(id), pd: t.w + t.l ? (t.pf - t.pa) / (t.w + t.l) : 0, seasonDays: season.seasonDays });
-      return { id, score: c.score, line: `${t.w}-${t.l} · ${Math.round(c.count)} move${Math.round(c.count) === 1 ? '' : 's'} · active ${t.activity?.days || 0} days` };
+      return { id, score: c.score, line: `${t.w}-${t.l} · ${Math.round(c.count)} move${Math.round(c.count) === 1 ? '' : 's'}` };   // activity stays private: finalists are public
     })),
     goty: top((season.games || []).filter((g) => g.hs + g.as > 0).map((g) => {
       const r = gameScore({ ...g, q: [win(g.home), win(g.away)] });

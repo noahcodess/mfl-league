@@ -6,6 +6,7 @@ import { db } from './supabase.js';
 import { DEMO } from './demo.js';
 import { getTeams, currentSeason, currentWeek, currentPhase, awardsUntil } from './teams.js';
 import { getAllPlayers } from './players.js';
+import { coachNames } from './coaches.js';
 import { rankAwards } from '../lib/awardRank.js';
 import { seasonValues } from '../lib/awardMath.js';
 
@@ -63,11 +64,14 @@ export async function seasonInputs(season) {
 export async function computeAwards(season) {
   const inp = DEMO && import.meta.env.DEV ? await (await import('./awardsDemo.js')).demoInputs() : await seasonInputs(season);   // dev: a quick simulated season
   if (!inp) return null;
-  const ranked = rankAwards(inp), teamName = (id) => getTeams().find((t) => t.id === id)?.name || id;
-  const snap = (key, r) => key === 'coy' ? { ...r, name: teamName(r.id), team: r.id } : key === 'goty' ? (() => { const g = inp.games.find((x) => String(x.id) === r.id); return { ...r, name: `${teamName(g.away)} at ${teamName(g.home)}`, team: null }; })()
+  const ranked = rankAwards(inp), teamName = (id) => getTeams().find((t) => t.id === id)?.name || id, coaches = await coachNames().catch(() => ({}));
+  const snap = (key, r) => key === 'coy' ? { ...r, ...coachEntry(r.id, coaches, teamName) } : key === 'goty' ? (() => { const g = inp.games.find((x) => String(x.id) === r.id); return { ...r, name: `${teamName(g.away)} at ${teamName(g.home)}`, team: null }; })()
     : { ...r, name: inp.players[r.id].name, team: inp.players[r.id].team, pos: inp.players[r.id].pos };
-  return { inputs: inp, lists: Object.fromEntries(Object.entries(ranked).map(([k, rows]) => [k, rows.map((r) => snap(k, r))])) };
+  return { inputs: inp, coaches, lists: Object.fromEntries(Object.entries(ranked).map(([k, rows]) => [k, rows.map((r) => snap(k, r))])) };
 }
+
+// Coach of the Year names the coach ("Coach Noah") with his team where a player's position goes.
+export const coachEntry = (teamId, coaches, teamName) => ({ name: coaches[teamId] ? `Coach ${coaches[teamId]}` : `${teamName(teamId)} coach`, team: teamId, pos: teamName(teamId) });
 
 export async function savedAwards(season) {
   if (DEMO) return {};

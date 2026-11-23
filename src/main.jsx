@@ -40,6 +40,7 @@ import './styles/injury.css';
 import './styles/twoMinute.css';
 import './styles/lineupShowcase.css';
 import './styles/awards.css';
+import './styles/ceremony.css';
 import './styles/tradeWire.css';
 import './styles/intro.css';
 import './styles/introScenes.css';
