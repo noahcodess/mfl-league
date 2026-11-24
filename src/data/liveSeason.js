@@ -14,12 +14,12 @@ export function getSampleSeason() {
 
 const timeText = (iso) => new Date(iso).toLocaleString('en-US', { weekday: 'short', hour: 'numeric', minute: '2-digit' }).replace(',', '');
 
-// The week the league is really on: the first week that still has a game to play (never behind the saved week). A week
-// whose games are all final is done, even if the saved week hasn't caught up yet.
+// The week the league is on: the saved week (it moves when the commissioner goes to the next week, or when a game from a
+// later week is played or simmed). A finished week stays "this week" until then, so going to the next week from Week 1
+// lands on Week 2, never 3.
 export function weekNow(games) {
-  const open = (games || []).filter((g) => g.kind === 'regular' && g.status !== 'final').map((g) => g.week);
-  const first = open.length ? Math.min(...open) : 12;
-  return Math.min(12, Math.max(1, currentWeek() || 1, first));
+  const played = (games || []).filter((g) => g.kind === 'regular' && g.status === 'final').map((g) => g.week);
+  return Math.min(12, Math.max(1, currentWeek() || 1, ...played));   // the league's week (a game played from a later week has moved it there)
 }
 
 function fromGames(games) {

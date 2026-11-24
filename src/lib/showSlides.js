@@ -2,7 +2,8 @@
 // camera keyframes (each slide starts from wherever the camera already is, so nothing jumps) and what the screen shows.
 // It opens on the stage and pulls back into the auditorium. Each award: its title card on the screen, the finalists
 // (they walk on, the screen stacks them), then the reveal: the lights drop, the drum roll, spotlights hunting, the
-// winner on the screen, confetti. Game, Coach, Rookie, Offense, Defense, and the MVP last.
+// winner on the screen, confetti. Game, Coach, the two Rookies, Comeback, Offense, Defense, and the MVP last. The
+// finalists stand (and are listed) in a random order.
 export const CAMS = {
   live: { x: 160, y: 75, z: 1.28 }, wide: { x: 160, y: 92, z: 1 }, crowd: { x: 160, y: 104, z: 1.05 }, house: { x: 160, y: 98, z: 1.22 },
   screen: { x: 160, y: 62, z: 2.08 }, stage: { x: 160, y: 80, z: 1.62 }, push: { x: 160, y: 82, z: 1.85 }, out: { x: 160, y: 83, z: 1.5 },
@@ -10,8 +11,8 @@ export const CAMS = {
 };
 export const DRUM_AT = 0.6, HIT = 5.0;   // the drum roll starts, and its final hit (the trimmed file hits 4.4s in)
 
-const LINES = { goty: ['Game', 'of the Year'], coy: ['Coach', 'of the Year'], roy: ['Rookie', 'of the Year'], opoy: ['Offensive Player', 'of the Year'], dpoy: ['Defensive Player', 'of the Year'], mvp: ['Most Valuable', 'Player'] };
-export const AWARD_NAME = { goty: 'GAME OF THE YEAR', coy: 'COACH OF THE YEAR', roy: 'ROOKIE OF THE YEAR', opoy: 'OFFENSIVE PLAYER OF THE YEAR', dpoy: 'DEFENSIVE PLAYER OF THE YEAR', mvp: 'MOST VALUABLE PLAYER' };
+const LINES = { goty: ['Game', 'of the Year'], coy: ['Coach', 'of the Year'], oroy: ['Offensive Rookie', 'of the Year'], droy: ['Defensive Rookie', 'of the Year'], cpoy: ['Comeback Player', 'of the Year'], opoy: ['Offensive Player', 'of the Year'], dpoy: ['Defensive Player', 'of the Year'], mvp: ['Most Valuable', 'Player'] };
+export const AWARD_NAME = { goty: 'GAME OF THE YEAR', coy: 'COACH OF THE YEAR', oroy: 'OFFENSIVE ROOKIE OF THE YEAR', droy: 'DEFENSIVE ROOKIE OF THE YEAR', cpoy: 'COMEBACK PLAYER OF THE YEAR', opoy: 'OFFENSIVE PLAYER OF THE YEAR', dpoy: 'DEFENSIVE PLAYER OF THE YEAR', mvp: 'MOST VALUABLE PLAYER' };
 
 // order: award keys in show order. winners: award -> its 3 entries (the winner first). Returns the slides.
 export function showSlides(order, winners) {
@@ -22,7 +23,7 @@ export function showSlides(order, winners) {
   ];
   order.forEach((key, n) => {
     const list = winners[key] || [], game = key === 'goty';
-    const seat = [0, 1, 2].sort((a, b) => ((key.charCodeAt(0) * (a + 3)) % 7) - ((key.charCodeAt(0) * (b + 3)) % 7));   // the winner isn't always in the same spot
+    const seat = [0, 1, 2].map((k) => [k, Math.random()]).sort((a, b) => a[1] - b[1]).map(([k]) => k);   // a fresh random order each show: the order never gives the winner away
     const onStage = seat.map((k) => list[k]).filter(Boolean), win = onStage.indexOf(list[0]);
     const lead = n === 0 ? 'FIRST UP' : n === order.length - 1 ? 'AND FINALLY' : 'NEXT';
     const base = { key, game, onStage, win, winner: list[0], title: AWARD_NAME[key], lines: LINES[key] };
@@ -35,7 +36,7 @@ export function showSlides(order, winners) {
   return out;
 }
 
-export const SHORT = { goty: 'Game of the Year', coy: 'Coach of the Year', roy: 'Rookie of the Year', opoy: 'Offensive Player', dpoy: 'Defensive Player', mvp: 'Most Valuable Player' };
+export const SHORT = { goty: 'Game of the Year', coy: 'Coach of the Year', oroy: 'Offensive Rookie', droy: 'Defensive Rookie', cpoy: 'Comeback Player', opoy: 'Offensive Player', dpoy: 'Defensive Player', mvp: 'Most Valuable Player' };
 export const listNames = (order) => order.map((k) => SHORT[k].toUpperCase());
 
 // The camera at time t: from `start` (where it was when the slide began) through the slide's keyframes, eased.

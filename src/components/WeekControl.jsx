@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import ConfirmButton from './ConfirmButton.jsx';
 import Modal from './Modal.jsx';
-import { advanceWeek } from '../data/weeks.js';
+import { advanceWeek, savedWeek } from '../data/weeks.js';
 import { currentPhase, currentSeason, currentWeek } from '../data/teams.js';
 import { useSeasonGames } from '../data/games.js';
 import { simGameNow } from '../data/gameResults.js';
@@ -19,6 +19,8 @@ export default function WeekControl({ canControl, reload }) {
   const toAwards = inSeason && wk === 12 && currentWeek() <= 12, atAwards = inSeason && currentWeek() > 12;   // Week 12's button goes to the ceremony
   const go = async () => {   // quick-sim whatever is left this week, then move on
     setError(''); setResult(null);
+    const real = await savedWeek();
+    if (real != null && real !== Math.min(12, currentWeek() || 1)) { await reload?.(); throw new Error(`The league is on Week ${real} now (it changed in another window). Check it, then go again.`); }
     for (const [n, g] of left.entries()) {
       setSimming(`${n + 1}/${left.length}`);
       try { await simGameNow(g.id, g.home, g.away, 'auto', g); } catch (e) { setSimming(null); throw new Error(`Couldn't sim game ${n + 1}: ${e.message}`); }

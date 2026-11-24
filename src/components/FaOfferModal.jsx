@@ -16,6 +16,7 @@ import { money, plural, heightLabel } from '../lib/format.js';
 import { getTeam } from '../data/teams.js';
 import { PERSONALITIES, LEFT_HOW } from '../lib/personalities.js';
 import { openPlayerCard } from '../lib/playerCard.js';
+import { potentialLeft } from '../lib/potentialLeft.js';
 
 // Make (or change, or pull) an offer to one free agent. He answers when the commissioner runs the next round.
 export const FA_JERSEY = { color: '#3a3f47', accent: '#9aa4b2' };
@@ -65,7 +66,7 @@ export default function FaOfferModal({ player, myTeam, canOffer, potential, scou
         <div>
           <h2>{player.name}</h2>
           <div className="nego-sub">{player.position} · Age {player.age} · {heightLabel(player.height)}{player.weight ? `, ${player.weight} lbs` : ''} · <StarRating value={player.stars} elite={player.elite} peak={player.peakStars} />
-            {potential != null && <> · POT <StarRating value={potential} elite={potential === 5} /></>}</div>
+            {potentialLeft(player, potential) && <> · POT <StarRating value={potential} elite={potential === 5} /></>}</div>
           <div className={`tier tier-${tier.key}`} title={tier.note}>{tier.label}{player.nationality && player.nationality !== 'USA' ? ` · ${player.nationality}` : ''}</div>
         </div>
         <button className="btn small ghost nego-card" onClick={() => openPlayerCard(player)} title="Full player card">🪪 Card</button>

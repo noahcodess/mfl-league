@@ -1,5 +1,5 @@
 // The Live tab after Week 12: the award ceremony is its own moment (no weeks, games or standings). The stage with its
-// countdown on the screen, the commissioner's show button, and below it the nominees (each award's 3 finalists, by name
+// countdown on the screen, the commissioner's show button, and below it the nominees (each award's 3 finalists, in a random order
 // so nobody can tell who won), which turn into the winners after the show.
 import React, { useState } from 'react';
 import CeremonyStage from './CeremonyStage.jsx';
@@ -41,7 +41,7 @@ export default function CeremonyLive({ season, canControl }) {
             ))}
           </div>
         )}
-        {lists && !state.revealed && <p className="dim cer-foot">Listed by name. The winners are revealed at the ceremony.</p>}
+        {lists && !state.revealed && <p className="dim cer-foot">Listed in a random order. The winners are revealed at the ceremony.</p>}
       </section>
     </div>
   );

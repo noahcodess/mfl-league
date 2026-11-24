@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { usePlayerAwards } from '../data/awardWinners.js';
 
-const SHORT = { mvp: 'MVP', opoy: 'Offensive Player of the Year', dpoy: 'Defensive Player of the Year', roy: 'Rookie of the Year', coy: 'Coach of the Year', goty: 'Game of the Year' };
+const SHORT = { mvp: 'MVP', opoy: 'Offensive Player of the Year', dpoy: 'Defensive Player of the Year', roy: 'Rookie of the Year', oroy: 'Offensive Rookie of the Year', droy: 'Defensive Rookie of the Year', cpoy: 'Comeback Player of the Year', coy: 'Coach of the Year', goty: 'Game of the Year' };
 
 export default function AwardTags({ playerId }) {
   const wins = usePlayerAwards(playerId), [open, setOpen] = useState(null);

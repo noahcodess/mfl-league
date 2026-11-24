@@ -60,8 +60,9 @@ export function drawScreen(ctx, t, mode, d = {}, p = 1, th) {
     text(ctx, `${d.count} awards revealed`, cx, y + 39, 5.4, { font: SANS, weight: 600, color: '#f4ead2', alpha: ease(p * 2 - 0.8), spacing: 0.4 });
   } else if (mode === 'list') {
     text(ctx, "TONIGHT'S AWARDS", cx, y + 7, 4.4, { gold: true, spacing: 1, glow: 3 });
+    const many = (d.names || []).length > 6, step = many ? 5.3 : 7;   // 8 awards still fit
     (d.names || []).forEach((n, i) => { const k = ease(p * (d.names.length + 1) - i), last = i === d.names.length - 1;
-      text(ctx, n, cx + (1 - k) * 8, y + 16 + i * 7, last ? 5 : 4.4, { gold: last, color: '#fff', alpha: k, spacing: 0.4, glow: last ? 4 : 0 }); });
+      text(ctx, n, cx + (1 - k) * 8, y + 15 + i * step, last ? (many ? 4.2 : 5) : many ? 3.6 : 4.4, { gold: last, color: '#fff', alpha: k, spacing: 0.4, glow: last ? 4 : 0 }); });
   } else if (mode === 'intro') {
     text(ctx, d.lead, cx, y + 13, 3.8, { font: SANS, weight: 800, color: th.accent, spacing: 1.6, alpha: ease(p * 2) });
     (d.lines || []).forEach((l, i) => text(ctx, l, cx, y + 27 + i * 12, 10, { weight: 900, gold: true, glow: 8, alpha: ease(p * 2 - 0.4 - i * 0.3), spacing: 0.6, maxW: w - 8 }));
@@ -100,9 +101,10 @@ export function drawScreen(ctx, t, mode, d = {}, p = 1, th) {
     if (p < 0.4) { ctx.fillStyle = `rgba(255,255,255,${0.9 * (1 - p / 0.4)})`; ctx.fillRect(x, y, w, h); }   // the reveal flash
   } else if (mode === 'winners') {
     text(ctx, `SEASON ${d.season} WINNERS`, cx, y + 7, 5, { weight: 900, gold: true, spacing: 1, glow: 4 });
-    (d.list || []).forEach((r, i) => { const k = ease(p * 7 - i * 0.8), ry = y + 16 + i * 7;
-      text(ctx, r.award, cx - 2, ry, 2.7, { font: SANS, weight: 800, color: th.accent, align: 'right', spacing: 0.5, alpha: k });
-      text(ctx, r.name, cx + 2, ry, 4.3, { weight: 700, align: 'left', alpha: k, maxW: w / 2 - 6 }); });
+    const many = (d.list || []).length > 6, step = many ? 5.3 : 7;
+    (d.list || []).forEach((r, i) => { const k = ease(p * 7 - i * 0.8), ry = y + 15 + i * step;
+      text(ctx, r.award, cx - 2, ry, many ? 2.4 : 2.7, { font: SANS, weight: 800, color: th.accent, align: 'right', spacing: 0.5, alpha: k });
+      text(ctx, r.name, cx + 2, ry, many ? 3.7 : 4.3, { weight: 700, align: 'left', alpha: k, maxW: w / 2 - 6 }); });
   } else if (mode === 'live') {
     const pulse = 0.6 + 0.4 * Math.sin(t * 4);
     text(ctx, '● LIVE NOW', cx, y + 24, 10, { font: SANS, weight: 900, color: `rgba(255,90,90,${pulse})`, glow: 14 });

@@ -21,7 +21,8 @@ export default function AwardList({ award, list, edited, pool, onChange, onReset
         {edited && edit && !locked && <button className="btn small ghost" onClick={onReset} title="Back to the numbers' order">↺ Use the numbers</button>}
       </header>
       {how && <p className="aw-how">{award.how}</p>}
-      {!list.length && <p className="dim">No candidates yet: this fills in as games are played.</p>}
+      {!list.length && <p className="dim">{award.key === 'cpoy' ? 'Nobody qualifies yet: a comeback needs a dip last season on the site. Not given this season unless you add 3.' : 'No candidates yet: this fills in as games are played.'}</p>}
+      {edit && !locked && list.length > 0 && list.length < 3 && <button className="btn small ghost" onClick={() => onChange([], true)}>⊘ Don't give this award this season</button>}
       <ol className="aw-list">
         {list.map((r, n) => (
           <li key={r.id} className={`${n < 3 ? 'aw-final' : ''}${drag === n ? ' drag' : ''}${locked && n >= 3 ? ' aw-out' : ''}`} draggable={edit && n < lim}

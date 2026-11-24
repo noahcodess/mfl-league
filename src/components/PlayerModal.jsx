@@ -19,6 +19,7 @@ import { POSITION_NAMES } from '../data/positions.js';
 import { money, heightLabel } from '../lib/format.js';
 import { flagFor } from '../lib/flags.js';
 import { viewerTeam, viewerIsBoss } from '../data/viewer.js';
+import { potentialLeft } from '../lib/potentialLeft.js';
 
 // Full player card: bio up top, then tabs for skills (archetype, bars), morale & stats, drip (uniform and gear), contract & money,
 // and past teams. Anyone can open anyone's card. Potential only shows to his own team, the commissioner and scouts; the Drip tab
@@ -49,7 +50,7 @@ export default function PlayerModal({ player, team, canSeePotential, potential, 
           <div><span>Country</span><b>{flagFor(player.nationality || 'USA')} {player.nationality || 'USA'}</b></div>
           <div><span>Mood</span><b><MoodTag mood={player.mood} /></b></div>
           <div className={`pot${canSeePotential ? '' : ' locked'}`} title={canSeePotential ? '' : 'Scout him to unlock'}><span>Potential</span><b>{!canSeePotential ? '🔒 Hidden' : potential === undefined ? <span className="dim">Loading...</span> : potential === null ? <span className="dim">Not rated</span>
-            : <><StarRating value={potential} elite={potential === 5} />{potential <= player.stars && <small className="dim"> Maxed</small>}</>}</b></div>
+            : potentialLeft(player, potential) ? <StarRating value={potential} elite={potential === 5} /> : <span className="dim">✓ Reached</span>}</b></div>
         </div>
         <PlayerFlags player={player} />
         <Tabs tabs={[

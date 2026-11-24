@@ -24,6 +24,13 @@ export async function catchUpWeeks(target) {
   return n;
 }
 
+// The league's saved week, read fresh (the page's copy can be stale if another window moved it).
+export async function savedWeek() {
+  if (DEMO) return null;
+  const { data } = await db.from('league_settings').select('value').eq('key', 'current_week').maybeSingle();
+  return data ? Number(data.value) || 1 : null;
+}
+
 // After a regular-season game goes final: catch the league up to that game's week.
 export async function catchUpToGame(gameId) {
   if (DEMO) return 0;

@@ -5,7 +5,7 @@ import React, { useEffect, useState } from 'react';
 import AwardList from './AwardList.jsx';
 import CeremonyDesk from './CeremonyDesk.jsx';
 import { AWARDS } from '../lib/awardRank.js';
-import { statLine } from '../lib/awardMath.js';
+import { statLine, groupOf } from '../lib/awardMath.js';
 import { computeAwards, savedAwards, saveAward, setAwardsUntil, coachEntry } from '../data/awards.js';
 import { useCeremony, ceremonyTime } from '../data/ceremony.js';
 import { useSeasonGames } from '../data/games.js';
@@ -13,12 +13,16 @@ import { currentSeason, currentWeek, awardsUntil, getTeams } from '../data/teams
 
 const UNTIL = [[-1, "Don't display awards"], ...Array.from({ length: 11 }, (_, w) => [w, `Through the end of Week ${w}`])];
 
+const OFF_G = new Set(['QB', 'RB', 'WR', 'TE', 'OL']), DEF_G = new Set(['DL', 'LB', 'DB']);
+const POOL = { oroy: 'orookie', droy: 'drookie', cpoy: 'vets' };   // who can be added to each award by hand
+
 function pools(inp, coaches) {
   const name = (id) => getTeams().find((t) => t.id === id)?.name || id;
   const players = Object.entries(inp.players).filter(([, p]) => p.games > 0).sort((a, b) => a[1].name.localeCompare(b[1].name))
     .map(([id, p]) => ({ id, rookie: p.rookie, label: `${p.name} · ${p.pos} · ${name(p.team)}`, entry: { id, name: p.name, team: p.team, pos: p.pos, line: statLine(p.s, p.pos), score: null } }));
   return {
-    player: players, rookie: players.filter((p) => p.rookie),
+    player: players, vets: players.filter((p) => !p.rookie),
+    orookie: players.filter((p) => p.rookie && OFF_G.has(groupOf(p.entry.pos))), drookie: players.filter((p) => p.rookie && DEF_G.has(groupOf(p.entry.pos))),
     team: getTeams().map((t) => ({ id: t.id, label: t.name, entry: { id: t.id, ...coachEntry(t.id, coaches, name), line: '', score: null } })),
     game: [...inp.games].sort((a, b) => a.week - b.week).map((g) => ({ id: String(g.id), label: `Week ${g.week}: ${name(g.away)} ${g.as} at ${name(g.home)} ${g.hs}`, entry: { id: String(g.id), name: `${name(g.away)} at ${name(g.home)}`, line: `Week ${g.week} · ${g.as}-${g.hs}`, score: null } })),
   };
@@ -45,7 +49,7 @@ export default function AwardsTab({ canControl }) {
   };
   useEffect(() => { if (cer) load(); }, [season, !!cer]); // eslint-disable-line react-hooks/exhaustive-deps   (waits for the ceremony: locked lists never re-save)
   const change = (key, list, ed) => { setData((d) => ({ ...d, lists: { ...d.lists, [key]: list }, edited: { ...d.edited, [key]: ed } })); saveAward(season, key, list, ed).catch((e) => setErr(e.message)); };
-  const poolFor = (a) => (!data?.pool ? [] : a.key === 'roy' ? data.pool.rookie : a.kind === 'team' ? data.pool.team : a.kind === 'game' ? data.pool.game : data.pool.player);
+  const poolFor = (a) => (!data?.pool ? [] : POOL[a.key] ? data.pool[POOL[a.key]] : a.kind === 'team' ? data.pool.team : a.kind === 'game' ? data.pool.game : data.pool.player);
   return (
     <div className="aw-tab">
       <div className="aw-bar">

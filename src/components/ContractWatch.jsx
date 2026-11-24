@@ -7,6 +7,7 @@ import { isExpiring } from '../data/contracts.js';
 import { resignOpen } from '../data/teams.js';
 import { money } from '../lib/format.js';
 import { askingPrice } from '../lib/marketValue.js';
+import { potentialLeft } from '../lib/potentialLeft.js';
 
 // Coach-only lists: players whose contracts end this offseason (re-sign or lose them) and players aging out.
 function Row({ p, team, potential, onOpen, right }) {
@@ -14,7 +15,7 @@ function Row({ p, team, potential, onOpen, right }) {
     <button className="watch-row" onClick={() => onOpen(p)}>
       <Headshot player={p} team={team} size={32} />
       <span className="watch-name"><b>{p.name}</b><small>{p.position} · Age {p.age ?? '-'}</small></span>
-      <span className="watch-stars"><StarRating value={p.stars} elite={p.elite} peak={p.peakStars} />{potential != null && potential > p.stars && <small>→ <StarRating value={potential} /></small>}</span>
+      <span className="watch-stars"><StarRating value={p.stars} elite={p.elite} peak={p.peakStars} />{potentialLeft(p, potential) && <small>→ <StarRating value={potential} /></small>}</span>
       <span className="watch-right">{right}</span>
     </button>
   );

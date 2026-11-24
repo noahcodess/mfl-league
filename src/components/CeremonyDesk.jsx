@@ -11,7 +11,7 @@ const local = (iso) => { if (!iso) return ''; const d = new Date(iso); return ne
 // state: from useCeremony. lists: award key -> list. due: Week 12 is done, so confirming is what's holding up the league.
 export default function CeremonyDesk({ season, state, lists, canControl, due, reload }) {
   const [step, setStep] = useState(0), [busy, setBusy] = useState(false), [err, setErr] = useState('');
-  const short = AWARDS.filter((a) => (lists[a.key] || []).length < 3);
+  const short = AWARDS.filter((a) => { const n = (lists[a.key] || []).length; return n > 0 && n < 3; });   // empty = not given this season
   const act = async (fn) => { setBusy(true); setErr(''); try { await fn(); await reload(); setStep(0); } catch (e) { setErr(e.message); } finally { setBusy(false); } };
   if (!state) return null;
   return (
@@ -38,11 +38,11 @@ export default function CeremonyDesk({ season, state, lists, canControl, due, re
           {step === 1 ? <>
             <h2>⚠️ Confirm the finalists?</h2>
             <p>These 3 for every award become permanent. You can still change the order of the 3 (that picks the winner) until the show starts.</p>
-            <div className="aw-cer-sum">{AWARDS.map((a) => <div key={a.key}><b>{a.icon} {a.name}</b><span>{(lists[a.key] || []).slice(0, 3).map((r) => r.name).join(' · ')}</span></div>)}</div>
+            <div className="aw-cer-sum">{AWARDS.map((a) => <div key={a.key}><b>{a.icon} {a.name}</b><span>{(lists[a.key] || []).length ? lists[a.key].slice(0, 3).map((r) => r.name).join(' · ') : 'Not given this season'}</span></div>)}</div>
             <div className="confirm-actions"><button className="btn ghost" onClick={() => setStep(0)}>Not yet</button><button className="btn" onClick={() => setStep(2)}>Looks right</button></div>
           </> : <>
             <h2>🔒 Last check</h2>
-            <p>Everyone will see the finalists on the Live tab right away (sorted by name, so nobody can tell who won). This can't be undone.</p>
+            <p>Everyone will see the finalists on the Live tab right away (in a random order, so nobody can tell who won). This can't be undone.</p>
             {err && <p className="notice bad">{err}</p>}
             <div className="confirm-actions"><button className="btn ghost" disabled={busy} onClick={() => setStep(1)}>Back</button>
               <button className="btn" disabled={busy} onClick={() => act(() => lockFinalists(season))}>{busy ? 'Working...' : 'Confirm finalists'}</button></div>

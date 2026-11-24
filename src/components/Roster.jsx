@@ -4,6 +4,7 @@ import StarRating from './StarRating.jsx';
 import { OFFENSE, DEFENSE, SPECIAL, POSITION_NAMES } from '../data/positions.js';
 import MedicalCross from './MedicalCross.jsx';
 import { useInjuries, returnText } from '../data/injuries.js';
+import { potentialLeft } from '../lib/potentialLeft.js';
 
 // The roster as a real depth chart: a card per position, players stacked top to bottom with the best starter on top
 // (WR1, WR2...), backups tucked under "+ backups". Insiders also see contract years and potential. Injured players say so.
@@ -21,7 +22,7 @@ function DepthRow({ p, label, team, onOpen, insider, backup, hurt }) {
         <span className="depth-sub">
           <StarRating value={p.stars} elite={p.elite} peak={p.peakStars} />
           <span className="dim">Age {p.age ?? '-'}</span>
-          {pot != null && pot > p.stars && <span className="pot-mini">POT <StarRating value={pot} elite={pot === 5} /></span>}
+          {potentialLeft(p, pot) && <span className="pot-mini">POT <StarRating value={pot} elite={pot === 5} /></span>}
           {hurt && <span className="ptile-hurt" title={`${hurt.label} (${hurt.severity})`}><MedicalCross /> Out · {returnText(hurt)}</span>}
         </span>
       </span>

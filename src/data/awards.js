@@ -7,6 +7,7 @@ import { DEMO } from './demo.js';
 import { getTeams, currentSeason, currentWeek, currentPhase, awardsUntil } from './teams.js';
 import { getAllPlayers } from './players.js';
 import { coachNames } from './coaches.js';
+import { comebackHistory } from './awardHistory.js';
 import { rankAwards } from '../lib/awardRank.js';
 import { seasonValues } from '../lib/awardMath.js';
 
@@ -57,7 +58,8 @@ export async function seasonInputs(season) {
   (act || []).forEach((a) => { if (teams[a.team_id]) teams[a.team_id].activity = { days: a.days, minutes: a.minutes }; });
   const seasonDays = Math.min(150, Math.max(1, Math.round((Date.now() - new Date(since).getTime()) / 864e5)));
   const list = regular.map((r) => { const g = kinds[r.game_id]; return { id: r.game_id, week: r.week, home: g.home_team, away: g.away_team, hs: r.home_score, as: r.away_score, ot: r.overtimes || 0, scoring: r.scoring || [], prime: !!g.prime }; });
-  return { players, teams, games: list, seasonDays };
+  const history = await comebackHistory(season).catch(() => ({}));   // earlier seasons, for Comeback Player of the Year
+  return { players, teams, games: list, seasonDays, season, teamGames: Math.max(1, ...Object.values(players).map((p) => p.games)), history };
 }
 
 // The numbers' top 5 for every award, each entry with a snapshot (name, team, position) for the saved list.
