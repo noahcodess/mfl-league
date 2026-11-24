@@ -5,9 +5,10 @@ import { drawScreen } from './stageScreen.js';
 import { drawLight, camXf } from './stageLight.js';
 
 // The still picture, drawn once. house: the whole auditorium (the show) or just the stage (the Live tab).
-export function buildStill(house) {
-  const c = document.createElement('canvas'); c.width = W; c.height = H;
-  const heads = drawStage(c.getContext('2d'), { house });
+// theme: showTheme (the Craft Bowl's colors). The canvas is twice the world, for half-unit detail.
+export function buildStill(house, theme) {
+  const c = document.createElement('canvas'); c.width = W * 2; c.height = H * 2;
+  const heads = drawStage(c.getContext('2d'), { house, theme });
   return { canvas: c, heads };
 }
 
@@ -26,8 +27,8 @@ export function renderStage(ctx, still, cam, t, o = {}) {
   const dw = ctx.canvas.width, dh = ctx.canvas.height, xf = camXf(cam, dw, dh);
   ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.fillStyle = '#05020a'; ctx.fillRect(0, 0, dw, dh);
   ctx.setTransform(xf.s, 0, 0, xf.s, xf.ox, xf.oy); ctx.imageSmoothingEnabled = false;
-  ctx.drawImage(still.canvas, 0, 0);
-  if (o.screen) drawScreen(ctx, t, o.screen.mode, o.screen.d, o.screen.p ?? 1);
+  ctx.drawImage(still.canvas, 0, 0, W, H);
+  if (o.screen) drawScreen(ctx, t, o.screen.mode, o.screen.d, o.screen.p ?? 1, o.theme);
   const a = o.actors ? o.actors(ctx) : null;
   hands(ctx, still.heads, t, o.clap || 0);
   ctx.setTransform(1, 0, 0, 1, 0, 0);

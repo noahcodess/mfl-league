@@ -15,6 +15,8 @@
 .show-x { position: absolute; top: 1rem; right: 1.1rem; border: 0; background: #0008; color: #fff8; width: 2.2rem; height: 2.2rem; border-radius: 50%; cursor: pointer; opacity: .35; }
 .show-x:hover { opacity: 1; }
 .show-loading { position: absolute; bottom: 1.4rem; left: 1.6rem; color: #e9c368; font-size: .85rem; letter-spacing: .1em; }
-.show-gate { position: absolute; inset: 0; display: grid; place-content: center; justify-items: center; gap: .8rem; background: radial-gradient(#140a1ccc, #000e); color: #fff; text-align: center; }
-.show-gate b { font-size: 1.8rem; color: #e9c368; letter-spacing: .04em; }
+.show-gate { position: absolute; left: 50%; bottom: 7%; transform: translateX(-50%); display: grid; justify-items: center; gap: .55rem; padding: 1.1rem 1.6rem;
+  background: #0b0710d9; border: 1px solid #e9c36866; border-radius: 16px; color: #fff; text-align: center; backdrop-filter: blur(6px); box-shadow: 0 10px 40px #000a; animation: show-gate-in .8s ease both; }
+.show-gate b { font: 700 1.3rem 'Cinzel', serif; color: #f0cc70; letter-spacing: .06em; }
+@keyframes show-gate-in { from { opacity: 0; transform: translate(-50%, 12px); } }
 .show-gate span { color: #d6cbb3; }

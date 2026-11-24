@@ -1,6 +1,7 @@
-// The award show's nominees on stage, in world pixels: players are their Drip-tab sprites in their team's home uniform,
-// coaches their coach art. They walk on carrying a little trophy, stand on their marks, and the winner steps forward and
-// raises a big one under falling confetti. Name plates are drawn after the lighting, at screen resolution.
+// The award show's nominees on stage, in world units at half size (the stage art is twice their resolution): players
+// are their Drip-tab sprites in their team's home uniform, coaches their coach art. They walk on carrying a little
+// trophy and stand on their marks; after the reveal the winner steps to the front and keeps lifting his trophy overhead,
+// and the other two walk off into the wings. Name plates are drawn after the lighting, at screen resolution.
 import { sprite, buildOf } from './fieldSprite.js';
 import { looksFor } from './portraitLooks.js';
 import { drawCup } from './stageProps.js';
@@ -15,71 +16,66 @@ export function makeNominee(entry, { player, kit, design, coachImg, team }) {
   return { entry, look, coachImg, color: team?.color || '#c79a3a', teamName: team?.name || '' };
 }
 
-// Where nominee i is at time t of a slide. kind: enter | stand | winner. win: the winner's index.
-function placeOf(i, t, kind, win) {
+// Where nominee i is at time t. kind: enter | stand | reveal. win: the winner's index. hit: when the winner is revealed.
+function placeOf(i, t, kind, win, hit) {
   const mark = MARKS[i];
   if (kind === 'enter') {
-    const start = 0.35 + i * 0.45, k = ease((t - start) / 2.4), from = i === 2 ? 300 : -20 + (i === 1 ? -26 : 0);
-    const x = from + (mark - from) * k, walking = k > 0 && k < 1;
-    return { x, y: FOOT, walking, face: from < mark ? 1 : -1, a: t < start ? 0 : 1, t };
+    const start = 0.4 + i * 0.5, from = i === 2 ? 296 : 24 - (i === 1 ? 14 : 0), dur = Math.abs(mark - from) / 34, k = ease((t - start) / dur);
+    return { x: from + (mark - from) * k, y: FOOT, walking: k > 0 && k < 1, face: from < mark ? 1 : -1, a: t < start ? 0 : Math.min(1, (t - start) * 3), t };
   }
-  if (kind === 'winner' && win != null) {
-    const step = ease((t - 1.3) / 0.8);
-    if (i === win) return { x: mark + (160 - mark) * step, y: FOOT + 7 * step, cheer: t > 2, a: 1, walking: step > 0 && step < 1, face: mark < 160 ? 1 : -1, t };
-    return { x: mark + (mark < 160 ? -14 : mark > 160 ? 14 : -26) * step, y: FOOT - 2 * step, a: 1 - 0.45 * step, face: 1, t };
+  if (kind !== 'reveal' || win == null || t < hit) return { x: mark, y: FOOT, a: 1, t };
+  const u = t - hit;
+  if (i === win) {
+    const k = ease(u / 0.9);
+    return { x: mark + (160 - mark) * k, y: FOOT + 5 * k, walking: k > 0 && k < 1 && mark !== 160, face: mark < 160 ? 1 : -1, lift: u > 1 ? u - 1 : -1, a: 1, t };
   }
-  return { x: mark, y: FOOT, a: 1, t };
+  const side = mark < 160 || (mark === 160 && MARKS[win] > 160) ? -1 : 1, start = 0.6 + (i === 1 ? 0.35 : 0);
+  const x = mark + side * Math.max(0, u - start) * 32, gone = side < 0 ? (x - 70) / 18 : (250 - x) / 18;
+  return { x, y: FOOT, walking: u > start, face: side, a: Math.max(0, Math.min(1, gone)), t };
 }
 
 function drawOne(ctx, n, at) {
   if (at.a <= 0) return;
   ctx.save(); ctx.globalAlpha = at.a;
-  ctx.fillStyle = 'rgba(0,0,0,0.45)'; ctx.beginPath(); ctx.ellipse(at.x, at.y + 0.5, 9, 2, 0, 0, Math.PI * 2); ctx.fill();   // shadow
-  let handX = at.x + 7, handY = at.y - 24;
+  ctx.fillStyle = 'rgba(0,0,0,0.45)'; ctx.beginPath(); ctx.ellipse(at.x, at.y + 0.3, 5, 1.1, 0, 0, Math.PI * 2); ctx.fill();   // shadow
+  const lifting = at.lift >= 0, ph = lifting ? (at.lift % 1.8) / 1.8 : 0, up = lifting ? ease(Math.min(1, Math.sin(ph * Math.PI) * 1.35)) : 0;   // up, a held beat, down
+  let hx = at.x + 3.5, hy = at.y - 12;
   if (n.coachImg) {
-    const bob = at.walking ? Math.abs(Math.sin(at.t * 9)) * 1.2 : 0, img = n.coachImg;
-    if (img.complete && img.width) ctx.drawImage(img, Math.round(at.x - img.width / 2), Math.round(at.y - img.height - bob));
-    if (at.cheer) { handX = at.x; handY = at.y - 58; }
+    const img = n.coachImg, bob = at.walking ? Math.abs(Math.sin(at.t * 9)) * 0.6 : 0;
+    if (img.complete && img.width) ctx.drawImage(img, at.x - img.width / 4, at.y - img.height / 2 - bob, img.width / 2, img.height / 2);
+    if (at.walking) hx = at.x + 3 * (at.face || 1);
   } else {
-    const view = at.walking ? 'side' : 'front', pose = at.cheer ? 'cheer' : at.walking ? 'run' : 'stand';
-    const frame = at.walking ? Math.floor(at.t * 7) % 4 : at.cheer ? Math.floor(at.t * 3) % 2 : 0;
-    const c = sprite(n.look, view, pose, frame, at.face || 1);
-    ctx.drawImage(c, Math.round(at.x - c.width / 2), Math.round(at.y - c.height + 2));
-    if (at.walking) { handX = at.x + 6 * (at.face || 1); handY = at.y - 26; }
-    if (at.cheer) { handX = at.x; handY = at.y - 56; }
+    const view = at.walking ? 'side' : 'front', pose = lifting && up > 0.55 ? 'cheer' : at.walking ? 'run' : 'stand';
+    const c = sprite(n.look, view, pose, at.walking ? Math.floor(at.t * 7) % 4 : 0, at.face || 1);
+    ctx.drawImage(c, at.x - c.width / 4, at.y - c.height / 2 + 1, c.width / 2, c.height / 2);
+    if (at.walking) { hx = at.x + 3 * (at.face || 1); hy = at.y - 13; }
   }
-  drawCup(ctx, Math.round(handX), Math.round(handY), at.cheer ? 1.5 : 1);
+  if (lifting) { hx = at.x + (1 - up) * 3.5; hy = at.y - 12 - up * 17; }   // the trophy goes up overhead and back, again and again
+  drawCup(ctx, hx, hy, lifting ? 0.55 : 0.4);
   ctx.restore();
 }
 
-const CONFETTI = Array.from({ length: 140 }, (_, i) => ({ x: (i * 47.7) % 220 + 50, d: (i * 0.37) % 2.2, v: 14 + (i * 7) % 16, w: (i * 13) % 5, c: ['#e9c368', '#fff0b0', '#ffffff', '#c79a3a', '#d23a44'][i % 5] }));
-
-// nominees: from makeNominee. kind: enter | stand | winner. Returns where each one is (for the name plates).
-export function drawNominees(ctx, nominees, t, kind, win) {
-  const places = nominees.map((n, i) => placeOf(i, t, kind, win));
+// nominees: from makeNominee. Returns where each one is (for the name plates).
+export function drawNominees(ctx, nominees, t, kind, win, hit = 0) {
+  const places = nominees.map((n, i) => placeOf(i, t, kind, win, hit));
   places.map((at, i) => [at, i]).sort((a, b) => a[0].y - b[0].y).forEach(([at, i]) => drawOne(ctx, nominees[i], at));
-  if (kind === 'winner' && t > 1.9) for (const c of CONFETTI) {   // confetti over the winner
-    const tt = t - 1.9 - c.d; if (tt < 0) continue;
-    const y = -6 + tt * c.v * 2.2; if (y > 132) continue;
-    ctx.fillStyle = c.c; ctx.fillRect(c.x + Math.sin(tt * 3 + c.w) * 6, y, Math.sin(tt * 8 + c.w) > 0 ? 1.4 : 0.6, 1.4);
-  }
   return places;
 }
 
 // Name plates under each nominee, at screen resolution. xf: from camXf.
-export function drawPlates(ctx, nominees, places, xf, win, alpha = 1) {
+export function drawPlates(ctx, nominees, places, xf, alpha = 1) {
   const { s, X, Y } = xf;
   nominees.forEach((n, i) => {
     const at = places[i]; if (!at || at.a <= 0.05 || at.walking || alpha <= 0) return;
-    const w = 31 * s, h = 8.6 * s, x = X(at.x) - w / 2, y = Y(at.y + 4);
-    ctx.save(); ctx.globalAlpha = Math.min(at.a, alpha) * (win != null && i !== win ? 0.6 : 1);
-    ctx.fillStyle = 'rgba(10,6,14,0.82)'; ctx.beginPath(); ctx.roundRect(x, y, w, h, 2 * s); ctx.fill();
-    ctx.fillStyle = n.color; ctx.fillRect(x, y, 1.2 * s, h);
-    ctx.strokeStyle = i === win ? '#e9c368' : 'rgba(233,195,104,0.35)'; ctx.lineWidth = Math.max(1, 0.3 * s); ctx.stroke();
+    const w = 22.5 * s, h = 6.4 * s, x = X(at.x) - w / 2, y = Y(at.y + 2.5);
+    ctx.save(); ctx.globalAlpha = Math.min(at.a, alpha);
+    ctx.fillStyle = 'rgba(10,6,14,0.85)'; ctx.beginPath(); ctx.roundRect(x, y, w, h, 1.4 * s); ctx.fill();
+    ctx.fillStyle = n.color; ctx.fillRect(x, y, 0.9 * s, h);
+    ctx.strokeStyle = 'rgba(240,204,112,0.5)'; ctx.lineWidth = Math.max(1, 0.25 * s); ctx.stroke();
     ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillStyle = '#fff';
-    ctx.font = `800 ${3.1 * s}px 'Inter', system-ui, sans-serif`; ctx.fillText(n.entry.name, X(at.x) + 0.6 * s, y + h * 0.36, w - 3 * s);
-    ctx.fillStyle = '#e9c368'; ctx.font = `600 ${2.1 * s}px 'Inter', system-ui, sans-serif`;
-    ctx.fillText([n.entry.pos, n.teamName].filter(Boolean).filter((v, k, a) => a.indexOf(v) === k).join(' · '), X(at.x) + 0.6 * s, y + h * 0.74, w - 3 * s);
+    ctx.font = `800 ${2.3 * s}px 'Inter', system-ui, sans-serif`; ctx.fillText(n.entry.name, X(at.x) + 0.45 * s, y + h * 0.37, w - 2.5 * s);
+    ctx.fillStyle = '#f0cc70'; ctx.font = `600 ${1.55 * s}px 'Inter', system-ui, sans-serif`;
+    ctx.fillText([n.entry.pos, n.teamName].filter((v, k, a) => v && a.indexOf(v) === k).join(' · '), X(at.x) + 0.45 * s, y + h * 0.75, w - 2.5 * s);
     ctx.restore();
   });
 }

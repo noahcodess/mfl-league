@@ -3,7 +3,7 @@
 // theater beams sweeping from the rig with haze and dust in them, glows, and a vignette. cam: { x, y, z } over the
 // 320x180 world (z 1 = all of it).
 import { STAGE, SCREEN } from './stageArt.js';
-import { CASE, LECTERN } from './stageProps.js';
+import { PLINTH, LECTERN } from './stageProps.js';
 import { LAMPS } from './stageHouse.js';
 
 export function camXf(cam, dw, dh) {
@@ -49,12 +49,12 @@ export function drawLight(ctx, xf, t, o = {}) {
   const L = level * (1 - dim * 0.75);
   hole(g, X(160), Y(96), 120 * s, 0.5 * L, 0.55);   // the general stage wash
   bs.forEach((b) => hole(g, X(b.tx), Y(b.ty), 24 * s, 0.95 * level * beams, 0.4));
-  if (focus) hole(g, X(focus.x), Y(focus.y - 18), 30 * s, (focus.k ?? 1) * 0.9, 1.4);
-  hole(g, X(SCREEN.x + SCREEN.w / 2), Y(SCREEN.y + SCREEN.h / 2), 74 * s, 0.75 * Math.max(0.35, L), 0.62);
+  if (focus) hole(g, X(focus.x), Y(focus.y - 12), 18 * s, (focus.k ?? 1) * 0.95, 1.5);
+  hole(g, X(SCREEN.x + SCREEN.w / 2), Y(SCREEN.y + SCREEN.h / 2), 84 * s, 0.8 * Math.max(0.85, L), 0.6);   // the screen glows on its own, even in the dark
   for (let x = 34; x <= 286; x += 10) hole(g, X(x + 1.5), Y(STAGE.lip + 3), 12 * s, 0.5 * L, 0.7);
-  hole(g, X(CASE.x + CASE.w / 2), Y(CASE.y + CASE.h * 0.4), 30 * s, 0.75 * L, 1.2);
-  hole(g, X(LECTERN.x + 4), Y(LECTERN.top), 18 * s, 0.6 * L);
-  hole(g, X(LECTERN.x + 13), Y(LECTERN.top + 12), 22 * s, 0.35 * L, 1.3);
+  hole(g, X(PLINTH.x), Y(PLINTH.top + 4), 20 * s, 0.8 * L, 1.3);
+  hole(g, X(LECTERN.x + 3), Y(LECTERN.top), 12 * s, 0.6 * L);
+  hole(g, X(LECTERN.x + 7), Y(LECTERN.top + 8), 16 * s, 0.4 * L, 1.3);
   LAMPS.forEach(([x, y]) => hole(g, X(x + 1), Y(y), 11 * s, lamps * 0.9));
   hole(g, X(160), Y(146), 175 * s, (0.3 * L + 0.25 * lamps) * (o.audience ?? 1), 0.22);   // stage spill on the front rows
   ctx.drawImage(dk, 0, 0);
@@ -76,11 +76,11 @@ export function drawLight(ctx, xf, t, o = {}) {
       if (Math.abs(px - cx) < half) { ctx.fillStyle = `rgba(255,240,215,${0.55 * bA * (1 - Math.abs(px - cx) / half) * (0.6 + 0.4 * Math.sin(t * 3 + d.s))})`; ctx.fillRect(X(px), Y(py), Math.max(1, s * 0.6), Math.max(1, s * 0.6)); }
     }
   });
-  if (focus) glow(ctx, X(focus.x), Y(focus.y - 16), 26 * s, '255,236,200', 0.28 * (focus.k ?? 1), 1.5);
+  if (focus) glow(ctx, X(focus.x), Y(focus.y + 1), 14 * s, '255,236,200', 0.22 * (focus.k ?? 1), 0.3);   // the pool at his feet
   glow(ctx, X(SCREEN.x + SCREEN.w / 2), Y(SCREEN.y + SCREEN.h / 2), 80 * s, screenRgb, 0.16 * Math.max(0.4, L), 0.6);
   for (let x = 34; x <= 286; x += 10) glow(ctx, X(x + 1.5), Y(STAGE.lip + 3), 7 * s, '255,200,110', (0.32 + 0.08 * Math.sin(t * 7 + x)) * Math.max(0.3, L), 0.7);
-  glow(ctx, X(CASE.x + CASE.w / 2), Y(CASE.y + 4), 16 * s, '255,220,160', 0.22 * L, 0.6);
-  glow(ctx, X(LECTERN.x + 4.5), Y(LECTERN.top - 2), 9 * s, '255,225,150', 0.4 * L);
+  glow(ctx, X(PLINTH.x), Y(PLINTH.top - 5), 10 * s, '255,225,160', 0.3 * L);
+  glow(ctx, X(LECTERN.x + 2.75), Y(LECTERN.top - 2), 6 * s, '255,225,150', 0.4 * L);
   LAMPS.forEach(([x, y], i) => glow(ctx, X(x + 1), Y(y), 9 * s, '255,190,100', lamps * (0.4 + 0.08 * Math.sin(t * 5 + i * 2))));
   const haze = ctx.createLinearGradient(0, Y(10), 0, Y(80));   // stage haze catching the light
   haze.addColorStop(0, `rgba(150,120,200,${0.05 * level})`); haze.addColorStop(1, 'rgba(150,120,200,0)');

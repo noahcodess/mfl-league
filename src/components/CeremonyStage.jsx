@@ -3,6 +3,8 @@
 // (join the Discord call); after it, Congratulations.
 import React, { useEffect, useRef } from 'react';
 import { buildStill, renderStage } from '../lib/stageView.js';
+import { showTheme } from '../lib/showTheme.js';
+import { useCraftBowlPlan } from '../data/craftBowlPlans.js';
 
 const two = (n) => String(n).padStart(2, '0');
 function left(ms) {
@@ -14,7 +16,7 @@ export const LIVE_CAM = { x: 160, y: 75, z: 1.28 };
 
 // What the screen says right now.
 function screenFor(state, season, now) {
-  if (state?.finished) return { mode: 'winners', d: { season } };
+  if (state?.finished) return { mode: 'after', d: { season } };
   if (state?.started) return { mode: 'live', d: { season } };
   const at = state?.show_at ? Date.parse(state.show_at) : null;
   if (at && at > now) return { mode: 'countdown', d: { season, big: left(at - now), small: when(state.show_at) } };
@@ -23,19 +25,19 @@ function screenFor(state, season, now) {
 }
 
 export default function CeremonyStage({ season, state }) {
-  const ref = useRef(null), live = useRef(state);
+  const ref = useRef(null), live = useRef(state), theme = showTheme(useCraftBowlPlan(season));
   live.current = state;
   useEffect(() => {
-    const cv = ref.current, ctx = cv.getContext('2d'), still = buildStill(false), t0 = performance.now();
+    const cv = ref.current, ctx = cv.getContext('2d'), still = buildStill(false, theme), t0 = performance.now();
     let raf = 0, on = true;
     const frame = (ms) => {
-      if (on) renderStage(ctx, still, LIVE_CAM, (ms - t0) / 1000, { screen: screenFor(live.current, season, Date.now()), light: { dark: 0.46, beams: 0.6 } });
+      if (on) renderStage(ctx, still, LIVE_CAM, (ms - t0) / 1000, { screen: screenFor(live.current, season, Date.now()), light: { dark: 0.46, beams: 0.6, screenRgb: theme.rgb }, theme });
       raf = requestAnimationFrame(frame);
     };
     const io = new IntersectionObserver(([e]) => { on = e.isIntersecting; });   // no drawing while it's scrolled away
     io.observe(cv); raf = requestAnimationFrame(frame);
     return () => { cancelAnimationFrame(raf); io.disconnect(); };
-  }, [season]);
+  }, [season, theme.primary, theme.secondary]); // eslint-disable-line react-hooks/exhaustive-deps
   return (
     <section className="cer-stage">
       <canvas ref={ref} width={1280} height={660} className="cer-canvas" aria-label={`Season ${season} MFL Award Ceremony stage`} />

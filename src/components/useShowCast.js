@@ -22,7 +22,7 @@ export default function useShowCast(slides) {
     let live = true;
     (async () => {
       const players = Object.fromEntries(getAllPlayers().map((p) => [p.id, p])), nominees = {}, teamIds = new Set(), kits = {};
-      const people = slides.filter((s) => s.kind === 'nominees' && !s.game);
+      const people = slides.filter((s) => s.kind === 'finalists' && !s.game);
       people.forEach((s) => s.onStage.forEach((e) => e.team && teamIds.add(e.team)));
       await Promise.all([...teamIds].map(async (id) => { const t = getTeam(id); if (t) kits[id] = await homeKit(t).catch(() => null); }));
       people.forEach((s) => {
@@ -32,11 +32,12 @@ export default function useShowCast(slides) {
             design: helmetDesign(team), team, coachImg: coach || s.key === 'coy' ? image(coachUrl(coachLooks(coach || { team_id: e.team }, team))) : null });
         });
       });
-      const gameIds = slides.filter((s) => s.kind === 'nominees' && s.game).flatMap((s) => s.onStage.map((e) => Number(e.id))).filter(Boolean), games = {};
+      const gameIds = slides.filter((s) => s.kind === 'finalists' && s.game).flatMap((s) => s.onStage.map((e) => Number(e.id))).filter(Boolean), games = {};
       if (gameIds.length && !DEMO) {
-        const { data } = await db.from('games').select('id, home_team, away_team').in('id', gameIds);
-        (data || []).forEach((g) => { games[g.id] = { home: g.home_team, away: g.away_team }; teamIds.add(g.home_team); teamIds.add(g.away_team); });
+        const { data } = await db.from('games').select('id, home_team, away_team, home_score, away_score, week').in('id', gameIds);
+        (data || []).forEach((g) => { games[g.id] = { home: g.home_team, away: g.away_team, hs: g.home_score, as: g.away_score, week: g.week }; teamIds.add(g.home_team); teamIds.add(g.away_team); });
       }
+      slides.forEach((s) => (s.onStage || []).forEach((e) => e.team && teamIds.add(e.team)));
       const logos = Object.fromEntries([...teamIds].map((id) => [id, getTeam(id)?.logo]).filter(([, l]) => l).map(([id, l]) => [id, image(l)]));
       if (live) setCast({ nominees, logos, games, teamName: (id) => getTeam(id)?.name || '', ready: true });
     })().catch(() => live && setCast((c) => ({ ...c, ready: true })));
