@@ -11,7 +11,7 @@ export const AWARDS = [
   { key: 'opoy', name: 'Offensive Player of the Year', icon: '🏈', kind: 'player',
     how: 'The best offensive player: yards, touchdowns, catches and efficiency, minus turnovers and sacks, measured against a normal starter at his position. Usually a quarterback or a receiver, sometimes a running back, rarely a tight end.' },
   { key: 'dpoy', name: 'Defensive Player of the Year', icon: '🛡️', kind: 'player',
-    how: 'The best defensive player: sacks, pressures, tackles for loss, interceptions, pass breakups, forced fumbles and defensive touchdowns, minus missed tackles and catches given up, measured against a normal starter at his position. Linemen, linebackers and defensive backs all win it.' },
+    how: 'The best defensive player: sacks, pressures, tackles for loss, interceptions, pass breakups, forced fumbles and defensive touchdowns, minus missed tackles and catches given up, measured against a normal starter at his position. Interceptions and pass breakups count big, so safeties and corners win it most, then linebackers; a lineman can win it with a huge year.' },
   { key: 'roy', name: 'Rookie of the Year', icon: '🌱', kind: 'player',
     how: 'The best first-year player, on offense or defense, ranked the same way as the player awards (defense counts a little less), with a small boost for helping his team win.' },
   { key: 'coy', name: 'Coach of the Year', icon: '🧢', kind: 'team',
@@ -21,7 +21,7 @@ export const AWARDS = [
 ];
 export const byKey = Object.fromEntries(AWARDS.map((a) => [a.key, a]));
 
-const MVP_POS = { QB: 1.25, RB: 1, WR: 0.95, TE: 0.85, OL: 0.6 };   // the MVP leans to the quarterback, like real football
+const MVP_POS = { QB: 1.1, RB: 1, WR: 0.95, TE: 0.85, OL: 0.6 };   // the MVP leans to the quarterback, like real football
 const top = (rows, k = 5) => rows.filter((r) => r.score > -Infinity).sort((a, b) => b.score - a.score).slice(0, k).map((r) => ({ ...r, score: Math.round(r.score * 10) / 10 }));
 
 // season: { players: { id: { name, pos, team, rookie, games, s } }, teams: { id: { w, l, pf, pa, rank, moves, helped, picks,

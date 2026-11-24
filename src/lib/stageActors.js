@@ -62,20 +62,42 @@ export function drawNominees(ctx, nominees, t, kind, win, hit = 0) {
   return places;
 }
 
-// Name plates under each nominee, at screen resolution. xf: from camXf.
-export function drawPlates(ctx, nominees, places, xf, alpha = 1) {
+// Name plates under each nominee with their team's logo, at screen resolution. xf: from camXf. logos: teamId -> Image.
+// only: draw just this nominee's plate (the winner's, after the reveal).
+export function drawPlates(ctx, nominees, places, xf, alpha = 1, logos = {}, only = null) {
   const { s, X, Y } = xf;
   nominees.forEach((n, i) => {
-    const at = places[i]; if (!at || at.a <= 0.05 || at.walking || alpha <= 0) return;
-    const w = 22.5 * s, h = 6.4 * s, x = X(at.x) - w / 2, y = Y(at.y + 2.5);
+    const at = places[i]; if (!at || at.a <= 0.05 || at.walking || alpha <= 0 || (only != null && i !== only)) return;
+    const w = 22.5 * s, h = 6.4 * s, img = only != null ? logos[n.entry.team] : null, x = X(at.x) - w / 2 + (img ? 2 * s : 0), y = Y(at.y + 2.5);   // the logo rides on a lone winner's plate
     ctx.save(); ctx.globalAlpha = Math.min(at.a, alpha);
     ctx.fillStyle = 'rgba(10,6,14,0.85)'; ctx.beginPath(); ctx.roundRect(x, y, w, h, 1.4 * s); ctx.fill();
     ctx.fillStyle = n.color; ctx.fillRect(x, y, 0.9 * s, h);
     ctx.strokeStyle = 'rgba(240,204,112,0.5)'; ctx.lineWidth = Math.max(1, 0.25 * s); ctx.stroke();
+    if (img?.complete && img.width) {   // the team logo badge on the plate's left end
+      const ls = 7.6 * s, lx = x - ls * 0.62, ly = y + h / 2 - ls / 2;
+      ctx.fillStyle = 'rgba(10,6,14,0.9)'; ctx.beginPath(); ctx.arc(lx + ls / 2, ly + ls / 2, ls * 0.56, 0, Math.PI * 2); ctx.fill();
+      ctx.strokeStyle = n.color; ctx.lineWidth = Math.max(1, 0.35 * s); ctx.stroke();
+      ctx.imageSmoothingEnabled = false; ctx.drawImage(img, lx + ls * 0.12, ly + ls * 0.12, ls * 0.76, ls * 0.76);
+    }
     ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillStyle = '#fff';
-    ctx.font = `800 ${2.3 * s}px 'Inter', system-ui, sans-serif`; ctx.fillText(n.entry.name, X(at.x) + 0.45 * s, y + h * 0.37, w - 2.5 * s);
+    ctx.font = `800 ${2.3 * s}px 'Inter', system-ui, sans-serif`; ctx.fillText(n.entry.name, x + w / 2 + (img ? 1.4 : 0.45) * s, y + h * 0.37, w - (img ? 5 : 2.5) * s);
     ctx.fillStyle = '#f0cc70'; ctx.font = `600 ${1.55 * s}px 'Inter', system-ui, sans-serif`;
-    ctx.fillText([n.entry.pos, n.teamName].filter((v, k, a) => v && a.indexOf(v) === k).join(' · '), X(at.x) + 0.45 * s, y + h * 0.75, w - 2.5 * s);
+    ctx.fillText([n.entry.pos, n.teamName].filter((v, k, a) => v && a.indexOf(v) === k).join(' · '), x + w / 2 + (img ? 1.4 : 0.45) * s, y + h * 0.75, w - (img ? 5 : 2.5) * s);
+    ctx.restore();
+  });
+}
+
+// A team-logo badge floating beside each nominee's shoulder, at screen resolution.
+export function drawBadges(ctx, nominees, places, xf, alpha = 1, logos = {}, only = null) {
+  const { s, X, Y } = xf;
+  nominees.forEach((n, i) => {
+    const at = places[i], img = logos[n.entry.team];
+    if (!at || at.a <= 0.05 || alpha <= 0 || !img?.complete || !img.width || (only != null && i !== only)) return;
+    const r = 3.3 * s, cx = X(at.x + 9), cy = Y(at.y - 20 + Math.sin(at.t * 2 + i) * 0.4);
+    ctx.save(); ctx.globalAlpha = Math.min(at.a, alpha);
+    ctx.fillStyle = 'rgba(10,6,14,0.88)'; ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.fill();
+    ctx.strokeStyle = n.color; ctx.lineWidth = Math.max(1, 0.32 * s); ctx.stroke();
+    ctx.imageSmoothingEnabled = false; ctx.drawImage(img, cx - r * 0.72, cy - r * 0.72, r * 1.44, r * 1.44);
     ctx.restore();
   });
 }

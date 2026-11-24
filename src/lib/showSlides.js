@@ -5,7 +5,7 @@
 // winner on the screen, confetti. Game, Coach, Rookie, Offense, Defense, and the MVP last.
 export const CAMS = {
   live: { x: 160, y: 75, z: 1.28 }, wide: { x: 160, y: 92, z: 1 }, crowd: { x: 160, y: 104, z: 1.05 }, house: { x: 160, y: 98, z: 1.22 },
-  screen: { x: 160, y: 62, z: 2.08 }, stage: { x: 160, y: 80, z: 1.62 }, push: { x: 160, y: 82, z: 1.85 }, out: { x: 160, y: 79, z: 1.5 },
+  screen: { x: 160, y: 62, z: 2.08 }, stage: { x: 160, y: 80, z: 1.62 }, push: { x: 160, y: 82, z: 1.85 }, out: { x: 160, y: 83, z: 1.5 },
   games: { x: 160, y: 64, z: 1.9 },
 };
 export const DRUM_AT = 0.6, HIT = 5.0;   // the drum roll starts, and its final hit (the trimmed file hits 4.4s in)

@@ -21,14 +21,15 @@ export function offensePoints(s, pos) {
 
 // What a season's defensive plays were worth.
 export function defensePoints(s) {
-  return n(s, 'tkl') + n(s, 'tfl') * 1.5 + n(s, 'sacks') * 5 + n(s, 'pres') * 1 + n(s, 'pd') * 2.5 + n(s, 'dint') * 7 + n(s, 'intyds') * 0.04
+  return n(s, 'tkl') * 0.85 + n(s, 'tfl') * 1.5 + n(s, 'sacks') * 5 + n(s, 'pres') * 1 + n(s, 'pd') * 4 + n(s, 'dint') * 9 + n(s, 'intyds') * 0.05
     + n(s, 'ff') * 4 + n(s, 'fr') * 3 + n(s, 'dtd') * 6 - n(s, 'miss') * 0.7 - n(s, 'cmpd') * 0.35;
 }
 
 // How much a standout at each position is worth next to the others (tuned on simulated seasons so the winners come out
 // like real football: quarterbacks and receivers usually win Offensive Player of the Year, running backs sometimes, tight
-// ends rarely; Defensive Player of the Year splits between the pass rushers, the linebackers and the secondary).
-export const WEIGHT = { QB: 1.3, RB: 1, WR: 0.98, TE: 0.9, OL: 0.45, DL: 0.98, LB: 1.05, DB: 1.08, ST: 0 };
+// ends rarely; Defensive Player of the Year mostly goes to the secondary (safeties and corners), then linebackers, and a
+// lineman can win it but rarely). Over 30 simulated seasons: DPOY 21 DBs, 5 LBs, 4 linemen; OPOY 13 QBs, 11 WRs.
+export const WEIGHT = { QB: 1.4, RB: 1, WR: 0.94, TE: 0.7, OL: 0.45, DL: 0.8, LB: 1.02, DB: 1.3, ST: 0 };
 
 // Every player's value for a season. players: { id: { pos, games, s } }.
 // Returns { id: { group, side, pts, off, def } }: how far above a normal starter at his position he played per game, in

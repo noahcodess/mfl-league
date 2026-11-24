@@ -14,8 +14,9 @@ import { showTheme } from '../lib/showTheme.js';
 import { SHOW_ORDER } from '../data/ceremony.js';
 import { useCraftBowlPlan } from '../data/craftBowlPlans.js';
 import { createCrowdAudio } from '../lib/crowdAudio.js';
+import { createShowAudio } from '../lib/showAudio.js';
 
-const DW = 1600, DH = 900, DRUM = `${import.meta.env.BASE_URL}audio/Drum Roll.mp3`;
+const DW = 1600, DH = 900;
 const saved = (season) => { try { return Number(localStorage.getItem(`mfl-show-${season}`)) || 0; } catch { return 0; } };
 const remember = (season, i) => { try { localStorage.setItem(`mfl-show-${season}`, String(i)); } catch { /* private mode */ } };
 const bypass = () => import.meta.env.DEV && /devshow/.test(window.location.search);   // dev: screenshots without full screen
@@ -28,36 +29,42 @@ export default function AwardShow({ season, state, onFinish, onExit }) {
   const { slides } = show, cast = useShowCast(slides), plan = useCraftBowlPlan(season), theme = showTheme(plan);
   const first = Number(new URLSearchParams(window.location.search).get('devslide')) || saved(season);
   const [idx, setIdx] = useState(Math.min(first, slides.length - 1)), [done, setDone] = useState(false), [full, setFull] = useState(!!document.fullscreenElement || bypass());
-  const [sound, setSound] = useState(true), root = useRef(null), cv = useRef(null), audio = useRef(null), drum = useRef(null), finished = useRef(!!state?.finished);
-  const live = useRef({ idx, t0: performance.now(), start: null, cam: null });   // what the drawing loop reads (set right away, no waiting on React)
+  const [sound, setSound] = useState(true), root = useRef(null), cv = useRef(null), audio = useRef(null), sfx = useRef(null), finished = useRef(!!state?.finished);
+  const live = useRef({ idx, t0: performance.now(), start: null, cam: null, opened: performance.now(), leave: {} });   // what the drawing loop reads (set right away, no waiting on React)
   live.current.cast = cast; live.current.info = { ...show.info, theme };
   const sl = slides[idx];
 
-  const go = (i) => { const L = live.current; L.idx = i; L.t0 = performance.now(); L.start = L.cam; setIdx(i); setDone(false); };
-  useEffect(() => {   // the crowd: a low murmur under the show; the drum roll
+  const go = (i) => {
+    const L = live.current, T = (performance.now() - L.opened) / 1000, k = slides[i].kind;
+    if (k === 'finale' && L.leave.F == null) L.leave.F = T;   // the audience starts leaving: some now, the rest on the last slide
+    if (k === 'close' && L.leave.C == null) { L.leave.C = T; if (L.leave.F == null) L.leave.F = T; }
+    L.idx = i; L.t0 = performance.now(); L.start = L.cam; setIdx(i); setDone(false); sfx.current?.play('whoosh', { gain: 0.7 });
+  };
+  useEffect(() => {   // the distant chatter under the show, and the show's own sounds
     const a = createCrowdAudio(); audio.current = a; a?.setBeds([0.45, 0.3, 0, 0], 0.1); a?.setMaster(0.55, 1.5);
-    drum.current = new Audio(DRUM); drum.current.preload = 'auto';
-    return () => { a?.close(); drum.current?.pause(); };
+    sfx.current = createShowAudio();
+    return () => { a?.close(); sfx.current?.close(); };
   }, []);
-  useEffect(() => { audio.current?.setVolume(sound ? 1 : 0); if (drum.current) drum.current.muted = !sound; }, [sound]);
+  useEffect(() => { audio.current?.setVolume(sound ? 1 : 0); sfx.current?.setVolume(sound ? 1 : 0); }, [sound]);
   useEffect(() => {   // each slide: Next unlocks when its animation is done; its sound cues
     remember(season, idx);
-    const a = audio.current, timers = [setTimeout(() => setDone(true), sl.len * 1000)];
-    const at = (s, fn) => timers.push(setTimeout(fn, s * 1000));
-    if (sl.kind === 'tonight') a?.pop('cheer', 0.7, 0.6);
-    if (sl.kind === 'reveal') {
-      at(DRUM_AT, () => { const d = drum.current; if (d) { d.currentTime = 0; d.volume = 0.9; d.play().catch(() => {}); } });
-      at(HIT, () => { a?.pop('eruption', 0.9, 0); a?.pop('cheer', 0.8, 0.25); });
-    }
-    if (sl.kind === 'finale') a?.pop('cheer', 0.8, 0.3);
+    const x = sfx.current, timers = [setTimeout(() => setDone(true), sl.len * 1000)], stops = [];
+    const at = (sec, key, o) => timers.push(setTimeout(() => { const st = x?.play(key, o); if (st && key === 'drum') stops.push(st); }, sec * 1000));   // only the drum roll stops if he moves on mid-roll
+    if (sl.kind === 'opening') at(2.1, 'chime', { gain: 0.9 });
+    if (sl.kind === 'tonight') at(0.6, 'applause', { gain: 0.8, fadeAfter: 4.5 });
+    if (sl.kind === 'intro') at(0.25, 'chime', { gain: 0.5 });
+    if (sl.kind === 'finalists') [0, 1, 2].forEach((i) => at(1.2 + i * 0.53, 'ping', { gain: 0.8 }));
+    if (sl.kind === 'reveal') { at(DRUM_AT, 'drum', { gain: 0.9 }); at(HIT, 'fanfare', { gain: 0.8, fadeAfter: 6.5 }); at(HIT + 0.15, 'applause', { gain: 0.95, fadeAfter: 6 }); }
+    if (sl.kind === 'finale') { at(0.3, 'applause', { gain: 0.9, fadeAfter: 6 }); at(0.5, 'chime', { gain: 0.8 }); }
+    if (sl.kind === 'close') audio.current?.setBeds([0.25, 0.1, 0, 0], 3);   // the room empties
     if ((sl.kind === 'finale' || sl.kind === 'close') && !finished.current) { finished.current = true; onFinish?.(); }
-    return () => { timers.forEach(clearTimeout); if (drum.current && sl.kind === 'reveal') drum.current.pause(); };
+    return () => { timers.forEach(clearTimeout); stops.forEach((f) => f()); };
   }, [idx]); // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => {   // draw every frame (the stills are rebuilt when the Craft Bowl's colors arrive)
     const ctx = cv.current.getContext('2d'), stills = { house: buildStill(true, theme), stage: buildStill(false, theme) }, off = document.createElement('canvas');
     off.width = DW; off.height = DH;
     let raf = 0;
-    const frame = (ms) => { const L = live.current; L.cam = drawShowFrame(ctx, stills, slides[L.idx], (ms - L.t0) / 1000, L.cast, L.info, L.start, off); raf = requestAnimationFrame(frame); };
+    const frame = (ms) => { const L = live.current; L.info.crowd = { T: (ms - L.opened) / 1000, leave: L.leave }; L.cam = drawShowFrame(ctx, stills, slides[L.idx], (ms - L.t0) / 1000, L.cast, L.info, L.start, off); raf = requestAnimationFrame(frame); };
     document.fonts?.load("900 20px 'Cinzel'").finally(() => { raf = requestAnimationFrame(frame); });
     return () => cancelAnimationFrame(raf);
   }, [theme.primary, theme.secondary]); // eslint-disable-line react-hooks/exhaustive-deps

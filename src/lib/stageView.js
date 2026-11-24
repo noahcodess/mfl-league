@@ -1,28 +1,20 @@
 // Puts one frame of the ceremony together on a screen-sized canvas: the still pixel stage seen through a camera, the big
-// screen's live content, the nominees, the audience's clapping hands, then the cinematic light and the name plates.
+// screen's live content, the nominees, the audience (arriving, clapping, leaving), then the light and the name plates.
 import { drawStage, W, H } from './stageArt.js';
 import { drawScreen } from './stageScreen.js';
 import { drawLight, camXf } from './stageLight.js';
+import { buildAudience, drawAudienceFrame } from './stageCrowd.js';
 
 // The still picture, drawn once. house: the whole auditorium (the show) or just the stage (the Live tab).
 // theme: showTheme (the Craft Bowl's colors). The canvas is twice the world, for half-unit detail.
 export function buildStill(house, theme) {
   const c = document.createElement('canvas'); c.width = W * 2; c.height = H * 2;
-  const heads = drawStage(c.getContext('2d'), { house, theme });
-  return { canvas: c, heads };
+  drawStage(c.getContext('2d'), { house, theme });
+  return { canvas: c, aud: house ? buildAudience() : null };
 }
 
-// Hands coming together over the front rows. clap 0..1: how many are clapping.
-function hands(ctx, heads, t, clap) {
-  if (clap <= 0) return;
-  heads.forEach((h, n) => {
-    if (h.k < 1 || ((n * 37) % 100) / 100 > clap * 0.7) return;
-    const r = h.r, sep = r * 0.12 + r * 0.38 * (0.5 + 0.5 * Math.sin(t * 13 + n * 2.3)), y = h.y - r * 0.9 + Math.sin(t * 13 + n) * 0.4, sz = Math.max(1.2, r * 0.42);
-    for (const dx of [-sep, sep]) { const hx = h.x + dx - sz / 2 + r * 0.5; ctx.fillStyle = '#6e5040'; ctx.fillRect(hx, y, sz, sz * 1.4); ctx.fillStyle = '#d8aa80'; ctx.fillRect(hx, y, sz, Math.min(1, sz * 0.4)); ctx.fillStyle = '#0c0810'; ctx.fillRect(hx, y + sz * 1.4, sz, sz); }
-  });
-}
-
-// cam: { x, y, z }. o: { light (drawLight's options), screen: { mode, d, p }, clap, actors(ctx) → anything, plates(ctx, xf, a) }.
+// cam: { x, y, z }. o: { light (drawLight's options), screen: { mode, d, p }, clap, crowd: { T, leave } (stageCrowd),
+// actors(ctx) → anything, plates(ctx, xf, a) }.
 export function renderStage(ctx, still, cam, t, o = {}) {
   const dw = ctx.canvas.width, dh = ctx.canvas.height, xf = camXf(cam, dw, dh);
   ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.fillStyle = '#05020a'; ctx.fillRect(0, 0, dw, dh);
@@ -30,7 +22,7 @@ export function renderStage(ctx, still, cam, t, o = {}) {
   ctx.drawImage(still.canvas, 0, 0, W, H);
   if (o.screen) drawScreen(ctx, t, o.screen.mode, o.screen.d, o.screen.p ?? 1, o.theme);
   const a = o.actors ? o.actors(ctx) : null;
-  hands(ctx, still.heads, t, o.clap || 0);
+  if (still.aud) drawAudienceFrame(ctx, still.aud, o.crowd?.T ?? 1e6, o.crowd?.leave || {}, t, o.clap || 0);
   ctx.setTransform(1, 0, 0, 1, 0, 0);
   drawLight(ctx, xf, t, o.light || {});
   if (o.plates) o.plates(ctx, xf, a);

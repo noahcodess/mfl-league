@@ -3,7 +3,7 @@
 // finalists, locking onto the winner), the big screen, the nominees, the clapping house, confetti, and the fade back
 // to the plain stage at the end.
 import { renderStage, easeIO } from './stageView.js';
-import { drawNominees, drawPlates } from './stageActors.js';
+import { drawNominees, drawPlates, drawBadges } from './stageActors.js';
 import { drawConfetti } from './showConfetti.js';
 import { camAt, HIT, DRUM_AT, CAMS } from './showSlides.js';
 import { MARKS } from './stageArt.js';
@@ -54,10 +54,12 @@ export function drawShowFrame(ctx, stills, sl, t, cast, info, start, off) {
   const clap = sl.kind === 'tonight' ? k01((t - 0.6) / 0.6) * (1 - k01((t - 5.4) / 0.6)) : sl.kind === 'reveal' ? k01((t - HIT - 0.2) / 0.3) * (1 - k01((t - 8) / 1)) : sl.kind === 'finale' ? 1 - k01((t - 5.5) / 1.5) : 0;
   let places = null;
   renderStage(ctx, stills.house, cam, t + (info.clock || 0), {
-    theme: info.theme, screen: screenFor(sl, t, info, cast), light: { ...lightFor(sl, t, winX), screenRgb: info.theme.rgb }, clap: clap * (sl.clap || 0),
+    theme: info.theme, crowd: info.crowd, screen: screenFor(sl, t, info, cast), light: { ...lightFor(sl, t, winX), screenRgb: info.theme.rgb }, clap: clap * (sl.clap || 0),
     actors: showNoms ? (c) => { places = drawNominees(c, noms, t, kind, sl.win, HIT); return places; } : null,
     plates: (c, xf) => {
-      if (showNoms && places && (sl.kind === 'finalists' || t < HIT - 1)) drawPlates(c, noms, places, xf, sl.kind === 'reveal' ? 1 - k01((t - DRUM_AT) / 0.6) : 1);
+      if (showNoms && places && (sl.kind === 'finalists' || t < HIT - 1)) drawPlates(c, noms, places, xf, sl.kind === 'reveal' ? 1 - k01((t - DRUM_AT) / 0.6) : 1, cast.logos);
+      if (showNoms && places && sl.kind === 'reveal' && t > HIT + 1) drawPlates(c, noms, places, xf, k01((t - HIT - 1) / 0.5), cast.logos, sl.win);   // the winner's plate
+      if (showNoms && places) drawBadges(c, noms, places, xf, sl.kind === 'reveal' && t > HIT ? k01((t - HIT - 1) / 0.5) : 1, cast.logos, sl.kind === 'reveal' && t > HIT ? sl.win : null);
       if (sl.kind === 'reveal') drawConfetti(c, t - HIT - 0.1, info.theme.confetti);
       if (sl.kind === 'finale') drawConfetti(c, t - 0.4, info.theme.confetti);
     },

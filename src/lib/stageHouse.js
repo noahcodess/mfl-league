@@ -1,6 +1,6 @@
 // The ceremony auditorium around the stage, as pixel art. Coordinates are in a 320x180 world but the canvas is twice that,
 // so details can sit on half-units: damask walls, a coffered gold ceiling, three tiers of balcony boxes with lamps and
-// guests, and the rows of guests in suits seen from behind (hair, ears, collars, the stage light on their heads).
+// guests, and the dark floor under the front rows (stageCrowd draws the rows and their guests live).
 export const W = 320, H = 180;
 
 export const hash = (a, b) => { const s = Math.sin(a * 127.1 + b * 311.7) * 43758.5453; return s - Math.floor(s); };
@@ -56,45 +56,9 @@ export function drawBalconies(ctx) {
 // Lamp spots on the balconies (for the light): [x, y].
 export const LAMPS = [[28, 30], [60, 32], [92, 34]].flatMap(([y, wl]) => [[4 + wl - 2, y + 5.5], [W - 3 - wl, y + 5.5]]);
 
-const HAIR = ['#0c0807', '#140e0a', '#1e140e', '#2a1a10', '#3a2614', '#4a4a50', '#2a120a', '#5a4a30', '#100c0c', '#1a1210'];
-const SUIT = ['#08070c', '#0c1020', '#121014', '#0a0c0a', '#140a10'];
-
-// One guest seen from behind: suit shoulders with a collar line, neck, ears, hair (some long), the stage light on top.
-function guest(ctx, cx, cy, r, n) {
-  const hair = HAIR[n % HAIR.length], suit = SUIT[(n * 7) % SUIT.length], long = hash(n, 3) < 0.3, sw = r * 2 + 3;
-  for (let j = 0; j < r * 2; j += 0.5) { const half = sw / 2 - Math.max(0, 1.5 - j) * 0.8; rect(ctx, suit, cx - half, cy + r * 2 - 0.5 + j, half * 2, 0.5); }
-  rect(ctx, '#2c2430', cx - sw / 2 + 1.5, cy + r * 2 - 0.5, sw - 3, 0.5);   // light across the shoulders
-  rect(ctx, '#000', cx - 0.25, cy + r * 2 + 1, 0.5, r * 1.5);   // the suit's back seam
-  rect(ctx, '#6a4c3c', cx - r * 0.35, cy + r * 1.6, r * 0.7, r * 0.5);   // neck
-  rect(ctx, '#d8d8e0', cx - r * 0.45, cy + r * 2 - 0.5, r * 0.9, 0.5);   // shirt collar
-  for (let dy = -r; dy <= r; dy += 0.5) {   // head (hair from behind)
-    const half = Math.max(0.5, Math.round(Math.sqrt(Math.max(0, r * r - dy * dy)) * 0.85 * 2) / 2), y = cy + r + dy - 1;
-    rect(ctx, hair, cx - half, y, half * 2, 0.5);
-    if (dy <= -r + 0.5) rect(ctx, '#5e4636', cx - half, y, half * 2, 0.5);
-    else if (dy <= -r + 1.5) rect(ctx, shade(hair), cx - half + 0.5, y, half * 2 - 1, 0.5);
-    if ((dy * 2) % 2 === 0 && dy > -r + 1) rect(ctx, '#00000033', cx - half + ((dy * 3) % 2), y, 0.5, 0.5);   // hair texture
-  }
-  rect(ctx, '#7a5444', cx - r * 0.85 - 0.5, cy + r - 0.5, 0.5, 1); rect(ctx, '#7a5444', cx + r * 0.85, cy + r - 0.5, 0.5, 1);   // ears
-  if (long) for (let j = 0; j < r * 1.6; j += 0.5) rect(ctx, hair, cx - r * 0.8, cy + r + j, r * 1.6, 0.5);   // long hair over the shoulders
-}
-const shade = (hex) => `${hex}`.replace(/^#(..)(..)(..)$/, (m, a, b, c) => `#${[a, b, c].map((v) => Math.min(255, parseInt(v, 16) + 40).toString(16).padStart(2, '0')).join('')}`);
-
-// The guests in the front rows (the nearest rows bigger). Returns each head (for the clapping hands).
-export function drawAudience(ctx) {
+// The dark floor under the front rows (the rows and guests themselves are stageCrowd, drawn live).
+export function drawAudienceFloor(ctx) {
   const g = ctx.createLinearGradient(0, 132, 0, H);
   g.addColorStop(0, '#120709'); g.addColorStop(1, '#030102');
   ctx.fillStyle = g; ctx.fillRect(0, 136, W, H - 136);
-  const heads = [];
-  [[142, 3, 9], [150, 4, 11], [159, 5, 13], [169, 6, 15], [180, 8, 19]].forEach(([y, r, step], k) => {
-    const back = ['#2a0c12', '#250a10', '#1f080d', '#18060a', '#100407'][k];
-    for (let x = -step; x < W + step; x += step) { rect(ctx, back, x + 1, y - r + 1, step - 2, r + 4); rect(ctx, '#4a1420', x + 1, y - r + 1, step - 2, 0.5); }   // seat backs
-    const off = (k % 2) * (step / 2);
-    for (let x = off; x < W + step; x += step) {
-      if (hash(x, k) < 0.1) continue;   // an empty seat here and there
-      const hx = Math.round((x + (hash(k, x) - 0.5) * 3) * 2) / 2, hy = y - r * 2 - 1;
-      guest(ctx, hx, hy, r, Math.floor(hash(x, k + 9) * 97));
-      heads.push({ x: hx, y: hy, r, k });
-    }
-  });
-  return heads;
 }

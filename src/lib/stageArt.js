@@ -2,7 +2,7 @@
 // gilded proscenium with fluted columns and a crest, a red velvet valance and tied-back curtains, the big screen hung over
 // the stage (stageScreen paints on it live), a backdrop in the Craft Bowl's colors, a wood floor in perspective with a
 // red carpet, the trophy pedestal and the lectern. house: also the auditorium around it (the full-screen show).
-import { W, H, rect, drawWalls, drawBalconies, drawAudience } from './stageHouse.js';
+import { W, H, rect, drawWalls, drawBalconies, drawAudienceFloor } from './stageHouse.js';
 import { drawPlinth, drawLectern } from './stageProps.js';
 
 export const STAGE = { x0: 60, x1: 260, top: 24, floorBack: 98, floorFront: 128, lip: 132, vp: [160, 60] };
@@ -99,13 +99,12 @@ function proscenium(ctx) {
   rect(ctx, GOLD[2], cx - 5, 23, 10, 2); rect(ctx, GOLD[1], cx - 3, 25, 6, 1);
 }
 
-// The whole still picture into a 640x360 context. house: the auditorium too. theme: showTheme. Returns the front-row heads.
+// The whole still picture into a 640x360 context. house: the auditorium too (its guests are drawn live). theme: showTheme.
 export function drawStage(ctx, { house = true, theme } = {}) {
   ctx.save(); ctx.scale(2, 2); ctx.imageSmoothingEnabled = false;
   if (house) { drawWalls(ctx); drawBalconies(ctx); } else { ctx.fillStyle = '#0b0610'; ctx.fillRect(0, 0, W, H); }
   backdrop(ctx, theme); floor(ctx); drawPlinth(ctx); drawLectern(ctx); curtains(ctx); proscenium(ctx);
-  const heads = house ? drawAudience(ctx) : [];
+  if (house) drawAudienceFloor(ctx);
   ctx.restore();
-  return heads;
 }
 export { W, H };
