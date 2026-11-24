@@ -10,22 +10,20 @@ import DraftPage from './DraftPage.jsx';
 import { useSchedule } from '../data/schedule.js';
 import { useDraftStatus } from '../data/draftRoom.js';
 import { currentSeason, currentPhase, currentWeek, offseasonStep } from '../data/teams.js';
-import { useCeremony, ceremonyTime } from '../data/ceremony.js';
-import { useSeasonGames } from '../data/games.js';
 import { liveStage } from '../lib/liveStage.js';
 
 // Live: whatever the league is doing right now. Birthday & Farewell, re-signing, free agency (sign players right here),
 // draft night (the full draft room), preseason games, or the season (week tabs, games, top players, standings), always with a
-// countdown to what's next. After Week 12 the award ceremony's stage and nominees go on top. The owner and commissioner can preview the season view any time.
+// countdown to what's next. After Week 12, the award ceremony (its stage and nominees, nothing else). The owner and commissioner can preview the season view any time.
 export default function LivePage({ viewer, canControl, reload }) {
   const draft = useDraftStatus(currentSeason());
   const rows = useSchedule(currentSeason()) || [];
   const draftAt = rows.find((r) => r.kind === 'draft')?.at;
-  const stage = liveStage({ phase: currentPhase(), step: offseasonStep(), draft, draftAt });
+  const demoCer = import.meta.env.DEV && /democer/.test(window.location.search);   // dev: preview the ceremony
+  const stage = demoCer ? 'awards' : liveStage({ phase: currentPhase(), step: offseasonStep(), draft, draftAt, week: currentWeek() });
   const [preview, setPreview] = useState(false);
-  const cer = useCeremony(currentSeason()), games = useSeasonGames(currentSeason());
-  const showtime = (stage === 'season' && ceremonyTime(games, cer, currentWeek())) || (import.meta.env.DEV && /democer/.test(window.location.search));   // after Week 12: the award ceremony
   if (stage === 'draft') return <DraftPage viewer={viewer} canControl={canControl} />;
+  if (stage === 'awards') return <div className="live"><CeremonyLive season={currentSeason()} canControl={canControl} /></div>;   // after Week 12: its own moment
   if (preview) {
     return (
       <div className="live">
@@ -42,7 +40,6 @@ export default function LivePage({ viewer, canControl, reload }) {
       {stage === 'fa' && <FaLiveView viewer={viewer} />}
       {stage === 'resign' && <LiveSimpleView stage={stage} />}
       {stage === 'camp' && <LiveGames kind="preseason" />}
-      {showtime && <CeremonyLive season={currentSeason()} state={cer} />}
       {stage === 'season' && <LiveSeason canControl={canControl} teamId={viewer?.team_id} />}
     </div>
   );

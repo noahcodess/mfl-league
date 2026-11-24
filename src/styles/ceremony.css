@@ -1,15 +1,12 @@
 /* The award ceremony on the Live tab: the pixel stage with its countdown, and the nominees below. */
 .cer-live { display: grid; gap: 1.2rem; }
-.cer-stage { position: relative; border-radius: 14px; overflow: hidden; background: #050203; border: 1px solid #c79a3a55; box-shadow: 0 10px 40px #0008, inset 0 0 0 1px #0006; }
-.cer-canvas { display: block; width: 100%; aspect-ratio: 16 / 9; image-rendering: pixelated; }
-.cer-count { position: absolute; left: 50%; bottom: 4%; transform: translateX(-50%); display: grid; justify-items: center; gap: .15rem; text-align: center;
-  padding: .7rem 1.6rem .8rem; border-radius: 14px; background: linear-gradient(180deg, #0b0710e6, #12080ce6); border: 1px solid #e9c36866;
-  box-shadow: 0 6px 30px #000a, 0 0 24px #e9c36822; font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif; backdrop-filter: blur(2px); }
-.cer-count small { font-size: clamp(.62rem, 1.3vw, .8rem); letter-spacing: .22em; text-transform: uppercase; color: #e9c368; font-weight: 700; }
-.cer-count b { font-size: clamp(1.4rem, 4.6vw, 2.9rem); font-weight: 800; color: #fff; font-variant-numeric: tabular-nums; letter-spacing: .02em; line-height: 1.1; text-shadow: 0 2px 12px #e9c36844; }
-.cer-count span { font-size: clamp(.72rem, 1.5vw, .95rem); color: #d9d2c4; }
-.cer-count.live b { color: #ff6b6b; animation: cer-live 1.6s ease-in-out infinite; }
-@keyframes cer-live { 50% { opacity: .6; } }
+.cer-stage { position: relative; margin: -.5rem auto 0; max-width: 1180px; }
+.cer-canvas { display: block; width: 100%; aspect-ratio: 1280 / 660; image-rendering: pixelated;
+  -webkit-mask-image: radial-gradient(ellipse 62% 70% at 50% 46%, #000 62%, transparent 100%); mask-image: radial-gradient(ellipse 62% 70% at 50% 46%, #000 62%, transparent 100%); }
+.cer-title { text-align: center; margin: 0 0 -.2rem; font-family: 'Inter', system-ui, sans-serif; letter-spacing: .32em; text-transform: uppercase; font-size: .78rem; font-weight: 800; color: #e9c368; }
+.cer-title b { display: block; letter-spacing: .08em; font-size: clamp(1.4rem, 3.4vw, 2.2rem); color: #fff; text-transform: none; margin-top: .15rem; }
+.cer-controls { display: flex; justify-content: center; gap: .6rem; flex-wrap: wrap; margin-top: -.4rem; }
+.cer-live-note { text-align: center; margin: 0; color: #ff8a8a; font-weight: 700; }
 .cer-noms h2 { margin: 0 0 .7rem; }
 .cer-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: .9rem; }
 .cer-card { background: linear-gradient(160deg, #23160a, var(--card, #1c1f26) 55%); border: 1px solid #c79a3a44; border-radius: 12px; padding: .8rem .95rem; display: grid; gap: .5rem; }

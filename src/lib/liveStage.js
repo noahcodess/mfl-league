@@ -10,11 +10,13 @@ export const STAGES = {
   draft: { icon: '🏈', title: 'Draft night', next: 'camp' },
   camp: { icon: '🏟️', title: 'Preseason', next: 'season_start' },
   season: { icon: '🏟️', title: 'Regular season', next: 'trade_deadline' },
+  awards: { icon: '🏅', title: 'Award Ceremony', next: 'playoffs' },
 };
 
 // draft = { status } from the draft room (or null), draftAt = scheduled draft night ISO time, now = ms.
-export function liveStage({ phase, step, draft, draftAt, roomOpensMin = 15, now = Date.now() }) {
-  if (phase === 'regular_season') return 'season';
+// week: the league's saved week (past 12 = the award ceremony, its own moment).
+export function liveStage({ phase, step, draft, draftAt, week = 0, roomOpensMin = 15, now = Date.now() }) {
+  if (phase === 'regular_season') return week > 12 ? 'awards' : 'season';
   if (step === 0) return 'birthday_soon';
   if (step === 1) return 'birthday';
   if (step === 2) return 'resign';

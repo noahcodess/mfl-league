@@ -43,3 +43,9 @@
 .aw-cer-sum { display: grid; gap: .45rem; margin: .4rem 0; max-height: 46vh; overflow: auto; }
 .aw-cer-sum div { display: grid; gap: .1rem; font-size: .88rem; }
 .aw-cer-sum b { font-size: .8rem; text-transform: uppercase; letter-spacing: .05em; color: #f2c94c; }
+.aw-tags { display: flex; flex-wrap: wrap; gap: .3rem; margin: .3rem 0 .2rem; }
+.aw-tag { display: inline-flex; align-items: center; gap: .3rem; border: 1px solid #e9c36866; background: linear-gradient(180deg, #3a2a0c, #1f1606); color: #ffe8a8;
+  border-radius: 999px; padding: .12rem .45rem; font-size: .78rem; font-weight: 700; cursor: pointer; box-shadow: 0 0 10px #e9c36822; }
+.aw-tag.mvp { border-color: #ffe08a; box-shadow: 0 0 12px #ffe08a44; }
+.aw-tag span { max-width: 0; overflow: hidden; white-space: nowrap; transition: max-width .25s ease; }
+.aw-tag:hover span, .aw-tag.open span { max-width: 18rem; }

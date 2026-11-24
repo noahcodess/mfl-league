@@ -26,7 +26,7 @@ function demoState(season) {
   };
   const sorted = Object.fromEntries(Object.entries(fin).map(([k, v]) => [k, [...v].sort((a, b) => a.name.localeCompare(b.name))]));
   return { season, show_at: new Date(Date.now() + 2 * 864e5 + 4 * 36e5 + 1234e3).toISOString(), locked: mode !== 'open', started: mode === 'live' || mode === 'done',
-    finished: mode === 'done', revealed: mode === 'done', finalists: mode === 'open' ? null : sorted, winners: mode === 'done' ? fin : null };
+    finished: mode === 'done', revealed: mode === 'done', finalists: mode === 'open' ? null : sorted, winners: mode === 'live' || mode === 'done' || /devshow/.test(window.location.search) ? fin : null };
 }
 
 export async function ceremonyState(season) {

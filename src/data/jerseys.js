@@ -39,6 +39,12 @@ async function loadTeam(teamId) {
   return list;
 }
 
+// A team's home uniform colors, saved or default (for code that isn't a screen, like the award show's nominees).
+export async function homeKit(team) {
+  const saved = cache.get(team.id) || await loadTeam(team.id);
+  return (saved?.find((j) => j.slot === 1) || defaultJerseys(team)[0]).colors;
+}
+
 // A team's 4 jerseys in slot order (falls back to the team-color defaults).
 export function useJerseys(team, version = 0) {
   const [, bump] = useState(0);

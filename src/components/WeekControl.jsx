@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import ConfirmButton from './ConfirmButton.jsx';
+import Modal from './Modal.jsx';
 import { advanceWeek } from '../data/weeks.js';
-import { currentPhase, currentSeason } from '../data/teams.js';
+import { currentPhase, currentSeason, currentWeek } from '../data/teams.js';
 import { useSeasonGames } from '../data/games.js';
 import { simGameNow } from '../data/gameResults.js';
 import { weekNow } from '../data/liveSeason.js';
@@ -11,10 +12,11 @@ import { useCeremony } from '../data/ceremony.js';
 // Commissioner's Desk → Season: the current game week and "Go to next week". Moving on also runs the bots' weekly moves.
 export default function WeekControl({ canControl, reload }) {
   const [result, setResult] = useState(null);
-  const [error, setError] = useState(''), [simming, setSimming] = useState(null);
+  const [error, setError] = useState(''), [simming, setSimming] = useState(null), [mustLock, setMustLock] = useState(false);
   const games = useSeasonGames(currentSeason()), inSeason = currentPhase() === 'regular_season', wk = weekNow(games), cer = useCeremony(currentSeason());
   const left = (games || []).filter((g) => g.kind === 'regular' && g.week <= wk && g.status !== 'final');   // this week's unplayed games
   const needAwards = inSeason && wk >= 12 && cer && !cer.locked;   // past Week 12 only once the award finalists are confirmed
+  const toAwards = inSeason && wk === 12 && currentWeek() <= 12, atAwards = inSeason && currentWeek() > 12;   // Week 12's button goes to the ceremony
   const go = async () => {   // quick-sim whatever is left this week, then move on
     setError(''); setResult(null);
     for (const [n, g] of left.entries()) {
@@ -22,21 +24,28 @@ export default function WeekControl({ canControl, reload }) {
       try { await simGameNow(g.id, g.home, g.away, 'auto', g); } catch (e) { setSimming(null); throw new Error(`Couldn't sim game ${n + 1}: ${e.message}`); }
     }
     setSimming(null);
-    if (needAwards) { await reload?.(); setError('Week 12 is played. Confirm the award finalists (Awards tab), then come back to go on.'); return; }
+    if (needAwards) { await reload?.(); setMustLock(true); return; }
     setResult(await advanceWeek()); await reload?.();
   };
   return (
     <div className="weeks">
       <section className="card week-card">
         <span className="week-label">Season {currentSeason()}</span>
-        <b className="week-num">{inSeason ? `Week ${wk}` : 'Offseason'}</b>
-        <p className="dim">{inSeason
+        <b className="week-num">{atAwards ? '🏅 Award Ceremony' : inSeason ? `Week ${wk}` : 'Offseason'}</b>
+        <p className="dim">{atAwards ? 'The regular season is over. Run the show from the Live tab. The playoffs come after the ceremony.' : inSeason
           ? 'Go to the next week any time: games this week that haven\'t been played get quick-simmed first.'
           : 'Game weeks start when the regular season begins (the last offseason step, Training camp, starts Week 1).'}</p>
-        <ConfirmButton className="btn" label="⏭️ Go to next week" disabled={!canControl || !inSeason || !!simming || (needAwards && !left.length)} title={`Finish Week ${wk}?`} yes="Go to next week"
-          text={`${inSandbox() ? '🧪 TEST mode. ' : ''}${left.length ? `${left.length} unplayed game${left.length === 1 ? '' : 's'} this week get${left.length === 1 ? 's' : ''} quick-simmed first (final results, no broadcast). ` : ''}Every coach gets a notice, and the bots make their weekly moves.`} onConfirm={go} />
+        {needAwards && !left.length ? <button className="btn" disabled={!canControl} onClick={() => setMustLock(true)}>🏅 Go to award ceremony</button>
+        : <ConfirmButton className="btn" label={toAwards ? '🏅 Go to award ceremony' : '⏭️ Go to next week'} disabled={!canControl || !inSeason || atAwards || !!simming} title={toAwards ? 'Finish the regular season?' : `Finish Week ${wk}?`} yes={toAwards ? 'Go to the award ceremony' : 'Go to next week'}
+          text={`${inSandbox() ? '🧪 TEST mode. ' : ''}${left.length ? `${left.length} unplayed game${left.length === 1 ? '' : 's'} this week get${left.length === 1 ? 's' : ''} quick-simmed first (final results, no broadcast). ` : ''}${toAwards ? 'The Live tab turns into the Award Ceremony. ' : ''}Every coach gets a notice, and the bots make their weekly moves.`} onConfirm={go} />}
         {simming && <p className="dim">⚡ Simming this week's games: {simming}...</p>}
-        {needAwards && <p className="aw-cer-warn">🏅 Before going past Week 12, confirm the award finalists: <a href="#control-awards">Commissioner's Desk → Awards</a>.</p>}
+        {mustLock && (
+          <Modal onClose={() => setMustLock(false)} className="confirm-modal">
+            <h2>🔒 Confirm the finalists first</h2>
+            <p>You must confirm the award finalists before going to the award ceremony.</p>
+            <div className="confirm-actions"><button className="btn ghost" onClick={() => setMustLock(false)}>Close</button><a className="btn" href="#control-awards" onClick={() => setMustLock(false)}>Go to Awards</a></div>
+          </Modal>
+        )}
         {error && <p className="form-error">{error}</p>}
         {result && <p className="week-result">✅ Week {result.week} is here. Bots: {result.bots.blocks} on the block · {result.bots.deals} bot trade{result.bots.deals === 1 ? '' : 's'} · {result.bots.offers} offer{result.bots.offers === 1 ? '' : 's'} to coaches · {result.bots.filled} free agents signed.</p>}
       </section>

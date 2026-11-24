@@ -1,5 +1,6 @@
 import React from 'react';
 import Modal from './Modal.jsx';
+import AwardTags from './AwardTags.jsx';
 import Headshot from './Headshot.jsx';
 import StarRating from './StarRating.jsx';
 import MoodTag from './MoodTag.jsx';
@@ -34,6 +35,7 @@ export default function PlayerModal({ player, team, canSeePotential, potential, 
             <div className="pcard-num">#{player.number ?? '-'} · {POSITION_NAMES[player.position] || player.position}</div>
             <h2>{player.name}</h2>
             <div className="pcard-team">{team.name} · {player.depth === 'starter' ? 'Starter' : 'Backup'}</div>
+            <AwardTags playerId={player.id} />
             <StarRating value={player.stars} elite={player.elite} peak={player.peakStars} showNumber />
           </div>
         </div>
