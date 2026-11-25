@@ -65,3 +65,4 @@
 .gf-scoring li { display: grid; grid-template-columns: 22px 64px 34px 1fr; align-items: center; gap: 8px; padding: 5px 8px; background: #0006; border: 1px solid #000; font-size: 13px; }
 .gf-scoring img { width: 20px; height: 20px; object-fit: contain; } .gf-scoring span { color: var(--dim); font-family: var(--label); } .gf-scoring b { color: var(--gold); }
 .gp-paused { display: grid; justify-items: center; gap: 4px; } .gp-paused b { font-family: var(--label); letter-spacing: .14em; color: var(--gold); } .gp-paused span { color: var(--dim); font-size: 13px; }
+.gp-bowl { max-height: 120px; max-width: 200px; margin-bottom: 6px; filter: drop-shadow(0 0 18px #ffd84a66) drop-shadow(3px 3px 0 #000a); }

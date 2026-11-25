@@ -6,6 +6,7 @@ import { toPlayer } from './loadLeague.js';
 import { selectAll } from './selectAll.js';
 import { ATTRIBUTES } from '../lib/attributeDefs.js';
 import { seeded } from '../lib/seed.js';
+import { boardRanks } from '../lib/draftBoard.js';
 
 // Test-only stand-in class so screenshots work offline.
 const FIRST = ['Tobi', 'Cole', 'Jaxon', 'Lachlan', 'Darius', 'Sione', 'Marcus', 'Liam', 'Keon', 'Malik', 'Brody', 'Tre', 'Isaiah', 'Rowan', 'Dante', 'Kai'];
@@ -16,19 +17,23 @@ export function demoClass(season, count = 60) {
   return Array.from({ length: count }, (_, i) => {
     const r = seeded(`demo-prospect-${i}`);
     const stars = [3, 3, 2.5, 3, 2.5, 2.5, 2, 3, 2, 2.5, 1.5, 2, 2, 1.5, 1, 2][i % 16];
+    const grade = Math.max(5, Math.min(99, Math.round(stars * 26 - 10 + r(14))));
     return { id: `demo-dr-${i}`, name: `${FIRST[i % 16]} ${LAST[(i * 7 + 3) % 16]}`, position: pos[r(pos.length)], stars, age: 21 + r(2), status: 'prospect', notes: [],
       nationality: i % 9 === 4 ? 'Nigeria' : 'USA', college: SCHOOLS[i % SCHOOLS.length], height: 70 + r(8), weight: 190 + r(120), draftSeason: season, looks: {},
-      collegeStats: { class: 'Senior', games: 13, stats: [['Tackles', 40 + r(40)], ['Sacks', 2 + r(10)], ['INT', r(4)], ['Forced fumbles', r(4)]], honors: i % 3 === 0 ? ['All-Conference First Team'] : [] } };
+      collegeStats: { class: 'Senior', games: 12, stats: [['Tackles', 40 + r(40)], ['Sacks', 2 + r(10)], ['INT', r(4)], ['Forced fumbles', r(4)]], honors: i % 3 === 0 ? ['All-Conference First Team'] : [], grade } };
   });
 }
+
+// Each prospect carries his spot on the draft board (by college grade, over the whole class, so it never shifts mid-draft).
+const ranked = (list) => { const rk = boardRanks(list); return list.map((p) => ({ ...p, boardRank: rk[p.id] })); };
 
 export function useDraftClass(season) {
   const [list, setList] = useState(null);
   useEffect(() => {
     let live = true;
-    if (DEMO) { setList(demoClass(season)); return undefined; }
+    if (DEMO) { setList(ranked(demoClass(season))); return undefined; }
     selectAll(() => db.from('players').select('*').eq('status', 'prospect').eq('draft_season', season).order('id'))
-      .then(({ data }) => { if (live) setList((data || []).map(toPlayer)); });
+      .then(({ data }) => { if (live) setList(ranked((data || []).map(toPlayer))); });
     return () => { live = false; };
   }, [season]);
   return list;

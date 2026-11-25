@@ -9,6 +9,7 @@ export function applyDemoOverrides() {
   if (params.get('step')) store.league.meta.offseasonStep = Number(params.get('step'));
   if (params.get('round')) store.league.meta.faRound = Number(params.get('round'));
   if (params.get('sandbox')) store.league.meta.sandbox = true;
+  if (params.get('demoplay')) { store.league.meta.phase = 'regular_season'; store.league.meta.currentWeek = Number(params.get('demoplay')); }   // the playoff preview
 }
 applyDemoOverrides();
 

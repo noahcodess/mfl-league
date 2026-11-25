@@ -1,6 +1,7 @@
 import React from 'react';
 import PixelCanvas from './PixelCanvas.jsx';
 import { makeDrift, makeOrbit } from '../lib/pixelSwarm.js';
+import { gameWhen } from '../lib/playoffRounds.js';
 
 // Intro shot 1: the broadcast's logo punches in with pixels swirling around it, then the matchup slides up underneath.
 // Stacked top to bottom so nothing overlaps.
@@ -15,9 +16,9 @@ export default function IntroOpen({ bc, game, home, away }) {
           <img className="open-logo" src={bc.logo} alt={bc.title} />
         </div>
         <div className="open-sub">
-          <span className="open-week">{bc.prime ? bc.show.name : `Week ${game.week}`}</span>
+          <span className="open-week">{bc.prime ? bc.show.name : gameWhen(game)}</span>
           <b className="open-teams" style={{ '--len': away.name.length + home.name.length }}><span>{away.name}</span><i>at</i><span>{home.name}</span></b>
-          {bc.prime && <span className="open-time">Week {game.week} · {game.time}</span>}
+          {bc.prime && <span className="open-time">{gameWhen(game)} · {game.time}</span>}
         </div>
       </div>
     </div>

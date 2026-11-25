@@ -10,7 +10,7 @@ export default function CommishPickModal({ team, prospects, onPick, onClose, ini
   const [sure, setSure] = useState(initial || null);
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState('');
-  const hits = prospects.filter((p) => `${p.name} ${p.position} ${p.college}`.toLowerCase().includes(q.toLowerCase())).sort((a, b) => b.stars - a.stars).slice(0, 30);
+  const hits = prospects.filter((p) => `${p.name} ${p.position} ${p.college}`.toLowerCase().includes(q.toLowerCase())).sort((a, b) => (a.boardRank ?? 999) - (b.boardRank ?? 999)).slice(0, 30);
   const go = async () => {
     setBusy(true); setErr('');
     try { await onPick(sure); } catch (e) { setErr(e.message); setBusy(false); }

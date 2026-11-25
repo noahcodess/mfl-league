@@ -11,12 +11,13 @@ export const STAGES = {
   camp: { icon: '🏟️', title: 'Preseason', next: 'season_start' },
   season: { icon: '🏟️', title: 'Regular season', next: 'trade_deadline' },
   awards: { icon: '🏅', title: 'Award Ceremony', next: 'playoffs' },
+  playoffs: { icon: '🏆', title: 'Playoffs', next: null },
 };
 
 // draft = { status } from the draft room (or null), draftAt = scheduled draft night ISO time, now = ms.
-// week: the league's saved week (past 12 = the award ceremony, its own moment).
+// week: the league's saved week (13 = the award ceremony, its own moment; 14-16 = the playoffs).
 export function liveStage({ phase, step, draft, draftAt, week = 0, roomOpensMin = 15, now = Date.now() }) {
-  if (phase === 'regular_season') return week > 12 ? 'awards' : 'season';
+  if (phase === 'regular_season') return week >= 14 ? 'playoffs' : week > 12 ? 'awards' : 'season';
   if (step === 0) return 'birthday_soon';
   if (step === 1) return 'birthday';
   if (step === 2) return 'resign';

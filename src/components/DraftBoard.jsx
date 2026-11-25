@@ -4,13 +4,14 @@ import { FA_JERSEY } from './FaOfferModal.jsx';
 import { ALL_POSITIONS } from '../data/positions.js';
 
 // The big board: everyone still available. Filter by your watch list, the players you scouted, a position, or search.
-// When you're on the clock, every row gets a Draft button.
+// Listed in draft board order (college grade). When you're on the clock, every row gets a Draft button.
 export default function DraftBoard({ prospects, potentials, flags, scouted, canFlag, onFlag, onClock, onDraft, onOpen }) {
   const [view, setView] = useState('all');
   const [pos, setPos] = useState('ALL');
   const [q, setQ] = useState('');
   const shown = prospects.filter((p) => (view === 'all' || (view === 'flags' ? flags.has(p.id) : scouted.has(p.id)))
     && (pos === 'ALL' || p.position === pos) && (!q || `${p.name} ${p.college}`.toLowerCase().includes(q.toLowerCase())));
+  const ranks = Object.fromEntries(prospects.map((p) => [p.id, p.boardRank]));
   const count = (x) => prospects.filter((p) => p.position === x).length;
   const tags = (p) => (
     <>
@@ -36,7 +37,7 @@ export default function DraftBoard({ prospects, potentials, flags, scouted, canF
         ))}
       </div>
       {shown.length ? (
-        <PlayerTable players={shown} jersey={FA_JERSEY} onOpen={onOpen} potentials={potentials} tags={tags}
+        <PlayerTable players={shown} jersey={FA_JERSEY} onOpen={onOpen} potentials={potentials} tags={tags} ranks={ranks}
           sub={(p) => `${p.college} · ${p.collegeStats?.class || 'Senior'}`} />
       ) : <p className="dim board-empty">{view === 'flags' ? 'Tap 👀 on players to build your watch list.' : view === 'scouted' ? 'You haven\'t scouted anyone still on the board.' : 'Nobody matches.'}</p>}
     </div>

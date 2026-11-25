@@ -11,7 +11,7 @@ import { usePotentials } from '../data/potentials.js';
 import { useFaOffers, faOpen, faRound, faRounds } from '../data/freeAgency.js';
 import { useMyScouts } from '../data/scouting.js';
 
-// The free agent market: every unsigned player, filter by position, sort. Tap one for his full card (potential stays locked
+// The free agent market: every unsigned player (listed in a fresh random order each visit), filter by position, sort. Tap one for his full card (potential stays locked
 // until you scout him); from the card you can scout or make an offer during free agency. Your scouts left sit up top.
 
 function marketStatus() {
@@ -50,7 +50,7 @@ export default function FreeAgentsPage({ viewer }) {
             ))}
           </div>
           {!shown.length && <p className="dim">Nobody here right now.</p>}
-          <PlayerTable players={shown} jersey={FA_JERSEY} onOpen={setOpen} potentials={seesPot ? potentials.map : null}
+          <PlayerTable players={shown} jersey={FA_JERSEY} onOpen={setOpen} potentials={seesPot ? potentials.map : null} shuffle
             sub={(p) => (p.previousTeamId ? `Last team: ${getTeam(p.previousTeamId)?.code || p.previousTeamId}` : p.nationality && p.nationality !== 'USA' ? p.nationality : 'Free agent')}
             tags={(p) => (offeredIds.has(p.id) ? <span className="offer-tag">Your offer</span> : null)} />
         </section>

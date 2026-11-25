@@ -9,6 +9,7 @@ import RankClimb from './RankClimb.jsx';
 import { playsOfTheGame } from '../lib/playsOfGame.js';
 import { clipFor } from '../lib/replayClip.js';
 import { rankMoves } from '../lib/finalRanks.js';
+import { gameWhen, isPlayoffGame } from '../lib/playoffRounds.js';
 import { playerOfGame } from '../lib/playerOfGame.js';
 import { createShowAudio } from '../lib/showAudio.js';
 import { getTeams } from '../data/teams.js';
@@ -22,7 +23,7 @@ export default function FinalReport({ game, teams, sideOf, bc, film, finale, snd
   useEffect(() => { sfx.current = createShowAudio(); return () => sfx.current?.close(); }, []);
   useEffect(() => { sfx.current?.setVolume(snd?.on ? (snd.vol ?? 0.7) : 0); }, [snd?.on, snd?.vol]);
   const best = useMemo(() => (film.lineups ? playsOfTheGame(game.plays).map((p) => ({ p, clip: clipFor(p, film.lineups, film.seed) })) : []), [game.plays, film.lineups, film.seed]);
-  const moves = useMemo(() => rankMoves(finale.season?.weeks || [], { id: finale.match.id, home: teams.home.id, away: teams.away.id }, score, getTeams()).filter(Boolean), [finale.season]); // eslint-disable-line react-hooks/exhaustive-deps
+  const moves = useMemo(() => rankMoves(finale.season?.weeks || [], { id: finale.match.id, home: teams.home.id, away: teams.away.id }, score, getTeams(), isPlayoffGame(finale.match)).filter(Boolean), [finale.season]); // eslint-disable-line react-hooks/exhaustive-deps
   const potg = useMemo(() => {
     const rows = Object.entries(game.players || {}).map(([id, s]) => ({ player_id: id, team_id: teams[sideOf[id]]?.id, stats: s })).filter((r) => r.team_id);
     return playerOfGame(rows, score.home >= score.away ? teams.home.id : teams.away.id);
@@ -34,7 +35,7 @@ export default function FinalReport({ game, teams, sideOf, bc, film, finale, snd
       <div className="ht-score">
         {['away', 'home'].map((k) => <div key={k} className={`ht-team ${k}${score[k] > score[k === 'home' ? 'away' : 'home'] ? ' won' : ''}`} style={{ '--tc': teams[k].color }}><img src={teams[k].logo} alt="" /><b className="hf">{score[k]}</b><span>{teams[k].code}</span></div>)}
       </div>
-      <small>Week {finale.match.week} · {teams.home.name} host {teams.away.name}</small>
+      <small>{gameWhen(finale.match)} · {teams.home.name} {finale.match.kind === 'craft_bowl' ? 'vs' : 'host'} {teams.away.name}</small>
     </div>
   );
   const steps = [

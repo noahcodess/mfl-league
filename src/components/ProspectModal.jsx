@@ -19,7 +19,7 @@ export default function ProspectModal({ player, potential, scouts, scouted, onSc
       <div className="pcard-head">
         <Headshot player={player} team={FA_JERSEY} size={128} />
         <div>
-          <div className="pcard-num">Draft prospect · {POSITION_NAMES[player.position] || player.position}</div>
+          <div className="pcard-num">Draft prospect · {POSITION_NAMES[player.position] || player.position}{player.boardRank ? ` · Board #${player.boardRank}` : ''}</div>
           <h2>{player.name}</h2>
           <div className="pcard-team">{player.college} · {cs.class || 'Senior'}</div>
           <StarRating value={player.stars} showNumber />
@@ -39,7 +39,8 @@ export default function ProspectModal({ player, potential, scouts, scouted, onSc
             <div className="college">
               <div className="college-head">Last college season · {player.college}</div>
               <div className="college-stats">
-                <div><span>Games</span><b>{cs.games ?? '-'}</b></div>
+                <div><span>Games</span><b>{cs.games != null ? `${cs.games} of 12` : '-'}</b></div>
+                {cs.grade != null && <div><span>College grade</span><b>{cs.grade}</b></div>}
                 {(cs.stats || []).map(([label, value]) => <div key={label}><span>{label}</span><b>{value}</b></div>)}
               </div>
               {cs.honors?.length > 0 && <div className="honors">{cs.honors.map((h) => <span key={h} className="honor">🏅 {h}</span>)}</div>}

@@ -11,12 +11,14 @@ import { openGameBooth } from '../lib/windows.js';
 import { useGame, useRivals, isRivalry } from '../data/liveSeason.js';
 import { useGameState, isRealGame, startGame, flipKickoff, PREGAME, clockText, quarterText, finalText } from '../data/gameState.js';
 import { useStadiums } from '../data/stadiums.js';
-import { getTeam, isTestMode } from '../data/teams.js';
+import { getTeam, isTestMode, currentSeason } from '../data/teams.js';
 import { broadcastFor } from '../data/broadcast.js';
 import { records, recordText } from '../lib/seasonStats.js';
 import { links } from '../lib/router.js';
 import { brightness } from '../lib/pixels.js';
 import { ConfMatch } from '../components/ConfLogo.jsx';
+import { gameWhen } from '../lib/playoffRounds.js';
+import { useCraftBowlPlan, logoSrc } from '../data/craftBowlPlans.js';
 
 const ROOM_OPENS = 5 * 60e3;
 const mmss = (ms) => { const s = Math.max(0, Math.ceil(ms / 1000)); return s >= 3600 ? `${Math.floor(s / 3600)}h ${Math.floor(s / 60) % 60}m` : `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`; };
@@ -31,12 +33,13 @@ export default function GamePage({ id, canControl, teamId }) {
   const [version, setVersion] = useState(0);
   const live = useGameState(id, version);
   const [local, setLocal] = useState(null), [run, setRun] = useState(0), [kick, setKick] = useState(null), [resumeAt, setResumeAt] = useState(null), [handoff, setHandoff] = useState(null);
-  const gate = useWeekGate(found?.game || { week: 0 }, found?.season);
+  const gate = useWeekGate(found?.game || { week: 0 }, found?.season), plan = useCraftBowlPlan(currentSeason());
   if (!found) return <p className="dim">Looking for that game...</p>;
   const { game, season } = found, home = getTeam(game.home), away = getTeam(game.away), bc = broadcastFor(game, home);
   const real = isRealGame(id), st = real ? live : (local || PREGAME), rec = records(season.weeks.slice(0, game.week - 1));
   const mine = [home.id, away.id].includes(teamId), at = game.startsAt ? Date.parse(game.startsAt) : null;
   const roomOpen = !real || (at && now >= at - ROOM_OPENS) || st?.status === 'live';
+  const bowl = game.kind === 'craft_bowl', host = bowl && plan?.stadium ? getTeam(plan.stadium) : home;
   const final = game.status === 'final', score = (side) => (final ? game[`${side}Score`] : st?.[`${side}_score`]);
   const paused = real && !final && st?.status === 'live';
   const resume = async () => { const k = await startGame(id); setKick(k); setResumeAt(st?.play_index || 0); setRun((n) => n + 1); };
@@ -56,9 +59,10 @@ export default function GamePage({ id, canControl, teamId }) {
     <div className="game-page">
       <a href={links.live} className="dim">← Live</a>
       <section className="gp-hero" style={{ '--ac': away.color, '--hc': home.color }}>
+        {bowl && <img className="gp-bowl" src={logoSrc(plan?.logo) || `${import.meta.env.BASE_URL}img/craft-bowl.png`} alt="Craft Bowl" />}
         <img className="gp-net" src={bc.logo} alt={bc.title} />
         <div className="gp-match">{team(away, 'away')}<span className="gp-at">at</span>{team(home, 'home')}</div>
-        <p className="gp-where">🏟️ {stadiums[home.id]?.name || home.name} · Week {game.week} · {bc.title}{isRivalry(game, rivals) && <span className="rival-badge">⚔️ Rivalry</span>}<ConfMatch home={home} away={away} /></p>
+        <p className="gp-where">🏟️ {stadiums[host.id]?.name || host.name} · {gameWhen(game)} · {bc.title}{isRivalry(game, rivals) && <span className="rival-badge">⚔️ Rivalry</span>}<ConfMatch home={home} away={away} /></p>
         {final ? <p className="gp-final">{finalText(st?.quarter).toUpperCase()}</p> : paused ? (
           <p className="gp-paused"><b>⏸ PAUSED</b><span>{quarterText(st.quarter)}{st.quarter >= 5 ? '' : ` · ${clockText(st.clock_left ?? 0)} left`}</span></p>
         ) : <KickoffClock startsAt={game.startsAt} status={st?.status} />}

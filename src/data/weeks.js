@@ -11,6 +11,15 @@ export async function advanceWeek() {
   return data;
 }
 
+// The playoffs move round by round (Week 13 ceremony → 14 Quarterfinals → 15 Semifinals → 16 Craft Bowl). seeds is only
+// needed to start them: { Overworld: [id x4], Nether: [id x4] }, the 1 seed first, from the standings the site shows.
+export async function advancePlayoffs(seeds = null) {
+  if (DEMO) return { week: 14, round: 'The Quarterfinals', games: 4 };
+  const { data, error } = await db.rpc('advance_playoffs', { p_seeds: seeds });
+  if (error) throw new Error(error.message.includes('not allowed') ? 'Only the commissioner can do this.' : error.message.replace(/^.*?ERROR:\s*/, ''));
+  return data;
+}
+
 // Moves the saved week up to `target` (never past 12). Quietly does nothing for anyone but the commissioner. Returns how
 // many weeks it moved.
 export async function catchUpWeeks(target) {

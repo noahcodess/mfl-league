@@ -5,6 +5,8 @@ import { sampleSeason } from '../lib/sampleSeason.js';
 import { useSeasonGames, rivalPairs } from './games.js';
 import { getTeams, currentSeason, currentWeek, currentPhase } from './teams.js';
 import { getPlayers } from './players.js';
+import { ROUNDS } from '../lib/playoffRounds.js';
+import { DEMO_PLAY } from './playoffDemo.js';
 
 let sample = null;
 export function getSampleSeason() {
@@ -22,13 +24,17 @@ export function weekNow(games) {
   return Math.min(12, Math.max(1, currentWeek() || 1, ...played));   // the league's week (a game played from a later week has moved it there)
 }
 
+const card = (g) => ({
+  id: g.id, week: g.week, kind: g.kind, home: g.home, away: g.away, window: g.prime, time: g.starts_at ? timeText(g.starts_at) : 'Time to be set',
+  status: g.status === 'final' ? 'final' : 'upcoming', homeScore: g.home_score, awayScore: g.away_score, lines: [], rivalry: !!g.rivalry, startsAt: g.starts_at || null,
+});
+
+// weeks: the 12 regular-season weeks (records and standings only ever count these). playoffs: each round once it's set.
 function fromGames(games) {
   const weeks = Array.from({ length: 12 }, (_, i) => ({ week: i + 1, games: [] }));
-  games.filter((g) => g.kind === 'regular' && g.week >= 1 && g.week <= 12).forEach((g) => weeks[g.week - 1].games.push({
-    id: g.id, week: g.week, home: g.home, away: g.away, window: g.prime, time: g.starts_at ? timeText(g.starts_at) : 'Time to be set',
-    status: g.status === 'final' ? 'final' : 'upcoming', homeScore: g.home_score, awayScore: g.away_score, lines: [], rivalry: !!g.rivalry, startsAt: g.starts_at || null,
-  }));
-  return { sample: false, current: weekNow(games), weeks };
+  games.filter((g) => g.kind === 'regular' && g.week >= 1 && g.week <= 12).forEach((g) => weeks[g.week - 1].games.push(card(g)));
+  const playoffs = ROUNDS.map((r) => ({ ...r, games: games.filter((g) => g.kind === r.kind).map(card) })).filter((r) => r.games.length);
+  return { sample: false, current: weekNow(games), weeks, playoffs };
 }
 
 // Every rivalry as a set of 'a|b' keys (both orders), for the ⚔️ Rivalry badge.
@@ -50,7 +56,7 @@ export function useGame(id) {
   const games = useSeasonGames(currentSeason());
   return useMemo(() => {
     const seasons = [games?.some((g) => g.kind === 'regular') ? fromGames(games) : null, getSampleSeason()];
-    for (const s of seasons.filter(Boolean)) for (const w of s.weeks) { const g = w.games.find((x) => String(x.id) === String(id)); if (g) return { game: g, season: s }; }
+    for (const s of seasons.filter(Boolean)) for (const w of [...s.weeks, ...(s.playoffs || [])]) { const g = w.games.find((x) => String(x.id) === String(id)); if (g) return { game: g, season: s }; }
     return null;
   }, [games, id]);
 }
@@ -59,7 +65,7 @@ export function useGame(id) {
 export function useLiveSeason(preview = false) {
   const games = useSeasonGames(currentSeason());
   return useMemo(() => {
-    const real = currentPhase() === 'regular_season' && games?.some((g) => g.kind === 'regular');
+    const real = (currentPhase() === 'regular_season' || DEMO_PLAY) && games?.some((g) => g.kind === 'regular');   // (dev: the playoff preview)
     if (real && !preview) return fromGames(games);
     return getSampleSeason();
   }, [games, preview]);

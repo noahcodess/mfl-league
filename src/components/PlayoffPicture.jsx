@@ -11,5 +11,5 @@ export default function PlayoffPicture() {
   const season = useLiveSeason();
   const rec = useMemo(() => records(season.weeks), [season]);
   if (season.sample || season.current < PLAYOFFS_FROM) return null;
-  return <PlayoffBracket rec={rec} settled={seasonSettled(season)} />;
+  return <PlayoffBracket rec={rec} settled={seasonSettled(season)} rounds={season.playoffs || []} />;
 }

@@ -6,6 +6,7 @@ import { headliners } from '../data/gameKits.js';
 import { recordText } from '../lib/seasonStats.js';
 import { brightness } from '../lib/pixels.js';
 import { ConfMatch } from './ConfLogo.jsx';
+import { gameWhen } from '../lib/playoffRounds.js';
 
 function Half({ side, team, kit, rec }) {
   return (
@@ -33,7 +34,7 @@ export default function IntroMatchup({ bc, game, home, away, kits, rec, stadium 
       <Half side="away" team={away} kit={kits?.away} rec={rec[away.id]} />
       <Half side="home" team={home} kit={kits?.home} rec={rec[home.id]} />
       <div className="match-vs"><span>@</span></div>
-      <div className="match-bar"><img src={bc.net.logo} alt="" /><span>Week {game.week}</span><span>{game.time}</span><span>{stadium?.name}</span><ConfMatch home={home} away={away} size={22} /></div>
+      <div className="match-bar"><img src={bc.net.logo} alt="" /><span>{gameWhen(game)}</span><span>{game.time}</span><span>{stadium?.name}</span><ConfMatch home={home} away={away} size={22} /></div>
     </div>
   );
 }

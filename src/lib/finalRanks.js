@@ -16,14 +16,15 @@ function table(teams, games) {
 }
 const order = (rows, cat) => [...rows].sort((a, b) => (!a.gp - !b.gp) || cat.better(a, b));   // unplayed teams last
 
-// weeks: the season's weeks. game: this game ({ id, home, away }). score: { home, away }. teams: every team.
+// weeks: the season's weeks. game: this game ({ id, home, away }). score: { home, away }. teams: every team. playoff: a
+// playoff game never moves the standings, so only the offense and defense ranks can change.
 // Returns up to 3 graphics: { cat, title, conf, team, from, to, rows (after, in order), was (ids in the old order) }.
-export function rankMoves(weeks, game, score, teams) {
+export function rankMoves(weeks, game, score, teams, playoff = false) {
   const played = weeks.flatMap((w) => w.games).filter((g) => g.status === 'final' && g.id !== game.id);
   const now = [...played, { home: game.home, away: game.away, homeScore: score.home, awayScore: score.away }];
   const b4 = table(teams, played), af = table(teams, now), confOf = Object.fromEntries(teams.map((t) => [t.id, t.conference]));
   const win = score.home >= score.away ? game.home : game.away, out = [];
-  for (const id of [game.home, game.away]) for (const cat of CATS) {
+  for (const id of [game.home, game.away]) for (const cat of CATS.filter((c) => !playoff || c.key !== 'conf')) {
     const pool = (rows) => (cat.key === 'conf' ? rows.filter((r) => confOf[r.id] === confOf[id]) : rows);
     const was = order(pool(b4), cat), is = order(pool(af), cat);
     const from = b4.find((r) => r.id === id).gp ? was.findIndex((r) => r.id === id) + 1 : null, to = is.findIndex((r) => r.id === id) + 1;
@@ -34,5 +35,5 @@ export function rankMoves(weeks, game, score, teams) {
   }
   const best = out.filter((m) => m.score > 1).sort((a, b) => b.score - a.score), pick = [];
   for (const m of best) if (pick.length < 3 && pick.filter((p) => p.team === m.team).length < 2) pick.push(m);
-  return pick.length ? pick : [out.find((m) => m.team === win && m.cat === 'conf')];   // nothing moved much: the winner's conference standings
+  return pick.length ? pick : [out.find((m) => m.team === win && m.cat === 'conf')].filter(Boolean);   // nothing moved much: the winner's conference standings
 }

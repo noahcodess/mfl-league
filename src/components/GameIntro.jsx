@@ -7,7 +7,8 @@ import IntroPlayer from './IntroPlayer.jsx';
 import IntroTape from './IntroTape.jsx';
 import IntroCrowd from './IntroCrowd.jsx';
 import LiveGame from './LiveGame.jsx';
-import { getTeam } from '../data/teams.js';
+import { getTeam, currentSeason } from '../data/teams.js';
+import { useCraftBowlPlan } from '../data/craftBowlPlans.js';
 import { getPlayers } from '../data/players.js';
 import { broadcastFor } from '../data/broadcast.js';
 import { useGameKits } from '../data/gameKits.js';
@@ -33,7 +34,8 @@ const FADE = 450;
 export default function GameIntro({ game, season, kick, st, resume: resumeAt = null, onClose, onReplay, onFinal }) {
   const resume = import.meta.env.DEV && /devfinal/.test(window.location.search) ? 9999 : resumeAt;   // dev: start on the last play (to see the end-of-game show)
   const home = getTeam(game.home), away = getTeam(game.away), bc = broadcastFor(game, home);
-  const kits = useGameKits(home, away, game), stadium = useStadiums()[home.id], att = useGameCrowd(game);
+  const plan = useCraftBowlPlan(currentSeason()), host = game.kind === 'craft_bowl' && plan?.stadium ? plan.stadium : home.id;   // the Craft Bowl is at its host stadium
+  const kits = useGameKits(home, away, game), stadium = useStadiums()[host], att = useGameCrowd(game);
   const before = useMemo(() => season.weeks.slice(0, game.week - 1), [season, game.week]);
   const rec = useMemo(() => records(before), [before]);
   const stats = useMemo(() => teamStats(before), [before]);
