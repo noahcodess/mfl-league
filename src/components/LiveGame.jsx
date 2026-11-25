@@ -16,7 +16,7 @@ const sameInputs = (a = [], b = []) => JSON.stringify(a) === JSON.stringify(b);
 
 // game: the scheduled game. home/away: team objects. kick: { receiving, seed } from the kickoff. st: the live game state
 // (inputs saved with it, a coach's timeout). rec: records for the scorebugs.
-export default function LiveGame({ game, home, away, kick, resume = 0, st = null, rec = null }) {
+export default function LiveGame({ game, home, away, kick, resume = 0, st = null, rec = null, season, onFinal }) {
   const lineups = useGameLineups(home.id, away.id);
   const [rivalry, setRivalry] = useState(null), [done, setDone] = useState(''), real = isRealGame(game.id);
   const [inputs, setInputs] = useState(() => (kick?.already ? st?.inputs || [] : DEV_INJ ? [{ kind: 'injury', n: DEV_INJ }] : []));
@@ -60,7 +60,7 @@ export default function LiveGame({ game, home, away, kick, resume = 0, st = null
   return (
     <>
       <PixelGame game={result} teams={{ home, away }} lineups={lineups} match={game} full onDone={onDone} onPlay={onPlay} startAt={Math.min(resume, result.plays.length - 1)}
-        rec={rec} boothId={game.id} onInput={onInput} sound={crowd || { fill: 0.75 }} />
+        rec={rec} boothId={game.id} onInput={onInput} sound={crowd || { fill: 0.75 }} finale={season && onFinal ? { match: game, season, onFinal } : null} />
       {done && done !== 'saving' && <div className={`lg-saved${done === 'saved' ? '' : ' bad'}`}>{done === 'saved' ? '✅ Final saved: records and stats are in' : done === 'test' ? '🧪 Test game: a test tool was used, so it isn\'t saved' : done}</div>}
     </>
   );

@@ -26,6 +26,7 @@ import { penaltyCall } from '../lib/penaltyCall.js';
 import { callStage, callCam, CALL_LEN, CALL_PANEL } from '../lib/refCallShow.js';
 import { planGraphics } from '../lib/broadcastGfx.js';
 import HalftimeReport from './HalftimeReport.jsx';
+import FinalReport from './FinalReport.jsx';
 import OvertimeRules from './OvertimeRules.jsx';
 import QuarterRecap from './QuarterRecap.jsx';
 import useBoothRemote from './useBoothRemote.js';
@@ -62,7 +63,7 @@ function makeLooks(lineups, kits, teams, drips) {
 // onInput(input): a timeout or test tool from the booth (the game replays from there). sound: the game's crowd, for the
 // commissioner's crowd sound (null: silent). Pre-play cutscenes (cutPlan): the Creepers whiteout, a Bloodbath opener and
 // the two-minute warning.
-export default function PixelGame({ game, teams, lineups, onClose, onDone, onPlay, startAt = 0, match = null, full = false, rec = null, boothId = null, onInput, sound = null }) {
+export default function PixelGame({ game, teams, lineups, onClose, onDone, onPlay, startAt = 0, match = null, full = false, rec = null, boothId = null, onInput, sound = null, finale = null }) {
   const [sting, setSting] = useState(0), [i, setI] = useState(startAt), [speed, setSpeed] = useState(1), [paused, setPaused] = useState(false), [beat0, setBeat] = useState({ post: false, phase: 'live', i: startAt });
   const beat = beat0.i === i ? beat0 : { post: false, phase: 'live', i };   // a beat from the last play never leaks into this one (no flash of how this play ends)
   const [brk, setBrk] = useState(null), shownBrk = useRef(new Set());   // a break between plays: 'half' (the halftime report) or 'ot' (the overtime rules), live = covering the field
@@ -83,6 +84,7 @@ export default function PixelGame({ game, teams, lineups, onClose, onDone, onPla
   const inj = play && game.injuries?.find((x) => x.n === play.n), reps = useMemo(() => reportPlays(game.plays, game.injuries), [game.plays, game.injuries]), rep = reps[i];   // someone hurt on this play; the injury report due on this one
   const sideOf = useMemo(() => Object.fromEntries(['home', 'away'].flatMap((s) => everyone(lineups, s).map((p) => [p.id, s]))), [lineups]);
   const marks = useMemo(() => ({ q1: game.plays.findIndex((p) => p.before.quarter === 2), half: game.plays.findIndex((p) => p.before.quarter === 3), q3: game.plays.findIndex((p) => p.before.quarter === 4), ot: game.plays.findIndex((p) => p.before.quarter >= 5) }), [game.plays]);   // the first snap of the 2nd, the second-half kickoff, the first snap of the 4th, the first overtime snap
+  useEffect(() => { if (!done || !finale) return undefined; const t = setTimeout(() => setBrk({ kind: 'final', live: true }), 3500); return () => clearTimeout(t); }, [done]); // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => { const kind = i === marks.half ? 'half' : i === marks.ot ? 'ot' : i === marks.q1 ? 'q1' : i === marks.q3 ? 'q3' : null; if (kind && i > 0 && !shownBrk.current.has(i)) { shownBrk.current.add(i); setBrk({ kind, live: true }); } }, [i, marks]);
   const fresh = i === 0 || i === marks.half || i === marks.ot;   // the scorebug builds in again for these kickoffs
   const jumpTo = (k) => { const q = play?.before.quarter ?? 1, at = k === 'half' ? marks.half : k === 'ot' ? marks.ot : k === 'nextq' ? game.plays.findIndex((p, n) => n > i && p.before.quarter > q) : -1; setI(at > i ? at : game.plays.length); };
@@ -178,7 +180,8 @@ export default function PixelGame({ game, teams, lineups, onClose, onDone, onPla
         <BroadcastSlot pre={ix ? null : gpre} pace={pace} bt={bt} live={pre} play={play} teams={teams} bug={bc.bug} playerOf={playerOf} n={i} />
         {pzUp && !brk?.live && <StadiumPulse key={`sp${i}${pzAfter ? 'a' : ''}`} v={pzAfter ? pz.after : pz.v} net={bc.net.key} hit={pz.hit && beat.post} run={pz.run} out={pzOut} />}
         {bugUp && <div className="pg-shelf" />}
-        {brk && (() => {   // the break plays at its mark, or wherever the booth previews it (at)
+        {brk?.kind === 'final' && <FinalReport game={game} teams={teams} sideOf={sideOf} bc={bc} film={{ lineups, looks, seed: game.seed || 1 }} finale={finale} snd={snd} />}
+        {brk && brk.kind !== 'final' && (() => {   // the break plays at its mark, or wherever the booth previews it (at)
           const at = brk.at ?? marks[brk.kind], p0 = game.plays[Math.min(at, game.plays.length - 1)], ends = { onReveal: () => setBrk((b) => b && { ...b, live: false }), onDone: () => setBrk(null) };
           const film = { lineups, looks, seed: game.seed || 1 };   // to act out the replays
           if (brk.kind === 'q1' || brk.kind === 'q3') return <QuarterRecap q={brk.kind === 'q1' ? 1 : 3} plays={game.plays.slice(0, at)} score={p0.before.score} teams={teams} bc={bc} {...film} {...ends} />;

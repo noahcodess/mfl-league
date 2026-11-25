@@ -14,6 +14,7 @@ import { getPicks } from '../data/picks.js';
 import { links } from '../lib/router.js';
 import { usePotentials } from '../data/potentials.js';
 import { usePlayerTraits } from '../data/traits.js';
+import ConfLogo from '../components/ConfLogo.jsx';
 
 // One team: ratings, cap, coach, fan support, roster (click a player for his card) and picks.
 // rosterOnly (My Team → Roster): just the header (name, offense, defense, cap) and the roster.
@@ -32,7 +33,7 @@ export default function TeamPage({ teamId, viewer, rosterOnly = false }) {
       <div className="team-head">
         <TeamBadge team={team} size="lg" />
         <div className="team-title">
-          <span className="conf-tag">{team.conference} Conference{isMine && ' · Your team'}</span>
+          <span className="conf-tag"><ConfLogo conf={team.conference} size={22} />{team.conference} Conference{isMine && ' · Your team'}</span>
           <h1>{team.name}</h1>
           <TeamTrophies teamId={team.id} />
           <div className="chips">

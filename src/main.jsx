@@ -42,6 +42,8 @@ import './styles/lineupShowcase.css';
 import './styles/awards.css';
 import './styles/ceremony.css';
 import './styles/awardShow.css';
+import './styles/conference.css';
+import './styles/finalReport.css';
 import '@fontsource/cinzel/700.css';
 import '@fontsource/cinzel/900.css';
 import './styles/tradeWire.css';

@@ -4,6 +4,7 @@ import { useCraftBowlPlan, logoSrc, roman } from '../data/craftBowlPlans.js';
 import { useStadiums } from '../data/stadiums.js';
 import { getTeams, getTeam, currentSeason } from '../data/teams.js';
 import { trophyImg } from '../data/craftBowls.js';
+import ConfLogo from './ConfLogo.jsx';
 
 // The playoff bracket (from Week 7 on): Overworld on the left, Nether on the right, the Craft Bowl logo in the middle. Every
 // team tile wears this season's Craft Bowl colors as a gradient, with its logo and its seed in the top right; the better seed
@@ -28,8 +29,8 @@ export default function PlayoffBracket({ rec, settled }) {
   const side = (c, flip) => {
     const games = firstRound(seeds[c] || []);
     const cols = [
-      <div className="pb-col" key="r1"><h4>{c} · Round 1</h4>{games.map(([h, a], k) => <Game key={k} a={h} b={a} label={`${h.seed} vs ${a.seed}`} />)}</div>,
-      <div className="pb-col" key="r2"><h4>{c} title</h4><Game label="Conference championship" /></div>,
+      <div className="pb-col" key="r1"><h4><ConfLogo conf={c} size={22} />{c} · Round 1</h4>{games.map(([h, a], k) => <Game key={k} a={h} b={a} label={`${h.seed} vs ${a.seed}`} />)}</div>,
+      <div className="pb-col" key="r2"><h4><ConfLogo conf={c} size={22} />{c} title</h4><Game label="Conference championship" /></div>,
     ];
     return flip ? cols.reverse() : cols;
   };

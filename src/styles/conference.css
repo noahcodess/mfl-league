@@ -1,0 +1,11 @@
+/* Conference logos (Overworld, Nether) wherever conferences show up: standings, tables, the team page, the bracket, game tags. */
+.conf-logo { object-fit: contain; vertical-align: middle; flex: none; filter: drop-shadow(0 2px 4px #0008); }
+.conf-head { display: flex; align-items: center; gap: .55rem; }
+.conf-tabs button { display: inline-flex; align-items: center; gap: .35rem; }
+.conf-tag { display: inline-flex; align-items: center; gap: .35rem; }
+.pb-col h4 { display: flex; align-items: center; gap: .35rem; }
+.lv-standings > header .conf-logo { margin-right: .1rem; }
+.conf-match { display: inline-flex; align-items: center; gap: .3rem; margin-left: .5rem; padding: .1rem .5rem .1rem .25rem; border-radius: 999px; background: #ffffff10; border: 1px solid #ffffff22;
+  font-size: .78em; font-weight: 700; letter-spacing: .02em; white-space: nowrap; }
+.match-bar .conf-match { margin-left: 0; background: transparent; border: 0; font-size: inherit; }
+.te-preview small .conf-logo { margin-right: .25rem; }

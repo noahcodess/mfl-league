@@ -7,6 +7,7 @@ import { useSeasonGames } from '../data/games.js';
 import { records } from '../lib/seasonStats.js';
 import { rankRows } from '../lib/tiebreak.js';
 import { links } from '../lib/router.js';
+import ConfLogo from './ConfLogo.jsx';
 
 const PLAYOFF = { champion: '🏆', craft_bowl_loss: '🥈', conference: 'Conf', divisional: 'Div' };
 
@@ -25,8 +26,8 @@ export default function StandingsCard({ results, season }) {
   const ranked = rankRows(rows, confOf, now ? currentSeason() : season || 1), teams = Object.fromEntries(getTeams().map((t) => [t.id, t]));
   return (
     <article className={`feed-card conf-card ${confClass(conf)}`}>
-      <header><span className="feed-icon">📊</span><div><b>Conference standings</b><small>{now ? `Season ${currentSeason()} · in order by record` : `Season ${season || currentSeason() - 1} final records`}</small></div></header>
-      <div className="seg feed-seg conf-tabs">{conferences.map((c) => <button key={c} className={`${c === conf ? 'on' : ''} ${confClass(c)}`} onClick={() => setConf(c)}>{c}</button>)}</div>
+      <header><span className="feed-icon"><ConfLogo conf={conf} size={30} /></span><div><b>Conference standings</b><small>{now ? `Season ${currentSeason()} · in order by record` : `Season ${season || currentSeason() - 1} final records`}</small></div></header>
+      <div className="seg feed-seg conf-tabs">{conferences.map((c) => <button key={c} className={`${c === conf ? 'on' : ''} ${confClass(c)}`} onClick={() => setConf(c)}><ConfLogo conf={c} size={20} />{c}</button>)}</div>
       <ol className="feed-standings">
         {ranked.map((r, i) => {
           const t = teams[r.id];

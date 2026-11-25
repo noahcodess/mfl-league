@@ -4,12 +4,13 @@ import StarRating from './StarRating.jsx';
 import { getPlayers, teamCapUsed } from '../data/players.js';
 import { links } from '../lib/router.js';
 import { money, ordinal } from '../lib/format.js';
+import ConfLogo from './ConfLogo.jsx';
 
 // One conference's teams, best overall rating first.
 export default function ConferenceTable({ name, teams }) {
   return (
     <section className="card conf">
-      <h3>{name} Conference</h3>
+      <h3 className="conf-head"><ConfLogo conf={name} size={30} />{name} Conference</h3>
       <div className="table-wrap">
         <table className="table teams">
           <thead><tr><th>Lg</th><th>Team</th><th>Overall</th><th>Offense</th><th>Defense</th><th>Cap used</th><th>Roster</th></tr></thead>

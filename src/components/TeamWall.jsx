@@ -1,13 +1,14 @@
 import React from 'react';
 import TeamBadge from './TeamBadge.jsx';
 import { links } from '../lib/router.js';
+import ConfLogo from './ConfLogo.jsx';
 
 // All 16 teams as logo tiles, split by conference: OPEN (claimable), TAKEN (has a coach) or RESERVED (held back).
 export default function TeamWall({ teams, openIds }) {
   const open = new Set(openIds || []);
   return ['Overworld', 'Nether'].map((conf) => (
     <section key={conf} className="card wall-conf">
-      <h3>{conf} Conference</h3>
+      <h3 className="conf-head"><ConfLogo conf={conf} size={40} />{conf} Conference</h3>
       <div className="wall">
         {teams.filter((t) => t.conference === conf).map((t, i) => (
           <a key={t.id} href={links.team(t.id)} className={`wall-team${!t.reserved && open.has(t.id) ? ' open' : ''}`} style={{ '--team': t.color, '--i': i }}>

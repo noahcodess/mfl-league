@@ -3,6 +3,7 @@ import TeamBadge from './TeamBadge.jsx';
 import { getTeams, getTeam, getConferences, currentSeason } from '../data/teams.js';
 import { standings } from '../lib/seasonStats.js';
 import { links } from '../lib/router.js';
+import ConfLogo from './ConfLogo.jsx';
 
 export const confClass = (c) => (c ? `conf-${String(c).toLowerCase().replace(/[^a-z]/g, '')}` : '');
 
@@ -15,8 +16,8 @@ export default function ConfStandings({ rec, through }) {
   const table = all ? standings(getTeams().map((t) => ({ ...t, conference: 'all' })), rec, confOf, currentSeason()).all : standings(getTeams(), rec, confOf, currentSeason())[conf] || [];
   return (
     <article className={`lv-card lv-standings conf-card ${all ? '' : confClass(conf)}`}>
-      <header><span>📊</span><div><b>Standings</b><small>{through ? `After Week ${through}` : 'This season'}</small></div></header>
-      <div className="lv-tabs conf-tabs">{confs.map((c) => <button key={c} className={`${c === conf ? 'on' : ''} ${confClass(c)}`} onClick={() => setConf(c)}>{c}</button>)}</div>
+      <header>{all ? <span>📊</span> : <ConfLogo conf={conf} size={34} />}<div><b>Standings</b><small>{through ? `After Week ${through}` : 'This season'}</small></div></header>
+      <div className="lv-tabs conf-tabs">{confs.map((c) => <button key={c} className={`${c === conf ? 'on' : ''} ${confClass(c)}`} onClick={() => setConf(c)}><ConfLogo conf={c} size={20} />{c}</button>)}</div>
       <table className="cs-table">
         <thead><tr><th>#</th><th>Team</th><th>W-L</th><th>Diff</th><th>Strk</th></tr></thead>
         <tbody>

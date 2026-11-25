@@ -4,6 +4,7 @@ import KickoffClock, { useNow } from '../components/KickoffClock.jsx';
 import StartGameButton from '../components/StartGameButton.jsx';
 import QuickSimButton from '../components/QuickSimButton.jsx';
 import GameFinal from '../components/GameFinal.jsx';
+import FinalHandoff from '../components/FinalHandoff.jsx';
 import { useWeekGate } from '../components/WeekGate.jsx';
 import { unfinalizeGame } from '../data/gameResults.js';
 import { openGameBooth } from '../lib/windows.js';
@@ -15,6 +16,7 @@ import { broadcastFor } from '../data/broadcast.js';
 import { records, recordText } from '../lib/seasonStats.js';
 import { links } from '../lib/router.js';
 import { brightness } from '../lib/pixels.js';
+import { ConfMatch } from '../components/ConfLogo.jsx';
 
 const ROOM_OPENS = 5 * 60e3;
 const mmss = (ms) => { const s = Math.max(0, Math.ceil(ms / 1000)); return s >= 3600 ? `${Math.floor(s / 3600)}h ${Math.floor(s / 60) % 60}m` : `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`; };
@@ -23,12 +25,12 @@ const mmss = (ms) => { const s = Math.max(0, Math.ceil(ms / 1000)); return s >= 
 // 2 hours), and one button that depends on who's looking. Commissioner: Start game (plays the intro). A coach in the game:
 // Enter coaching room (counts down until it opens 5 minutes before kickoff). Everyone else: watch on Discord.
 // A started game that was closed is paused: its score and clock show, and the commissioner gets Resume. A final game just
-// says FINAL, with the Player of the Game and the stat sheet underneath.
+// says FINAL, with the Player of the Game and the stat sheet underneath. A watched game's end-of-game show lands here.
 export default function GamePage({ id, canControl, teamId }) {
   const found = useGame(id), rivals = useRivals(), stadiums = useStadiums(), now = useNow();
   const [version, setVersion] = useState(0);
   const live = useGameState(id, version);
-  const [local, setLocal] = useState(null), [run, setRun] = useState(0), [kick, setKick] = useState(null), [resumeAt, setResumeAt] = useState(null);
+  const [local, setLocal] = useState(null), [run, setRun] = useState(0), [kick, setKick] = useState(null), [resumeAt, setResumeAt] = useState(null), [handoff, setHandoff] = useState(null);
   const gate = useWeekGate(found?.game || { week: 0 }, found?.season);
   if (!found) return <p className="dim">Looking for that game...</p>;
   const { game, season } = found, home = getTeam(game.home), away = getTeam(game.away), bc = broadcastFor(game, home);
@@ -56,7 +58,7 @@ export default function GamePage({ id, canControl, teamId }) {
       <section className="gp-hero" style={{ '--ac': away.color, '--hc': home.color }}>
         <img className="gp-net" src={bc.logo} alt={bc.title} />
         <div className="gp-match">{team(away, 'away')}<span className="gp-at">at</span>{team(home, 'home')}</div>
-        <p className="gp-where">🏟️ {stadiums[home.id]?.name || home.name} · Week {game.week} · {bc.title}{isRivalry(game, rivals) && <span className="rival-badge">⚔️ Rivalry</span>}</p>
+        <p className="gp-where">🏟️ {stadiums[home.id]?.name || home.name} · Week {game.week} · {bc.title}{isRivalry(game, rivals) && <span className="rival-badge">⚔️ Rivalry</span>}<ConfMatch home={home} away={away} /></p>
         {final ? <p className="gp-final">{finalText(st?.quarter).toUpperCase()}</p> : paused ? (
           <p className="gp-paused"><b>⏸ PAUSED</b><span>{quarterText(st.quarter)}{st.quarter >= 5 ? '' : ` · ${clockText(st.clock_left ?? 0)} left`}</span></p>
         ) : <KickoffClock startsAt={game.startsAt} status={st?.status} />}
@@ -73,7 +75,9 @@ export default function GamePage({ id, canControl, teamId }) {
       </section>
       {final && real && <GameFinal game={game} home={home} away={away} />}
       {gate.ui}
-      {run > 0 && <GameIntro key={run} game={game} season={season} kick={kick} st={st} resume={resumeAt} onClose={() => { setRun(0); setVersion((v) => v + 1); }} onReplay={() => setRun((n) => n + 1)} />}
+      {run > 0 && <GameIntro key={run} game={game} season={season} kick={kick} st={st} resume={resumeAt} onClose={() => { setRun(0); setVersion((v) => v + 1); }} onReplay={() => setRun((n) => n + 1)}
+        onFinal={(d) => { setHandoff(d); setTimeout(() => { setRun(0); setVersion((v) => v + 1); }, 450); }} />}   {/* the end-of-game show lands on this page */}
+      {handoff && <FinalHandoff data={handoff} onDone={() => setHandoff(null)} />}
     </div>
   );
 }

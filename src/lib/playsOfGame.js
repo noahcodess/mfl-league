@@ -31,3 +31,11 @@ export function playsOfHalf(plays) {
   const pick = ranked.filter(([, v], k) => k < 2 || (k === 2 && v >= 35) || (k === 3 && v >= 58)).slice(0, 4).map(([p]) => p);
   return pick.sort((a, b) => a.n - b.n);
 }
+
+// The plays of the game for the final report, in the order they happened: never fewer than 2, never more than 5. The best
+// two always; a third, fourth and fifth only when they were real highlights.
+export function playsOfTheGame(plays) {
+  const ranked = plays.map((p) => [p, playValue(p)]).filter(([, v]) => v > 0).sort((a, b) => b[1] - a[1]);
+  const pick = ranked.filter(([, v], k) => k < 2 || (k === 2 && v >= 30) || (k === 3 && v >= 45) || (k === 4 && v >= 60)).slice(0, 5).map(([p]) => p);
+  return pick.sort((a, b) => a.n - b.n);
+}

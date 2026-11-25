@@ -8,6 +8,7 @@ import { getConferences } from '../data/teams.js';
 import { logoFor } from '../data/logos.js';
 import { updateTeam, uploadTeamLogo, resetTeamLogo } from '../data/commishEdit.js';
 import { prepareLogo } from '../lib/logoCheck.js';
+import ConfLogo from './ConfLogo.jsx';
 
 // Commissioner: edit one team. Location + team name (the full name is both: Ocean Monument + Guardians), abbreviation,
 // conference, colors, the logo (PNG with a see-through background), the stadium and the four jerseys.
@@ -42,7 +43,7 @@ export default function TeamEditor({ team, canControl, onClose, onSaved }) {
   return (
     <Modal onClose={onClose} className="team-editor" style={{ '--team': f.color, '--team-accent': f.accent }}>
       <button className="modal-x" onClick={onClose} aria-label="Close">×</button>
-      <div className="te-preview"><TeamBadge team={preview} size="lg" /><div><small>{f.code || '???'} · {f.conference}</small><h2>{name || 'Team name'}</h2></div></div>
+      <div className="te-preview"><TeamBadge team={preview} size="lg" /><div><small><ConfLogo conf={f.conference} size={18} />{f.code || '???'} · {f.conference}</small><h2>{name || 'Team name'}</h2></div></div>
       <div className="te-grid">
         <label className="field"><span>Location</span><input value={f.location} onChange={set('location')} maxLength={28} placeholder="Ocean Monument" disabled={!canControl} /></label>
         <label className="field"><span>Team name</span><input value={f.nickname} onChange={set('nickname')} maxLength={20} placeholder="Guardians" disabled={!canControl} /></label>
