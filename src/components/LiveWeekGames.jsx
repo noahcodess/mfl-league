@@ -35,7 +35,7 @@ export default function LiveWeekGames({ week, rec, teamId, canControl = false, s
       {week.games.map((g) => {
         const st = states[String(g.id)], isLive = st?.status === 'live' || g.status === 'live', done = g.status === 'final' || st?.status === 'final';
         const hs = st ? st.home_score : g.homeScore, as = st ? st.away_score : g.awayScore, started = done || isLive;
-        const home = getTeam(g.home), away = getTeam(g.away), net = networkFor(g.window, home), prime = g.window?.endsWith('night'), bc = net && broadcastFor(g, home);
+        const home = getTeam(g.home), away = getTeam(g.away), net = networkFor(g.window, home), bc = net && broadcastFor(g, home), prime = !!bc?.prime;
         const coach = teamId && (g.home === teamId || g.away === teamId), bowl = g.kind === 'craft_bowl', host = bowl && plan?.stadium ? plan.stadium : g.home;
         const tag = (id, side) => (seedOf?.[id] ? `#${seedOf[id]} seed${bowl ? '' : ` · ${side}`}` : side);
         return (

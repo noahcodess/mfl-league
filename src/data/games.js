@@ -93,12 +93,14 @@ export const WINDOWS = [
   ['thu_night', 'Thursday Night Football', 'NBC'], ['sat_day', 'Saturday day game', null], ['sat_night', 'Saturday Night Football', 'ESPN'],
   ['sun_day', 'Sunday day game', null], ['sun_night', 'Sunday Night Football', 'NBC'], ['mon_night', 'Monday Night Football', 'ESPN'],
 ];
+// Playoff games can also go to just a network (its main broadcast); the Craft Bowl only ever does.
+export const PROGRAMS = [['fox', 'Playoff broadcast', 'FOX'], ['cbs', 'Playoff broadcast', 'CBS'], ['nbc', 'Playoff broadcast', 'NBC'], ['espn', 'Playoff broadcast', 'ESPN']];
 export function networkFor(win, homeTeam) {
-  const w = WINDOWS.find(([k]) => k === win);
+  const w = [...WINDOWS, ...PROGRAMS].find(([k]) => k === win);
   if (!w) return null;
   return w[2] || (homeTeam?.conference === 'Overworld' ? 'FOX' : 'CBS');
 }
-export const windowLabel = (win) => WINDOWS.find(([k]) => k === win)?.[1] || null;
+export const windowLabel = (win) => [...WINDOWS, ...PROGRAMS].find(([k]) => k === win)?.[1] || null;
 // Best game of the week → Sunday night, then Monday night, Thursday night, Saturday night; everything else day games.
 export const PRIME_PLAN = ['sun_night', 'mon_night', 'thu_night', 'sat_night', 'sun_day', 'sun_day', 'sat_day', 'sat_day'];
 export const swapWeeks = (season, a, b) => rpc('swap_schedule_weeks', { p_season: season, p_a: a, p_b: b });

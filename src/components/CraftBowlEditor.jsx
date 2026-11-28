@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { prepareLogo } from '../lib/logoCheck.js';
 import { getTeams } from '../data/teams.js';
-import { savePlan, uploadPlanLogo, openStadiums, roman } from '../data/craftBowlPlans.js';
+import { savePlan, uploadPlanLogo, openStadiums, roman, CB_NETWORKS, takenNetworks, setPlanNetwork } from '../data/craftBowlPlans.js';
 
 // Edit one season's Craft Bowl: upload a logo, pick its two colors, pick the stadium (the ones that hosted within 3 seasons
-// are greyed out) or roll the dice. onRoll(season) runs the dice animation on the tile and resolves to the stadium it lands on.
+// are greyed out) or roll the dice, and pick the network that airs it (saved right away; the network that has the season
+// before or after is greyed out). onRoll(season) runs the dice animation on the tile and resolves to the stadium it lands on.
 export default function CraftBowlEditor({ plan, plans, stadiums, canControl, onRoll, rolling }) {
   const [draft, setDraft] = useState(plan), [file, setFile] = useState(null), [msg, setMsg] = useState(''), [busy, setBusy] = useState(false);
   useEffect(() => { setDraft(plan); setFile(null); setMsg(''); }, [plan.season]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -19,7 +20,9 @@ export default function CraftBowlEditor({ plan, plans, stadiums, canControl, onR
     catch (err) { setMsg(`⚠️ ${err.message}`); }
     setBusy(false);
   };
-  const changed = JSON.stringify(draft) !== JSON.stringify(plan);
+  const pickNet = async (net) => { setMsg(''); try { await setPlanNetwork(plan.season, net); setMsg(`📺 ${net.toUpperCase()} has Craft Bowl ${roman(plan.season)}. Saved.`); } catch (err) { setMsg(`⚠️ ${err.message}`); } };
+  const taken = takenNetworks(plans, plan.season);
+  const changed = JSON.stringify({ ...draft, network: null }) !== JSON.stringify({ ...plan, network: null });
   return (
     <section className="card cb-edit" style={{ '--cb1': draft.primary, '--cb2': draft.secondary }}>
       <h3>🏆 Craft Bowl {roman(plan.season)} <small className="dim">Season {plan.season}</small></h3>
@@ -36,6 +39,12 @@ export default function CraftBowlEditor({ plan, plans, stadiums, canControl, onR
             {teams.map((t) => <option key={t.id} value={t.id} disabled={!open.has(t.id)}>{stadiums[t.id]?.name || t.name} ({t.code}){open.has(t.id) ? '' : ' · hosted within 3 seasons'}</option>)}
           </select>
           <button type="button" className={`btn cb-dice${rolling ? ' spin' : ''}`} disabled={!canControl || rolling} onClick={roll} title="Pick a random stadium (follows the 3-season rule)">🎲 Randomize</button>
+        </label>
+        <label className="cb-field"><span>📺 Network</span>
+          <select value={plan.network || ''} disabled={!canControl} onChange={(e) => e.target.value && pickNet(e.target.value)}>
+            {!plan.network && <option value="">Pick a network</option>}
+            {CB_NETWORKS.map(([k, name]) => <option key={k} value={k} disabled={taken.includes(k) && k !== plan.network}>{name}{taken.includes(k) ? ' · has the season before or after' : ''}</option>)}
+          </select>
         </label>
       </div>
       <div className="cb-save">

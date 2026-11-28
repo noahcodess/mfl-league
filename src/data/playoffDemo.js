@@ -15,7 +15,7 @@ export function demoPlayoffGames(regular) {
   let id = 9000;
   const game = (week, kind, a, b, played) => {
     const [home, away] = seedOf[a] <= seedOf[b] ? [a, b] : [b, a];
-    return { id: ++id, week, kind, home, away, rivalry: false, slot: null, prime: kind === 'craft_bowl' ? 'sun_night' : null, starts_at: null,
+    return { id: ++id, week, kind, home, away, rivalry: false, slot: null, prime: kind === 'craft_bowl' ? 'nbc' : ['espn', 'fox', 'nbc', 'cbs'][id % 4], starts_at: null,
       status: played ? 'final' : 'scheduled', home_score: played ? 24 + (id % 9) : null, away_score: played ? 17 + (id % 11) : null, odds: { home_win: 0.55, away_win: 0.45, rating: 'great', keys: [] } };
   };
   const out = [], champs = [];

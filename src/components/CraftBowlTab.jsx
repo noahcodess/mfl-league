@@ -29,7 +29,7 @@ export default function CraftBowlTab({ canControl }) {
   });
   return (
     <div className="cb-tab">
-      <p className="dim">🏆 The next {AHEAD} Craft Bowls plus this season's. Each one: logo, colors (the playoff bracket wears them) and a stadium. A stadium can't host again within 3 seasons.</p>
+      <p className="dim">🏆 The next {AHEAD} Craft Bowls plus this season's. Each one: logo, colors (the playoff bracket wears them), a stadium and a network. A stadium can't host again within 3 seasons, and a network can't air it two seasons in a row.</p>
       <div className="cb-grid">
         {list.map((p) => <CraftBowlTile key={p.season} plan={p} stadiums={stadiums} on={plan?.season === p.season} onClick={() => setSel(p.season)}
           rolling={roll.season === p.season} shown={roll.season === p.season ? roll.shown : undefined} />)}

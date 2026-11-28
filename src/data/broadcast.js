@@ -1,6 +1,9 @@
 // Who broadcasts a game and how it looks: the network (FOX and CBS split the day games, NBC and ESPN the nights), the show
-// logo for primetime windows, and each network's colors for intros, transitions and graphics.
+// logo for primetime windows, and each network's colors for intros, transitions and graphics. Playoff games air on a
+// network's main broadcast (NBC = its Sunday night look, ESPN = its Saturday/Monday night look; TNF never airs playoffs)
+// and always wear the network's own logo, even if the commissioner put one on a show like Saturday Night.
 import { networkFor } from './games.js';
+import { isPlayoffGame, roundOfGame } from '../lib/playoffRounds.js';
 
 const files = import.meta.glob('./broadcast/*.png', { eager: true, import: 'default' });
 const img = (n) => files[`./broadcast/${n}.png`];
@@ -19,12 +22,18 @@ const SHOWS = {
   mon_night: { key: 'mnf', name: 'Monday Night Football', logo: img('mnf') },
 };
 
+// Each network's main broadcast, used when a playoff game is given just the network.
+const MAIN = { nbc: 'sun_night', espn: 'mon_night' };
+
 // Scorebug designs: FOX, CBS, TNF and SNF each have their own; ESPN's is shared by Saturday Night and Monday Night.
 const BUG = { tnf: 'tnf', snf: 'snf', stnf: 'espn', mnf: 'espn' };
 
 // { net, show (null for day games), prime, logo (show logo, else the network's MFL logo), title, bug (scorebug design) }
 export function broadcastFor(game0, homeTeam) {
   const dev = import.meta.env.DEV && typeof window !== 'undefined' && /[?&]devnet=([a-z_]+)/.exec(window.location.search)?.[1], game = dev ? { ...game0, window: dev } : game0;   // dev only: ?devnet=sun_night
-  const net = NETS[networkFor(game.window, homeTeam)] || NETS.FOX, show = SHOWS[game.window] || null;
-  return { net, show, prime: !!show, logo: show?.logo || net.logo, title: show?.name || `The MFL on ${net.name}`, bug: BUG[show?.key] || net.key };
+  const net = NETS[networkFor(game.window, homeTeam)] || NETS.FOX, playoff = isPlayoffGame(game);
+  let show = SHOWS[game.window] || SHOWS[MAIN[game.window]] || null;
+  if (show && playoff) show = { ...show, logo: net.logo, name: `${roundOfGame(game).one} on ${net.name}` };   // the network's logo, never the show's
+  const title = playoff ? `The MFL Playoffs on ${net.name}` : show?.name || `The MFL on ${net.name}`;
+  return { net, show, prime: !!show, logo: show?.logo || net.logo, title, bug: BUG[show?.key] || net.key };
 }
