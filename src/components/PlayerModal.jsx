@@ -50,7 +50,7 @@ export default function PlayerModal({ player, team, canSeePotential, potential, 
           <div><span>Country</span><b>{flagFor(player.nationality || 'USA')} {player.nationality || 'USA'}</b></div>
           <div><span>Mood</span><b><MoodTag mood={player.mood} /></b></div>
           <div className={`pot${canSeePotential ? '' : ' locked'}`} title={canSeePotential ? '' : 'Scout him to unlock'}><span>Potential</span><b>{!canSeePotential ? '🔒 Hidden' : potential === undefined ? <span className="dim">Loading...</span> : potential === null ? <span className="dim">Not rated</span>
-            : potentialLeft(player, potential) ? <StarRating value={potential} elite={potential === 5} /> : <span className="dim">✓ Reached</span>}</b></div>
+            : <><StarRating value={potential} elite={potential === 5} />{!potentialLeft(player, potential) && <small className="dim pot-reached"> ✓ Reached</small>}</>}</b></div>
         </div>
         <PlayerFlags player={player} />
         <Tabs tabs={[
