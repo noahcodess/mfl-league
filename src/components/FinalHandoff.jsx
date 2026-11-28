@@ -37,12 +37,11 @@ export default function FinalHandoff({ data, onDone }) {
   const [fly, setFly] = useState(false), hero = useRef(null), card = useRef(null);
   const sa = useCount(data.score.away, 700), sh = useCount(data.score.home, 700);
   useEffect(() => {
-    const sfx = createShowAudio(), t = [], pr = soundPrefs();
+    const sfx = createShowAudio(['applause', 'cheer']), t = [], pr = soundPrefs();   // never the award show's sounds
     sfx?.setVolume(pr.on ? pr.vol : 0);
-    t.push(setTimeout(() => sfx?.play('chime', { gain: 0.7 }), 450));
-    t.push(setTimeout(() => sfx?.play('ping', { gain: 0.7 }), 1700));
+    t.push(setTimeout(() => sfx?.play('cheer', { gain: 0.45 }), 450));
     t.push(setTimeout(() => {   // into the page
-      window.scrollTo({ top: 0 }); setFly(true); sfx?.play('whoosh', { gain: 0.5 });
+      window.scrollTo({ top: 0 }); setFly(true);
       requestAnimationFrame(() => { flyTo(hero.current, document.querySelector('.gp-hero')); flyTo(card.current, document.querySelector('.gf-potg')); });
     }, FLY_AT));
     t.push(setTimeout(() => onDone?.(), FLY_AT + FLY_MS + 80));

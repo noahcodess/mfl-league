@@ -1,15 +1,15 @@
-// The award show's own sounds (Web Audio, so they can overlap): the signature chime, the slide transition, the finalist
-// ping, the drum roll, the winner fanfare and theater applause. play() returns a stop function. The distant chatter
-// under the show still comes from crowdAudio's quiet beds.
+// The shows' sounds (Web Audio, so they can overlap). The chime, transition whoosh, finalist ping, drum roll and fanfare
+// belong to the award show ONLY; anything else (the end-of-game show) asks for just applause and the crowd cheer through
+// keys. play() returns a stop function. The distant chatter under the award show still comes from crowdAudio's beds.
 const BASE = `${import.meta.env.BASE_URL}audio/`;
-const FILES = { chime: 'Show Chime.mp3', whoosh: 'Show Transition.mp3', ping: 'Show Ping.mp3', drum: 'Drum Roll.mp3', fanfare: 'Show Fanfare.mp3', applause: 'Show Applause.mp3' };
+const FILES = { chime: 'Show Chime.mp3', whoosh: 'Show Transition.mp3', ping: 'Show Ping.mp3', drum: 'Drum Roll.mp3', fanfare: 'Show Fanfare.mp3', applause: 'Show Applause.mp3', cheer: 'Pop Big Cheer.mp3' };
 
-export function createShowAudio() {
+export function createShowAudio(keys = Object.keys(FILES)) {
   const AC = window.AudioContext || window.webkitAudioContext;
   if (!AC) return null;
   const ctx = new AC(), master = ctx.createGain(), bufs = {};
   master.connect(ctx.destination);
-  Object.entries(FILES).forEach(([k, f]) => {
+  Object.entries(FILES).filter(([k]) => keys.includes(k)).forEach(([k, f]) => {
     fetch(BASE + encodeURI(f)).then((r) => r.arrayBuffer()).then((b) => ctx.decodeAudioData(b)).then((d) => { bufs[k] = d; }).catch(() => {});
   });
   return {

@@ -20,8 +20,8 @@ export function HalfPlayer({ potg, who, team }) {
   );
 }
 
-// One storyline. people: id → player. teams: { home, away }.
-export function StoryCard({ st, people, teams }) {
+// One storyline. people: id → player. teams: { home, away }. after: the end-of-game show (the whole game, past tense).
+export function StoryCard({ st, people, teams, after = false }) {
   const team = teams[st.side], p = people[st.id || st.off], vs = st.def && people[st.def], name = (x) => x?.last || x?.name || '?';
   const body = {
     duel: () => ({ tag: 'Matchup cooking 🔥', title: <><small className="htc-pos">{p?.pos}</small>{name(p)} <i>vs</i> <small className="htc-pos">{vs?.pos}</small>{name(vs)}</>, nums: [[st.rec, 'Catches'], [st.yds, 'Yards'], [st.td, 'TD'], [`${st.rec}/${st.tgt}`, 'On targets']], line: `${p?.name || 'He'} has owned ${vs?.name || 'his man'} so far.` }),
@@ -31,6 +31,8 @@ export function StoryCard({ st, people, teams }) {
     pick: () => ({ tag: 'Ballhawk', title: name(p), nums: [[st.n, st.n > 1 ? 'Interceptions' : 'Interception']], line: 'Turned the game with the ball in the air.' }),
     wall: () => ({ tag: 'Brick wall', title: team.name, nums: [[st.yds, 'Yards allowed'], [st.plays, 'Plays faced']], line: 'Nothing is getting through.' }),
   }[st.kind]();   // only the card being shown is built
+  if (after) body.line = { duel: `${p?.name || 'He'} owned ${vs?.name || 'his man'} all game.`, qb: 'Picked the defense apart all game.', rb: 'Moved the chains every time he touched it.',
+    rush: 'The line never had an answer for him.', pick: 'Turned the game with the ball in the air.', wall: 'Nothing got through all game.' }[st.kind];
   return (
     <div className="htc-story" style={{ '--tc': team.color, '--ta': team.accent }}>
       <span className="htc-kick hf">{body.tag}</span>

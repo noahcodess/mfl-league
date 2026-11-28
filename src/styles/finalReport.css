@@ -1,29 +1,29 @@
-/* The end-of-game show: FINAL, the ranking moves (a team's row sliding up its table), and the hand-off onto the game page. */
+/* The end-of-game show: FINAL, a big ranking jump (a team's row gliding up its ladder), and the hand-off onto the game page. */
 .fr-title .ht-team.won { box-shadow: 0 0 2.2cqw var(--tc), inset 0 0 0 .3cqw var(--accent, #fff); transform: scale(1.06); }
 .fr-title h2 { font-size: 9cqw; color: var(--accent, #fff); }
 
-.rk { width: min(70cqw, 100%); display: grid; gap: 1.4cqw; justify-items: center; }
+.rk { width: min(64cqw, 100%); display: grid; gap: 1.6cqw; justify-items: center; }
 .rk-head { display: grid; justify-items: center; gap: .6cqw; animation: brk-up .45s both; }
 .rk-kicker { display: inline-flex; align-items: center; gap: .6cqw; font-size: 1.7cqw; letter-spacing: .22em; text-transform: uppercase; color: var(--accent, #fff); font-weight: 800; }
 .rk-kicker .conf-logo { width: 3cqw; height: 3cqw; }
 .rk-head h3 { margin: 0; display: flex; align-items: center; gap: 1.2cqw; font-size: 3.6cqw; text-transform: uppercase; text-shadow: .3cqw .3cqw 0 #000; }
 .rk-head h3 img { width: 5cqw; height: 5cqw; object-fit: contain; filter: drop-shadow(.2cqw .2cqw 0 #000); }
-.rk-board { position: relative; width: 100%; height: calc(var(--n) * 4.4cqw); overflow: hidden; padding: 0 1.6cqw 0 5cqw; box-sizing: border-box;
-  -webkit-mask-image: linear-gradient(180deg, transparent, #000 6%, #000 94%, transparent); mask-image: linear-gradient(180deg, transparent, #000 6%, #000 94%, transparent); }
-.rk-num { position: absolute; left: 0; top: 0; width: 4cqw; height: 3.8cqw; display: grid; place-items: center; transform: translateY(calc(var(--y) * 4.4cqw + .3cqw));
-  font-size: 2.2cqw; font-weight: 900; color: var(--accent, #fff); text-shadow: .2cqw .2cqw 0 #000; }
-.rk-row { position: absolute; left: 5.4cqw; right: 1.4cqw; top: 0; height: 3.8cqw; display: flex; align-items: center; gap: 1.2cqw; padding: 0 1.6cqw;
-  transform: translateY(calc(var(--y) * 4.4cqw + .3cqw)); transition: transform 1.35s cubic-bezier(.65, 0, .25, 1);
-  background: linear-gradient(90deg, color-mix(in srgb, var(--rc) 55%, #000), #000c 75%); border: .15cqw solid #ffffff22; border-radius: .5cqw; }
-.rk-row img { width: 2.8cqw; height: 2.8cqw; object-fit: contain; }
-.rk-row b { flex: 1; font-size: 1.9cqw; text-transform: uppercase; letter-spacing: .04em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.rk-row span { font-size: 1.8cqw; font-weight: 800; font-variant-numeric: tabular-nums; }
-.rk-row.me { z-index: 2; background: linear-gradient(90deg, var(--tc), color-mix(in srgb, var(--tc) 40%, #000) 80%); border-color: var(--accent, #fff);
-  box-shadow: 0 0 2cqw var(--tc), 0 .6cqw 1.4cqw #000a; scale: 1.04; }
-.rk-row.me.landed { animation: rk-land .6s ease-out; }
-@keyframes rk-land { 40% { scale: 1.1; box-shadow: 0 0 4cqw var(--tc), 0 0 0 .4cqw var(--accent, #fff); } }
+/* the ladder: every row moves at the same moment with the same curve, so it reads as one clean slide */
+.rk-board { position: relative; width: 100%; height: calc(var(--n) * 5cqw); animation: brk-up .45s .15s both; }
+.rk-row { position: absolute; left: 0; right: 0; top: 0; height: 4.2cqw; display: flex; align-items: center; gap: 1.3cqw; padding: 0 1.8cqw 0 0;
+  transform: translateY(calc(var(--y) * 5cqw)); transition: transform .95s cubic-bezier(.7, 0, .3, 1), opacity .4s;
+  background: linear-gradient(90deg, color-mix(in srgb, var(--rc) 35%, #000) , #000d 70%); border-radius: .4cqw; opacity: .78; }
+.rk-rank { width: 5.2cqw; align-self: stretch; display: grid; place-items: center; font-size: 2.3cqw; background: #0009; border-radius: .4cqw 0 0 .4cqw; font-variant-numeric: tabular-nums; }
+.rk-row img { width: 3cqw; height: 3cqw; object-fit: contain; }
+.rk-row b { flex: 1; font-size: 2cqw; text-transform: uppercase; letter-spacing: .04em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rk-val { font-size: 1.8cqw; font-weight: 800; font-variant-numeric: tabular-nums; opacity: .9; }
+.rk-row.me { z-index: 2; opacity: 1; background: linear-gradient(90deg, var(--tc), color-mix(in srgb, var(--tc) 45%, #000) 85%); box-shadow: 0 .5cqw 1.6cqw #000b; }
+.rk-row.me .rk-rank { background: var(--accent, #fff); color: var(--on-accent, #111); font-size: 2.7cqw; }
+.rk-board.go .rk-row:not(.me) { opacity: .55; }
+.rk-row.me.landed { animation: rk-land .55s ease-out; }
+@keyframes rk-land { 45% { box-shadow: 0 0 3.2cqw var(--tc), 0 0 0 .35cqw var(--accent, #fff); } }
 .rk-banner { padding: .6cqw 2.6cqw; font-size: 2.6cqw; text-transform: uppercase; letter-spacing: .04em; background: var(--accent, #fff); color: var(--on-accent, #111);
-  opacity: 0; transform: translateY(1cqw) scale(.9); transition: opacity .35s, transform .45s cubic-bezier(.3, 1.6, .5, 1); }
+  opacity: 0; transform: translateY(.8cqw); transition: opacity .35s, transform .4s ease-out; }
 .rk-banner.on { opacity: 1; transform: none; }
 
 .fh { position: fixed; inset: 0; z-index: 6000; display: grid; place-content: center; justify-items: center; gap: 2.2rem; animation: fh-in .35s ease-out both; font-family: 'Inter', system-ui, sans-serif; }

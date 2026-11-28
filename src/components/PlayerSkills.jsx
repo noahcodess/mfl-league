@@ -7,7 +7,7 @@ import { STYLES } from '../lib/attributeDefs.js';
 // The skills part of a player page: his position rank and league rank (from his skills), his archetype with strengths and
 // weaknesses, then his attribute bars.
 export default function PlayerSkills({ player, potential }) {
-  const { ratings, ceilings, style, rank, loaded } = usePlayerAttributes(player, potential);
+  const { ratings, peaks, ceilings, style, rank, loaded } = usePlayerAttributes(player, potential);
   if (!loaded) return <p className="dim">Loading skills...</p>;
   if (!ratings) return null;
   const { strengths, weaknesses } = strengthsAndWeaknesses(player.position, ratings);
@@ -27,7 +27,7 @@ export default function PlayerSkills({ player, potential }) {
           <div><span className="bad">Weaknesses</span>{weaknesses.length ? <ul>{weaknesses.map((w) => <li key={w}>{w}</li>)}</ul> : <p className="dim">No real holes in his game.</p>}</div>
         </div>
       </section>
-      <AttributeBars position={player.position} ratings={ratings} ceilings={ceilings} />
+      <AttributeBars position={player.position} ratings={ratings} ceilings={ceilings} peaks={peaks} />
     </>
   );
 }

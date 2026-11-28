@@ -91,10 +91,28 @@ export async function setAwardsUntil(week) {
   if (error) throw new Error(error.message);
 }
 
-// The League tab: last season's finalists (top 3 of each award), while they're still on display. null: nothing to show.
-export function useShownAwards() {
-  const [v, setV] = useState(null), season = currentSeason() - 1;
-  const on = awardsUntil() >= 0 && (currentPhase() !== 'regular_season' || currentWeek() <= awardsUntil());
-  useEffect(() => { if (!on || DEMO) return; savedAwards(season).then((m) => setV(Object.keys(m).length ? { season, lists: m } : null)).catch(() => {}); }, [on, season]);
-  return on ? v : null;
+// The League tab's awards card (see AwardsCard). In season, through the week the commissioner picked: this season's race,
+// the top 3 of every award in order (his edited order wins over the numbers). After that week: hidden until the award
+// ceremony reveals the winners (then: the winners). In the offseason: last season's winners and finalists.
+// Returns null (nothing to show) or { mode: 'race' | 'hidden' | 'winners', season, lists: { award: [entries] } }.
+export function useAwardRace(cer) {
+  const [v, setV] = useState(null), phase = currentPhase(), wk = currentWeek(), until = awardsUntil();
+  const inSeason = phase === 'regular_season', season = inSeason ? currentSeason() : currentSeason() - 1;
+  const mode = until < 0 ? null : !inSeason ? 'winners' : wk <= Math.min(until, 12) ? 'race' : cer?.revealed ? 'winners' : 'hidden';
+  useEffect(() => {
+    if (!mode || mode === 'hidden') return undefined;
+    let live = true;
+    (async () => {
+      const saved = await savedAwards(season).catch(() => ({}));
+      let lists = Object.fromEntries(Object.entries(saved).map(([k, r]) => [k, r.entries || []]));
+      if (mode === 'race') {   // live numbers, except where the commissioner set his own order
+        const fresh = await computeAwards(season).catch(() => null);
+        lists = { ...(fresh?.lists || {}), ...Object.fromEntries(Object.entries(saved).filter(([, r]) => r.edited).map(([k, r]) => [k, r.entries || []])) };
+      }
+      if (live) setV({ season, lists });
+    })();
+    return () => { live = false; };
+  }, [mode, season]);
+  if (!mode) return null;
+  return mode === 'hidden' ? { mode, season, lists: {} } : v && { mode, ...v };
 }

@@ -42,3 +42,6 @@
 .sb-ot .sb-q, .sb-ot .sb-qx { color: var(--ot-c, #ffd84a); }
 .sb-fox { --ot-c: #b30000; } .sb-cbs { --ot-c: #ffd84a; }   /* FOX's clock box is gold, so its OT goes deep red */
 .sb-final .sb-clock { display: none; } .sb-final .sb-q { font-size: 1.25em; white-space: nowrap; }   /* final: the quarter slot carries Final or Final/OT2 */
+/* 0:00 and the game is over: the clock flashes for the two seconds before the end-of-game show */
+.sb-ending .sb-clock, .sb-ending .snf-circle > b, .sb-ending .tnf-time > b { animation: sb-flash .5s steps(1) infinite; }
+@keyframes sb-flash { 50% { opacity: .12; } }

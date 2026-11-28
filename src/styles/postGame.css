@@ -1,0 +1,23 @@
+/* The end-of-game show's graphics after the highlights: matchup of the game and the game flow chart. */
+.pgm { display: grid; justify-items: center; gap: 1.4cqw; width: min(78cqw, 100%); }
+.pgm-row { position: relative; display: grid; grid-template-columns: 1fr 1fr; gap: 6cqw; width: 100%; }
+.pgm-card { display: grid; justify-items: center; gap: .5cqw; padding: 1.6cqw; background: linear-gradient(180deg, color-mix(in srgb, var(--tc) 55%, #000), #000c); border-radius: .6cqw;
+  box-shadow: 0 .6cqw 1.6cqw #000a; animation: brk-up .5s both; text-align: center; }
+.pgm-card.won { box-shadow: 0 0 2.4cqw var(--tc), inset 0 0 0 .3cqw var(--accent, #fff); }
+.pgm-card .headshot { width: 11cqw !important; height: 11cqw !important; }
+.pgm-card > b { font-size: 2.6cqw; text-transform: uppercase; }
+.pgm-card small { display: inline-flex; align-items: center; gap: .5cqw; font-size: 1.5cqw; opacity: .85; } .pgm-card small img { width: 2cqw; height: 2cqw; }
+.pgm-feat { font-size: 2.2cqw; color: var(--accent, #fff); } .pgm-card p { margin: 0; font-size: 1.5cqw; opacity: .9; }
+.pgm-vs { position: absolute; left: 50%; top: 42%; translate: -50% -50%; font-size: 4cqw; color: var(--accent, #fff); text-shadow: .3cqw .3cqw 0 #000; animation: brk-up .4s .6s both; }
+.pgm-sub { margin: 0; font-size: 1.9cqw; text-transform: uppercase; letter-spacing: .12em; font-weight: 800; animation: brk-up .4s .9s both; }
+
+.pgf { display: grid; justify-items: center; gap: 1.2cqw; width: min(78cqw, 100%); }
+.pgf-title { font-size: 3cqw; text-transform: uppercase; text-align: center; text-shadow: .3cqw .3cqw 0 #000; animation: brk-up .45s both; }
+.pgf-chart { position: relative; width: 100%; background: #000a; border-radius: .6cqw; padding: 3cqw 1.6cqw; box-sizing: border-box; animation: brk-up .45s .15s both; }
+.pgf-chart svg { width: 100%; height: auto; display: block; overflow: visible; }
+.pgf-team { position: absolute; left: 1.6cqw; display: inline-flex; align-items: center; gap: .5cqw; font-size: 1.4cqw; font-weight: 800; text-transform: uppercase; opacity: .85; }
+.pgf-team img { width: 2cqw; height: 2cqw; } .pgf-team.top { top: .6cqw; } .pgf-team.bot { bottom: .6cqw; }
+.pgf-zero { stroke: #fff8; stroke-width: 1.5; } .pgf-q { stroke: #fff3; stroke-width: 1; stroke-dasharray: 4 4; } .pgf-ql { fill: #fffa; font-size: 12px; font-weight: 800; }
+.pgf-area { opacity: 0; animation: pgf-fade .6s 1.6s forwards; } @keyframes pgf-fade { to { opacity: .45; } }
+.pgf-line { fill: none; stroke: var(--accent, #fff); stroke-width: 3; stroke-linejoin: round; stroke-dasharray: 1; stroke-dashoffset: 1; animation: pgf-draw 1.8s .4s cubic-bezier(.5, 0, .3, 1) forwards; }
+@keyframes pgf-draw { to { stroke-dashoffset: 0; } }

@@ -49,3 +49,5 @@
 .aw-tag.mvp { border-color: #ffe08a; box-shadow: 0 0 12px #ffe08a44; }
 .aw-tag span { max-width: 0; overflow: hidden; white-space: nowrap; transition: max-width .25s ease; }
 .aw-tag:hover span, .aw-tag.open span { max-width: 18rem; }
+.aw-feed-row li.won span { font-weight: 800; color: var(--gold, #ffd84a); } .aw-feed-row li em { font-style: normal; font-size: 12px; color: var(--gold, #ffd84a); }
+.aw-feed-hide { margin: .4rem 0 0; color: var(--dim, #9aa3b2); }

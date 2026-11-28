@@ -54,7 +54,7 @@ export default function AwardsTab({ canControl }) {
     <div className="aw-tab">
       <div className="aw-bar">
         <label>Season <select value={season} onChange={(e) => setSeason(Number(e.target.value))}>{Array.from({ length: currentSeason() }, (_, k) => currentSeason() - k).map((s) => <option key={s} value={s}>Season {s}</option>)}</select></label>
-        <label>Show last season's awards on the League tab <select value={until} disabled={!canControl} onChange={(e) => { const w = Number(e.target.value); setUntil(w); setAwardsUntil(w).catch((x) => setErr(x.message)); }}>{UNTIL.map(([w, t]) => <option key={w} value={w}>{t}</option>)}</select></label>
+        <label>Show the award race on the League tab <select value={until} disabled={!canControl} onChange={(e) => { const w = Number(e.target.value); setUntil(w); setAwardsUntil(w).catch((x) => setErr(x.message)); }}>{UNTIL.map(([w, t]) => <option key={w} value={w}>{t}</option>)}</select></label>
         <button className="btn small ghost" onClick={() => load()}>↻ Recalculate</button>
       </div>
       <p className="dim aw-intro">The numbers rank a top 5 for each award; the top 3 are the finalists (shaded), and only they are ever shown. Drag rows (or use ▲▼) to reorder; to bring someone else in, 🔄 Replace #4 or #5. Tap ❓ for how each one is calculated.</p>
