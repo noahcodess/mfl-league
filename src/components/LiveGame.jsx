@@ -9,6 +9,7 @@ import { useGameLineups } from '../data/gameLineups.js';
 import { isRealGame } from '../data/gameState.js';
 import { loadCrowd } from '../data/gameCrowd.js';
 import { playOfficial, finalizeGame, isRivalGame, loadReplay, saveReplay, saveProgress, addGameInput } from '../data/gameResults.js';
+import { setBallStyle } from '../lib/sceneBall.js';
 
 const seedOf = (s) => [...String(s)].reduce((h, c) => (h * 31 + c.charCodeAt(0)) >>> 0, 7);
 const DEV_INJ = import.meta.env.DEV && Number(new URLSearchParams(window.location.search).get('devinjury'));   // dev only: ?devinjury=N hurts someone on play N
@@ -21,6 +22,7 @@ export default function LiveGame({ game, home, away, kick, resume = 0, st = null
   const [rivalry, setRivalry] = useState(null), [done, setDone] = useState(''), real = isRealGame(game.id);
   const [inputs, setInputs] = useState(() => (kick?.already ? st?.inputs || [] : DEV_INJ ? [{ kind: 'injury', n: DEV_INJ }] : []));
   const [crowd, setCrowd] = useState(undefined);   // the crowd (Stadium Pulse), fixed before kickoff so every rerun plays the same
+  useEffect(() => { setBallStyle(game.kind === 'craft_bowl' ? 'gold' : 'brown'); return () => setBallStyle('brown'); }, [game.kind]);   // the Craft Bowl plays with a gold ball
   useEffect(() => { let on = true; loadCrowd(game).then((c) => on && setCrowd(c || null)); return () => { on = false; }; }, [game.id]); // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => { let on = true; isRivalGame(home.id, away.id).then((r) => on && setRivalry(r)).catch(() => on && setRivalry(false)); return () => { on = false; }; }, [home.id, away.id]);
   const k = useMemo(() => (kick?.seed ? kick : { ...kick, seed: seedOf(game.id) }), [kick, game.id]);

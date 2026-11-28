@@ -1,0 +1,45 @@
+/* The Craft Bowl on every scorebug: the network's own bug with gold edges, gold gems at the ends, a gold light sweeping
+   across every few seconds and a small gold Craft Bowl tab on top. Plus playoff seeds next to each abbreviation. */
+.sb-seed { display: inline-grid; place-items: center; min-width: 1.15em; height: 1.15em; margin-right: .28em; padding: 0 .15em; border-radius: .25em;
+  font: 800 .62em/1 var(--sb-font, 'Barlow Condensed', sans-serif); background: #ffffff24; color: inherit; vertical-align: .15em; }
+.sb-gold .sb-seed { background: linear-gradient(180deg, #ffe98a, #c9a227); color: #2a1d00; }
+
+.sb-gold .sb-bar, .sb-gold .snf { position: relative; }
+.sb-gold .sb-bar { overflow: visible !important; box-shadow: 0 0 0 .13em #e8c34a, 0 0 0 .24em #3d2a00, 0 0 1.3em #ffd84a66, 0 .3em .9em #0008 !important; }
+.sb-gold .sb-score { box-shadow: inset 0 -.16em 0 #e8c34a; }
+.sb-gold .sb-down { box-shadow: inset 0 -.16em 0 #e8c34a; }
+.sb-gold .snf { filter: drop-shadow(0 0 .1em #e8c34a) drop-shadow(0 0 .9em #ffd84a66) drop-shadow(0 .3em .5em #000b); }
+.sb-gold .snf-plate { box-shadow: inset 0 .16em 0 #ffe98a, inset 0 -.22em 0 #c9a227; }
+.sb-gold .snf-circle { outline: .2em solid #e8c34a; outline-offset: .02em; box-shadow: 0 0 1.4em #ffd84acc; }
+.sb-gold .sb-football ellipse:first-child { fill: #d9a514; stroke: #3d2a00; } .sb-gold .sb-football ellipse:nth-child(2) { fill: #ffe773; }
+
+.sbg-shine { position: absolute; inset: 0; z-index: 3; pointer-events: none; overflow: hidden; border-radius: inherit; }
+.sbg-shine::before { content: ''; position: absolute; top: -20%; bottom: -20%; width: 18%; left: -30%;
+  background: linear-gradient(100deg, #fff0, #fff6d0aa 45%, #fffbe6 50%, #fff6d0aa 55%, #fff0); filter: blur(.08em); animation: sbg-sweep 6s ease-in-out 1.2s infinite; }
+@keyframes sbg-sweep { 0% { left: -30%; } 22% { left: 115%; } 100% { left: 115%; } }
+.sbg-gem { position: absolute; z-index: 4; top: 50%; width: .62em; height: .62em; translate: 0 -50%; rotate: 45deg; pointer-events: none;
+  background: linear-gradient(135deg, #fffbe6, #ffd84a 40%, #b8860b 75%, #6b4a00); box-shadow: 0 0 0 .08em #3d2a00, 0 0 .6em #ffd84acc; animation: sbg-gem 3s ease-in-out infinite; }
+.sbg-gem.l { left: -.42em; } .sbg-gem.r { right: -.42em; animation-delay: 1.5s; }
+@keyframes sbg-gem { 50% { box-shadow: 0 0 0 .08em #3d2a00, 0 0 1.1em #fff3b0; filter: brightness(1.25); } }
+.sbg-tab { position: absolute; z-index: 4; left: 1.4em; bottom: 100%; translate: 0 -.1em; padding: .12em .7em .08em; white-space: nowrap; pointer-events: none;
+  font: 800 .55em/1.2 var(--sb-font, 'Barlow Condensed', sans-serif); letter-spacing: .14em; text-transform: uppercase; color: #2a1d00;
+  background: linear-gradient(180deg, #fff3b0, #e8c34a 55%, #b8860b); clip-path: polygon(.6em 0, calc(100% - .6em) 0, 100% 100%, 0 100%); box-shadow: 0 0 .8em #ffd84a88; }
+/* the trim layer shares the bar's grid cell, so it lines up with the bar but is never clipped by it */
+.sb-gold > .sb-bar, .sbg-frame { grid-row: 2; grid-column: 1; }
+.sbg-frame { position: relative; justify-self: stretch; align-self: stretch; pointer-events: none; z-index: 2; }
+.sb-gold.sb-espn .sb-bar { border-top-color: #e8c34a; }
+.sb.sb-gold.sb-espn { filter: drop-shadow(0 0 .08em #e8c34a) drop-shadow(0 0 .08em #e8c34a) drop-shadow(0 .3em 0 #3d2a00) drop-shadow(0 0 1em #ffd84a77); }
+.sb-espn .sbg-gem.l { left: .1em; } .sb-espn .sbg-gem.r { right: .1em; } .sb-espn .sbg-tab { left: 2.2em; }
+.snf .sbg-tab { bottom: 100%; left: 2.2em; translate: 0 .35em; } .snf .sbg-gem.l { left: .4em; } .snf .sbg-gem.r { right: .4em; }
+
+/* the gold transition: gold tiles (from the palette) plus a glowing logo, a light sweep and sparkles */
+.sting-gold .net-sting-logo { filter: drop-shadow(0 0 1.4cqw #ffd84a) drop-shadow(.4cqw .4cqw 0 #3d2a00); }
+.sting-sweep { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+.sting-sweep::before { content: ''; position: absolute; top: -30%; bottom: -30%; width: 22%; left: -40%; rotate: 14deg;
+  background: linear-gradient(90deg, #fff0, #fffbe6cc 50%, #fff0); mix-blend-mode: screen; animation: sting-sweep .6s .22s ease-in-out forwards; }
+@keyframes sting-sweep { to { left: 120%; } }
+.sting-spark { position: absolute; width: 4cqw; height: 4cqw; pointer-events: none; opacity: 0; scale: 0;
+  background: radial-gradient(circle, #fffbe6 0 12%, #fff0 13%), linear-gradient(0deg, #fff0 46%, #fff3b0 50%, #fff0 54%), linear-gradient(90deg, #fff0 46%, #fff3b0 50%, #fff0 54%);
+  filter: drop-shadow(0 0 .6cqw #ffd84a); animation: sting-spark .5s ease-out forwards; }
+.sting-spark.a { left: 30%; top: 32%; animation-delay: .25s; } .sting-spark.b { left: 66%; top: 40%; animation-delay: .34s; } .sting-spark.c { left: 46%; top: 64%; animation-delay: .42s; }
+@keyframes sting-spark { 40% { opacity: 1; scale: 1; rotate: 45deg; } 100% { opacity: 0; scale: .4; rotate: 90deg; } }

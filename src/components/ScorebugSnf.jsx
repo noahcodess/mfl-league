@@ -5,6 +5,7 @@ import DownText from './DownText.jsx';
 import { recordText } from '../lib/seasonStats.js';
 import { PLAY_CLOCK } from '../lib/simClock.js';
 import { toSlots } from '../data/gameState.js';
+import ScorebugGold from './ScorebugGold.jsx';
 
 // SNF's scorebug: a long night-blue bar that tapers at both ends with a circle in the middle (like NBC's real one), silver
 // edges and a peacock stripe. Big logos at the ends, abbreviation and record, score boxes with timeouts under them; the circle
@@ -16,7 +17,7 @@ export default function ScorebugSnf({ home, away, st, rec = {}, pop, card, class
     <div className={`snf-side ${s}${st?.possession === t.id ? ' ball' : ''}`} style={{ '--tc': t.color }}>
       <i className="snf-plate" aria-hidden="true" />
       <img className="snf-logo" src={t.logo} alt="" />
-      <div className="snf-id">{st?.possession === t.id && <i className="snf-ball" title="Has the ball" />}<b>{t.code}</b><small>{recordText(rec[t.id])}</small></div>
+      <div className="snf-id">{st?.possession === t.id && <i className="snf-ball" title="Has the ball" />}<b>{t.seed && <small className="sb-seed">{t.seed}</small>}{t.code}</b><small>{recordText(rec[t.id])}</small></div>
       <div className="snf-score"><ScoreNum value={st?.[`${s}_score`] ?? 0} /><span className="sb-tos">{toSlots(st?.quarter).map((i) => <i key={i} className={i < (st?.[`${s}_timeouts`] ?? 3) ? 'on' : ''} />)}</span></div>
       {card?.side === s && <ScorebugCard card={card} />}
     </div>
@@ -25,6 +26,7 @@ export default function ScorebugSnf({ home, away, st, rec = {}, pop, card, class
     <div className={`sb sb-snf${st?.quarter >= 5 ? ' sb-ot' : ''}${st?.flag ? ' sb-flagged' : ''} ${className}`}>
       <div className="sb-pop">{pop}</div>
       <div className="snf">
+        {className.includes('sb-gold') && <ScorebugGold />}
         {side(away, 'away')}
         <div className={`snf-circle${pc <= 5 && pcIn !== '' ? ' low' : ''}`} style={{ '--pc': pc / PLAY_CLOCK }}>
           <small className="sb-qx" key={quarter}>{quarter}</small>

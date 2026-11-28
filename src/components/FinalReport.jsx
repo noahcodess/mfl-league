@@ -63,6 +63,6 @@ export default function FinalReport({ game, teams, sideOf, people, bc, film, fin
     ...(best.length ? [{ sting: true }, ...best.map(({ p, clip }, k) => ({ ms: clip.ms, render: () => <PlaySlide label={`Highlights · ${k + 1} of ${best.length}`} play={p} clip={clip} teams={teams} looks={film.looks} /> }))] : []),
     ...picks.flatMap((pk) => [{ sting: true }, { ms: MS[pk.kind], render: graphic(pk) }]),
   ];
-  const handOff = () => finale.onFinal?.({ score, label, potg, home: teams.home.id, away: teams.away.id, net: bc.net.key });
+  const handOff = () => finale.onFinal?.({ score, label, potg, home: teams.home.id, away: teams.away.id, logos: { home: teams.home.logo, away: teams.away.logo }, net: bc.net.key });
   return <BreakShow net={bc.net} steps={steps} onReveal={handOff} className="ht fr" />;
 }

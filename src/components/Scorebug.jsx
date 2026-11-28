@@ -3,6 +3,7 @@ import ScoreNum from './ScoreNum.jsx';
 import ScorebugTnf from './ScorebugTnf.jsx';
 import ScorebugSnf from './ScorebugSnf.jsx';
 import ScorebugCard from './ScorebugCard.jsx';
+import ScorebugGold from './ScorebugGold.jsx';
 import DownText from './DownText.jsx';
 import { useTicker, clockLeft, gameClockText, quarterText, finalText, downText, toSlots } from '../data/gameState.js';
 import { recordText } from '../lib/seasonStats.js';
@@ -29,7 +30,7 @@ function Team({ t, side, st, rec, bug, card }) {
   return (
     <div className={`sb-team ${side}${st?.possession === t.id ? ' ball' : ''}`} style={{ '--tc': t.color, '--ta': t.accent }}>
       <img className="sb-logo" src={t.logo} alt="" />
-      <div className="sb-id"><span className="sb-line"><span className="sb-code">{t.code}</span>{st?.possession === t.id && <Possession bug={bug} />}</span>
+      <div className="sb-id"><span className="sb-line">{t.seed && <small className="sb-seed">{t.seed}</small>}<span className="sb-code">{t.code}</span>{st?.possession === t.id && <Possession bug={bug} />}</span>
         <span className="sb-line"><small className="sb-rec">{recordText(rec?.[t.id])}</small><Pips n={st?.[`${side}_timeouts`] ?? 3} q={st?.quarter} /></span></div>
       <ScoreNum className="sb-score" value={st?.[`${side}_score`] ?? 0} />
       {card?.side === side && <ScorebugCard card={card} />}
@@ -40,7 +41,8 @@ function Team({ t, side, st, rec, bug, card }) {
 // The broadcast scorebug for a game, in its program's own shape: FOX (slanted black bar, gold chevron clock), CBS (square white
 // bar), ESPN for Saturday and Monday night (angled slate with red glow), TNF (compact rounded box) and SNF (bar with a circle).
 // Shows both teams (logo, abbreviation, record, timeouts, score, a marker for who has the ball), quarter, game
-// clock, play clock, down and distance. rec: { teamId: record } for the records.
+// clock, play clock, down and distance (plus each team's seed in the playoffs, and gold trim in the Craft Bowl).
+// rec: { teamId: record } for the records.
 // pop: the space above the bug where stat pop-outs (completion %, drive summary) will slide out later.
 // card: { side, player, team, lines, out } a player's stat card taking over that team's box (ScorebugCard).
 export default function Scorebug(props) {
@@ -52,11 +54,12 @@ export default function Scorebug(props) {
   if (fin) { parts.down = `${won.code} win`; parts.pc = ''; } else parts.pc = st?.play_clock ?? 24;
   if (st?.flag) parts.down = 'FLAG';   // a flag is down: the down and distance turns into FLAG
   if (bc.bug === 'tnf') return <ScorebugTnf {...props} {...parts} />;
-  if (bc.bug === 'snf') return <ScorebugSnf {...props} {...parts} />;
+  if (bc.bug === 'snf') return <ScorebugSnf {...props} {...parts} className={`${className}${bc.gold ? ' sb-gold' : ''}`} />;
   return (
-    <div className={`sb sb-${bc.bug}${st?.quarter >= 5 ? ' sb-ot' : ''}${fin ? ' sb-final' : ''}${st?.flag ? ' sb-flagged' : ''} ${className}`}>
+    <div className={`sb sb-${bc.bug}${bc.gold ? ' sb-gold' : ''}${st?.quarter >= 5 ? ' sb-ot' : ''}${fin ? ' sb-final' : ''}${st?.flag ? ' sb-flagged' : ''} ${className}`}>
       <div className="sb-pop">{pop}</div>
       <div className="sb-bar">
+        {bc.gold && <ScorebugGold part="shine" />}
         <span className="sb-net"><img src={bc.prime ? bc.logo : bc.net.logo} alt="" /></span>
         <Team t={away} side="away" st={st} rec={props.rec} bug={bc.bug} card={props.card} />
         <Team t={home} side="home" st={st} rec={props.rec} bug={bc.bug} card={props.card} />
@@ -67,6 +70,7 @@ export default function Scorebug(props) {
         </div>
         <div className="sb-down"><DownText text={parts.down} /></div>
       </div>
+      {bc.gold && <ScorebugGold part="trim" />}
     </div>
   );
 }

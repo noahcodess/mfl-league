@@ -2,8 +2,12 @@
 // kicks tumble end over end, deflections and throws made while getting hit wobble like a duck, a loose ball tumbles as it
 // bounces, a shadow on the grass shows where it is over the field, and a short trail shows the path of a throw.
 const ART = ['...OOOOO...', '.OOHHBBBOO.', 'OBHHBWBWBBO', 'OBBWWWWWBBO', 'OBBBBWBWBDO', '.OODDDDDOO.', '...OOOOO...'];
-const COL = { O: '#1a0f08', B: '#8b4a1f', H: '#b8692f', W: '#f4f1e8', D: '#6b3614' };
+const BROWN = { O: '#1a0f08', B: '#8b4a1f', H: '#b8692f', W: '#f4f1e8', D: '#6b3614' };
+const GOLD = { O: '#3d2a00', B: '#d9a514', H: '#ffe773', W: '#fffbe6', D: '#9c7208' };   // the Craft Bowl's gold ball
+let COL = BROWN, style = 'brown';
 const cache = new Map();
+// 'gold' for the Craft Bowl, 'brown' for every other game (the game sets it when it starts).
+export function setBallStyle(next) { if (next === style) return; style = next; COL = next === 'gold' ? GOLD : BROWN; cache.clear(); }
 
 function art(spin) {
   const c = document.createElement('canvas'); c.width = 11; c.height = 7; const x = c.getContext('2d');

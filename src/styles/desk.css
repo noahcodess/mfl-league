@@ -44,3 +44,7 @@
 /* League rules */
 .rules-list { margin: 0 0 10px; padding-left: 18px; display: grid; gap: 4px; } .rules-list .bad { color: var(--bad); font-weight: 700; }
 .rules-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; } .rules-row input { width: 64px; margin: 0 4px; }
+.te-gold { border-style: solid; border-color: #c9a227; background: linear-gradient(135deg, #1a1405, #000 60%); }
+.te-gold-pair { display: flex !important; align-items: center; gap: 6px; flex: 0 0 auto !important; min-width: 0 !important; }
+.te-gold-pair img { width: 44px; height: 44px; object-fit: contain; } .te-gold-pair span { color: #c9a227; font-weight: 800; }
+.te-gold-img { filter: drop-shadow(0 0 6px #ffd84a88); } .te-gold-none { font-size: 11px; color: var(--dim) !important; font-weight: 600 !important; width: 60px; text-align: center; }

@@ -19,6 +19,7 @@ import { brightness } from '../lib/pixels.js';
 import { ConfMatch } from '../components/ConfLogo.jsx';
 import { gameWhen } from '../lib/playoffRounds.js';
 import { useCraftBowlPlan, logoSrc } from '../data/craftBowlPlans.js';
+import { broadcastTeams } from '../data/broadcastTeams.js';
 
 const ROOM_OPENS = 5 * 60e3;
 const mmss = (ms) => { const s = Math.max(0, Math.ceil(ms / 1000)); return s >= 3600 ? `${Math.floor(s / 3600)}h ${Math.floor(s / 60) % 60}m` : `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`; };
@@ -35,7 +36,7 @@ export default function GamePage({ id, canControl, teamId }) {
   const [local, setLocal] = useState(null), [run, setRun] = useState(0), [kick, setKick] = useState(null), [resumeAt, setResumeAt] = useState(null), [handoff, setHandoff] = useState(null);
   const gate = useWeekGate(found?.game || { week: 0 }, found?.season), plan = useCraftBowlPlan(currentSeason());
   if (!found) return <p className="dim">Looking for that game...</p>;
-  const { game, season } = found, home = getTeam(game.home), away = getTeam(game.away), bc = broadcastFor(game, home);
+  const { game, season } = found, { home, away } = broadcastTeams(game, season), bc = broadcastFor(game, home);   // gold logos in the Craft Bowl
   const real = isRealGame(id), st = real ? live : (local || PREGAME), rec = records(season.weeks.slice(0, game.week - 1));
   const mine = [home.id, away.id].includes(teamId), at = game.startsAt ? Date.parse(game.startsAt) : null;
   const roomOpen = !real || (at && now >= at - ROOM_OPENS) || st?.status === 'live';

@@ -32,7 +32,7 @@ const flyTo = (el, target) => {   // glide an element onto another one's spot
 };
 
 export default function FinalHandoff({ data, onDone }) {
-  const home = getTeam(data.home), away = getTeam(data.away), win = data.score.home >= data.score.away ? 'home' : 'away';
+  const home = { ...getTeam(data.home), logo: data.logos?.home || getTeam(data.home).logo }, away = { ...getTeam(data.away), logo: data.logos?.away || getTeam(data.away).logo }, win = data.score.home >= data.score.away ? 'home' : 'away';
   const star = data.potg && getAllPlayers().find((p) => p.id === data.potg.player_id), starTeam = star && getTeam(data.potg.team_id);
   const [fly, setFly] = useState(false), hero = useRef(null), card = useRef(null);
   const sa = useCount(data.score.away, 700), sh = useCount(data.score.home, 700);

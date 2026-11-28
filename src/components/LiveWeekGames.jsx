@@ -42,7 +42,7 @@ export default function LiveWeekGames({ week, rec, teamId, canControl = false, s
           <li key={g.id} className={`lw-game ${isLive ? 'live' : g.status}${prime ? ' prime' : ''} click`} style={{ '--away': away?.color, '--home': home?.color }}
             onClick={() => { window.location.hash = coach && !done && !canControl ? links.coaching(g.id) : links.game(g.id); }} title={coach && !done && !canControl ? 'Your game: open the coaching room' : undefined}>
             <div className="lw-top">
-              <span className="lw-when">{g.time}{bc && <span className={`lw-prog net-${bc.net.key}${bc.prime ? ` show-${bc.show.key}` : ''}`} title={bc.title}><img src={bc.logo} alt={bc.title} />{!bc.prime && <b>Day game</b>}</span>}</span>
+              <span className="lw-when">{g.time}{bc && <span className={`lw-prog net-${bc.net.key}${bc.prime ? ` show-${bc.show.key}` : ''}`} title={bc.title}><img src={bc.logo} alt={bc.title} />{!bc.prime && !bc.playoff && <b>Day game</b>}</span>}</span>
               <span className="lw-status">{done ? finalText(st?.quarter) : isLive ? <span className="lw-live"><i className="live-pulse" />Live{st ? ` · ${quarterText(st.quarter)} ${gameClockText(st.quarter, clockLeft(st))}` : ''}</span>
                 : ''}</span>
             </div>

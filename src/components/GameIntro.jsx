@@ -19,6 +19,7 @@ import { playerSpotlight, gameWeather } from '../lib/introFacts.js';
 import { records } from '../lib/seasonStats.js';
 import { teamStats } from '../lib/teamRanks.js';
 import { STING_MID } from '../lib/pixelSwarm.js';
+import { useBroadcastTeams } from '../data/broadcastTeams.js';
 
 // Day games (~20s): transition, network logo, the two teams with three players each, transition, the crowd, then the program's
 // transition cuts straight into the opening kickoff (the camera pushes in and the scorebug builds in as the ball is kicked).
@@ -33,7 +34,7 @@ const FADE = 450;
 // end-of-game show handing off to the game page.
 export default function GameIntro({ game, season, kick, st, resume: resumeAt = null, onClose, onReplay, onFinal }) {
   const resume = import.meta.env.DEV && /devfinal/.test(window.location.search) ? 9999 : resumeAt;   // dev: start on the last play (to see the end-of-game show)
-  const home = getTeam(game.home), away = getTeam(game.away), bc = broadcastFor(game, home);
+  const { home, away } = useBroadcastTeams(game, season), bc = broadcastFor(game, home);   // seeds in the playoffs, gold logos in the Craft Bowl
   const plan = useCraftBowlPlan(currentSeason()), host = game.kind === 'craft_bowl' && plan?.stadium ? plan.stadium : home.id;   // the Craft Bowl is at its host stadium
   const kits = useGameKits(home, away, game), stadium = useStadiums()[host], att = useGameCrowd(game);
   const before = useMemo(() => season.weeks.slice(0, game.week - 1), [season, game.week]);

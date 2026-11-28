@@ -4,6 +4,7 @@ import TeamBadge from './TeamBadge.jsx';
 import ConfirmButton from './ConfirmButton.jsx';
 import TeamJerseys from './TeamJerseys.jsx';
 import StadiumEdit from './StadiumEdit.jsx';
+import GoldLogoEdit from './GoldLogoEdit.jsx';
 import { getConferences } from '../data/teams.js';
 import { logoFor } from '../data/logos.js';
 import { updateTeam, uploadTeamLogo, resetTeamLogo } from '../data/commishEdit.js';
@@ -11,7 +12,7 @@ import { prepareLogo } from '../lib/logoCheck.js';
 import ConfLogo from './ConfLogo.jsx';
 
 // Commissioner: edit one team. Location + team name (the full name is both: Ocean Monument + Guardians), abbreviation,
-// conference, colors, the logo (PNG with a see-through background), the stadium and the four jerseys.
+// conference, colors, the logo (PNG with a see-through background), the gold Craft Bowl logo, the stadium and the four jerseys.
 export default function TeamEditor({ team, canControl, onClose, onSaved }) {
   const split = (team.name || '').match(/^(.*)\s(\S+)$/) || [null, team.name, ''];
   const [f, setF] = useState({ location: team.location || split[1], nickname: team.nickname || split[2], code: team.code, conference: team.conference, color: team.color, accent: team.accent });
@@ -63,6 +64,7 @@ export default function TeamEditor({ team, canControl, onClose, onSaved }) {
         )}
         {logo && <span className="te-new">✅ New logo ready. Save to use it.</span>}
       </div>
+      <GoldLogoEdit team={team} canControl={canControl} />
       <StadiumEdit team={team} canControl={canControl} />
       <TeamJerseys team={team} canControl={canControl} />
       {f.code !== team.code && <p className="dim">Changing the abbreviation also renames all of this team's draft picks.</p>}

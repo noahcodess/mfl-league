@@ -22,18 +22,23 @@ const SHOWS = {
   mon_night: { key: 'mnf', name: 'Monday Night Football', logo: img('mnf') },
 };
 
+// The Craft Bowl's colors: gold transitions (and gold trim on the scorebug, set by bc.gold).
+const GOLD = ['#ffd84a', '#f5c518', '#c9a227', '#fff3b0', '#8a6a10', '#ffe98a'];
+
 // Each network's main broadcast, used when a playoff game is given just the network.
 const MAIN = { nbc: 'sun_night', espn: 'mon_night' };
 
 // Scorebug designs: FOX, CBS, TNF and SNF each have their own; ESPN's is shared by Saturday Night and Monday Night.
 const BUG = { tnf: 'tnf', snf: 'snf', stnf: 'espn', mnf: 'espn' };
 
-// { net, show (null for day games), prime, logo (show logo, else the network's MFL logo), title, bug (scorebug design) }
+// { net, show (null for day games), prime, logo (show logo, else the network's MFL logo), title, bug (scorebug design),
+//   gold (the Craft Bowl), playoff }
 export function broadcastFor(game0, homeTeam) {
   const dev = import.meta.env.DEV && typeof window !== 'undefined' && /[?&]devnet=([a-z_]+)/.exec(window.location.search)?.[1], game = dev ? { ...game0, window: dev } : game0;   // dev only: ?devnet=sun_night
-  const net = NETS[networkFor(game.window, homeTeam)] || NETS.FOX, playoff = isPlayoffGame(game);
+  const net0 = NETS[networkFor(game.window, homeTeam)] || NETS.FOX, playoff = isPlayoffGame(game), gold = game.kind === 'craft_bowl';
+  const net = gold ? { ...net0, pixels: GOLD, gold: true } : net0;
   let show = SHOWS[game.window] || SHOWS[MAIN[game.window]] || null;
   if (show && playoff) show = { ...show, logo: net.logo, name: `${roundOfGame(game).one} on ${net.name}` };   // the network's logo, never the show's
   const title = playoff ? `The MFL Playoffs on ${net.name}` : show?.name || `The MFL on ${net.name}`;
-  return { net, show, prime: !!show, logo: show?.logo || net.logo, title, bug: BUG[show?.key] || net.key };
+  return { net, show, prime: !!show, logo: show?.logo || net.logo, title, bug: BUG[show?.key] || net.key, gold, playoff };
 }

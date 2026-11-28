@@ -45,6 +45,7 @@ import './styles/awardShow.css';
 import './styles/conference.css';
 import './styles/finalReport.css';
 import './styles/postGame.css';
+import './styles/scorebugGold.css';
 import '@fontsource/cinzel/700.css';
 import '@fontsource/cinzel/900.css';
 import './styles/tradeWire.css';
